@@ -226,9 +226,9 @@ export function PortfolioApp() {
           </h1>
           <p className="text-sm leading-relaxed text-dash-muted sm:text-base">
             Create a simple account (email + password) to log pairs you own,
-            mark cost basis, and see live-ish market asks in USD and Bitcoin.
-            Accounts are stored on this device for now — cloud sync ships with
-            Plus.
+            mark cost basis, and see live-ish market asks in USD (and an
+            optional BTC read of the same total). Accounts are stored on this
+            device for now — cloud sync ships with Plus.
           </p>
         </header>
 
@@ -326,7 +326,7 @@ export function PortfolioApp() {
           <Link href="/plus" className="text-dash-accent hover:underline">
             Plus
           </Link>{" "}
-          will add cloud backup and Bitcoin payments.
+          will add cloud backup.
         </p>
       </div>
     );
@@ -343,8 +343,8 @@ export function PortfolioApp() {
             Your collection
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-dash-muted">
-            Mark what you own, what you paid, and see asks vs cost — in dollars
-            and BTC. Local vault on this device.
+            Mark what you own, what you paid, and see asks vs cost. Local vault
+            on this device.
           </p>
         </div>
         <button
@@ -614,7 +614,7 @@ export function PortfolioApp() {
           </button>
         </div>
         <p className="text-xs text-dash-faint">
-          Want cloud sync across phones + pay for Plus in Bitcoin?{" "}
+          Want cloud sync across phones?{" "}
           <Link href="/plus" className="text-dash-accent hover:underline">
             Join the Plus list
           </Link>

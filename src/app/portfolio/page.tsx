@@ -4,7 +4,7 @@ import { PortfolioApp } from "@/components/portfolio/PortfolioApp";
 export const metadata = {
   title: "Portfolio — SneakerPulse",
   description:
-    "Track your sneaker collection with a simple account. See market asks in USD and Bitcoin.",
+    "Track your sneaker collection with a simple account. See market asks vs what you paid.",
 };
 
 export default function PortfolioPage() {

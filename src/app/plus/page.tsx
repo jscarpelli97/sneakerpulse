@@ -69,8 +69,7 @@ export default function PlusPage() {
               <li>
                 <strong className="text-dash-text">Plus</strong> — live asks,
                 faster refresh, deeper coverage, richer alerts, cloud portfolio
-                sync, Bitcoin checkout, and (over time) multi-marketplace views
-                in one place.
+                sync, and (over time) multi-marketplace views in one place.
               </li>
             </ul>
           </section>
@@ -91,18 +90,15 @@ export default function PlusPage() {
 
           <section className="space-y-3">
             <h2 className="font-[family-name:var(--font-syne)] text-xl font-bold">
-              Portfolio + Bitcoin
+              Portfolio
             </h2>
             <p className="text-dash-muted leading-relaxed">
               Free{" "}
               <Link href="/portfolio" className="text-dash-accent hover:underline">
                 Portfolio
               </Link>{" "}
-              already tracks your collection in USD and BTC on-device. Plus will
-              add cloud sync across phones and{" "}
-              <strong className="text-dash-text">pay with Bitcoin</strong> for
-              subscriptions — so collectors and shops can settle without the
-              card-network tax when they want to.
+              already tracks your collection on-device. Plus will add cloud sync
+              across phones so your vault follows you.
             </p>
           </section>
 
@@ -111,9 +107,8 @@ export default function PlusPage() {
               Get early access
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-dash-muted">
-              Leave your email if Plus would help you hunt pairs, run
-              inventory, or pay in BTC. We&apos;ll only ping you when it&apos;s
-              ready.
+              Leave your email if Plus would help you hunt pairs or run
+              inventory. We&apos;ll only ping you when it&apos;s ready.
             </p>
             <div className="mt-4">
               <PlusInterestForm source="plus-page" inputId="plus-email-page" />
