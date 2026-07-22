@@ -1,0 +1,14 @@
+{
+  "productId": "008e26dc-fa33-43d8-84e5-736eaa7c48b3",
+  "slug": "yzy-ys-01-silver-green",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-22T15:42:12.627Z",
+  "points": [
+    {
+      "date": "2026-07-22",
+      "price": 32,
+      "orders": 1525
+    }
+  ]
+}

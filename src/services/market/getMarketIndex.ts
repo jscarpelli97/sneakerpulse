@@ -1,4 +1,5 @@
-import historicalIndex from "@/data/index/stockx-whole-market-2012-2020.json";
+import historicalIndex from "@/data/index/stockx-whole-market-2012-2021.json";
+import extensionIndex from "@/data/index/spi-daily-extension.json";
 import {
   fetchTopStockxSneakers,
   getKicksApiKey,
@@ -12,7 +13,8 @@ import {
 } from "@/utils/metrics";
 
 const INDEX_BASE = 1000;
-const INDEX_DAYS = 90;
+/** Trailing live bootstrap window when daily extension is still thin. */
+const INDEX_DAYS = 365;
 
 type HistoricalFile = {
   name: string;
@@ -24,8 +26,19 @@ type HistoricalFile = {
   constituents: number;
   productsCovered?: number;
   citation?: string;
+  citations?: string[];
   paper?: string;
+  gapAfter?: string;
+  peakLevel?: number;
+  peakDate?: string;
   points: ChartPoint[];
+};
+
+type ExtensionFile = {
+  points?: ChartPoint[];
+  asOf?: string | null;
+  anchorLevel?: number;
+  gapBefore?: string;
 };
 
 function loadHistoricalSeries(): {
@@ -44,8 +57,34 @@ function loadHistoricalSeries(): {
   };
 }
 
+function loadExtensionSeries(): ChartPoint[] {
+  const file = extensionIndex as ExtensionFile;
+  if (!file?.points?.length) return [];
+  return file.points
+    .filter((point) => point.price > 0 && point.date)
+    .map((point) => ({
+      date: point.date.slice(0, 10),
+      price: point.price,
+      orders: point.orders ?? 1,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/** Merge historical + extension without inventing the 2022–gap years. */
+function mergeHistoricalAndExtension(
+  historical: ChartPoint[],
+  extension: ChartPoint[],
+): ChartPoint[] {
+  if (!extension.length) return historical;
+  const byDate = new Map<string, ChartPoint>();
+  for (const point of historical) byDate.set(point.date, point);
+  for (const point of extension) byDate.set(point.date, point);
+  return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+}
+
 function peakOf(series: ChartPoint[]) {
-  if (!series.length) return { level: null as number | null, date: null as string | null };
+  if (!series.length)
+    return { level: null as number | null, date: null as string | null };
   let peak = series[0];
   for (const point of series) {
     if (point.price > peak.price) peak = point;
@@ -109,21 +148,27 @@ async function buildLiveSeries(limit: number): Promise<{
 
 /**
  * ChronoPulse-style whole-market index:
- * - Long history: rotating top-200 StockX colorways from embSneakers
- *   whole-catalog transactions (2012–2020)
- * - Live window: rotating top StockX sellers by current sales rank
+ * - Long history: embSneakers 2012–2020 + Flurin17 daily 2020–2021
+ * - Extension: daily top-seller Laspeyres from `npm run snapshot`
+ * - Live window: rotating top StockX sellers (bootstrap when extension is thin)
  */
 export async function getMarketIndex(
   limit = TOP_SELLERS_LIMIT,
 ): Promise<MarketIndex | null> {
   const historical = loadHistoricalSeries();
+  const extension = loadExtensionSeries();
   const live = await buildLiveSeries(limit);
 
-  if (!historical && !live) return null;
+  if (!historical && !live && extension.length < 2) return null;
 
-  const historicalSeries = historical?.series ?? [];
+  const coreHistorical = historical?.series ?? [];
+  const historicalSeries = mergeHistoricalAndExtension(
+    coreHistorical,
+    extension,
+  );
   const liveSeries = live?.series ?? [];
-  const primary = historicalSeries.length >= 2 ? historicalSeries : liveSeries;
+  const primary =
+    historicalSeries.length >= 2 ? historicalSeries : liveSeries;
   const liveLevel = liveSeries.at(-1)?.price ?? primary.at(-1)!.price;
   const historicalEnd = historicalSeries.at(-1)?.price ?? null;
   const histPeak = peakOf(historicalSeries);
@@ -133,6 +178,10 @@ export async function getMarketIndex(
   const liveStart = liveSeries[0]?.price ?? null;
 
   const productsCovered = historical?.meta.productsCovered;
+  const gapAfter = historical?.meta.gapAfter ?? "2021-12-26";
+  const hasExtension = extension.length > 0;
+  const citation =
+    historical?.meta.citations?.[0] ?? historical?.meta.citation ?? null;
 
   return {
     name: "SneakerPulse Index",
@@ -167,9 +216,9 @@ export async function getMarketIndex(
           ? "whole_market"
           : "bootstrap",
     methodology: historical
-      ? `ChronoPulse-style whole StockX market index. Long history uses a rotating monthly basket of the top ${historical.meta.constituents} colorways by sales (from ${productsCovered?.toLocaleString?.() ?? productsCovered ?? "11k+"} products, Apr 2012–Jul 2020). Shoes enter and exit as liquidity shifts. Live window uses the current top StockX sellers. No free public daily sales feed fills Aug 2020 through today, so ALL shows the long market series and 3M shows live SPI.`
+      ? `ChronoPulse-style whole StockX market index. Apr 2012–Jul 2020: rotating monthly top ${historical.meta.constituents} colorways (embSneakers, ${productsCovered?.toLocaleString?.() ?? productsCovered ?? "11k+"} products). Nov 2020–Dec 2021: daily top-200 from Flurin17 snapshots (~4k products). Aug–Oct 2020 held flat. ${hasExtension ? `Daily extension resumes from snapshots after the public-data gap. ` : `No free public whole-market daily feed fills ${gapAfter} → today yet — run npm run snapshot daily to extend. `}ALL/1Y = long market series; 3M = live top sellers.`
       : "Volume-weighted Laspeyres basket of the current top StockX sellers. Shoes rotate with live sales rank.",
-    citation: historical?.meta.citation ?? null,
+    citation,
     fetchedAt: new Date().toISOString(),
   };
 }

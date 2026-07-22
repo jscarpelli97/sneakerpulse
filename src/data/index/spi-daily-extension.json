@@ -1,0 +1,20 @@
+{
+  "id": "spi-daily-extension",
+  "name": "SneakerPulse Index daily extension",
+  "source": "kicksdb_top_sellers_laspeyres",
+  "note": "Append-only daily SPI continuation from live top StockX sellers (lowest ask, weekly_orders weights). Anchored to the last historical SPI level on the first recorded day so the long series can resume after the Jan 2022–present public-data gap. Run: npm run snapshot",
+  "anchorDate": "2021-12-26",
+  "anchorLevel": 5304.94,
+  "baseLevel": 5304.94,
+  "asOf": "2026-07-22",
+  "constituents": 100,
+  "gapBefore": "2022-01-01",
+  "points": [
+    {
+      "date": "2026-07-22",
+      "price": 5304.94,
+      "orders": 100
+    }
+  ],
+  "updatedAt": "2026-07-22T15:42:17.469Z"
+}

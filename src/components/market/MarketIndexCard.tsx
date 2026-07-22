@@ -8,6 +8,8 @@ import { changeClass, formatNumber } from "@/utils/format";
 
 type Range = (typeof CHART_RANGES)[number];
 
+const GAP_DAYS = 60;
+
 function filterByRange(points: ChartPoint[], range: Range): ChartPoint[] {
   if (points.length === 0) return points;
   if (range === "ALL") return points;
@@ -28,14 +30,46 @@ function filterByRange(points: ChartPoint[], range: Range): ChartPoint[] {
   return filtered.length > 1 ? filtered : points.slice(-2);
 }
 
-function seriesForRange(index: MarketIndex, range: Range): ChartPoint[] {
-  // ALL / 1Y: whole-market historical series (ChronoPulse-style long view).
+/** Split one series into pre/post gap segments when calendar holes are large. */
+function splitOnGap(points: ChartPoint[]): {
+  primary: ChartPoint[];
+  secondary?: ChartPoint[];
+} {
+  if (points.length < 4) return { primary: points };
+  const dayMs = 86_400_000;
+  let splitAt = -1;
+  for (let i = 1; i < points.length; i++) {
+    const prev = Date.parse(points[i - 1].date.slice(0, 10));
+    const next = Date.parse(points[i].date.slice(0, 10));
+    if (Number.isFinite(prev) && Number.isFinite(next) && next - prev > GAP_DAYS * dayMs) {
+      splitAt = i;
+      break;
+    }
+  }
+  if (splitAt < 0) return { primary: points };
+  const primary = points.slice(0, splitAt);
+  const secondary = points.slice(splitAt);
+  if (primary.length < 2 || secondary.length < 2) return { primary: points };
+  return { primary, secondary };
+}
+
+function seriesForRange(index: MarketIndex, range: Range): {
+  primary: ChartPoint[];
+  secondary?: ChartPoint[];
+  source: "historical" | "live";
+} {
+  // ALL / 1Y: whole-market historical (+ daily extension when present).
   // Shorter ranges: live rotating top-seller basket.
   const useHistorical =
     index.historicalSeries.length >= 2 &&
     (range === "ALL" || range === "1Y" || index.liveSeries.length < 2);
   const source = useHistorical ? index.historicalSeries : index.liveSeries;
-  return filterByRange(source, range);
+  const filtered = filterByRange(source, range);
+  if (useHistorical && (range === "ALL" || range === "1Y")) {
+    const split = splitOnGap(filtered);
+    return { ...split, source: "historical" };
+  }
+  return { primary: filtered, source: useHistorical ? "historical" : "live" };
 }
 
 function formatIndexLevel(value: number) {
@@ -56,15 +90,21 @@ function formatIndexChange(change: MarketIndex["changeToday"]) {
 
 export function MarketIndexCard({ index }: { index: MarketIndex }) {
   const [range, setRange] = useState<Range>("ALL");
-  const data = useMemo(() => seriesForRange(index, range), [index, range]);
-  const showingHistorical =
-    index.historicalSeries.length >= 2 &&
-    (range === "ALL" || range === "1Y" || index.liveSeries.length < 2);
-  const hasSeries = data.length > 1;
-  const isUp = hasSeries && data[data.length - 1].price >= data[0].price;
+  const { primary, secondary, source } = useMemo(
+    () => seriesForRange(index, range),
+    [index, range],
+  );
+  const showingHistorical = source === "historical";
+  const chartEnd = secondary?.at(-1) ?? primary.at(-1);
+  const chartStart = primary[0];
+  const hasSeries = primary.length > 1;
+  const isUp =
+    hasSeries &&
+    (chartEnd?.price ?? 0) >= (chartStart?.price ?? 0);
   const today = formatIndexChange(index.changeToday);
   const month = formatIndexChange(index.change30d);
   const historical = formatIndexChange(index.changeHistorical);
+  const histEndLabel = index.historicalSeries.at(-1)?.date?.slice(0, 4) ?? "now";
 
   return (
     <section className="dash-card animate-rise stagger-2 overflow-hidden">
@@ -79,7 +119,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             </span>
             <span className="rounded-full bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
               {showingHistorical
-                ? "Whole market · 2012–2020"
+                ? "Whole market · 2012–2021+"
                 : "Live top sellers"}
             </span>
           </div>
@@ -88,13 +128,13 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
           </h2>
           <p className="mt-1 max-w-3xl text-sm text-dash-muted">
             {showingHistorical
-              ? `ChronoPulse-style StockX market pulse — rotating basket of the most traded colorways across the whole catalog (not one brand). Shoes enter and exit as liquidity shifts. Indexed to ${formatIndexLevel(index.baseLevel)} in Apr 2012.`
+              ? `ChronoPulse-style StockX market pulse — rotating basket across the whole catalog (not one brand). Shoes enter and exit as liquidity shifts. Indexed to ${formatIndexLevel(index.baseLevel)} in Apr 2012.`
               : `Live ChronoPulse-style basket of the current top ${formatNumber(index.constituents)} StockX sellers by sales rank. Constituents rotate with the market.`}
           </p>
         </div>
         <div className="text-right">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            {showingHistorical ? "2020 level" : "Live level"}
+            {showingHistorical ? `Through ${histEndLabel}` : "Live level"}
           </p>
           <p className="mt-1 font-[family-name:var(--font-syne)] text-3xl font-extrabold tabular-nums text-dash-text sm:text-4xl">
             {formatIndexLevel(
@@ -135,7 +175,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             tone: changeClass(index.change30d?.percent),
           },
           {
-            label: "2012→2020",
+            label: "2012→now",
             value: historical.percent,
             sub:
               index.historicalConstituents != null
@@ -175,8 +215,8 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
           <p className="text-sm text-dash-muted">
             {hasSeries
               ? showingHistorical
-                ? `Whole StockX market · ${data.length} sessions · ${data[0]?.date} → ${data.at(-1)?.date}`
-                : `Live top sellers · ${data.length} sessions · as of ${index.asOf}`
+                ? `Whole StockX market · ${primary.length + (secondary?.length ?? 0)} sessions · ${chartStart?.date} → ${chartEnd?.date}${secondary ? " · gold = daily extension after gap" : ""}`
+                : `Live top sellers · ${primary.length} sessions · as of ${index.asOf}`
               : "Index series unavailable"}
           </p>
           <div className="flex flex-wrap gap-1 rounded-xl bg-dash-elevated p-1">
@@ -198,7 +238,11 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
         </div>
         <div className="relative h-[280px] w-full md:h-[340px]">
           {hasSeries ? (
-            <LightweightPriceChart data={data} up={isUp} />
+            <LightweightPriceChart
+              data={primary}
+              secondaryData={secondary}
+              up={isUp}
+            />
           ) : (
             <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-dash-border bg-dash-elevated/40 text-sm text-dash-muted">
               No index points to plot yet.
@@ -213,14 +257,23 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
           {index.citation ? (
             <>
               {" "}
-              Historical transactions via{" "}
+              Sources:{" "}
               <a
                 href={index.citation}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-dash-link underline-offset-2 hover:underline"
               >
-                embSneakers / StockX crawl (WWW 2022)
+                embSneakers
+              </a>
+              {" · "}
+              <a
+                href="https://github.com/Flurin17/stockXsalesData"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-dash-link underline-offset-2 hover:underline"
+              >
+                Flurin17
               </a>
               . ALL/1Y = long market series; 3M = live rotating basket.
             </>

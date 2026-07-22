@@ -1,0 +1,14 @@
+{
+  "productId": "12db0831-7ca6-47f1-943a-a2a09352b720",
+  "slug": "yzy-ys-01-black",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-22T15:42:12.319Z",
+  "points": [
+    {
+      "date": "2026-07-22",
+      "price": 32,
+      "orders": 13431
+    }
+  ]
+}

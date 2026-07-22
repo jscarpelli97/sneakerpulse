@@ -11,6 +11,8 @@ import type { ChartPoint } from "@/types/market";
 
 type Props = {
   data: ChartPoint[];
+  /** Optional second segment (e.g. post-gap extension) drawn separately so we do not invent a line across missing years. */
+  secondaryData?: ChartPoint[];
   up: boolean;
 };
 
@@ -30,7 +32,7 @@ function toChartPoints(data: ChartPoint[]) {
   return points;
 }
 
-export function LightweightPriceChart({ data, up }: Props) {
+export function LightweightPriceChart({ data, secondaryData, up }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -67,18 +69,37 @@ export function LightweightPriceChart({ data, up }: Props) {
     });
 
     const line = up ? "#26a69a" : "#ef5350";
+    const hasSecondary = Boolean(secondaryData && secondaryData.length > 1);
     const series = chart.addSeries(AreaSeries, {
       lineColor: line,
       topColor: up ? "rgba(38, 166, 154, 0.32)" : "rgba(239, 83, 80, 0.32)",
       bottomColor: up ? "rgba(38, 166, 154, 0.02)" : "rgba(239, 83, 80, 0.02)",
       lineWidth: 2,
-      priceLineVisible: true,
-      lastValueVisible: true,
+      priceLineVisible: !hasSecondary,
+      lastValueVisible: !hasSecondary,
     });
 
     const points = toChartPoints(data);
     if (points.length > 0) {
       series.setData(points);
+    }
+
+    if (hasSecondary && secondaryData) {
+      const secondary = chart.addSeries(AreaSeries, {
+        lineColor: "#d4a017",
+        topColor: "rgba(212, 160, 23, 0.28)",
+        bottomColor: "rgba(212, 160, 23, 0.02)",
+        lineWidth: 2,
+        priceLineVisible: true,
+        lastValueVisible: true,
+      });
+      const secondaryPoints = toChartPoints(secondaryData);
+      if (secondaryPoints.length > 0) {
+        secondary.setData(secondaryPoints);
+      }
+    }
+
+    if (points.length > 0 || hasSecondary) {
       chart.timeScale().fitContent();
     }
 
@@ -95,7 +116,7 @@ export function LightweightPriceChart({ data, up }: Props) {
       ro.disconnect();
       chart.remove();
     };
-  }, [data, up]);
+  }, [data, secondaryData, up]);
 
   return (
     <div

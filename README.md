@@ -18,15 +18,26 @@ Do not reintroduce the old light ink/paper theme unless asked.
 
 Homepage market pulse inspired by Chrono24’s ChronoPulse — **whole StockX market**, not a single brand:
 
-- **Long history (ALL / 1Y):** rotating monthly basket of the top 200 colorways by sales from embSneakers’ whole-catalog StockX transactions (**Apr 2012 → Jul 2020**, ~13M trades / ~12k products). Shoes enter and exit as liquidity shifts. Data: `src/data/index/stockx-whole-market-2012-2020.json`
-- **Live window (3M / shorter):** rotating basket of the current top StockX sellers by sales rank
-- **Gap:** no free public daily sales feed fills Aug 2020 → today (including the 2021 peak), so we do not invent that segment
+- **Long history (ALL / 1Y):** chained Laspeyres on rotating top-200 colorways
+  - **Apr 2012 → Jul 2020:** embSneakers whole-catalog StockX transactions (~13M trades / ~12k products), monthly LOCF daily — `stockx-whole-market-2012-2020.json`
+  - **Aug → early Nov 2020:** level held (no public daily feed)
+  - **Nov 2020 → Dec 2021:** Flurin17 daily StockX snapshots (~4k products, lowest ask) — merged into `stockx-whole-market-2012-2021.json`
+- **Daily extension (from first `npm run snapshot` onward):** live top-100 Laspeyres appended to `spi-daily-extension.json` (anchored to the Dec 2021 level so the long series can resume)
+- **Live window (3M / shorter):** rotating basket of the current top StockX sellers by sales rank (bootstrap from StockX stats when needed)
+- **Gap:** no free public whole-market daily feed for **Jan 2022 → day before extension starts**. Charts draw the pre-gap and extension segments separately (no invented line across missing years).
 
-Rebuild historical JSON from the embSneakers Dropbox dump ([bit.ly/3DvnC6p](https://bit.ly/3DvnC6p)):
+Rebuild / extend:
 
 ```bash
-# after downloading the zip that contains resale_transactions_ALL.csv
+# embSneakers Dropbox dump (bit.ly/3DvnC6p) → 2012–2020 segment
 node scripts/build-whole-market-index.mjs /path/to/emb.zip
+
+# Flurin17 Drive JSON → 2020–2021 segment, then merge
+node scripts/build-flurin-index.mjs /path/to/flurin.json
+node scripts/merge-market-index.mjs
+
+# Daily: product ask snapshots + SPI extension point (keeps the series going past today)
+npm run snapshot
 ```
 
 ```
