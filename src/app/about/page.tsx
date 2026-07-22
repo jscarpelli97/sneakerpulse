@@ -77,12 +77,8 @@ export default function AboutPage() {
             </p>
             <p className="text-sm text-dash-faint leading-relaxed">
               Official StockX Developer API access is pending. Until then,
-              listings may show a Cached badge instead of Live.{" "}
-              <Link href="/plus#compare" className="text-dash-accent hover:underline">
-                SneakerPulse Plus
-              </Link>{" "}
-              unlocks the full board and email alerts — see the free vs Plus
-              checklist, or leave your email for launch notes.
+              listings may show a Cached badge instead of Live. SneakerPulse is
+              an independent fan project — not affiliated with StockX.
             </p>
           </section>
 

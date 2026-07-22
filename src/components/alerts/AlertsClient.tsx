@@ -28,8 +28,8 @@ function EmailAlertsPaywall() {
           </h2>
           <p className="max-w-xl text-sm leading-relaxed text-dash-muted sm:text-base">
             Plus members set above/below thresholds and we email you when a
-            live StockX ask crosses them. Free accounts stay on the board —
-            email delivery is a Plus feature.
+            live ask crosses them. Free accounts stay on the board — email
+            delivery is a Plus feature.
           </p>
           <div className="flex flex-wrap gap-3 pt-1">
             <Link
@@ -96,9 +96,12 @@ function ComingSoonCard() {
 export function AlertsClient({
   sneakers,
   isPlus,
+  publicPlus = false,
 }: {
   sneakers: SneakerCatalogEntry[];
   isPlus: boolean;
+  /** When false, Plus marketing/paywall is hidden sitewide. */
+  publicPlus?: boolean;
 }) {
   const { alerts, addAlert, removeAlert } = usePriceAlerts();
   const [slug, setSlug] = useState(sneakers[0]?.slug ?? "");
@@ -108,7 +111,10 @@ export function AlertsClient({
   const [result, setResult] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
 
+  const emailMode = publicPlus && isPlus;
+
   useEffect(() => {
+    if (!emailMode) return;
     try {
       const stored = localStorage.getItem(EMAIL_KEY);
       if (stored) {
@@ -120,9 +126,9 @@ export function AlertsClient({
     }
     const session = getSession();
     if (session?.email) setEmail(session.email);
-  }, []);
+  }, [emailMode]);
 
-  if (!isPlus) {
+  if (publicPlus && !isPlus) {
     return <EmailAlertsPaywall />;
   }
 
@@ -145,12 +151,12 @@ export function AlertsClient({
     setResult(null);
     const trimmed = email.trim().toLowerCase();
     try {
-      if (trimmed) {
+      if (emailMode && trimmed) {
         localStorage.setItem(EMAIL_KEY, trimmed);
       }
       const json = await evaluateAlerts(alerts, {
         email: trimmed,
-        notifyEmail: Boolean(trimmed),
+        notifyEmail: emailMode && Boolean(trimmed),
       });
       if (!json.ok) {
         setResult(json.error ?? "Evaluation failed");
@@ -170,12 +176,14 @@ export function AlertsClient({
               .join(" · "),
         );
       }
-      if (json.emailed && json.emailed > 0) {
-        parts.push(`Emailed ${trimmed}`);
-      } else if (json.emailError) {
-        parts.push(json.emailError);
-      } else if (!trimmed && json.triggered?.length) {
-        parts.push("Add an email above to get notified next time");
+      if (emailMode) {
+        if (json.emailed && json.emailed > 0) {
+          parts.push(`Emailed ${trimmed}`);
+        } else if (json.emailError) {
+          parts.push(json.emailError);
+        } else if (!trimmed && json.triggered?.length) {
+          parts.push("Add an email above to get notified next time");
+        }
       }
       setResult(parts.join(" · "));
     } catch (error) {
@@ -187,28 +195,31 @@ export function AlertsClient({
 
   return (
     <div className="space-y-6">
-      <ComingSoonCard />
+      {emailMode ? <ComingSoonCard /> : null}
 
       <section className="dash-card p-4 md:p-5">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold">
-          Email price alert
+          {emailMode ? "Email price alert" : "Create alert"}
         </h2>
         <p className="mt-1 text-sm text-dash-muted">
-          Threshold alerts email your inbox when you check them. Restock
-          Monitor (size restocks + soft price drops) is coming soon for Plus.
+          {emailMode
+            ? "Threshold alerts email your inbox when you check them. Restock Monitor is coming soon for Plus."
+            : "Thresholds stay in this browser. Check now evaluates against live asks."}
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <label className="text-sm text-dash-muted md:col-span-2">
-            Notify email
-            <input
-              className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted"
-              type="email"
-              autoComplete="email"
-              placeholder="you@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
+          {emailMode ? (
+            <label className="text-sm text-dash-muted md:col-span-2">
+              Notify email
+              <input
+                className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted"
+                type="email"
+                autoComplete="email"
+                placeholder="you@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+          ) : null}
           <label className="text-sm text-dash-muted">
             Sneaker
             <select
@@ -247,9 +258,9 @@ export function AlertsClient({
           </label>
         </div>
         <p className="mt-3 text-xs text-dash-faint">
-          Alerts are saved in this browser. &quot;Check &amp; email&quot;
-          evaluates live asks and emails only when something triggers. First
-          send may need a one-time FormSubmit confirmation in your inbox.
+          {emailMode
+            ? 'Alerts are saved in this browser. "Check & email" evaluates live asks and emails only when something triggers.'
+            : "Outbound email is off for now while membership stays paused."}
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <button
@@ -265,7 +276,11 @@ export function AlertsClient({
             disabled={!alerts.length || checking}
             className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold text-dash-text hover:bg-dash-elevated disabled:opacity-40"
           >
-            {checking ? "Checking…" : "Check & email"}
+            {checking
+              ? "Checking…"
+              : emailMode
+                ? "Check & email"
+                : "Check alerts now"}
           </button>
         </div>
         {result ? <p className="mt-3 text-sm text-dash-muted">{result}</p> : null}
@@ -279,8 +294,10 @@ export function AlertsClient({
         </div>
         {alerts.length === 0 ? (
           <p className="px-4 py-5 text-sm text-dash-muted md:px-5">
-            No alerts yet. Save a threshold and we&apos;ll email you when it
-            hits.
+            No alerts yet.
+            {emailMode
+              ? " Save a threshold and we'll email you when it hits."
+              : " Alerts are stored in this browser."}
           </p>
         ) : (
           <ul className="divide-y divide-dash-border">

@@ -27,7 +27,7 @@ import { PlusCatalogGate } from "@/components/plus/PlusCatalogGate";
 export const dynamic = "force-dynamic";
 
 export default async function MarketsIndexPage() {
-  const [{ isPlus }, allQuotes, marketIndex] = await Promise.all([
+  const [{ isPlus, publicPlus }, allQuotes, marketIndex] = await Promise.all([
     getPlusAccess(),
     getCatalogQuotes(TOP_SELLERS_LIMIT),
     getMarketIndex(TOP_SELLERS_LIMIT),
@@ -51,7 +51,7 @@ export default async function MarketsIndexPage() {
 
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
-      <PlusTopCallout />
+      {publicPlus ? <PlusTopCallout /> : null}
       <SiteHeader
         subtitle={
           access.gated
@@ -74,7 +74,7 @@ export default async function MarketsIndexPage() {
               totalMarkets={access.gated ? FREE_CATALOG_LIMIT : quotes.length}
             />
           ) : null}
-          {access.gated ? (
+          {access.gated && publicPlus ? (
             <PlusCatalogGate
               visible={access.visible}
               total={access.total}
@@ -98,18 +98,20 @@ export default async function MarketsIndexPage() {
                 : `Hottest ${watchlist.length} of ${access.total} tracked StockX sellers`
             }
             hrefAll={{
-              href: access.gated ? "/plus" : "/markets",
-              label: access.gated
-                ? `Unlock all ${access.total}`
-                : `View all ${access.total}`,
+              href:
+                access.gated && publicPlus ? "/plus" : "/markets",
+              label:
+                access.gated && publicPlus
+                  ? `Unlock all ${access.total}`
+                  : `View all ${access.total}`,
             }}
             variant="dashboard"
           />
-          <PlusInterest variant="panel" source="home" />
+          {publicPlus ? <PlusInterest variant="panel" source="home" /> : null}
         </div>
       </main>
       <SiteFooter variant="dashboard" />
-      <PlusPopup />
+      {publicPlus ? <PlusPopup /> : null}
     </div>
   );
 }

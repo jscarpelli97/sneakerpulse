@@ -7,7 +7,7 @@ import { getTrackedCatalog } from "@/services/catalog/sneakers";
 export const dynamic = "force-dynamic";
 
 export default async function AlertsPage() {
-  const [{ isPlus }, all] = await Promise.all([
+  const [{ isPlus, publicPlus }, all] = await Promise.all([
     getPlusAccess(),
     getTrackedCatalog(),
   ]);
@@ -17,7 +17,13 @@ export default async function AlertsPage() {
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
       <SiteHeader
-        subtitle={isPlus ? "Alerts · Plus" : "Alerts · Plus feature"}
+        subtitle={
+          publicPlus
+            ? isPlus
+              ? "Alerts · Plus"
+              : "Alerts · Plus feature"
+            : "Alerts"
+        }
       />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-7 px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
@@ -26,15 +32,17 @@ export default async function AlertsPage() {
               Tools
             </p>
             <h1 className="mt-2 font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight text-dash-text md:text-5xl">
-              Email alerts
+              {publicPlus ? "Email alerts" : "Price alerts"}
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
-              {isPlus
-                ? `Threshold alerts to your inbox${access.gated ? "" : " across the Plus board"}. Restock Monitor coming soon.`
-                : "Email price alerts are a Plus feature — Restock Monitor (size restocks + soft drops) is coming soon for Plus too."}
+              {publicPlus
+                ? isPlus
+                  ? `Threshold alerts to your inbox${access.gated ? "" : " across the Plus board"}. Restock Monitor coming soon.`
+                  : "Email price alerts are a Plus feature — Restock Monitor (size restocks + soft drops) is coming soon for Plus too."
+                : "Save above/below thresholds in this browser. Email delivery and Restock Monitor come later."}
             </p>
           </section>
-          {access.gated && isPlus ? (
+          {access.gated && publicPlus && isPlus ? (
             <PlusCatalogGate
               visible={access.visible}
               total={access.total}
@@ -42,7 +50,11 @@ export default async function AlertsPage() {
             />
           ) : null}
           <div className="animate-rise stagger-2">
-            <AlertsClient sneakers={sneakers} isPlus={isPlus} />
+            <AlertsClient
+              sneakers={sneakers}
+              isPlus={isPlus}
+              publicPlus={publicPlus}
+            />
           </div>
         </div>
       </main>

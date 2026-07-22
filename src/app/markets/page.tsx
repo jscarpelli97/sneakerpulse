@@ -16,7 +16,7 @@ export default async function MarketsBrowsePage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q } = await searchParams;
-  const [{ isPlus }, allQuotes] = await Promise.all([
+  const [{ isPlus, publicPlus }, allQuotes] = await Promise.all([
     getPlusAccess(),
     getCatalogQuotes(TOP_SELLERS_LIMIT),
   ]);
@@ -45,7 +45,7 @@ export default async function MarketsBrowsePage({
       />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-          {access.gated ? (
+          {access.gated && publicPlus ? (
             <PlusCatalogGate
               visible={access.visible}
               total={access.total}

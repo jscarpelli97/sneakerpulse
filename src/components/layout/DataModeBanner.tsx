@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PlusSoonLink } from "@/components/plus/PlusInterest";
+import { plusPublicEnabled } from "@/lib/plus/config";
 
 export function DataModeBanner({
   mode,
@@ -28,7 +28,14 @@ export function DataModeBanner({
         <p className="text-sm text-dash-text/90">{detail}</p>
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-3">
-        {mode !== "live" ? <PlusSoonLink /> : null}
+        {mode !== "live" && plusPublicEnabled() ? (
+          <Link
+            href="/plus"
+            className="shrink-0 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-muted underline-offset-4 hover:text-dash-text hover:underline"
+          >
+            Plus soon
+          </Link>
+        ) : null}
         <Link
           href="/about"
           className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-muted underline-offset-4 hover:text-dash-text hover:underline"

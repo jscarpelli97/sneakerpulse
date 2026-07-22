@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatBtc, usdToBtc } from "@/lib/btc/format";
+import { plusPublicEnabled } from "@/lib/plus/config";
 import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
 import {
@@ -224,7 +225,7 @@ export function PortfolioApp() {
             Create a simple account (email + password) to log pairs you own,
             mark cost basis, and see live-ish market asks in USD (and an
             optional BTC read of the same total). Accounts are stored on this
-            device for now — cloud sync ships with Plus.
+            device for now.
           </p>
         </header>
 
@@ -318,11 +319,16 @@ export function PortfolioApp() {
 
         <p className="text-xs leading-relaxed text-dash-faint">
           Not financial advice. Password stays on this browser — clearing site
-          data logs you out of the local vault.{" "}
-          <Link href="/plus" className="text-dash-accent hover:underline">
-            Plus
-          </Link>{" "}
-          will add cloud backup.
+          data logs you out of the local vault.
+          {plusPublicEnabled() ? (
+            <>
+              {" "}
+              <Link href="/plus" className="text-dash-accent hover:underline">
+                Plus
+              </Link>{" "}
+              will add cloud backup.
+            </>
+          ) : null}
         </p>
       </div>
     );
@@ -609,13 +615,19 @@ export function PortfolioApp() {
             Save username
           </button>
         </div>
-        <p className="text-xs text-dash-faint">
-          Want cloud sync across phones?{" "}
-          <Link href="/plus" className="text-dash-accent hover:underline">
-            Join the Plus list
-          </Link>
-          .
-        </p>
+        {plusPublicEnabled() ? (
+          <p className="text-xs text-dash-faint">
+            Want cloud sync across phones?{" "}
+            <Link href="/plus" className="text-dash-accent hover:underline">
+              Join the Plus list
+            </Link>
+            .
+          </p>
+        ) : (
+          <p className="text-xs text-dash-faint">
+            Holdings stay on this device for now.
+          </p>
+        )}
       </section>
     </div>
   );

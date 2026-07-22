@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { plusPublicEnabled } from "@/lib/plus/config";
 import {
   isValidInterestEmail,
   plusInterestEmail,
@@ -27,6 +28,16 @@ function clientIp(request: Request) {
  * "{email} signed up for SneakerPulse Plus".
  */
 export async function POST(request: Request) {
+  if (!plusPublicEnabled()) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Plus waitlist is paused while StockX API access is pending",
+      },
+      { status: 503 },
+    );
+  }
+
   let body: Body = {};
   try {
     body = (await request.json()) as Body;

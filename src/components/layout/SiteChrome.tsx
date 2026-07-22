@@ -1,19 +1,28 @@
 import Link from "next/link";
 import { SiteSearch } from "@/components/layout/SiteSearch";
 import { PlusInterest } from "@/components/plus/PlusInterest";
+import { plusPublicEnabled } from "@/lib/plus/config";
 
 /** Site chrome uses the markets-terminal (homepage) look by default. */
 type ChromeVariant = "dashboard" | "light";
 
-const NAV = [
+const NAV_BASE = [
   { href: "/", label: "Home" },
   { href: "/markets", label: "All markets" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
-  { href: "/plus", label: "Plus" },
   { href: "/about", label: "About" },
 ] as const;
+
+function navItems() {
+  if (!plusPublicEnabled()) return [...NAV_BASE];
+  return [
+    ...NAV_BASE.slice(0, 5),
+    { href: "/plus", label: "Plus" },
+    ...NAV_BASE.slice(5),
+  ];
+}
 
 export function SiteHeader({
   subtitle,
@@ -22,6 +31,8 @@ export function SiteHeader({
   subtitle?: string;
   variant?: ChromeVariant;
 }) {
+  const nav = navItems();
+
   if (variant === "light") {
     return (
       <header className="sticky top-0 z-40 border-b border-ink/8 bg-white/80 backdrop-blur-xl">
@@ -37,7 +48,7 @@ export function SiteHeader({
               <p className="hidden text-sm text-ink-soft sm:block">{subtitle}</p>
             ) : null}
             <nav className="flex items-center gap-1">
-              {NAV.map((item) => (
+              {nav.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -72,7 +83,7 @@ export function SiteHeader({
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <SiteSearch className="hidden sm:flex" />
           <nav className="flex items-center gap-0.5 sm:gap-1">
-            {NAV.map((item) => (
+            {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -97,6 +108,8 @@ export function SiteFooter({
 }: {
   variant?: ChromeVariant;
 }) {
+  const publicPlus = plusPublicEnabled();
+
   if (variant === "light") {
     return (
       <footer className="mt-auto border-t border-ink/8 bg-white px-4 py-6 md:px-6">
@@ -124,7 +137,9 @@ export function SiteFooter({
               Independent markets terminal for sneaker asks and the SPI index.
               Not affiliated with StockX.
             </p>
-            <PlusInterest variant="footer" source="footer" />
+            {publicPlus ? (
+              <PlusInterest variant="footer" source="footer" />
+            ) : null}
           </div>
           <nav className="flex flex-wrap gap-x-4 gap-y-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
             <Link href="/markets" className="hover:text-dash-text">
@@ -142,9 +157,11 @@ export function SiteFooter({
             <Link href="/about" className="hover:text-dash-text">
               About
             </Link>
-            <Link href="/plus" className="hover:text-dash-text">
-              Plus
-            </Link>
+            {publicPlus ? (
+              <Link href="/plus" className="hover:text-dash-text">
+                Plus
+              </Link>
+            ) : null}
           </nav>
         </div>
         <p className="border-t border-dash-border pt-3 text-xs leading-relaxed text-dash-faint">

@@ -11,7 +11,7 @@ export default async function ComparePage({
 }: {
   searchParams: Promise<{ a?: string; b?: string }>;
 }) {
-  const [{ isPlus }, all] = await Promise.all([
+  const [{ isPlus, publicPlus }, all] = await Promise.all([
     getPlusAccess(),
     getTrackedCatalog(),
   ]);
@@ -51,10 +51,10 @@ export default async function ComparePage({
               Visual matchup on ask, premium vs retail, momentum, and volume
               {access.gated
                 ? ` — free top ${FREE_CATALOG_LIMIT}.`
-                : " across the full Plus board."}
+                : " across the tracked board."}
             </p>
           </section>
-          {access.gated ? (
+          {access.gated && publicPlus ? (
             <PlusCatalogGate
               visible={access.visible}
               total={access.total}

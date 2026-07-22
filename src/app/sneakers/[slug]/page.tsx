@@ -59,8 +59,8 @@ export default async function SneakerMarketPage({
   const catalog = await getSneakerBySlug(slug);
   if (!catalog) notFound();
 
-  const { isPlus } = await getPlusAccess();
-  if (!isPlus) {
+  const { isPlus, publicPlus } = await getPlusAccess();
+  if (publicPlus && !isPlus) {
     const freeSlugs = new Set(
       getOfflineCatalogQuotes(FREE_CATALOG_LIMIT).map((row) => row.slug),
     );

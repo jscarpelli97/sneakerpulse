@@ -1,9 +1,24 @@
 import { NextResponse } from "next/server";
-import { plusPriceUsd, openNodeConfigured } from "@/lib/plus/config";
+import {
+  plusPriceUsd,
+  openNodeConfigured,
+  plusPublicEnabled,
+} from "@/lib/plus/config";
 import { createPlusCharge } from "@/lib/plus/opennode";
 import { isValidEmail } from "@/lib/portfolio/username";
 
 export async function POST(request: Request) {
+  if (!plusPublicEnabled()) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Plus checkout is paused while StockX API access is pending",
+      },
+      { status: 503 },
+    );
+  }
+
   let body: { email?: string } = {};
   try {
     body = (await request.json()) as { email?: string };

@@ -36,7 +36,8 @@ Checkout uses [OpenNode](https://opennode.com) (Lightning + on-chain in one invo
    - `PLUS_PRICE_USD=10`
    - `PLUS_TERM_DAYS=30`
    - `NEXT_PUBLIC_SITE_URL=https://sneakerpulse.vercel.app`
-3. Redeploy. Without `OPENNODE_API_KEY`, `/plus` still works in **mock** mode (simulate payment).
+   - `NEXT_PUBLIC_PLUS_PUBLIC=1` **only after** StockX API access is approved/denied and you want Plus marketing live (off by default)
+3. Redeploy. Without `OPENNODE_API_KEY`, `/plus` still works in **mock** mode (simulate payment) when public.
 
 Webhook URL to allow in OpenNode: `https://sneakerpulse.vercel.app/api/plus/webhook`
 

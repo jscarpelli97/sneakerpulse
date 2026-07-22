@@ -1,5 +1,21 @@
 export const PLUS_COOKIE = "sp_plus_member";
 
+/**
+ * Public Plus marketing + checkout.
+ * Off by default until StockX API access is approved/denied — set
+ * NEXT_PUBLIC_PLUS_PUBLIC=1 (and/or PLUS_PUBLIC=1) on Vercel to re-enable.
+ */
+export function plusPublicEnabled() {
+  const v = (
+    process.env.NEXT_PUBLIC_PLUS_PUBLIC ??
+    process.env.PLUS_PUBLIC ??
+    ""
+  )
+    .trim()
+    .toLowerCase();
+  return v === "1" || v === "true" || v === "yes" || v === "on";
+}
+
 export function plusPriceUsd() {
   const n = Number(process.env.PLUS_PRICE_USD ?? "10");
   return Number.isFinite(n) && n > 0 ? n : 10;
