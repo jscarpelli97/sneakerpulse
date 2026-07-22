@@ -7,7 +7,7 @@
   "products": [
     {
       "slug": "yzy-ys-01-black",
-      "ticker": "TOP1",
+      "ticker": "YS01BLACK",
       "styleCode": "yzy-ys-01-black",
       "name": "YZY YS-01 Black",
       "brand": "Yeezy",
@@ -121,7 +121,7 @@
     },
     {
       "slug": "yzy-ys-01-silver-green",
-      "ticker": "TOP7",
+      "ticker": "YS01CREAM",
       "styleCode": "yzy-ys-01-silver-green",
       "name": "YZY YS-01 Cream",
       "brand": "Yeezy",
@@ -482,7 +482,7 @@
     },
     {
       "slug": "bravest-studios-bear-claw-mule-black",
-      "ticker": "TOP28",
+      "ticker": "BEARCLAWMU",
       "styleCode": "bravest-studios-bear-claw-mule-black",
       "name": "Bravest Studios Bear Claw Mule Black",
       "brand": "Bravest Studios",
@@ -1090,7 +1090,7 @@
     },
     {
       "slug": "yzy-ys-01-fudge",
-      "ticker": "TOP64",
+      "ticker": "YS01FUDGE",
       "styleCode": "yzy-ys-01-fudge",
       "name": "YZY YS-01 Fudge",
       "brand": "Yeezy",
