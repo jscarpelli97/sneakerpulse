@@ -116,12 +116,12 @@ export function PlusInterest({
   if (variant === "footer") {
     return (
       <p className="text-xs leading-relaxed text-dash-faint">
-        Plus (live asks) coming soon ·{" "}
+        Plus ·{" "}
         <Link
           href="/plus"
           className="text-dash-muted underline-offset-2 hover:text-dash-text hover:underline"
         >
-          learn more
+          Bitcoin / Lightning checkout
         </Link>
       </p>
     );
@@ -135,24 +135,29 @@ export function PlusInterest({
       <div className="grid gap-6 px-5 py-5 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] sm:items-end sm:px-6 sm:py-6">
         <div>
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-accent">
-            SneakerPulse Plus · coming soon
+            SneakerPulse Plus
           </p>
           <h2 className="mt-2 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
             Spot the next pair — and what to keep on the shelf
           </h2>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-dash-muted">
-            Live tape for collectors and shop floors: clearer asks across
-            StockX first, then GOAT, Stadium Goods, and more. Free mode stays —
-            Plus is the fresher feed.
+            Live tape for collectors and shop floors. Pay with Lightning or
+            on-chain Bitcoin — free mode stays.
           </p>
           <Link
             href="/plus"
             className="mt-3 inline-block font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-accent underline-offset-4 hover:underline"
           >
-            What&apos;s in Plus →
+            Upgrade to Plus →
           </Link>
         </div>
-        <PlusInterestForm source={source} inputId="plus-email-home" />
+        <div className="space-y-3">
+          <p className="text-sm text-dash-muted">
+            Already curious? Leave your email for launch notes, or go straight
+            to checkout when you&apos;re ready.
+          </p>
+          <PlusInterestForm source={source} inputId="plus-email-home" />
+        </div>
       </div>
     </section>
   );

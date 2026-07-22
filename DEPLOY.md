@@ -24,13 +24,22 @@ CLI deploy works today. For push-to-deploy, link GitHub in the Vercel dashboard:
 2. Connect the GitHub account / install the Vercel GitHub app if prompted  
 3. Link repo `jscarpelli97/sneakerpulse`, production branch `main`
 
-## Environment variables
+## Plus (Bitcoin / Lightning)
 
-| Name | Required | Where |
-| --- | --- | --- |
-| `KICKSDB_API_KEY` | for daily job | Vercel (optional) + GitHub Actions |
-| `KICKSDB_LIVE_READS` | no | Vercel — set to `1` only to allow page views to hit KicksDB (default: offline catalog) |
-| `STATUS_TOKEN` | no | Vercel (detailed `/api/status` via `x-status-token`) |
+Checkout uses [OpenNode](https://opennode.com) (Lightning + on-chain in one invoice).
+
+1. Create an OpenNode account and API key (start with **dev** keys).
+2. In Vercel → Environment Variables set:
+   - `OPENNODE_API_KEY`
+   - `OPENNODE_ENV=dev` (or `live`)
+   - `PLUS_JWT_SECRET` (long random string)
+   - `PLUS_PRICE_USD=10`
+   - `PLUS_TERM_DAYS=30`
+   - `NEXT_PUBLIC_SITE_URL=https://sneakerpulse.vercel.app`
+3. Redeploy. Without `OPENNODE_API_KEY`, `/plus` still works in **mock** mode (simulate payment).
+
+Webhook URL to allow in OpenNode: `https://sneakerpulse.vercel.app/api/plus/webhook`
+
 
 ## Daily SPI snapshots
 
