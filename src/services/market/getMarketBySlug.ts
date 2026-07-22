@@ -8,7 +8,11 @@ import {
 import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
 import { resolveLocalHistory } from "@/services/market/historyStore";
 import { emptyMarket, mapProductToMarket } from "@/lib/mapProductToMarket";
-import { salesToSeries, upsertToday } from "@/utils/metrics";
+import {
+  buildBootstrapSeries,
+  salesToSeries,
+  upsertToday,
+} from "@/utils/metrics";
 import type {
   HistorySource,
   MarketLoadResult,
@@ -78,19 +82,44 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
     upstreamStatus = productRes.cacheHit ? "cached" : "degraded";
   }
 
-  if (historySource !== "sales") {
-    const livePrice =
-      product.min_price ??
-      product.avg_price ??
-      chartSeries.at(-1)?.price ??
-      0;
-    if (livePrice > 0) {
-      chartSeries = upsertToday(
-        chartSeries,
-        livePrice,
-        product.weekly_orders ? Math.round(product.weekly_orders / 7) : 1,
-      );
-    }
+  const livePrice =
+    product.min_price ??
+    product.avg_price ??
+    chartSeries.at(-1)?.price ??
+    0;
+
+  // Free-tier path: sales/daily is often 403 and top-100 SKUs lack local
+  // history files. Build an illustrative bootstrap series so every market
+  // page still renders a TradingView chart.
+  if (historySource !== "sales" && chartSeries.length < 2 && livePrice > 0) {
+    const stats = product.statistics;
+    chartSeries = buildBootstrapSeries({
+      livePrice,
+      low:
+        stats?.annual_range_low ??
+        stats?.last_90_days_range_low ??
+        stats?.annual_low ??
+        null,
+      high:
+        stats?.annual_range_high ??
+        stats?.last_90_days_range_high ??
+        stats?.annual_high ??
+        null,
+      average:
+        stats?.last_90_days_average_price ??
+        stats?.annual_average_price ??
+        product.avg_price ??
+        null,
+      volatility: stats?.annual_volatility ?? null,
+      weeklyOrders: product.weekly_orders ?? null,
+    });
+    historySource = "bootstrap";
+  } else if (historySource !== "sales" && livePrice > 0) {
+    chartSeries = upsertToday(
+      chartSeries,
+      livePrice,
+      product.weekly_orders ? Math.round(product.weekly_orders / 7) : 1,
+    );
   }
 
   return {

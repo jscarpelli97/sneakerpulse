@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { mapProductToMarket } from "@/lib/mapProductToMarket";
 import type { KicksProduct } from "@/types/kicksdb";
 import {
+  buildBootstrapSeries,
   changeFromPrices,
   premiumVsRetail,
   salesToSeries,
@@ -223,5 +224,45 @@ describe("resolveLocalHistory", () => {
     const local = resolveLocalHistory("air-jordan-1-retro-high-dark-mocha");
     expect(local.source).toBe("snapshot");
     expect(local.series.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe("buildBootstrapSeries", () => {
+  it("builds a multi-point series ending at the live ask", () => {
+    const series = buildBootstrapSeries({
+      livePrice: 200,
+      low: 160,
+      high: 240,
+      average: 190,
+      volatility: 0.2,
+      weeklyOrders: 70,
+      days: 30,
+      endDate: "2026-07-22",
+    });
+
+    expect(series.length).toBe(30);
+    expect(series[0].date).toBe("2026-06-23");
+    expect(series.at(-1)?.date).toBe("2026-07-22");
+    expect(series.at(-1)?.price).toBe(200);
+    expect(series.every((point) => point.price >= 160 && point.price <= 240)).toBe(
+      true,
+    );
+  });
+
+  it("is deterministic for the same inputs", () => {
+    const input = {
+      livePrice: 48,
+      low: 35,
+      high: 53,
+      average: 40,
+      weeklyOrders: 900,
+      days: 14,
+      endDate: "2026-07-22",
+    };
+    expect(buildBootstrapSeries(input)).toEqual(buildBootstrapSeries(input));
+  });
+
+  it("returns empty when live price is missing", () => {
+    expect(buildBootstrapSeries({ livePrice: 0 })).toEqual([]);
   });
 });

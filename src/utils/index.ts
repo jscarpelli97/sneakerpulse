@@ -7,6 +7,7 @@ export {
   formatNumber,
 } from "@/utils/format";
 export {
+  buildBootstrapSeries,
   changeFromPrices,
   premiumVsRetail,
   salesToSeries,

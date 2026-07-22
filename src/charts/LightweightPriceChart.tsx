@@ -4,8 +4,6 @@ import {
   AreaSeries,
   ColorType,
   createChart,
-  type IChartApi,
-  type ISeriesApi,
   type Time,
 } from "lightweight-charts";
 import { useEffect, useRef } from "react";
@@ -16,16 +14,32 @@ type Props = {
   up: boolean;
 };
 
+function toChartPoints(data: ChartPoint[]) {
+  const seen = new Set<string>();
+  const points: Array<{ time: Time; value: number }> = [];
+
+  for (const point of data) {
+    if (!(point.price > 0) || !point.date) continue;
+    const day = point.date.slice(0, 10);
+    if (seen.has(day)) continue;
+    seen.add(day);
+    points.push({ time: day as Time, value: point.price });
+  }
+
+  points.sort((a, b) => String(a.time).localeCompare(String(b.time)));
+  return points;
+}
+
 export function LightweightPriceChart({ data, up }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<"Area"> | null>(null);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
     const chart = createChart(el, {
+      width: Math.max(el.clientWidth, 1),
+      height: Math.max(el.clientHeight, 1),
       autoSize: true,
       layout: {
         background: { type: ColorType.Solid, color: "#151922" },
@@ -62,42 +76,31 @@ export function LightweightPriceChart({ data, up }: Props) {
       lastValueVisible: true,
     });
 
-    chartRef.current = chart;
-    seriesRef.current = series;
+    const points = toChartPoints(data);
+    if (points.length > 0) {
+      series.setData(points);
+      chart.timeScale().fitContent();
+    }
 
     const ro = new ResizeObserver(() => {
-      chart.applyOptions({ width: el.clientWidth, height: el.clientHeight });
+      if (!el.isConnected) return;
+      chart.applyOptions({
+        width: Math.max(el.clientWidth, 1),
+        height: Math.max(el.clientHeight, 1),
+      });
     });
     ro.observe(el);
 
     return () => {
       ro.disconnect();
       chart.remove();
-      chartRef.current = null;
-      seriesRef.current = null;
     };
-  }, [up]);
-
-  useEffect(() => {
-    const series = seriesRef.current;
-    const chart = chartRef.current;
-    if (!series || !chart) return;
-
-    const points = data
-      .filter((point) => point.price > 0 && point.date)
-      .map((point) => ({
-        time: point.date.slice(0, 10) as Time,
-        value: point.price,
-      }));
-
-    series.setData(points);
-    chart.timeScale().fitContent();
-  }, [data]);
+  }, [data, up]);
 
   return (
     <div
       ref={containerRef}
-      className="h-full w-full"
+      className="h-full min-h-[260px] w-full"
       role="img"
       aria-label="StockX historical price chart"
     />

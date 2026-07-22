@@ -6,6 +6,8 @@ export type KicksTrait = {
 export type KicksStatistics = {
   annual_high?: number;
   annual_low?: number;
+  annual_range_high?: number;
+  annual_range_low?: number;
   annual_average_price?: number;
   annual_volatility?: number;
   annual_sales_count?: number;

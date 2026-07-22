@@ -53,6 +53,89 @@ export function upsertToday(
   return next;
 }
 
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function pickPositive(
+  ...values: Array<number | null | undefined>
+): number | null {
+  for (const value of values) {
+    if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+      return value;
+    }
+  }
+  return null;
+}
+
+/**
+ * Illustrative daily series when StockX sales/daily and local snapshots are
+ * unavailable. Anchored to live ask + StockX range/average stats. Never used
+ * for % change metrics.
+ */
+export function buildBootstrapSeries(input: {
+  livePrice: number;
+  low?: number | null;
+  high?: number | null;
+  average?: number | null;
+  volatility?: number | null;
+  weeklyOrders?: number | null;
+  days?: number;
+  endDate?: string;
+}): ChartPoint[] {
+  const live = input.livePrice;
+  if (!(live > 0) || !Number.isFinite(live)) return [];
+
+  const days = Math.max(2, input.days ?? 90);
+  let low = pickPositive(input.low) ?? live * 0.82;
+  let high = pickPositive(input.high) ?? live * 1.18;
+
+  // Soft-clamp absurd StockX range floors/ceilings (e.g. $1 lows).
+  if (low < live * 0.35) low = live * 0.72;
+  if (high > live * 3.5) high = live * 1.35;
+  if (low >= high) {
+    low = live * 0.9;
+    high = live * 1.1;
+  }
+
+  const avg = clamp(pickPositive(input.average) ?? live, low, high);
+  const vol = clamp(input.volatility ?? 0.18, 0.05, 0.45);
+  const ordersPerDay = Math.max(
+    1,
+    Math.round((input.weeklyOrders ?? days) / 7),
+  );
+
+  const endDay = toDay(input.endDate ?? new Date().toISOString());
+  const endMs = Date.parse(`${endDay}T00:00:00.000Z`);
+  if (!Number.isFinite(endMs)) return [];
+
+  // Deterministic PRNG so SSR payloads stay stable across refreshes.
+  let seed = (Math.round(live * 100) ^ days ^ Math.floor(endMs / 86_400_000)) >>> 0;
+  const rand = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 0xffffffff;
+  };
+
+  let price = avg;
+  const points: ChartPoint[] = [];
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const t = days === 1 ? 1 : 1 - i / (days - 1);
+    const target = avg * (1 - t) + live * t;
+    const shock = (rand() - 0.5) * 2 * vol * live * 0.08;
+    price = clamp(price * 0.62 + target * 0.38 + shock, low, high);
+    if (i === 0) price = live;
+
+    const date = new Date(endMs - i * 86_400_000).toISOString().slice(0, 10);
+    points.push({
+      date,
+      price: Math.round(price * 100) / 100,
+      orders: ordersPerDay,
+    });
+  }
+
+  return points;
+}
+
 export function seriesWindowHighLow(points: ChartPoint[]) {
   if (points.length === 0) {
     return { high: null, low: null };
