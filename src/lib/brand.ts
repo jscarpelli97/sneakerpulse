@@ -17,3 +17,18 @@ export const BRAND_TAGLINE =
 
 export const BRAND_BLURB =
   "Independent markets terminal for sneaker and streetwear asks — plus the SPI premium-vs-retail index. Built to grow beyond sneakers into apparel.";
+
+/**
+ * Clothing / streetwear board in nav.
+ * Off by default — set NEXT_PUBLIC_CLOTHING_PUBLIC=1 to show again.
+ */
+export function clothingPublicEnabled() {
+  const v = (
+    process.env.NEXT_PUBLIC_CLOTHING_PUBLIC ??
+    process.env.CLOTHING_PUBLIC ??
+    ""
+  )
+    .trim()
+    .toLowerCase();
+  return v === "1" || v === "true" || v === "yes" || v === "on";
+}

@@ -74,12 +74,6 @@ export function MarketsHero({
             >
               Browse sneakers
             </Link>
-            <Link
-              href="/clothing"
-              className="inline-flex items-center rounded-xl border border-dash-border bg-dash-elevated px-5 py-3 text-sm font-semibold text-dash-text hover:border-dash-muted hover:bg-dash-panel"
-            >
-              Clothing
-            </Link>
           </div>
         </div>
 

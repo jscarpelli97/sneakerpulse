@@ -1,8 +1,9 @@
+import { redirect } from "next/navigation";
 import { CatalogMarketsExplorer } from "@/components/catalog/CatalogMarketsExplorer";
 import { MarketsCategoryTabs } from "@/components/catalog/MarketsCategoryTabs";
 import { DataModeBanner } from "@/components/layout/DataModeBanner";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME, clothingPublicEnabled } from "@/lib/brand";
 import {
   getClothingCatalogAsOf,
   getClothingCatalogNote,
@@ -22,6 +23,10 @@ export default async function ClothingBrowsePage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
+  if (!clothingPublicEnabled()) {
+    redirect("/markets");
+  }
+
   const { q } = await searchParams;
   const quotes = getClothingCatalogQuotes();
   const asOf = getClothingCatalogAsOf();

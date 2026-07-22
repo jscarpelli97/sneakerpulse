@@ -1,16 +1,19 @@
 import Link from "next/link";
+import { clothingPublicEnabled } from "@/lib/brand";
 
 const TABS = [
-  { href: "/markets", label: "Sneakers", match: "sneakers" },
-  { href: "/clothing", label: "Clothing", match: "clothing" },
+  { href: "/markets", label: "Sneakers", match: "sneakers" as const },
+  { href: "/clothing", label: "Clothing", match: "clothing" as const },
 ] as const;
 
-/** Sneakers / Clothing switch under the markets tools. */
+/** Sneakers / Clothing switch under the markets tools. Hidden when clothing is off. */
 export function MarketsCategoryTabs({
   active,
 }: {
   active: "sneakers" | "clothing";
 }) {
+  if (!clothingPublicEnabled()) return null;
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       <p className="mr-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">

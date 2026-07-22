@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { MarketHeader } from "@/components/market/MarketHeader";
 import { MarketSizeSection } from "@/components/market/MarketSizeSection";
 import { MarketSnapshot } from "@/components/market/MarketSnapshot";
@@ -9,7 +9,7 @@ import { SetupBanner } from "@/components/market/SetupBanner";
 import { StatsPanel } from "@/components/market/StatsPanel";
 import { UpstreamStatusBadge } from "@/components/market/UpstreamStatusBadge";
 import { SiteFooter } from "@/components/layout/SiteChrome";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME, clothingPublicEnabled } from "@/lib/brand";
 import { buildMarketSummary } from "@/lib/summary/buildMarketSummary";
 import {
   getAllClothingSlugs,
@@ -48,6 +48,10 @@ export default async function ClothingMarketPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  if (!clothingPublicEnabled()) {
+    redirect("/markets");
+  }
+
   const { slug } = await params;
   const catalog = getClothingBySlug(slug);
   if (!catalog) notFound();

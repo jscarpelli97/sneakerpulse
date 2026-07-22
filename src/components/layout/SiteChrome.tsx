@@ -1,28 +1,31 @@
 import Link from "next/link";
 import { SiteSearch } from "@/components/layout/SiteSearch";
 import { PlusInterest } from "@/components/plus/PlusInterest";
+import { clothingPublicEnabled } from "@/lib/brand";
 import { plusPublicEnabled } from "@/lib/plus/config";
 
 /** Site chrome uses the markets-terminal (homepage) look by default. */
 type ChromeVariant = "dashboard" | "light";
 
-const NAV_BASE = [
-  { href: "/", label: "Home" },
-  { href: "/markets", label: "Sneakers" },
-  { href: "/clothing", label: "Clothing" },
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/compare", label: "Compare" },
-  { href: "/alerts", label: "Alerts" },
-  { href: "/about", label: "About" },
-] as const;
-
 function navItems() {
-  if (!plusPublicEnabled()) return [...NAV_BASE];
-  return [
-    ...NAV_BASE.slice(0, 6),
-    { href: "/plus", label: "Plus" },
-    ...NAV_BASE.slice(6),
+  const items: { href: string; label: string }[] = [
+    { href: "/", label: "Home" },
+    { href: "/markets", label: "Sneakers" },
   ];
+  if (clothingPublicEnabled()) {
+    items.push({ href: "/clothing", label: "Clothing" });
+  }
+  items.push(
+    { href: "/portfolio", label: "Portfolio" },
+    { href: "/compare", label: "Compare" },
+    { href: "/alerts", label: "Alerts" },
+    { href: "/about", label: "About" },
+  );
+  if (plusPublicEnabled()) {
+    const aboutIdx = items.findIndex((i) => i.href === "/about");
+    items.splice(aboutIdx, 0, { href: "/plus", label: "Plus" });
+  }
+  return items;
 }
 
 export function SiteHeader({
@@ -147,9 +150,11 @@ export function SiteFooter({
             <Link href="/markets" className="hover:text-dash-text">
               Sneakers
             </Link>
-            <Link href="/clothing" className="hover:text-dash-text">
-              Clothing
-            </Link>
+            {clothingPublicEnabled() ? (
+              <Link href="/clothing" className="hover:text-dash-text">
+                Clothing
+              </Link>
+            ) : null}
             <Link href="/portfolio" className="hover:text-dash-text">
               Portfolio
             </Link>
