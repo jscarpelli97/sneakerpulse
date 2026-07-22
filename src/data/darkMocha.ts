@@ -1,3 +1,7 @@
+/**
+ * Static catalog identity for Jordan 1 High Dark Mocha (2020).
+ * Live market fields come from KicksDB/StockX at request time.
+ */
 export const DARK_MOCHA = {
   slug: "air-jordan-1-retro-high-dark-mocha",
   ticker: "J1-DMCH",

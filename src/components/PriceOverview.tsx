@@ -1,4 +1,5 @@
-import type { SneakerMarket } from "@/lib/stockx/types";
+import { METRIC_DEFINITIONS } from "@/lib/market/definitions";
+import type { SneakerMarket } from "@/lib/market/types";
 import {
   changeClass,
   formatChange,
@@ -11,9 +12,11 @@ type Metric = {
   value: string;
   sub?: string;
   tone?: string;
+  definition: string;
 };
 
 export function PriceOverview({ market }: { market: SneakerMarket }) {
+  const salesHistory = market.historySource === "sales";
   const today = formatChange(
     market.changeToday?.absolute,
     market.changeToday?.percent,
@@ -23,7 +26,10 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
     market.change30d?.percent,
   );
 
-  const volumeLabel = market.historyAvailable ? "24h volume" : "Weekly volume";
+  const volumeIsWeekly = market.volume24hSource === "weekly_orders";
+  const volumeDef = volumeIsWeekly
+    ? METRIC_DEFINITIONS.volumeWeekly
+    : METRIC_DEFINITIONS.volume24h;
   const volumeValue =
     market.volume24h.notional != null
       ? formatMoney(market.volume24h.notional)
@@ -33,32 +39,36 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
   const volumeSub =
     market.volume24h.notional != null
       ? `${formatNumber(market.volume24h.pairs)} pairs`
-      : market.historyAvailable
-        ? undefined
-        : "pairs this week (StockX)";
+      : volumeIsWeekly
+        ? "StockX weekly orders"
+        : undefined;
 
   const metrics: Metric[] = [
     {
-      label: "Current price",
+      label: METRIC_DEFINITIONS.price.label,
       value: formatMoney(market.price),
       sub: `Lowest ask · Retail ${formatMoney(market.retail)}`,
+      definition: METRIC_DEFINITIONS.price.definition,
     },
     {
-      label: "Today’s change",
+      label: METRIC_DEFINITIONS.changeToday.label,
       value: today.percent,
-      sub: today.absolute,
+      sub: salesHistory ? today.absolute : "Needs StockX sales history",
       tone: changeClass(market.changeToday?.percent),
+      definition: METRIC_DEFINITIONS.changeToday.definition,
     },
     {
-      label: "30-day change",
+      label: METRIC_DEFINITIONS.change30d.label,
       value: month.percent,
-      sub: month.absolute,
+      sub: salesHistory ? month.absolute : "Needs StockX sales history",
       tone: changeClass(market.change30d?.percent),
+      definition: METRIC_DEFINITIONS.change30d.definition,
     },
     {
-      label: volumeLabel,
+      label: volumeDef.label,
       value: volumeValue,
       sub: volumeSub,
+      definition: volumeDef.definition,
     },
   ];
 
@@ -67,6 +77,7 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
       {metrics.map((metric) => (
         <article
           key={metric.label}
+          title={metric.definition}
           className="border border-ink/10 bg-white px-4 py-4 shadow-[0_1px_0_rgba(18,20,26,0.04)]"
         >
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink/40">
@@ -86,10 +97,10 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
           ) : null}
         </article>
       ))}
-      {!market.historyAvailable ? (
+      {!salesHistory ? (
         <p className="text-xs text-ink/45 sm:col-span-2 xl:col-span-4">
-          Daily change and dollar volume need StockX sales history (KicksDB paid
-          tier). Live lowest ask and size asks are still from StockX.
+          Today/30d change stay blank until StockX daily sales history is
+          available. Live lowest ask and size asks are still from StockX.
         </p>
       ) : null}
     </section>

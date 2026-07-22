@@ -9,7 +9,7 @@ import {
   type Time,
 } from "lightweight-charts";
 import { useEffect, useRef } from "react";
-import type { ChartPoint } from "@/lib/stockx/types";
+import type { ChartPoint } from "@/lib/market/types";
 
 type Props = {
   data: ChartPoint[];

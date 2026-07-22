@@ -1,12 +1,10 @@
-import type { SneakerMarket } from "@/lib/stockx/types";
-import {
-  formatMaybeMoney,
-  formatNumber,
-} from "@/lib/format";
+import type { SneakerMarket } from "@/lib/market/types";
+import { formatMaybeMoney, formatNumber } from "@/lib/format";
 
 type StatRow = {
   label: string;
   value: string;
+  note?: string;
 };
 
 function StatList({ title, rows }: { title: string; rows: StatRow[] }) {
@@ -23,7 +21,14 @@ function StatList({ title, rows }: { title: string; rows: StatRow[] }) {
             key={row.label}
             className="flex items-start justify-between gap-4 px-4 py-3 text-sm md:px-5"
           >
-            <dt className="text-ink/50">{row.label}</dt>
+            <dt className="text-ink/50">
+              {row.label}
+              {row.note ? (
+                <span className="mt-0.5 block text-[11px] text-ink/35">
+                  {row.note}
+                </span>
+              ) : null}
+            </dt>
             <dd className="text-right font-semibold text-ink">{row.value}</dd>
           </div>
         ))}
@@ -32,19 +37,28 @@ function StatList({ title, rows }: { title: string; rows: StatRow[] }) {
   );
 }
 
+function sourceNote(source: "sales" | "stockx_stats" | null) {
+  if (source === "sales") return "From StockX daily sales";
+  if (source === "stockx_stats") return "From StockX 90d stats";
+  return undefined;
+}
+
 export function StatsPanel({ market }: { market: SneakerMarket }) {
   const primaryStats: StatRow[] = [
     {
       label: "Lowest ask",
       value: formatMaybeMoney(market.stats.lowestAsk),
+      note: "Live StockX",
     },
     {
       label: "Highest ask",
       value: formatMaybeMoney(market.stats.highestAsk),
+      note: "Live StockX",
     },
     {
       label: "Average ask",
       value: formatMaybeMoney(market.stats.averageAsk),
+      note: "Live StockX",
     },
     {
       label: "Active asks",
@@ -53,18 +67,25 @@ export function StatsPanel({ market }: { market: SneakerMarket }) {
     {
       label: "30d high",
       value: formatMaybeMoney(market.stats.high30d),
+      note: sourceNote(market.stats.high30dSource),
     },
     {
       label: "30d low",
       value: formatMaybeMoney(market.stats.low30d),
+      note: sourceNote(market.stats.low30dSource),
     },
     {
       label: "Avg sale (30d)",
       value: formatMaybeMoney(market.stats.avgSale30d),
+      note: sourceNote(market.stats.avgSale30dSource),
     },
     {
       label: "Last avg sale",
       value: formatMaybeMoney(market.stats.lastSale),
+      note:
+        market.historySource === "sales"
+          ? "From StockX daily sales"
+          : "Unavailable without sales history",
     },
   ];
 
@@ -72,14 +93,17 @@ export function StatsPanel({ market }: { market: SneakerMarket }) {
     {
       label: "Sales (15d)",
       value: formatNumber(market.stats.sales15d),
+      note: "Sum of size variants",
     },
     {
       label: "Sales (30d)",
       value: formatNumber(market.stats.sales30d),
+      note: "Sum of size variants",
     },
     {
       label: "Sales (60d)",
       value: formatNumber(market.stats.sales60d),
+      note: "Sum of size variants",
     },
     {
       label: "Weekly orders",
@@ -90,7 +114,8 @@ export function StatsPanel({ market }: { market: SneakerMarket }) {
     },
     {
       label: "StockX rank",
-      value: market.stats.rank != null ? `#${formatNumber(market.stats.rank)}` : "—",
+      value:
+        market.stats.rank != null ? `#${formatNumber(market.stats.rank)}` : "—",
     },
     {
       label: "Annual high",

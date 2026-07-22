@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { SneakerMarket } from "@/lib/stockx/types";
+import type { SneakerMarket } from "@/lib/market/types";
 import { changeClass, formatChange, formatMoney } from "@/lib/format";
 
 export function MarketHeader({

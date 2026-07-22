@@ -1,8 +1,8 @@
 {
   "productId": "f7dcb00f-d0a0-4d47-b419-5022b1b84411",
   "slug": "air-jordan-1-retro-high-dark-mocha",
-  "source": "stockx-stats-bootstrap",
-  "note": "Daily series anchored to live StockX 90-day range/avg and current lowest ask while sales/daily history requires a paid KicksDB plan.",
+  "source": "bootstrap",
+  "note": "Bootstrap series anchored to StockX 90-day range/average stats and current lowest ask. Not official StockX daily sales history. Prefer KicksDB sales/daily when entitled.",
   "updatedAt": "2026-07-22T13:57:00Z",
   "points": [
     {

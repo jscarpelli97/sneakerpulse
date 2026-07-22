@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { CHART_RANGES } from "@/data/darkMocha";
 import { LightweightPriceChart } from "@/components/LightweightPriceChart";
-import type { ChartPoint } from "@/lib/stockx/types";
+import { METRIC_DEFINITIONS } from "@/lib/market/definitions";
+import type { ChartPoint, HistorySource } from "@/lib/market/types";
 import { formatMoney } from "@/lib/format";
 
 type Range = (typeof CHART_RANGES)[number];
@@ -22,7 +23,9 @@ function filterByRange(points: ChartPoint[], range: Range): ChartPoint[] {
     "1Y": 365,
   };
   const from = last - lookback[range] * dayMs;
-  const filtered = points.filter((point) => Date.parse(point.date.slice(0, 10)) >= from);
+  const filtered = points.filter(
+    (point) => Date.parse(point.date.slice(0, 10)) >= from,
+  );
   return filtered.length > 1 ? filtered : points.slice(-2);
 }
 
@@ -31,7 +34,7 @@ export function PriceChart({
   historySource,
 }: {
   series: ChartPoint[];
-  historySource: "sales" | "local";
+  historySource: HistorySource;
 }) {
   const [range, setRange] = useState<Range>("3M");
   const data = useMemo(() => filterByRange(series, range), [series, range]);
@@ -39,8 +42,11 @@ export function PriceChart({
   const prices = data.map((point) => point.price);
   const min = hasSeries ? Math.min(...prices) : 0;
   const max = hasSeries ? Math.max(...prices) : 0;
-  const isUp =
-    hasSeries && data[data.length - 1].price >= data[0].price;
+  const isUp = hasSeries && data[data.length - 1].price >= data[0].price;
+  const chartDef =
+    historySource === "sales"
+      ? METRIC_DEFINITIONS.chartSales
+      : METRIC_DEFINITIONS.chartBootstrap;
 
   return (
     <section className="border border-ink/10 bg-white">
@@ -49,29 +55,40 @@ export function PriceChart({
           <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
             Price chart
           </h2>
-          <p className="text-sm text-ink-soft">
+          <p className="text-sm text-ink-soft" title={chartDef.definition}>
             {hasSeries
               ? historySource === "sales"
                 ? `TradingView Lightweight Charts · StockX daily sales · ${data.length} sessions`
-                : `TradingView Lightweight Charts · historical series · ${data.length} sessions`
+                : `TradingView Lightweight Charts · bootstrap series (not official sales) · ${data.length} sessions`
               : "Historical price series unavailable"}
           </p>
         </div>
-        <div className="flex flex-wrap gap-1">
-          {CHART_RANGES.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setRange(item)}
-              className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
-                range === item
-                  ? "bg-ink text-white"
-                  : "bg-paper text-ink-soft hover:text-ink"
-              }`}
-            >
-              {item}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className={`px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${
+              historySource === "sales"
+                ? "bg-up/15 text-up"
+                : "bg-paper text-ink/55"
+            }`}
+          >
+            {historySource === "sales" ? "Sales history" : "Bootstrap"}
+          </span>
+          <div className="flex flex-wrap gap-1">
+            {CHART_RANGES.map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setRange(item)}
+                className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
+                  range === item
+                    ? "bg-ink text-white"
+                    : "bg-paper text-ink-soft hover:text-ink"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -90,6 +107,13 @@ export function PriceChart({
             </div>
           )}
         </div>
+
+        {historySource === "bootstrap" && hasSeries ? (
+          <p className="mt-3 px-2 text-xs text-ink/45">
+            Bootstrap series is anchored to StockX range/average stats for chart
+            continuity. It is not official daily sales history.
+          </p>
+        ) : null}
       </div>
     </section>
   );

@@ -2,66 +2,20 @@ import { MarketHeader } from "@/components/MarketHeader";
 import { PriceChart } from "@/components/PriceChart";
 import { PriceOverview } from "@/components/PriceOverview";
 import { SetupBanner } from "@/components/SetupBanner";
+import { SizeAsksTable } from "@/components/SizeAsksTable";
 import { StatsPanel } from "@/components/StatsPanel";
 import { DARK_MOCHA } from "@/data/darkMocha";
-import { getDarkMochaMarket } from "@/lib/stockx/getDarkMocha";
-import type { SneakerMarket } from "@/lib/stockx/types";
+import {
+  getDarkMochaFallback,
+  getDarkMochaMarket,
+} from "@/lib/market/getDarkMochaMarket";
 
 export const revalidate = 300;
-
-function fallbackMarket(): SneakerMarket {
-  return {
-    id: DARK_MOCHA.slug,
-    name: DARK_MOCHA.name,
-    brand: DARK_MOCHA.brand,
-    year: DARK_MOCHA.year,
-    ticker: DARK_MOCHA.ticker,
-    styleCode: DARK_MOCHA.styleCode,
-    colorway: DARK_MOCHA.colorway,
-    retail: DARK_MOCHA.retail,
-    image: DARK_MOCHA.fallbackImage,
-    stockxUrl: DARK_MOCHA.stockxUrl,
-    price: 0,
-    currency: "USD",
-    changeToday: null,
-    change30d: null,
-    volume24h: { pairs: 0, notional: null },
-    volume30d: { pairs: 0, notional: null },
-    stats: {
-      lowestAsk: null,
-      highestAsk: null,
-      averageAsk: null,
-      askCount: 0,
-      high24h: null,
-      low24h: null,
-      high30d: null,
-      low30d: null,
-      avgSale30d: null,
-      lastSale: null,
-      sales15d: 0,
-      sales30d: 0,
-      sales60d: 0,
-      weeklyOrders: null,
-      rank: null,
-      annualHigh: null,
-      annualLow: null,
-      annualAvg: null,
-      annualVolatility: null,
-      annualSales: null,
-    },
-    chartSeries: [],
-    historySource: "local",
-    source: "stockx",
-    provider: "kicksdb",
-    fetchedAt: new Date().toISOString(),
-    historyAvailable: false,
-  };
-}
 
 export default async function Home() {
   const result = await getDarkMochaMarket();
   const live = result.ok;
-  const market = result.ok ? result.data : fallbackMarket();
+  const market = result.ok ? result.data : getDarkMochaFallback();
 
   return (
     <>
@@ -84,9 +38,11 @@ export default async function Home() {
             </div>
           ) : null}
 
+          {result.ok ? <SizeAsksTable sizes={market.sizes} /> : null}
+
           <p className="pb-4 text-center text-xs text-ink/40 md:text-left">
             {result.ok
-              ? `Live StockX market data for ${market.name}, refreshed about every 5 minutes. Source: StockX via KicksDB · fetched ${new Date(market.fetchedAt).toLocaleString()}.`
+              ? `Live StockX market data for ${market.name}, refreshed about every 5 minutes. Source: StockX via KicksDB · chart=${market.historySource} · fetched ${new Date(market.fetchedAt).toLocaleString()}.`
               : `Connect KicksDB to stream live StockX pricing for ${DARK_MOCHA.name}.`}
           </p>
         </div>
