@@ -160,6 +160,19 @@ Flow: set the first three → redeploy → open `/api/stockx/auth` → authorize
 
 Until then the site runs in **free cached mode** from `src/data/catalog/top-sellers.json`.
 
+## eBay comps (optional)
+
+Market pages can show an **eBay comps** panel (toggleable in the UI). Off by default.
+
+| Env var | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_EBAY_PUBLIC` | `1` to show the panel |
+| `EBAY_CLIENT_ID` / `EBAY_CLIENT_SECRET` | eBay Browse API (client credentials) |
+| `EBAY_ENV` | `production` (default) or `sandbox` |
+| `EBAY_MARKETPLACE_ID` | Default `EBAY_US` |
+
+Without Browse credentials the panel still appears in **link-only** mode (search URL). Users can Hide/Show eBay per browser via localStorage.
+
 ## Live StockX data (free path)
 
 KicksDB **Free** is €0 / **1,000 requests per month** (Standard API, US market). That is enough if the site mostly reads a committed catalog and only refreshes once daily.

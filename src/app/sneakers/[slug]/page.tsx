@@ -5,6 +5,7 @@ import { MarketSnapshot } from "@/components/market/MarketSnapshot";
 import { MarketSummaryCard } from "@/components/market/MarketSummaryCard";
 import { PriceChart } from "@/charts/PriceChart";
 import { PriceOverview } from "@/components/market/PriceOverview";
+import { EbayCompsPanel } from "@/components/market/EbayCompsPanel";
 import { SetupBanner } from "@/components/market/SetupBanner";
 import { StatsPanel } from "@/components/market/StatsPanel";
 import { UpstreamStatusBadge } from "@/components/market/UpstreamStatusBadge";
@@ -86,7 +87,9 @@ export default async function SneakerMarketPage({
 
   const result = await getMarketBySlug(slug);
   const live = result.ok;
-  const market = result.ok ? result.data : getMarketFallback(catalog);
+  const market = result.ok
+    ? result.data
+    : await getMarketFallback(catalog);
   const summary = result.ok ? buildMarketSummary(result.data) : null;
 
   return (
@@ -140,6 +143,13 @@ export default async function SneakerMarketPage({
           ) : null}
 
           {result.ok ? <MarketSizeSection market={market} /> : null}
+
+          {market.ebay ? (
+            <EbayCompsPanel
+              ebay={market.ebay}
+              stockxAsk={market.price > 0 ? market.price : null}
+            />
+          ) : null}
 
           <p className="pb-4 text-center text-xs text-dash-faint md:text-left">
             {result.ok

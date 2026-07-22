@@ -8,6 +8,7 @@ import {
 import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
 import { resolveLocalHistory } from "@/services/market/historyStore";
+import { getEbayCompsForProduct } from "@/services/market/getEbayComps";
 import { emptyMarket, mapProductToMarket } from "@/lib/mapProductToMarket";
 import {
   buildBootstrapSeries,
@@ -17,11 +18,21 @@ import {
 import type {
   HistorySource,
   MarketLoadResult,
+  SneakerMarket,
   UpstreamStatus,
 } from "@/types/market";
 import type { KicksProduct } from "@/types/kicksdb";
 
-function marketFromCachedCatalog(slug: string): MarketLoadResult {
+async function withEbayComps(market: SneakerMarket): Promise<SneakerMarket> {
+  const ebay = await getEbayCompsForProduct({
+    styleCode: market.styleCode,
+    name: market.name,
+  });
+  if (!ebay) return market;
+  return { ...market, ebay };
+}
+
+async function marketFromCachedCatalog(slug: string): Promise<MarketLoadResult> {
   const quote = getOfflineQuoteBySlug(slug);
   if (!quote) {
     return {
@@ -87,27 +98,29 @@ function marketFromCachedCatalog(slug: string): MarketLoadResult {
 
   return {
     ok: true,
-    data: mapProductToMarket({
-      product,
-      catalog,
-      chartSeries,
-      historySource,
-      upstreamStatus: "cached",
-    }),
+    data: await withEbayComps(
+      mapProductToMarket({
+        product,
+        catalog,
+        chartSeries,
+        historySource,
+        upstreamStatus: "cached",
+      }),
+    ),
   };
 }
 
 export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
   const apiKey = getKicksApiKey();
   if (!apiKey || !kicksLiveReadsEnabled()) {
-    return marketFromCachedCatalog(slug);
+    return await marketFromCachedCatalog(slug);
   }
 
   const productRes = await fetchStockxProduct(slug, apiKey);
   if (!productRes.ok) {
     // Inactive / exhausted free key → serve committed catalog instead of hard fail.
     if (productRes.status === 401 || productRes.status === 429) {
-      const cached = marketFromCachedCatalog(slug);
+      const cached = await marketFromCachedCatalog(slug);
       if (cached.ok) return cached;
     }
     if (productRes.status === 404) {
@@ -117,7 +130,7 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
         error: `Sneaker "${slug}" was not found on StockX via KicksDB.`,
       };
     }
-    const cached = marketFromCachedCatalog(slug);
+    const cached = await marketFromCachedCatalog(slug);
     if (cached.ok) return cached;
     return {
       ok: false,
@@ -204,16 +217,18 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
 
   return {
     ok: true,
-    data: mapProductToMarket({
-      product,
-      catalog,
-      chartSeries,
-      historySource,
-      upstreamStatus,
-    }),
+    data: await withEbayComps(
+      mapProductToMarket({
+        product,
+        catalog,
+        chartSeries,
+        historySource,
+        upstreamStatus,
+      }),
+    ),
   };
 }
 
-export function getMarketFallback(catalog: SneakerCatalogEntry) {
-  return emptyMarket(catalog);
+export async function getMarketFallback(catalog: SneakerCatalogEntry) {
+  return withEbayComps(emptyMarket(catalog));
 }
