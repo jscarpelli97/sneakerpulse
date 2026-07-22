@@ -1,6 +1,8 @@
 import premiumHistory from "@/data/index/stockx-premium-2020-2021.json";
 import extensionIndex from "@/data/index/spi-daily-extension.json";
 import savedBasket from "@/data/index/spi-chrono-basket.json";
+import fs from "node:fs";
+import path from "node:path";
 import {
   fetchTopStockxSneakers,
   getKicksApiKey,
@@ -40,8 +42,16 @@ type HistoricalFile = {
 };
 
 type ExtensionFile = {
-  points?: ChartPoint[];
+  points?: Array<ChartPoint & { spi?: number }>;
   asOf?: string | null;
+};
+
+type OpenDataFile = {
+  points?: Array<{
+    date: string;
+    spi: number;
+    constituents?: number;
+  }>;
 };
 
 function todayUtc() {
@@ -64,18 +74,53 @@ function loadPremiumHistory(): {
   };
 }
 
-function loadExtensionSeries(): ChartPoint[] {
+/** Public open-data tape (same CSV/JSON folks clone) — preferred forward series. */
+function loadOpenDataSeries(): ChartPoint[] {
+  try {
+    const raw = fs.readFileSync(
+      path.join(process.cwd(), "open-data/spi/daily.json"),
+      "utf8",
+    );
+    const file = JSON.parse(raw) as OpenDataFile;
+    return (file.points ?? [])
+      .filter((point) => point.spi > 0 && point.spi < 500 && point.date)
+      .map((point) => ({
+        date: point.date.slice(0, 10),
+        price: point.spi,
+        orders: point.constituents ?? 1,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  } catch {
+    return [];
+  }
+}
+
+function loadLegacyExtensionSeries(): ChartPoint[] {
   const file = extensionIndex as ExtensionFile;
   if (!file?.points?.length) return [];
   return file.points
-    // Premium index lives near 50–300. Drop legacy absolute-dollar seeds (~5000).
-    .filter((point) => point.price > 0 && point.price < 500 && point.date)
+    .filter((point) => {
+      const price = point.price ?? point.spi ?? 0;
+      return price > 0 && price < 500 && point.date;
+    })
     .map((point) => ({
       date: point.date.slice(0, 10),
-      price: point.price,
+      price: point.price ?? point.spi ?? 0,
       orders: point.orders ?? 1,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/** Merge open-data + in-app extension so the site chart grows with every daily commit. */
+function loadExtensionSeries(): ChartPoint[] {
+  const byDate = new Map<string, ChartPoint>();
+  for (const point of loadLegacyExtensionSeries()) {
+    byDate.set(point.date, point);
+  }
+  for (const point of loadOpenDataSeries()) {
+    byDate.set(point.date, point);
+  }
+  return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 function loadSavedBasket(): SpiChronoBasket | null {
@@ -296,8 +341,11 @@ export async function getMarketIndex(
     nextRebalanceAt: basket?.nextRebalanceAt ?? null,
     historySource:
       historical && live ? "hybrid" : historical ? "whole_market" : "bootstrap",
-    methodology: `${howItWorks.calculation} Real daily premium tape exists for Nov 2020–Dec 2021 (Flurin17). There is no free public daily whole-market premium feed for 2022–mid‑2025 — that gap is empty on purpose, not a drawn-in decline. Today’s SPI is the live ChronoPulse basket; run npm run snapshot daily to grow real post-gap history.`,
-    howItWorks,
+    methodology: `${howItWorks.calculation} Real daily premium tape exists for Nov 2020–Dec 2021 (Flurin17). There is no free public daily feed for 2022–mid‑2025 — that gap stays empty. From ${liveSeg[0]?.date ?? asOf} forward, each npm run snapshot / daily GitHub Action appends a real SPI point to open-data/spi/daily.csv and the homepage gold segment grows with it (${liveSeg.length} live day${liveSeg.length === 1 ? "" : "s"} so far).`,
+    howItWorks: {
+      ...howItWorks,
+      updates: `${howItWorks.updates} The same daily file powers this website chart and the public open-data repo — one append-only series.`,
+    },
     citation:
       historical?.meta.citation ??
       "https://github.com/Flurin17/stockXsalesData",

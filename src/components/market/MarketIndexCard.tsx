@@ -123,9 +123,11 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             {index.name}
           </h2>
           <p className="mt-1 max-w-3xl text-sm text-dash-muted">
-            Volume-weighted ask ÷ retail. Real daily history covers the 2020–2021
-            boom; 2022–2025 has no free public daily tape, so that stretch is a
-            gap — not a drawn-in line. Gold = live basket today.
+            Volume-weighted ask ÷ retail. Teal = 2020–2021 boom tape. Gold =
+            live SPI from {index.liveSeries[0]?.date ?? index.asOf} forward —
+            one new point every daily snapshot (same series as{" "}
+            <code className="text-dash-faint">open-data/spi/daily.csv</code>
+            ). The 2022–mid‑2025 hole stays empty on purpose.
           </p>
         </div>
         <div className="text-right">
@@ -201,7 +203,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
           <p className="text-sm text-dash-muted">
             {hasSeries
               ? secondary?.length
-                ? `Boom tape ${primary[0]?.date}→${primary.at(-1)?.date} · live ${secondary.at(-1)?.date}`
+                ? `Boom ${primary[0]?.date}→${primary.at(-1)?.date} · live tape ${index.liveSeries[0]?.date}→${index.asOf} (${formatNumber(index.liveSeries.length)} day${index.liveSeries.length === 1 ? "" : "s"})`
                 : `Premium · ${primary[0]?.date} → ${primary.at(-1)?.date}`
               : "Index series unavailable"}
           </p>
