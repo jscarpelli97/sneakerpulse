@@ -31,9 +31,14 @@ const COLUMNS: SortableColumn[] = [
 export function CatalogMarketsExplorer({
   rows,
   initialQuery = "",
+  itemHrefBase = "/sneakers",
+  emptyNoun = "pairs",
 }: {
   rows: CatalogQuote[];
   initialQuery?: string;
+  /** Detail route prefix, e.g. /sneakers or /clothing */
+  itemHrefBase?: string;
+  emptyNoun?: string;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
@@ -129,7 +134,7 @@ export function CatalogMarketsExplorer({
                   colSpan={7}
                   className="px-4 py-10 text-center text-sm text-dash-muted sm:px-5"
                 >
-                  No pairs match “{query.trim()}”.
+                  No {emptyNoun} match “{query.trim()}”.
                 </td>
               </tr>
             ) : (
@@ -146,7 +151,7 @@ export function CatalogMarketsExplorer({
                   </td>
                   <td className="px-4 py-3.5 sm:px-5">
                     <Link
-                      href={`/sneakers/${row.slug}`}
+                      href={`${itemHrefBase}/${row.slug}`}
                       className="flex items-center gap-3"
                     >
                       <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-elevated transition-transform group-hover:scale-[1.03]">

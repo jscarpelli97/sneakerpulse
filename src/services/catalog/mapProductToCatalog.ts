@@ -19,16 +19,48 @@ export function traitValue(
   return value ? value : null;
 }
 
+/** Build a short display ticker from the shoe name when no SKU exists. */
+export function tickerFromName(title: string, slug = ""): string {
+  let words: string[] = title.toUpperCase().match(/[A-Z0-9]+/g) ?? [];
+
+  // Drop leading brand tokens so the ticker reads like the model + colorway.
+  if (words[0] === "BRAVEST" && words[1] === "STUDIOS") {
+    words = words.slice(2);
+  } else if (words[0] === "YZY" || words[0] === "YEEZY") {
+    words = words.slice(1);
+  } else if (words.length >= 3) {
+    words = words.slice(1);
+  }
+
+  const fromName = words.join("").slice(0, 10);
+  if (fromName.length >= 3) return fromName;
+
+  const parts = slug.toLowerCase().split("-").filter(Boolean);
+  let start = 0;
+  if (parts[0] === "yzy") start = 1;
+  if (parts[0] === "bravest" && parts[1] === "studios") start = 2;
+  const fromSlug = parts
+    .slice(start)
+    .join("")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 10);
+  if (fromSlug.length >= 3) return fromSlug;
+
+  return (slug || title || "SHOE")
+    .replace(/[^A-Za-z0-9]/g, "")
+    .toUpperCase()
+    .slice(0, 10);
+}
+
 export function makeTicker(product: KicksProduct): string {
   const sku = product.sku?.trim();
   if (sku) {
     return sku.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10) || sku;
   }
-  if (product.rank != null) {
-    return `TOP${product.rank}`;
-  }
-  const slug = product.slug ?? product.id;
-  return slug.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10);
+
+  // No SKU (common for YZY drops) — derive from the shoe name, not sales rank.
+  return tickerFromName(product.title || "", product.slug ?? product.id ?? "");
 }
 
 export function mapListedProductToCatalog(

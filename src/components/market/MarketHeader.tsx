@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { clothingPublicEnabled } from "@/lib/brand";
 import type { SneakerMarket } from "@/types/market";
 import { changeClass, formatChange, formatMoney } from "@/utils/format";
 
@@ -26,12 +27,15 @@ export function MarketHeader({
             href="/"
             className="shrink-0 font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text transition-opacity hover:opacity-90 sm:text-xl"
           >
-            SneakerPulse
+            SPI Markets
           </Link>
           <span className="hidden text-dash-faint sm:inline">/</span>
           <nav className="hidden items-center gap-1 text-sm font-medium text-dash-muted sm:flex">
             {[
               { href: "/", label: "Markets" },
+              ...(clothingPublicEnabled()
+                ? [{ href: "/clothing", label: "Clothing" }]
+                : []),
               { href: "/compare", label: "Compare" },
               { href: "/alerts", label: "Alerts" },
             ].map((item) => (

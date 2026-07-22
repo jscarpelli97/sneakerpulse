@@ -1,10 +1,15 @@
 import { getSneakerBySlug, getOfflineQuoteBySlug } from "@/services/catalog/sneakers";
+import {
+  getClothingBySlug,
+  getClothingCatalogQuotes,
+} from "@/services/catalog/clothing";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 import {
   fetchStockxDailySales,
   fetchStockxProduct,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
+import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
 import { resolveLocalHistory } from "@/services/market/historyStore";
 import { emptyMarket, mapProductToMarket } from "@/lib/mapProductToMarket";
@@ -21,16 +26,20 @@ import type {
 import type { KicksProduct } from "@/types/kicksdb";
 
 function marketFromCachedCatalog(slug: string): MarketLoadResult {
-  const quote = getOfflineQuoteBySlug(slug);
+  const quote =
+    getOfflineQuoteBySlug(slug) ??
+    getClothingCatalogQuotes().find((row) => row.slug === slug) ??
+    null;
   if (!quote) {
     return {
       ok: false,
       code: "not_found",
-      error: `Sneaker "${slug}" was not found in the free offline catalog.`,
+      error: `Item "${slug}" was not found in the free offline catalog.`,
     };
   }
 
-  const catalog: SneakerCatalogEntry = {
+  const clothing = getClothingBySlug(slug);
+  const catalog: SneakerCatalogEntry = clothing ?? {
     slug: quote.slug,
     ticker: quote.ticker,
     styleCode: quote.styleCode,
@@ -98,7 +107,7 @@ function marketFromCachedCatalog(slug: string): MarketLoadResult {
 
 export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
   const apiKey = getKicksApiKey();
-  if (!apiKey) {
+  if (!apiKey || !kicksLiveReadsEnabled()) {
     return marketFromCachedCatalog(slug);
   }
 

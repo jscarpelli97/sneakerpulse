@@ -7,6 +7,7 @@ import {
   fetchTopStockxSneakers,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
+import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import {
   PREMIUM_INDEX_BASE,
   buildPremiumIndexLevel,
@@ -214,7 +215,8 @@ async function measureLivePremium(limit: number): Promise<{
   basket: SpiChronoBasket;
 } | null> {
   const apiKey = getKicksApiKey();
-  if (!apiKey) return null;
+  // Index live tip uses the same page-view gate; open-data / extension fill the tape.
+  if (!apiKey || !kicksLiveReadsEnabled()) return null;
 
   const res = await fetchTopStockxSneakers(apiKey, limit);
   if (!res.ok || !res.data.data?.length) return null;
@@ -258,7 +260,7 @@ function howItWorksFaq(
 }
 
 /**
- * SneakerPulse Index — premium-vs-retail market health (ChronoPulse-inspired
+ * SPI Index — premium-vs-retail market health (ChronoPulse-inspired
  * basket, but a sneaker-native equation).
  */
 export async function getMarketIndex(
@@ -312,7 +314,7 @@ export async function getMarketIndex(
   const boomEnd = histSeg.at(-1)?.price ?? null;
 
   return {
-    name: "SneakerPulse Index",
+    name: "SPI Index",
     ticker: "SPI",
     level,
     liveLevel: level,
