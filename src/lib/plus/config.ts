@@ -39,7 +39,7 @@ export function siteOrigin() {
   if (explicit) return explicit.replace(/\/$/, "");
   const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
   if (vercel) return `https://${vercel.replace(/^https?:\/\//, "")}`;
-  return "https://sneakerpulse.vercel.app";
+  return "https://spi-markets.vercel.app";
 }
 
 /** OpenNode keys unlock live BTC/Lightning checkout. */

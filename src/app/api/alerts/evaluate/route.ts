@@ -119,7 +119,7 @@ export async function POST(request: Request) {
           email,
           _replyto: "noreply@sneakerpulse.app",
           _subject: subject,
-          message: `Your SPI Plus alerts fired:\n\n${lines.join("\n")}\n\nOpen https://sneakerpulse.vercel.app/alerts to manage them.`,
+          message: `Your SPI Plus alerts fired:\n\n${lines.join("\n")}\n\nOpen https://spi-markets.vercel.app/alerts to manage them.`,
         }),
       });
       if (res.ok) {

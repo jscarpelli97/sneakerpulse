@@ -153,7 +153,7 @@ When StockX issues credentials, paste them here or into Vercel env — the scaff
 | `STOCKX_API_KEY` | Application `x-api-key` |
 | `STOCKX_CLIENT_ID` | Application client id |
 | `STOCKX_CLIENT_SECRET` | Application client secret |
-| `STOCKX_REDIRECT_URI` | `https://sneakerpulse.vercel.app/api/stockx/callback` (register this URI) |
+| `STOCKX_REDIRECT_URI` | `https://spi-markets.vercel.app/api/stockx/callback` (register this URI) |
 | `STOCKX_ACCESS_TOKEN` / `STOCKX_REFRESH_TOKEN` | After visiting `/api/stockx/auth` once |
 
 Flow: set the first three → redeploy → open `/api/stockx/auth` → authorize → copy tokens from the callback JSON into Vercel → redeploy. Catalog wiring will map StockX `/v2/catalog/search` into the existing watchlist.
