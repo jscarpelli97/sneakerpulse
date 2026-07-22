@@ -20,6 +20,14 @@ src/
 
 Next.js requires API routes under `src/app/api/*`. Shared fetch helpers live in `src/api/*` so UI code does not call `fetch` ad hoc.
 
+## Price history (database design)
+
+Schema lives in [`db/schema.sql`](db/schema.sql) with scaling notes in [`db/README.md`](db/README.md).
+
+Each snapshot stores: timestamp, lowest ask, highest bid, last sale, average sale, marketplace, and sneaker id — as an append-only Postgres fact table keyed by `(sneaker_id, marketplace, captured_at)`.
+
+The app still reads JSON under `src/data/snapshots/` until a `DATABASE_URL` collector is wired.
+
 ## Stack
 
 - Next.js (App Router)
