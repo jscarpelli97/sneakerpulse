@@ -7,6 +7,7 @@ import {
   fetchTopStockxSneakers,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
+import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import {
   PREMIUM_INDEX_BASE,
   buildPremiumIndexLevel,
@@ -214,7 +215,8 @@ async function measureLivePremium(limit: number): Promise<{
   basket: SpiChronoBasket;
 } | null> {
   const apiKey = getKicksApiKey();
-  if (!apiKey) return null;
+  // Index live tip uses the same page-view gate; open-data / extension fill the tape.
+  if (!apiKey || !kicksLiveReadsEnabled()) return null;
 
   const res = await fetchTopStockxSneakers(apiKey, limit);
   if (!res.ok || !res.data.data?.length) return null;
