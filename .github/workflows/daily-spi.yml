@@ -1,0 +1,41 @@
+name: Daily SPI open data
+
+on:
+  schedule:
+    # 13:05 UTC — shortly after market snapshot window
+    - cron: "5 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Capture daily SPI + member rows
+        env:
+          KICKSDB_API_KEY: ${{ secrets.KICKSDB_API_KEY }}
+        run: npm run snapshot
+
+      - name: Commit open data + app snapshots
+        run: |
+          git config user.name "sneakerpulse-bot"
+          git config user.email "sneakerpulse-bot@users.noreply.github.com"
+          git add open-data src/data/snapshots src/data/index/spi-daily-extension.json src/data/index/spi-basket-state.json src/data/index/spi-chrono-basket.json
+          if git diff --staged --quiet; then
+            echo "No SPI / snapshot changes"
+            exit 0
+          fi
+          DAY=$(date -u +%F)
+          git commit -m "data: SPI premium snapshot for ${DAY}"
+          git push

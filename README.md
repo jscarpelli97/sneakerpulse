@@ -22,7 +22,30 @@ Sneaker-native market health index (ChronoPulse-inspired basket, different equat
 2. **Calculation:** Volume-weighted **ask ÷ retail × 100**. **100 = at retail**, above 100 = premiums, below 100 = sitting under retail. Absolute-dollar Laspeyres stays “high” when retail prices rise and after the 2021 boom; premium vs retail matches how the market feels when everything is available near retail.
 3. **Updates:** Daily via `npm run snapshot`. Basket rebalances every six months.
 
-Boom-era chart tape: Flurin17 daily premiums (Nov 2020–Dec 2021). **There is no free public daily premium feed for most of 2022–mid‑2025** — that gap stays empty (no fake declining line). Live SPI is today’s ChronoPulse basket; `npm run snapshot` grows real post-gap history going forward.
+## Open data (daily SPI going forward)
+
+Public dataset lives in [`open-data/`](open-data/) (CC0):
+
+- `spi/daily.csv` / `daily.json` — append-only premium index  
+- `spi/latest.json` — today’s tip  
+- `spi/basket.json` — current brand × model basket  
+- `members/YYYY-MM-DD.csv` — per-model ask / retail that day  
+
+**Daily capture:** GitHub Action [`.github/workflows/daily-spi.yml`](.github/workflows/daily-spi.yml) runs `npm run snapshot` at **13:05 UTC** and commits updates. Add repo secret `KICKSDB_API_KEY`.
+
+**Publish as its own GitHub repo** (so people can `curl` / clone just the data):
+
+```bash
+gh auth login
+chmod +x scripts/publish-open-data-repo.sh
+./scripts/publish-open-data-repo.sh yourname/sneakerpulse-index
+```
+
+Then others can:
+
+```bash
+curl -sL https://raw.githubusercontent.com/yourname/sneakerpulse-index/main/spi/daily.csv
+```
 
 Rebuild / extend:
 

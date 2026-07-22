@@ -3,12 +3,12 @@
   "slug": "nike-ja-3-valentines-day",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T15:59:59.984Z",
+  "updatedAt": "2026-07-22T16:08:56.824Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 84,
-      "orders": 328
+      "orders": 324
     }
   ]
 }

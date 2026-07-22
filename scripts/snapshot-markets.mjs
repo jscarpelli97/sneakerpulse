@@ -222,6 +222,7 @@ function measurePremium(products, chronoBasket) {
   let den = 0;
   let count = 0;
   let atOrBelow = 0;
+  const memberRows = [];
   for (const product of products) {
     if (!product.slug || !weightBySlug.has(product.slug)) continue;
     const ask = product.min_price ?? product.avg_price ?? null;
@@ -233,10 +234,21 @@ function measurePremium(products, chronoBasket) {
     den += weight;
     count += 1;
     if (ratio <= 1) atOrBelow += 1;
+    const meta = chronoBasket.members.find((m) => m.slug === product.slug);
+    memberRows.push({
+      slug: product.slug,
+      brand: meta?.brand ?? product.brand ?? "",
+      name: meta?.name ?? product.title ?? product.slug,
+      ask,
+      retail,
+      ratio: Math.round(ratio * 10000) / 10000,
+      weight,
+      rank: product.rank ?? meta?.rank ?? "",
+    });
   }
   if (!(den > 0) || count < 3) return null;
   const level = Math.round(((PREMIUM_BASE * num) / den) * 100) / 100;
-  return { level, count, atOrBelow };
+  return { level, count, atOrBelow, memberRows };
 }
 
 async function upsertSpiExtension(products) {
@@ -309,6 +321,23 @@ async function upsertSpiExtension(products) {
   console.log(
     `SPI premium: ${cleaned.length} points, today=${measured.level} (${measured.atOrBelow}/${measured.count} ≤ retail)`,
   );
+
+  const { exportOpenData } = await import("./export-open-data.mjs");
+  await exportOpenData({
+    today,
+    level: measured.level,
+    constituents: measured.count,
+    atOrBelowRetail: measured.atOrBelow,
+    brandCount: chronoBasket.brandCount,
+    basket: chronoBasket,
+    memberRows: measured.memberRows,
+    historyPoints: cleaned.map((p) => ({
+      ...p,
+      at_or_below_retail:
+        p.date === today ? measured.atOrBelow : undefined,
+      brand_count: chronoBasket.brandCount,
+    })),
+  });
 }
 
 async function main() {

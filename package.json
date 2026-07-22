@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "snapshot": "node scripts/snapshot-markets.mjs",
+    "open-data": "node scripts/export-open-data.mjs",
     "index:merge": "node scripts/merge-market-index.mjs"
   },
   "dependencies": {

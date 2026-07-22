@@ -1,0 +1,19 @@
+{
+  "id": "sneakerpulse-premium-index",
+  "name": "SneakerPulse Index (SPI)",
+  "base": 100,
+  "base_meaning": "retail_parity",
+  "unit": "ask_over_retail_x100",
+  "updated_at": "2026-07-22T16:08:58.739Z",
+  "as_of": "2026-07-22",
+  "points": [
+    {
+      "date": "2026-07-22",
+      "spi": 93.92,
+      "premium_pct": -6.08,
+      "constituents": 51,
+      "at_or_below_retail": 37,
+      "brand_count": 12
+    }
+  ]
+}

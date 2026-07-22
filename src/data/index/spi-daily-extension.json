@@ -12,11 +12,11 @@
   "points": [
     {
       "date": "2026-07-22",
-      "price": 93.93,
+      "price": 93.92,
       "orders": 51
     }
   ],
-  "updatedAt": "2026-07-22T16:00:01.885Z",
+  "updatedAt": "2026-07-22T16:08:58.737Z",
   "brandCount": 12,
-  "atOrBelowRetail": 36
+  "atOrBelowRetail": 37
 }

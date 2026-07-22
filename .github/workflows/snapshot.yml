@@ -1,9 +1,8 @@
 name: Daily market snapshots
 
+# Legacy workflow — schedule disabled to avoid double-running with daily-spi.yml.
+# Keep workflow_dispatch for manual SKU snapshot-only runs if needed.
 on:
-  schedule:
-    # 13:00 UTC daily
-    - cron: "0 13 * * *"
   workflow_dispatch:
 
 jobs:
@@ -18,7 +17,7 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
-      - name: Append lowest-ask snapshots
+      - name: Append lowest-ask snapshots + SPI open data
         env:
           KICKSDB_API_KEY: ${{ secrets.KICKSDB_API_KEY }}
         run: npm run snapshot
@@ -26,10 +25,10 @@ jobs:
         run: |
           git config user.name "sneakerpulse-bot"
           git config user.email "sneakerpulse-bot@users.noreply.github.com"
-          git add src/data/snapshots
+          git add src/data/snapshots src/data/index open-data
           if git diff --staged --quiet; then
             echo "No snapshot changes"
             exit 0
           fi
-          git commit -m "chore: daily lowest-ask snapshots"
+          git commit -m "chore: daily lowest-ask + SPI open data"
           git push

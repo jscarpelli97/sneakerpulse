@@ -1,0 +1,12 @@
+{
+  "date": "2026-07-22",
+  "spi": 93.92,
+  "premium_pct": -6.08,
+  "constituents": 51,
+  "at_or_below_retail": 37,
+  "brand_count": 12,
+  "updated_at": "2026-07-22T16:08:58.739Z",
+  "base": 100,
+  "base_meaning": "retail_parity",
+  "note": "Volume-weighted ask/retail × 100 for the ChronoPulse-style basket."
+}
