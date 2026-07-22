@@ -116,10 +116,6 @@ export function PortfolioApp() {
 
   const btcUsd = btc?.usd ?? null;
   const marketBtc = btcUsd != null ? usdToBtc(totals.market, btcUsd) : null;
-  const costBtc =
-    btcUsd != null && totals.costBasis > 0
-      ? usdToBtc(totals.costBasis, btcUsd)
-      : null;
 
   const searchHits = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -378,7 +374,7 @@ export function PortfolioApp() {
             label: "Cost basis",
             value:
               totals.costBasis > 0 ? formatMoney(totals.costBasis) : "—",
-            sub: costBtc != null ? formatBtc(costBtc) : "Add buy prices",
+            sub: totals.costBasis > 0 ? "USD paid" : "Add buy prices",
           },
           {
             label: "Unrealized P&L",
