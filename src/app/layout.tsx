@@ -15,13 +15,13 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "SneakerPulse — Feel the Drop",
+  title: "Jordan 1 High Dark Mocha — SneakerPulse",
   description:
-    "SneakerPulse tracks upcoming drops, heat scores, and retail signals so you never miss the next release.",
+    "Market view for the Jordan 1 High Dark Mocha (2020): live-style price, change, volume, chart, and statistics.",
   openGraph: {
-    title: "SneakerPulse — Feel the Drop",
+    title: "Jordan 1 High Dark Mocha — SneakerPulse",
     description:
-      "Live drop intel for collectors and hunters who move on signal, not rumor.",
+      "TradingView and CoinMarketCap–inspired sneaker market page with dummy data.",
     siteName: "SneakerPulse",
     type: "website",
   },
