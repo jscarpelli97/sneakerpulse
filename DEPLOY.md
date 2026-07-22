@@ -1,58 +1,51 @@
 # Deploy SneakerPulse
 
-## Permanent host (recommended): Vercel
+**Live production:** https://sneakerpulse.vercel.app  
+**GitHub:** https://github.com/jscarpelli97/sneakerpulse  
+**Vercel project:** https://vercel.com/jscarpelli97/sneakerpulse
 
-This Cloud Agent environment has **no GitHub or Vercel login**, so the lasting public site must be created from your machine once.
+## What’s already set up
 
-### 1. Push the repo
+- Public GitHub repo (`main` + feature branch)
+- Vercel production deploy with `KICKSDB_API_KEY` + `STATUS_TOKEN`
+- GitHub Actions secret `KICKSDB_API_KEY` for `.github/workflows/daily-spi.yml`
 
-```bash
-cd /path/to/sneakerpulse
-gh auth login
-gh repo create YOUR_GITHUB_USER/sneakerpulse --private --source=. --remote=origin --push
-# or: git push -u origin main
-```
-
-Use branch `main` (or merge `cursor/index-2020-to-present-ab26` into it).
-
-### 2. Deploy
+## Redeploy from CLI
 
 ```bash
-npx vercel login
-npx vercel --prod
+npx vercel --prod --yes
 ```
 
-Or: [vercel.com/new](https://vercel.com/new) → import the GitHub repo → Deploy.
+## Connect GitHub → Vercel (auto-deploy on push)
 
-### 3. Environment variables (Vercel → Project → Settings → Environment Variables)
+CLI deploy works today. For push-to-deploy, link GitHub in the Vercel dashboard:
 
-| Name | Required | Notes |
+1. Open https://vercel.com/jscarpelli97/sneakerpulse/settings/git  
+2. Connect the GitHub account / install the Vercel GitHub app if prompted  
+3. Link repo `jscarpelli97/sneakerpulse`, production branch `main`
+
+## Environment variables
+
+| Name | Required | Where |
 | --- | --- | --- |
-| `KICKSDB_API_KEY` | yes | from [kicks.dev/register](https://kicks.dev/register) |
-| `STATUS_TOKEN` | no | unlocks detailed `/api/status` via `x-status-token` header |
+| `KICKSDB_API_KEY` | yes | Vercel + GitHub Actions |
+| `STATUS_TOKEN` | no | Vercel (detailed `/api/status` via `x-status-token`) |
 
-Apply to **Production** and **Preview**, then **Redeploy**.
+## Daily SPI snapshots
 
-### 4. Daily SPI snapshots
+Workflow: `.github/workflows/daily-spi.yml` (~13:05 UTC). Secret `KICKSDB_API_KEY` is already on the repo.
 
-In the GitHub repo: Settings → Secrets and variables → Actions → `KICKSDB_API_KEY`.
+After the GitHub↔Vercel link exists, snapshot commits on `main` will trigger redeploys automatically. Until then, run `npx vercel --prod --yes` after important data updates.
 
-Workflow: `.github/workflows/daily-spi.yml` (13:05 UTC).
-
-### 5. Rate limits
+## Rate limits
 
 Rate-limit `/api/*` in Vercel Firewall or Cloudflare so scrapers do not burn KicksDB quota.
 
----
-
-## Temporary public preview (this agent)
-
-Production server + Cloudflare quick tunnel:
+## Temporary agent preview
 
 ```bash
-npm run build
-npm run start -- -H 0.0.0.0 -p 3000
+npm run build && npm run start -- -H 0.0.0.0 -p 3000
 npx cloudflared tunnel --url http://127.0.0.1:3000
 ```
 
-The printed `https://*.trycloudflare.com` URL is temporary and dies when the agent/tunnel stops. Use Vercel for anything you share as “the site.”
+Prefer https://sneakerpulse.vercel.app for anything you share.
