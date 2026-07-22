@@ -19,7 +19,7 @@ export function CatalogTable({
 }) {
   if (variant === "dashboard") {
     return (
-      <section className="overflow-hidden rounded-2xl border border-dash-border bg-dash-panel">
+      <section className="dash-card animate-rise stagger-3 overflow-hidden">
         <div className="flex flex-wrap items-end justify-between gap-3 border-b border-dash-border px-4 py-4 sm:px-5">
           <div>
             <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text">
@@ -37,30 +37,30 @@ export function CatalogTable({
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-dash-border bg-dash-elevated/60 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
               <tr>
-                <th className="px-4 py-3 font-medium sm:px-5">#</th>
-                <th className="px-4 py-3 font-medium sm:px-5">Name</th>
-                <th className="px-4 py-3 font-medium sm:px-5">Ticker</th>
-                <th className="px-4 py-3 font-medium sm:px-5">Lowest ask</th>
-                <th className="px-4 py-3 font-medium sm:px-5">Weekly orders</th>
-                <th className="px-4 py-3 font-medium sm:px-5">Rank</th>
-                <th className="px-4 py-3 font-medium sm:px-5">Status</th>
+                <th className="px-4 py-3.5 font-medium sm:px-5">#</th>
+                <th className="px-4 py-3.5 font-medium sm:px-5">Name</th>
+                <th className="px-4 py-3.5 font-medium sm:px-5">Ticker</th>
+                <th className="px-4 py-3.5 font-medium sm:px-5">Lowest ask</th>
+                <th className="px-4 py-3.5 font-medium sm:px-5">Weekly orders</th>
+                <th className="px-4 py-3.5 font-medium sm:px-5">Rank</th>
+                <th className="px-4 py-3.5 font-medium sm:px-5">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--dash-border-subtle)]">
               {rows.map((row, index) => (
                 <tr
                   key={row.slug}
-                  className="transition-colors hover:bg-dash-elevated/50"
+                  className="group transition-colors hover:bg-dash-elevated/55"
                 >
-                  <td className="px-4 py-3 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-faint sm:px-5">
+                  <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-faint sm:px-5">
                     {index + 1}
                   </td>
-                  <td className="px-4 py-3 sm:px-5">
+                  <td className="px-4 py-3.5 sm:px-5">
                     <Link
                       href={`/sneakers/${row.slug}`}
                       className="flex items-center gap-3"
                     >
-                      <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-elevated">
+                      <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-elevated transition-transform group-hover:scale-[1.03]">
                         <Image
                           src={row.fallbackImage}
                           alt={row.name}
@@ -70,7 +70,7 @@ export function CatalogTable({
                         />
                       </span>
                       <span>
-                        <span className="block font-semibold text-dash-text">
+                        <span className="block font-semibold text-dash-text transition-colors group-hover:text-white">
                           {row.name}
                         </span>
                         <span className="block text-xs text-dash-faint">
@@ -79,21 +79,21 @@ export function CatalogTable({
                       </span>
                     </Link>
                   </td>
-                  <td className="px-4 py-3 font-[family-name:var(--font-plex-mono)] font-medium text-dash-accent sm:px-5">
+                  <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] font-medium text-dash-accent sm:px-5">
                     {row.ticker}
                   </td>
-                  <td className="px-4 py-3 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-dash-text sm:px-5">
+                  <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-dash-text sm:px-5">
                     {row.live ? formatMaybeMoney(row.price) : "—"}
                   </td>
-                  <td className="px-4 py-3 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
+                  <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
                     {row.live && row.weeklyOrders != null
                       ? formatNumber(row.weeklyOrders)
                       : "—"}
                   </td>
-                  <td className="px-4 py-3 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
+                  <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
                     {row.live && row.rank != null ? `#${row.rank}` : "—"}
                   </td>
-                  <td className="px-4 py-3 sm:px-5">
+                  <td className="px-4 py-3.5 sm:px-5">
                     <span
                       className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] ${
                         row.live
@@ -119,8 +119,8 @@ export function CatalogTable({
   }
 
   return (
-    <section className="border border-ink/10 bg-white">
-      <div className="border-b border-ink/10 px-4 py-3 md:px-5">
+    <section className="ui-card overflow-hidden">
+      <div className="border-b border-ink/8 px-4 py-4 md:px-5">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
           Tracked sneakers
         </h2>
@@ -130,7 +130,7 @@ export function CatalogTable({
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-ink/10 bg-paper/60 text-[11px] uppercase tracking-[0.12em] text-ink/45">
+          <thead className="border-b border-ink/8 bg-paper/70 text-[11px] uppercase tracking-[0.12em] text-ink/45">
             <tr>
               <th className="px-4 py-3 font-semibold md:px-5">Sneaker</th>
               <th className="px-4 py-3 font-semibold md:px-5">Ticker</th>
@@ -139,15 +139,18 @@ export function CatalogTable({
               <th className="px-4 py-3 font-semibold md:px-5">Rank</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink/10">
+          <tbody className="divide-y divide-ink/8">
             {rows.map((row) => (
-              <tr key={row.slug} className="hover:bg-paper/40">
+              <tr
+                key={row.slug}
+                className="transition-colors hover:bg-paper/70"
+              >
                 <td className="px-4 py-3 md:px-5">
                   <Link
                     href={`/sneakers/${row.slug}`}
                     className="flex items-center gap-3"
                   >
-                    <span className="relative h-12 w-12 shrink-0 overflow-hidden bg-paper-deep">
+                    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-paper-deep">
                       <Image
                         src={row.fallbackImage}
                         alt={row.name}
@@ -169,7 +172,7 @@ export function CatalogTable({
                 <td className="px-4 py-3 font-semibold text-ink md:px-5">
                   {row.ticker}
                 </td>
-                <td className="px-4 py-3 font-semibold text-ink md:px-5">
+                <td className="px-4 py-3 font-semibold tabular-nums text-ink md:px-5">
                   {row.live ? formatMaybeMoney(row.price) : "—"}
                 </td>
                 <td className="px-4 py-3 text-ink-soft md:px-5">

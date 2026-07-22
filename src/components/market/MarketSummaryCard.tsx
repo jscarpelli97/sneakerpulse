@@ -54,7 +54,7 @@ export function MarketSummaryCard({
 
   return (
     <section
-      className={`overflow-hidden rounded-2xl border border-dash-border border-l-4 bg-dash-panel text-dash-text ${tone.accent}`}
+      className={`dash-card animate-rise overflow-hidden border-l-4 text-dash-text ${tone.accent}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-dash-border px-4 py-3 sm:px-5">
         <div>

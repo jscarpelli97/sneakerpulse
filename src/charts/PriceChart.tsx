@@ -74,13 +74,13 @@ export function PriceChart({
   const meta = chartMeta(historySource);
 
   return (
-    <section className="border border-ink/10 bg-white">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 px-4 py-3 md:px-5">
+    <section className="ui-card animate-rise overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/8 px-4 py-3.5 md:px-5">
         <div>
           <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
             Price chart
           </h2>
-          <p className="text-sm text-ink-soft" title={meta.def.definition}>
+          <p className="mt-0.5 text-sm text-ink-soft" title={meta.def.definition}>
             {hasSeries
               ? meta.subtitle(data.length)
               : "Historical price series unavailable"}
@@ -88,20 +88,20 @@ export function PriceChart({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span
-            className={`px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${meta.badgeClass}`}
+            className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${meta.badgeClass}`}
           >
             {meta.badge}
           </span>
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 rounded-xl bg-paper p-1">
             {CHART_RANGES.map((item) => (
               <button
                 key={item}
                 type="button"
                 onClick={() => setRange(item)}
-                className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
+                className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${
                   range === item
-                    ? "bg-ink text-white"
-                    : "bg-paper text-ink-soft hover:text-ink"
+                    ? "bg-ink text-white shadow-[var(--shadow-xs)]"
+                    : "text-ink-soft hover:bg-white hover:text-ink"
                 }`}
               >
                 {item}
@@ -112,7 +112,7 @@ export function PriceChart({
       </div>
 
       <div className="relative px-2 py-4 md:px-4 md:py-5">
-        <div className="mb-3 flex items-end justify-between px-2 text-xs text-ink/45">
+        <div className="mb-3 flex items-end justify-between px-2 font-[family-name:var(--font-plex-mono)] text-xs text-ink/45">
           <span>High {hasSeries ? formatMoney(max) : "—"}</span>
           <span>Low {hasSeries ? formatMoney(min) : "—"}</span>
         </div>
@@ -121,7 +121,7 @@ export function PriceChart({
           {hasSeries ? (
             <LightweightPriceChart data={data} up={isUp} />
           ) : (
-            <div className="flex h-full items-center justify-center border border-dashed border-ink/15 bg-paper/50 px-6 text-center text-sm text-ink-soft">
+            <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-ink/15 bg-paper/50 px-6 text-center text-sm text-ink-soft">
               No historical points to plot yet.
             </div>
           )}

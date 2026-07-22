@@ -62,7 +62,7 @@ export function AlertsClient() {
 
   return (
     <div className="space-y-6">
-      <section className="border border-ink/10 bg-white p-4 md:p-5">
+      <section className="ui-card p-4 md:p-5">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold">
           Create alert
         </h2>
@@ -70,7 +70,7 @@ export function AlertsClient() {
           <label className="text-sm text-ink-soft">
             Sneaker
             <select
-              className="mt-1 w-full border border-ink/15 bg-paper px-3 py-2 text-ink"
+              className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
             >
@@ -84,7 +84,7 @@ export function AlertsClient() {
           <label className="text-sm text-ink-soft">
             Direction
             <select
-              className="mt-1 w-full border border-ink/15 bg-paper px-3 py-2 text-ink"
+              className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20"
               value={direction}
               onChange={(e) =>
                 setDirection(e.target.value as "above" | "below")
@@ -97,7 +97,7 @@ export function AlertsClient() {
           <label className="text-sm text-ink-soft">
             Threshold (USD)
             <input
-              className="mt-1 w-full border border-ink/15 bg-paper px-3 py-2 text-ink"
+              className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20"
               value={threshold}
               onChange={(e) => setThreshold(e.target.value)}
               inputMode="decimal"
@@ -106,18 +106,18 @@ export function AlertsClient() {
           <label className="text-sm text-ink-soft">
             Webhook URL (optional)
             <input
-              className="mt-1 w-full border border-ink/15 bg-paper px-3 py-2 text-ink"
+              className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20"
               value={webhookUrl}
               onChange={(e) => setWebhookUrl(e.target.value)}
               placeholder="https://example.com/hooks/sneakerpulse"
             />
           </label>
         </div>
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="mt-5 flex flex-wrap gap-3">
           <button
             type="button"
             onClick={handleAddAlert}
-            className="bg-ink px-4 py-2 text-sm font-semibold text-white"
+            className="rounded-xl bg-ink px-4 py-2.5 text-sm font-semibold text-white shadow-[var(--shadow-sm)] hover:opacity-90"
           >
             Save alert
           </button>
@@ -125,7 +125,7 @@ export function AlertsClient() {
             type="button"
             onClick={evaluate}
             disabled={!alerts.length || checking}
-            className="border border-ink/20 px-4 py-2 text-sm font-semibold text-ink disabled:opacity-40"
+            className="rounded-xl border border-ink/15 px-4 py-2.5 text-sm font-semibold text-ink hover:bg-paper disabled:opacity-40"
           >
             {checking ? "Checking…" : "Check alerts now"}
           </button>
@@ -133,8 +133,8 @@ export function AlertsClient() {
         {result ? <p className="mt-3 text-sm text-ink-soft">{result}</p> : null}
       </section>
 
-      <section className="border border-ink/10 bg-white">
-        <div className="border-b border-ink/10 px-4 py-3 md:px-5">
+      <section className="ui-card overflow-hidden">
+        <div className="border-b border-ink/8 px-4 py-3.5 md:px-5">
           <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold">
             Saved alerts
           </h2>
@@ -144,11 +144,11 @@ export function AlertsClient() {
             No alerts yet. Alerts are stored in this browser.
           </p>
         ) : (
-          <ul className="divide-y divide-ink/10">
+          <ul className="divide-y divide-ink/8">
             {alerts.map((alert) => (
               <li
                 key={alert.id}
-                className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-5"
+                className="flex flex-wrap items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-paper/50 md:px-5"
               >
                 <div>
                   <p className="font-semibold text-ink">
@@ -160,7 +160,7 @@ export function AlertsClient() {
                 <button
                   type="button"
                   onClick={() => removeAlert(alert.id)}
-                  className="text-sm font-medium text-down"
+                  className="rounded-lg px-2 py-1 text-sm font-medium text-down hover:bg-down/10"
                 >
                   Remove
                 </button>

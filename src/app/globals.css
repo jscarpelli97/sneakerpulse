@@ -3,31 +3,47 @@
 :root {
   --ink: #12141a;
   --ink-soft: #2a2e38;
-  --paper: #eef1f4;
-  --paper-deep: #dfe4ea;
+  --paper: #f3f5f8;
+  --paper-deep: #e4e8ef;
   --signal: #c8f542;
   --signal-deep: #a8d62e;
   --heat: #ff4d2e;
-  --up: #16a34a;
-  --down: #dc2626;
+  --up: #0f9f6e;
+  --down: #e11d48;
   --background: var(--paper);
   --foreground: var(--ink);
 
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --shadow-xs: 0 1px 0 rgba(18, 20, 26, 0.04);
+  --shadow-sm: 0 1px 2px rgba(18, 20, 26, 0.05), 0 1px 1px rgba(18, 20, 26, 0.03);
+  --shadow-md: 0 4px 16px rgba(18, 20, 26, 0.06), 0 1px 2px rgba(18, 20, 26, 0.04);
+  --shadow-lg: 0 12px 32px rgba(18, 20, 26, 0.08), 0 2px 6px rgba(18, 20, 26, 0.04);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 140ms;
+  --duration: 220ms;
+  --duration-slow: 420ms;
+
   /* Financial dashboard (homepage) */
-  --dash-bg: #0c0e12;
-  --dash-surface: #12151c;
-  --dash-panel: #171b24;
-  --dash-elevated: #1c2230;
+  --dash-bg: #0a0c10;
+  --dash-surface: #10131a;
+  --dash-panel: #151922;
+  --dash-elevated: #1b2130;
   --dash-border: #2a3142;
   --dash-border-subtle: #222836;
-  --dash-text: #e6e9ef;
+  --dash-text: #e8ebf2;
   --dash-muted: #8b93a7;
   --dash-faint: #5c657a;
   --dash-accent: #d4a017;
   --dash-accent-soft: rgba(212, 160, 23, 0.12);
-  --dash-link: #3d9cf0;
+  --dash-link: #4aa3f0;
   --dash-up: #26a69a;
   --dash-down: #ef5350;
+  --dash-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
 }
 
 @theme inline {
@@ -72,11 +88,13 @@ body {
   color: var(--foreground);
   font-family: var(--font-instrument), system-ui, sans-serif;
   overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--signal);
-  color: var(--ink);
+  background: color-mix(in oklab, var(--ink) 88%, white);
+  color: white;
 }
 
 .dashboard ::selection {
@@ -84,6 +102,78 @@ body {
   color: var(--dash-bg);
 }
 
+a,
+button,
+input,
+select,
+textarea {
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration) var(--ease-out);
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--ink) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.dashboard :focus-visible {
+  outline-color: color-mix(in oklab, var(--dash-accent) 80%, white);
+}
+
+/* Surfaces */
+.ui-card {
+  border: 1px solid rgba(18, 20, 26, 0.08);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.ui-card-hover {
+  transition:
+    border-color var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out),
+    transform var(--duration) var(--ease-out);
+}
+
+.ui-card-hover:hover {
+  border-color: rgba(18, 20, 26, 0.14);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.dash-card {
+  border: 1px solid var(--dash-border);
+  border-radius: var(--radius-lg);
+  background: var(--dash-panel);
+  box-shadow: var(--dash-shadow);
+}
+
+.dash-card-hover {
+  transition:
+    border-color var(--duration) var(--ease-out),
+    background-color var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out),
+    transform var(--duration) var(--ease-out);
+}
+
+.dash-card-hover:hover {
+  border-color: color-mix(in oklab, var(--dash-border) 70%, white);
+  background: var(--dash-elevated);
+  transform: translateY(-1px);
+}
+
+.page-shell {
+  background:
+    radial-gradient(1200px 480px at 10% -10%, rgba(18, 20, 26, 0.04), transparent 60%),
+    var(--paper);
+}
+
+/* Motion */
 @keyframes blink {
   0%,
   100% {
@@ -94,12 +184,104 @@ body {
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .animate-blink {
   animation: blink 1.6s ease-in-out infinite;
 }
 
+.animate-rise {
+  animation: rise-in var(--duration-slow) var(--ease-out) both;
+}
+
+.animate-fade {
+  animation: fade-in var(--duration-slow) var(--ease-out) both;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(18, 20, 26, 0.06) 0%,
+    rgba(18, 20, 26, 0.1) 45%,
+    rgba(18, 20, 26, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: var(--radius-sm);
+}
+
+.dashboard .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.09) 45%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+}
+
+.stagger-1 {
+  animation-delay: 40ms;
+}
+.stagger-2 {
+  animation-delay: 90ms;
+}
+.stagger-3 {
+  animation-delay: 140ms;
+}
+.stagger-4 {
+  animation-delay: 190ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-blink {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-blink,
+  .animate-rise,
+  .animate-fade,
+  .skeleton {
     animation: none;
+  }
+
+  .ui-card-hover:hover,
+  .dash-card-hover:hover {
+    transform: none;
+  }
+
+  a,
+  button,
+  input,
+  select,
+  textarea {
+    transition: none;
   }
 }

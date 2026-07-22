@@ -14,7 +14,8 @@ export function MarketsStatStrip({
       ? priced.reduce((sum, row) => sum + (row.price ?? 0), 0) / priced.length
       : null;
   const volume = quotes.reduce(
-    (sum, row) => sum + (row.live && row.weeklyOrders != null ? row.weeklyOrders : 0),
+    (sum, row) =>
+      sum + (row.live && row.weeklyOrders != null ? row.weeklyOrders : 0),
     0,
   );
 
@@ -43,10 +44,10 @@ export function MarketsStatStrip({
 
   return (
     <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      {cards.map((card) => (
+      {cards.map((card, index) => (
         <article
           key={card.label}
-          className="rounded-2xl border border-dash-border bg-dash-panel px-4 py-4 sm:px-5"
+          className={`dash-card dash-card-hover animate-rise px-4 py-4 sm:px-5 stagger-${index + 1}`}
         >
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
             {card.label}
@@ -54,7 +55,7 @@ export function MarketsStatStrip({
           <p className="mt-2 font-[family-name:var(--font-plex-mono)] text-2xl font-semibold tabular-nums tracking-tight text-dash-text sm:text-3xl">
             {card.value}
           </p>
-          <p className="mt-1 text-sm text-dash-muted">{card.note}</p>
+          <p className="mt-1.5 text-sm text-dash-muted">{card.note}</p>
         </article>
       ))}
     </section>

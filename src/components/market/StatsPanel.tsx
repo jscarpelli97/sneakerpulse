@@ -9,17 +9,17 @@ type StatRow = {
 
 function StatList({ title, rows }: { title: string; rows: StatRow[] }) {
   return (
-    <section className="border border-ink/10 bg-white">
-      <div className="border-b border-ink/10 px-4 py-3 md:px-5">
+    <section className="ui-card overflow-hidden">
+      <div className="border-b border-ink/8 px-4 py-3.5 md:px-5">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
           {title}
         </h2>
       </div>
-      <dl className="divide-y divide-ink/10">
+      <dl className="divide-y divide-ink/8">
         {rows.map((row) => (
           <div
             key={row.label}
-            className="flex items-start justify-between gap-4 px-4 py-3 text-sm md:px-5"
+            className="flex items-start justify-between gap-4 px-4 py-3 text-sm transition-colors hover:bg-paper/50 md:px-5"
           >
             <dt className="text-ink/50">
               {row.label}
@@ -29,7 +29,9 @@ function StatList({ title, rows }: { title: string; rows: StatRow[] }) {
                 </span>
               ) : null}
             </dt>
-            <dd className="text-right font-semibold text-ink">{row.value}</dd>
+            <dd className="text-right font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-ink">
+              {row.value}
+            </dd>
           </div>
         ))}
       </dl>

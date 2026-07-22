@@ -87,13 +87,13 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
 
   return (
     <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      {metrics.map((metric) => (
+      {metrics.map((metric, index) => (
         <article
           key={metric.label}
           title={metric.definition}
-          className="border border-ink/10 bg-white px-4 py-4 shadow-[0_1px_0_rgba(18,20,26,0.04)]"
+          className={`ui-card ui-card-hover animate-rise px-4 py-4 sm:px-5 stagger-${(index % 4) + 1}`}
         >
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink/40">
+          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-ink/40">
             {metric.label}
           </p>
           <p
@@ -104,7 +104,7 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
             {metric.value}
           </p>
           {metric.sub ? (
-            <p className={`mt-1 text-sm ${metric.tone ?? "text-ink-soft"}`}>
+            <p className={`mt-1.5 text-sm ${metric.tone ?? "text-ink-soft"}`}>
               {metric.sub}
             </p>
           ) : null}

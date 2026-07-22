@@ -20,7 +20,7 @@ export function SizeSelector({
   );
 
   return (
-    <section className="border border-ink/10 bg-white px-4 py-4 md:px-5">
+    <section className="ui-card px-4 py-4 md:px-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
@@ -33,7 +33,7 @@ export function SizeSelector({
         <label className="text-sm text-ink-soft">
           Size{" "}
           <select
-            className="ml-2 border border-ink/15 bg-paper px-3 py-2 text-ink outline-none"
+            className="ml-2 rounded-xl border border-ink/10 bg-paper px-3 py-2 text-ink outline-none hover:border-ink/20"
             value={selected}
             onChange={(event) => {
               const value = event.target.value;

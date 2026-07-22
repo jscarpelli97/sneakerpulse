@@ -66,8 +66,8 @@ export default async function SneakerMarketPage({
           ) : undefined
         }
       />
-      <main className="flex-1 bg-[linear-gradient(180deg,#eef1f4_0%,#e6eaef_45%,#eef1f4_100%)]">
-        <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 md:px-6 md:py-6">
+      <main className="page-shell flex-1">
+        <div className="mx-auto max-w-7xl space-y-5 px-4 py-5 md:space-y-6 md:px-6 md:py-7">
           {!result.ok ? (
             <SetupBanner
               code={result.code}

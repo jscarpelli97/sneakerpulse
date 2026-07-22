@@ -29,7 +29,7 @@ export function CompareClient({
         <label className="text-sm text-ink-soft">
           Sneaker A
           <select
-            className="mt-1 w-full border border-ink/15 bg-white px-3 py-2 text-ink"
+            className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20 focus:border-ink/30"
             value={a}
             onChange={(e) => setA(e.target.value)}
           >
@@ -43,7 +43,7 @@ export function CompareClient({
         <label className="text-sm text-ink-soft">
           Sneaker B
           <select
-            className="mt-1 w-full border border-ink/15 bg-white px-3 py-2 text-ink"
+            className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20 focus:border-ink/30"
             value={b}
             onChange={(e) => setB(e.target.value)}
           >
@@ -58,7 +58,7 @@ export function CompareClient({
           type="button"
           onClick={compare}
           disabled={loading || a === b}
-          className="self-end bg-ink px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-40"
+          className="self-end rounded-xl bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-[var(--shadow-sm)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {loading ? "Loading…" : "Compare"}
         </button>
@@ -67,8 +67,8 @@ export function CompareClient({
       {error ? <p className="text-sm text-down">{error}</p> : null}
 
       {rows.length > 0 ? (
-        <section className="border border-ink/10 bg-white">
-          <div className="grid grid-cols-3 border-b border-ink/10 text-sm font-semibold">
+        <section className="overflow-hidden rounded-xl border border-ink/8">
+          <div className="grid grid-cols-3 border-b border-ink/8 bg-paper/60 text-sm font-semibold">
             <div className="px-4 py-3 text-ink/45">Metric</div>
             <div className="px-4 py-3">
               <Link href={`/sneakers/${a}`} className="hover:underline">
@@ -84,11 +84,15 @@ export function CompareClient({
           {rows.map((row) => (
             <div
               key={row.label}
-              className="grid grid-cols-3 border-b border-ink/10 text-sm last:border-b-0"
+              className="grid grid-cols-3 border-b border-ink/8 text-sm last:border-b-0 hover:bg-paper/40"
             >
               <div className="px-4 py-3 text-ink/50">{row.label}</div>
-              <div className="px-4 py-3 font-semibold text-ink">{row.left}</div>
-              <div className="px-4 py-3 font-semibold text-ink">{row.right}</div>
+              <div className="px-4 py-3 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-ink">
+                {row.left}
+              </div>
+              <div className="px-4 py-3 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-ink">
+                {row.right}
+              </div>
             </div>
           ))}
         </section>

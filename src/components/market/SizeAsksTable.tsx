@@ -4,7 +4,7 @@ import { formatMaybeMoney, formatNumber } from "@/utils/format";
 export function SizeAsksTable({ sizes }: { sizes: SizeAsk[] }) {
   if (sizes.length === 0) {
     return (
-      <section className="border border-ink/10 bg-white px-4 py-5 md:px-5">
+      <section className="ui-card px-4 py-5 md:px-5">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
           Size asks
         </h2>
@@ -14,8 +14,8 @@ export function SizeAsksTable({ sizes }: { sizes: SizeAsk[] }) {
   }
 
   return (
-    <section className="border border-ink/10 bg-white">
-      <div className="border-b border-ink/10 px-4 py-3 md:px-5">
+    <section className="ui-card">
+      <div className="border-b border-ink/8 px-4 py-3 md:px-5">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
           Size asks
         </h2>
@@ -25,7 +25,7 @@ export function SizeAsksTable({ sizes }: { sizes: SizeAsk[] }) {
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-ink/10 bg-paper/60 text-[11px] uppercase tracking-[0.12em] text-ink/45">
+          <thead className="border-b border-ink/8 bg-paper/60 text-[11px] uppercase tracking-[0.12em] text-ink/45">
             <tr>
               <th className="px-4 py-3 font-semibold md:px-5">Size</th>
               <th className="px-4 py-3 font-semibold md:px-5">Lowest ask</th>
@@ -35,9 +35,9 @@ export function SizeAsksTable({ sizes }: { sizes: SizeAsk[] }) {
               <th className="px-4 py-3 font-semibold md:px-5">Sales 60d</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink/10">
+          <tbody className="divide-y divide-ink/8">
             {sizes.map((row) => (
-              <tr key={`${row.sizeType}-${row.size}`} className="hover:bg-paper/40">
+              <tr key={`${row.sizeType}-${row.size}`} className="transition-colors hover:bg-paper/60">
                 <td className="px-4 py-3 font-semibold text-ink md:px-5">
                   {row.size}
                   <span className="ml-2 text-xs font-medium uppercase text-ink/35">

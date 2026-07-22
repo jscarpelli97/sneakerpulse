@@ -30,7 +30,7 @@ export default async function MarketsIndexPage() {
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
       <SiteHeader subtitle={statusLabel} variant="dashboard" />
       <main className="flex-1">
-        <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
+        <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
           <MarketsHero
             featured={featured}
             liveCount={liveCount}

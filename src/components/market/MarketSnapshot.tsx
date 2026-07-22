@@ -108,7 +108,7 @@ export function MarketSnapshot({ market }: { market: SneakerMarket }) {
   const right = rows.slice(5);
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-dash-border bg-dash-panel text-dash-text shadow-[0_1px_0_rgba(0,0,0,0.25)]">
+    <section className="dash-card animate-rise overflow-hidden text-dash-text">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b border-dash-border px-4 py-3 sm:px-5">
         <div>
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-faint">
