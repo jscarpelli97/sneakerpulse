@@ -181,6 +181,15 @@ Open [http://localhost:3000](http://localhost:3000).
 
 To put the site on the public internet, see **[DEPLOY.md](DEPLOY.md)**.
 
+## Install as an app (PWA)
+
+SneakerPulse is installable from the browser:
+
+- **Android / Chrome / Edge:** use the Install banner, or menu → **Install app**
+- **iPhone / iPad (Safari):** Share → **Add to Home Screen**
+
+Manifest: `/manifest.webmanifest` · service worker: `/sw.js` · icons under `/icons/`.
+
 ## Scripts
 
 - `npm run dev` — start the development server

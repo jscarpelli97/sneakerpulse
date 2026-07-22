@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Instrument_Sans, Syne } from "next/font/google";
+import { PwaRegister } from "@/components/layout/PwaRegister";
 import "./globals.css";
 
 const instrument = Instrument_Sans({
@@ -24,6 +25,22 @@ export const metadata: Metadata = {
   title: "SneakerPulse — StockX market views",
   description:
     "Live StockX-style market views for the top 500 selling sneakers: price, change, volume, chart, and size asks.",
+  applicationName: "SneakerPulse",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "SneakerPulse",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+  },
   openGraph: {
     title: "SneakerPulse — StockX market views",
     description:
@@ -31,6 +48,14 @@ export const metadata: Metadata = {
     siteName: "SneakerPulse",
     type: "website",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0b0f17",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -45,6 +70,7 @@ export default function RootLayout({
     >
       <body className="dashboard flex min-h-full flex-col bg-dash-bg text-dash-text">
         {children}
+        <PwaRegister />
       </body>
     </html>
   );
