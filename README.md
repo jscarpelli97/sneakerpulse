@@ -16,17 +16,13 @@ Do not reintroduce the old light ink/paper theme unless asked.
 
 ## SneakerPulse Index (SPI)
 
-Homepage market pulse inspired by Chrono24’s ChronoPulse — **whole StockX market**, not a single brand:
+Homepage market pulse inspired by Chrono24’s ChronoPulse — same three rules:
 
-- **Long history → present (one chart):** chained Laspeyres on rotating top-200 colorways, merged into a **single continuous SPI series**
-  - **Apr 2012 → Jul 2020:** embSneakers whole-catalog StockX transactions (~13M trades / ~12k products), monthly LOCF daily — `stockx-whole-market-2012-2020.json`
-  - **Aug → early Nov 2020:** level held (no public daily feed)
-  - **Nov 2020 → Dec 2021:** Flurin17 daily StockX snapshots (~4k products, lowest ask) — merged into `stockx-whole-market-2012-2021.json`
-  - **Jan 2022 public-data gap → live window:** last known level is carried forward, then live top-seller day-over-day returns continue the same index through today
-  - **Daily extension:** `npm run snapshot` appends real Laspeyres points to `spi-daily-extension.json` (takes over as the chain grows)
-- **Range buttons** only zoom that one series (ALL / 1Y / 3M / …)
-- **Gap note:** there is still no free public whole-market daily tape for most of 2022–mid‑2025; that stretch is a level bridge, not invented trade prints.
-Rebuild / extend:
+1. **How are brands and models selected?** Up to **14 bestselling StockX sneaker brands** from the current top-seller pool; each brand contributes up to **10** bestselling / most important models (`src/data/index/spi-chrono-basket.json`).
+2. **How is the index calculated?** Volume-weighted **Laspeyres** on those models (weekly StockX order flow as the volume weight).
+3. **How often is it updated?** **Daily** prices via `npm run snapshot`. Brand/model selection and weights **rebalance every six months** (adds/removes recorded on the basket).
+
+Long chart history still stitches embSneakers (2012–2020) + Flurin17 (2020–2021) and bridges through today so ALL reaches the present.Rebuild / extend:
 
 ```bash
 # embSneakers Dropbox dump (bit.ly/3DvnC6p) → 2012–2020 segment

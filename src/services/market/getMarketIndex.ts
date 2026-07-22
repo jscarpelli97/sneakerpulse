@@ -1,10 +1,20 @@
 import historicalIndex from "@/data/index/stockx-whole-market-2012-2021.json";
 import extensionIndex from "@/data/index/spi-daily-extension.json";
+import savedBasket from "@/data/index/spi-chrono-basket.json";
 import {
   fetchTopStockxSneakers,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
+import {
+  SPI_BRAND_COUNT,
+  SPI_MODELS_PER_BRAND,
+  basketNeedsRebalance,
+  filterProductsToBasket,
+  selectChronoBasket,
+  type SpiChronoBasket,
+} from "@/lib/index/selectChronoBasket";
 import { TOP_SELLERS_LIMIT } from "@/services/catalog/mapProductToCatalog";
+import type { KicksProduct } from "@/types/kicksdb";
 import type { ChartPoint, MarketIndex } from "@/types/market";
 import {
   buildBootstrapSeries,
@@ -250,6 +260,26 @@ export function buildContinuousSeries(
   return continuous;
 }
 
+function loadSavedBasket(): SpiChronoBasket | null {
+  const file = savedBasket as SpiChronoBasket;
+  if (!file?.members?.length) return null;
+  return file;
+}
+
+function resolveBasket(
+  products: KicksProduct[],
+  previous: SpiChronoBasket | null,
+): SpiChronoBasket {
+  if (previous && !basketNeedsRebalance(previous)) {
+    return previous;
+  }
+  return selectChronoBasket(products, {
+    brandCount: SPI_BRAND_COUNT,
+    modelsPerBrand: SPI_MODELS_PER_BRAND,
+    previous,
+  });
+}
+
 function peakOf(series: ChartPoint[]) {
   if (!series.length)
     return { level: null as number | null, date: null as string | null };
@@ -263,6 +293,7 @@ function peakOf(series: ChartPoint[]) {
 async function buildLiveSeries(limit: number): Promise<{
   series: ChartPoint[];
   constituents: number;
+  basket: SpiChronoBasket;
 } | null> {
   const apiKey = getKicksApiKey();
   if (!apiKey) return null;
@@ -270,7 +301,12 @@ async function buildLiveSeries(limit: number): Promise<{
   const res = await fetchTopStockxSneakers(apiKey, limit);
   if (!res.ok || !res.data.data?.length) return null;
 
-  const members = res.data.data
+  const previous = loadSavedBasket();
+  const basket = resolveBasket(res.data.data, previous);
+  const basketProducts = filterProductsToBasket(res.data.data, basket);
+  const pool = basketProducts.length ? basketProducts : res.data.data;
+
+  const members = pool
     .map((product, index) => {
       const livePrice = product.min_price ?? product.avg_price ?? null;
       if (livePrice == null || !(livePrice > 0)) return null;
@@ -311,14 +347,25 @@ async function buildLiveSeries(limit: number): Promise<{
 
   const series = buildLaspeyresIndex(members, { baseLevel: INDEX_BASE });
   if (series.length < 2) return null;
-  return { series, constituents: members.length };
+  return { series, constituents: members.length, basket };
+}
+
+function howItWorksFaq(basket: SpiChronoBasket | null): MarketIndex["howItWorks"] {
+  const brands = basket?.brandCount ?? SPI_BRAND_COUNT;
+  const models = basket?.modelsPerBrand ?? SPI_MODELS_PER_BRAND;
+  const count = basket?.members.length ?? brands * models;
+  return {
+    selection: `The SneakerPulse Index is based on data from the StockX sneaker market’s ${brands} bestselling brands in the current top-seller pool. Each brand’s top ${models} bestselling and most important models are used for the index (up to ${brands * models} colorways; ${count} in the active basket).`,
+    calculation: `SPI tracks the asking prices of those ${count} sneaker models. Each shoe is included in proportion to its overall transaction volume (weekly StockX order flow). The index uses the Laspeyres model to measure changes in price levels — the same approach ChronoPulse uses for watches.`,
+    updates: `Prices in the index update daily. Brand and model selection/weights rebalance every six months${basket?.nextRebalanceAt ? ` (next: ${basket.nextRebalanceAt})` : ""}. Adds and removals are recorded when the basket rolls.`,
+  };
 }
 
 /**
  * ChronoPulse-style whole-market index:
  * - Long history: embSneakers 2012–2020 + Flurin17 daily 2020–2021
  * - Bridge through today (LOCF) so ALL always reaches the present
- * - Live window + daily extension overlay on that continuous axis
+ * - Live window: volume-weighted Laspeyres on ChronoPulse-style brand×model basket
  */
 export async function getMarketIndex(
   limit = TOP_SELLERS_LIMIT,
@@ -327,6 +374,7 @@ export async function getMarketIndex(
   const extension = loadExtensionSeries();
   const live = await buildLiveSeries(limit);
   const asOf = todayUtc();
+  const basket = live?.basket ?? loadSavedBasket();
 
   if (!historical && !live && extension.length < 1) return null;
 
@@ -353,6 +401,7 @@ export async function getMarketIndex(
   const productsCovered = historical?.meta.productsCovered;
   const citation =
     historical?.meta.citations?.[0] ?? historical?.meta.citation ?? null;
+  const howItWorks = howItWorksFaq(basket);
 
   return {
     name: "SneakerPulse Index",
@@ -375,8 +424,13 @@ export async function getMarketIndex(
     series: continuous,
     liveSeries: liveWindow.length >= 2 ? liveWindow : continuous.slice(-90),
     historicalSeries: continuous,
-    constituents: live?.constituents ?? historical?.meta.constituents ?? 0,
+    constituents: live?.constituents ?? basket?.members.length ?? 0,
     historicalConstituents: historical?.meta.constituents ?? null,
+    brandCount: basket?.brandCount ?? null,
+    modelsPerBrand: basket?.modelsPerBrand ?? null,
+    brands: basket?.brands ?? [],
+    rebalancedAt: basket?.rebalancedAt ?? null,
+    nextRebalanceAt: basket?.nextRebalanceAt ?? null,
     historySource:
       historical && live
         ? "hybrid"
@@ -384,8 +438,9 @@ export async function getMarketIndex(
           ? "whole_market"
           : "bootstrap",
     methodology: historical
-      ? `One continuous ChronoPulse-style SPI from ${continuous[0].date} through ${continuous.at(-1)!.date}. Apr 2012–Jul 2020: embSneakers rotating top ${historical.meta.constituents} (${productsCovered?.toLocaleString?.() ?? productsCovered ?? "11k+"} products). Nov 2020–Dec 2021: Flurin17 daily top-200. Missing public daily tape after Dec 2021 is bridged at the last known level through today; live top-seller returns and daily snapshots overlay the recent window.`
-      : "Volume-weighted Laspeyres basket of the current top StockX sellers. Shoes rotate with live sales rank.",
+      ? `${howItWorks.calculation} Long history (${continuous[0].date}→${continuous.at(-1)!.date}) stitches embSneakers (2012–2020, top ${historical.meta.constituents} of ${productsCovered?.toLocaleString?.() ?? productsCovered ?? "11k+"} products) and Flurin17 (2020–2021), then bridges to the live ChronoPulse basket.`
+      : howItWorks.calculation,
+    howItWorks,
     citation,
     fetchedAt: new Date().toISOString(),
   };

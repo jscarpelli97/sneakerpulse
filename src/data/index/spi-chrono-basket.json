@@ -1,0 +1,489 @@
+{
+  "id": "spi-chronopulse-basket",
+  "name": "SneakerPulse ChronoPulse basket",
+  "methodology": "chronopulse_laspeyres",
+  "brandCount": 12,
+  "modelsPerBrand": 10,
+  "rebalancedAt": "2026-07-22",
+  "nextRebalanceAt": "2027-01-22",
+  "members": [
+    {
+      "slug": "air-jordan-4-retro-toro-bravo-2026",
+      "brand": "Jordan",
+      "name": "Jordan 4 Retro Toro Bravo (2026)",
+      "weight": 22436,
+      "rank": 2
+    },
+    {
+      "slug": "air-jordan-4-retro-og-nigel-sylvester-brick-after-brick",
+      "brand": "Jordan",
+      "name": "Jordan 4 Retro OG Nigel Sylvester Brick After Brick",
+      "weight": 14553,
+      "rank": 3
+    },
+    {
+      "slug": "air-jordan-1-retro-low-og-sp-travis-scott-sail-tropical-pink",
+      "brand": "Jordan",
+      "name": "Jordan 1 Retro Low OG SP Travis Scott Sail Tropical Pink",
+      "weight": 12839,
+      "rank": 4
+    },
+    {
+      "slug": "air-jordan-1-retro-low-og-sp-travis-scott-shy-pink",
+      "brand": "Jordan",
+      "name": "Jordan 1 Retro Low OG SP Travis Scott Shy Pink",
+      "weight": 11861,
+      "rank": 5
+    },
+    {
+      "slug": "air-jordan-5-retro-white-metallic-2026",
+      "brand": "Jordan",
+      "name": "Jordan 5 Retro White Metallic (2026)",
+      "weight": 8959,
+      "rank": 9
+    },
+    {
+      "slug": "air-jordan-5-retro-black-university-blue-2026",
+      "brand": "Jordan",
+      "name": "Jordan 5 Retro Black University Blue (2026)",
+      "weight": 8936,
+      "rank": 10
+    },
+    {
+      "slug": "air-jordan-12-retro-bloodline",
+      "brand": "Jordan",
+      "name": "Jordan 12 Retro Bloodline",
+      "weight": 8687,
+      "rank": 11
+    },
+    {
+      "slug": "air-jordan-11-retro-gamma-blue-2025",
+      "brand": "Jordan",
+      "name": "Jordan 11 Retro Gamma Blue (2025)",
+      "weight": 8333,
+      "rank": 13
+    },
+    {
+      "slug": "air-jordan-5-retro-wolf-grey-2026",
+      "brand": "Jordan",
+      "name": "Jordan 5 Retro Wolf Grey (2026)",
+      "weight": 7600,
+      "rank": 14
+    },
+    {
+      "slug": "air-jordan-3-retro-worlds-best-dad",
+      "brand": "Jordan",
+      "name": "Jordan 3 Retro World's Best Dad",
+      "weight": 5966,
+      "rank": 16
+    },
+    {
+      "slug": "yzy-ys-01-black",
+      "brand": "Yeezy",
+      "name": "YZY YS-01 Black",
+      "weight": 94015,
+      "rank": 1
+    },
+    {
+      "slug": "yzy-ys-01-silver-green",
+      "brand": "Yeezy",
+      "name": "YZY YS-01 Cream",
+      "weight": 10677,
+      "rank": 7
+    },
+    {
+      "slug": "yzy-ys-01-fudge",
+      "brand": "Yeezy",
+      "name": "YZY YS-01 Fudge",
+      "weight": 2581,
+      "rank": 64
+    },
+    {
+      "slug": "nike-air-force-1-low-white-07",
+      "brand": "Nike",
+      "name": "Nike Air Force 1 Low '07 White",
+      "weight": 9019,
+      "rank": 8
+    },
+    {
+      "slug": "nike-mind-001-slide-black-chrome",
+      "brand": "Nike",
+      "name": "Nike Mind 001 Slide Black Chrome",
+      "weight": 5622,
+      "rank": 19
+    },
+    {
+      "slug": "nike-air-max-95-og-big-bubble-pink-foam-womens",
+      "brand": "Nike",
+      "name": "Nike Air Max 95 OG Big Bubble Pink Foam (Women's)",
+      "weight": 4449,
+      "rank": 35
+    },
+    {
+      "slug": "nike-air-force-1-low-supreme-box-logo-black",
+      "brand": "Nike",
+      "name": "Nike Air Force 1 Low Supreme Black",
+      "weight": 4448,
+      "rank": 36
+    },
+    {
+      "slug": "nike-air-force-1-low-supreme-box-logo-white",
+      "brand": "Nike",
+      "name": "Nike Air Force 1 Low Supreme White",
+      "weight": 4242,
+      "rank": 41
+    },
+    {
+      "slug": "nike-air-max-95-og-big-bubble-neon-2025",
+      "brand": "Nike",
+      "name": "Nike Air Max 95 OG Big Bubble Neon (2025/2026)",
+      "weight": 4146,
+      "rank": 44
+    },
+    {
+      "slug": "nike-mind-001-slide-light-smoke-grey",
+      "brand": "Nike",
+      "name": "Nike Mind 001 Slide Light Smoke Grey",
+      "weight": 3280,
+      "rank": 51
+    },
+    {
+      "slug": "nike-mind-001-slide-team-red-university-red",
+      "brand": "Nike",
+      "name": "Nike Mind 001 Slide Team Red University Red",
+      "weight": 3022,
+      "rank": 55
+    },
+    {
+      "slug": "nike-p-6000-metallic-silver",
+      "brand": "Nike",
+      "name": "Nike P-6000 Metallic Silver",
+      "weight": 2744,
+      "rank": 60
+    },
+    {
+      "slug": "nike-air-vapormax-plus-triple-black",
+      "brand": "Nike",
+      "name": "Nike Air VaporMax Plus Triple Black",
+      "weight": 2661,
+      "rank": 63
+    },
+    {
+      "slug": "asics-gel-1130-black-pure-silver",
+      "brand": "ASICS",
+      "name": "ASICS Gel-1130 Black Pure Silver",
+      "weight": 8342,
+      "rank": 12
+    },
+    {
+      "slug": "asics-gel-1130-white-pure-silver",
+      "brand": "ASICS",
+      "name": "ASICS Gel-1130 White Pure Silver",
+      "weight": 5596,
+      "rank": 21
+    },
+    {
+      "slug": "onitsuka-tiger-mexico-66-kill-bill-2022",
+      "brand": "ASICS",
+      "name": "Onitsuka Tiger Mexico 66 Kill Bill",
+      "weight": 3756,
+      "rank": 46
+    },
+    {
+      "slug": "asics-gel-kayano-14-white-graphite-grey",
+      "brand": "ASICS",
+      "name": "ASICS Gel-Kayano 14 White Graphite Grey",
+      "weight": 3564,
+      "rank": 47
+    },
+    {
+      "slug": "asics-gel-nyc-graphite-grey-black",
+      "brand": "ASICS",
+      "name": "ASICS Gel-NYC Graphite Grey Black",
+      "weight": 2518,
+      "rank": 65
+    },
+    {
+      "slug": "asics-gel-1130-white-clay-canyon",
+      "brand": "ASICS",
+      "name": "ASICS Gel-1130 White Clay Canyon",
+      "weight": 1858,
+      "rank": 93
+    },
+    {
+      "slug": "asics-gel-1130-white-cloud-grey",
+      "brand": "ASICS",
+      "name": "ASICS Gel-1130 White Cloud Grey",
+      "weight": 1766,
+      "rank": 103
+    },
+    {
+      "slug": "asics-gel-kayano-14-black-pure-silver",
+      "brand": "ASICS",
+      "name": "ASICS Gel-Kayano 14 Black Pure Silver",
+      "weight": 1731,
+      "rank": 109
+    },
+    {
+      "slug": "mihara-yasuhiro-hank-og-sole-canvas-low-black",
+      "brand": "Maison Mihara Yasuhiro",
+      "name": "Maison Mihara Yasuhiro Hank OG Sole Canvas Low Black",
+      "weight": 11013,
+      "rank": 6
+    },
+    {
+      "slug": "mihara-yasuhiro-peterson-og-sole-canvas-low-black",
+      "brand": "Maison Mihara Yasuhiro",
+      "name": "Maison Mihara Yasuhiro Peterson OG Sole Canvas Low Black",
+      "weight": 5398,
+      "rank": 24
+    },
+    {
+      "slug": "new-balance-9060-triple-black",
+      "brand": "New Balance",
+      "name": "New Balance 9060 Triple Black",
+      "weight": 5408,
+      "rank": 23
+    },
+    {
+      "slug": "new-balance-530-silver-metallic-polka-dots",
+      "brand": "New Balance",
+      "name": "New Balance 530 Silver Metallic Polka Dots",
+      "weight": 4664,
+      "rank": 33
+    },
+    {
+      "slug": "new-balance-m2002-protection-pack-rain-cloud",
+      "brand": "New Balance",
+      "name": "New Balance 2002R Protection Pack Rain Cloud",
+      "weight": 2689,
+      "rank": 61
+    },
+    {
+      "slug": "new-balance-9060-black-castlerock-grey",
+      "brand": "New Balance",
+      "name": "New Balance 9060 Black Castlerock Grey",
+      "weight": 1804,
+      "rank": 97
+    },
+    {
+      "slug": "new-balance-m2002-protection-pack-phantom",
+      "brand": "New Balance",
+      "name": "New Balance 2002R Protection Pack Phantom",
+      "weight": 1734,
+      "rank": 107
+    },
+    {
+      "slug": "adidas-samba-og-cloud-white-core-black",
+      "brand": "adidas",
+      "name": "adidas Samba OG Cloud White Core Black",
+      "weight": 3046,
+      "rank": 54
+    },
+    {
+      "slug": "adidas-ballerina-bad-bunny-flamboyan",
+      "brand": "adidas",
+      "name": "adidas Ballerina Bad Bunny Flamboyan",
+      "weight": 2668,
+      "rank": 62
+    },
+    {
+      "slug": "adidas-samba-og-preloved-red-leopard-womens",
+      "brand": "adidas",
+      "name": "adidas Samba OG Preloved Red Leopard (Women's)",
+      "weight": 2097,
+      "rank": 79
+    },
+    {
+      "slug": "adidas-yeezy-foam-rnnr-onyx",
+      "brand": "adidas",
+      "name": "adidas Yeezy Foam RNR Onyx",
+      "weight": 1933,
+      "rank": 89
+    },
+    {
+      "slug": "adidas-yeezy-boost-350-v2-onyx",
+      "brand": "adidas",
+      "name": "adidas Yeezy Boost 350 V2 Onyx",
+      "weight": 1871,
+      "rank": 91
+    },
+    {
+      "slug": "adidas-yeezy-slide-black-onyx",
+      "brand": "adidas",
+      "name": "adidas Yeezy Slide Onyx",
+      "weight": 1772,
+      "rank": 101
+    },
+    {
+      "slug": "adidas-yeezy-boost-350-v2-bone",
+      "brand": "adidas",
+      "name": "adidas Yeezy Boost 350 V2 Bone",
+      "weight": 1735,
+      "rank": 106
+    },
+    {
+      "slug": "vans-lx-old-skool-36-pearlized-pack-vintage-cocoa-brown",
+      "brand": "Vans",
+      "name": "Vans LX Old Skool 36 Pearlized Pack Vintage Cocoa Brown",
+      "weight": 4291,
+      "rank": 40
+    },
+    {
+      "slug": "vans-lx-old-skool-36-pearlized-pack-black-navy",
+      "brand": "Vans",
+      "name": "Vans LX Old Skool 36 Pearlized Pack Black Navy",
+      "weight": 2027,
+      "rank": 84
+    },
+    {
+      "slug": "timberland-6-inch-premium-waterproof-wheat",
+      "brand": "Timberland",
+      "name": "Timberland 6\" Premium Waterproof Boot Wheat",
+      "weight": 5221,
+      "rank": 26
+    },
+    {
+      "slug": "bravest-studios-bear-claw-mule-black",
+      "brand": "Bravest Studios",
+      "name": "Bravest Studios Bear Claw Mule Black",
+      "weight": 5178,
+      "rank": 28
+    },
+    {
+      "slug": "birkenstock-boston-soft-footbed-suede-taupe",
+      "brand": "Birkenstock",
+      "name": "Birkenstock Boston Soft Footbed Suede Taupe",
+      "weight": 4435,
+      "rank": 37
+    },
+    {
+      "slug": "crocs-classic-clog-lightning-mcqueen",
+      "brand": "Crocs",
+      "name": "Crocs Classic Clog Lightning McQueen",
+      "weight": 4303,
+      "rank": 39
+    }
+  ],
+  "brands": [
+    {
+      "brand": "Jordan",
+      "models": 10,
+      "weight": 110170
+    },
+    {
+      "brand": "Yeezy",
+      "models": 3,
+      "weight": 107273
+    },
+    {
+      "brand": "Nike",
+      "models": 10,
+      "weight": 43633
+    },
+    {
+      "brand": "ASICS",
+      "models": 8,
+      "weight": 29131
+    },
+    {
+      "brand": "Maison Mihara Yasuhiro",
+      "models": 2,
+      "weight": 16411
+    },
+    {
+      "brand": "New Balance",
+      "models": 5,
+      "weight": 16299
+    },
+    {
+      "brand": "adidas",
+      "models": 7,
+      "weight": 15122
+    },
+    {
+      "brand": "Vans",
+      "models": 2,
+      "weight": 6318
+    },
+    {
+      "brand": "Timberland",
+      "models": 1,
+      "weight": 5221
+    },
+    {
+      "brand": "Bravest Studios",
+      "models": 1,
+      "weight": 5178
+    },
+    {
+      "brand": "Birkenstock",
+      "models": 1,
+      "weight": 4435
+    },
+    {
+      "brand": "Crocs",
+      "models": 1,
+      "weight": 4303
+    }
+  ],
+  "changes": [
+    {
+      "date": "2026-07-22",
+      "added": [
+        "air-jordan-4-retro-toro-bravo-2026",
+        "air-jordan-4-retro-og-nigel-sylvester-brick-after-brick",
+        "air-jordan-1-retro-low-og-sp-travis-scott-sail-tropical-pink",
+        "air-jordan-1-retro-low-og-sp-travis-scott-shy-pink",
+        "air-jordan-5-retro-white-metallic-2026",
+        "air-jordan-5-retro-black-university-blue-2026",
+        "air-jordan-12-retro-bloodline",
+        "air-jordan-11-retro-gamma-blue-2025",
+        "air-jordan-5-retro-wolf-grey-2026",
+        "air-jordan-3-retro-worlds-best-dad",
+        "yzy-ys-01-black",
+        "yzy-ys-01-silver-green",
+        "yzy-ys-01-fudge",
+        "nike-air-force-1-low-white-07",
+        "nike-mind-001-slide-black-chrome",
+        "nike-air-max-95-og-big-bubble-pink-foam-womens",
+        "nike-air-force-1-low-supreme-box-logo-black",
+        "nike-air-force-1-low-supreme-box-logo-white",
+        "nike-air-max-95-og-big-bubble-neon-2025",
+        "nike-mind-001-slide-light-smoke-grey",
+        "nike-mind-001-slide-team-red-university-red",
+        "nike-p-6000-metallic-silver",
+        "nike-air-vapormax-plus-triple-black",
+        "asics-gel-1130-black-pure-silver",
+        "asics-gel-1130-white-pure-silver",
+        "onitsuka-tiger-mexico-66-kill-bill-2022",
+        "asics-gel-kayano-14-white-graphite-grey",
+        "asics-gel-nyc-graphite-grey-black",
+        "asics-gel-1130-white-clay-canyon",
+        "asics-gel-1130-white-cloud-grey",
+        "asics-gel-kayano-14-black-pure-silver",
+        "mihara-yasuhiro-hank-og-sole-canvas-low-black",
+        "mihara-yasuhiro-peterson-og-sole-canvas-low-black",
+        "new-balance-9060-triple-black",
+        "new-balance-530-silver-metallic-polka-dots",
+        "new-balance-m2002-protection-pack-rain-cloud",
+        "new-balance-9060-black-castlerock-grey",
+        "new-balance-m2002-protection-pack-phantom",
+        "adidas-samba-og-cloud-white-core-black",
+        "adidas-ballerina-bad-bunny-flamboyan",
+        "adidas-samba-og-preloved-red-leopard-womens",
+        "adidas-yeezy-foam-rnnr-onyx",
+        "adidas-yeezy-boost-350-v2-onyx",
+        "adidas-yeezy-slide-black-onyx",
+        "adidas-yeezy-boost-350-v2-bone",
+        "vans-lx-old-skool-36-pearlized-pack-vintage-cocoa-brown",
+        "vans-lx-old-skool-36-pearlized-pack-black-navy",
+        "timberland-6-inch-premium-waterproof-wheat",
+        "bravest-studios-bear-claw-mule-black",
+        "birkenstock-boston-soft-footbed-suede-taupe",
+        "crocs-classic-clog-lightning-mcqueen"
+      ],
+      "removed": []
+    }
+  ]
+}

@@ -77,9 +77,11 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             {index.name}
           </h2>
           <p className="mt-1 max-w-3xl text-sm text-dash-muted">
-            Continuous ChronoPulse-style StockX market pulse — one series from
-            2012 through today. Rotating basket across the whole catalog,
-            indexed to {formatIndexLevel(index.baseLevel)} in Apr 2012.
+            ChronoPulse-style StockX sneaker index — top{" "}
+            {index.brandCount ?? "—"} brands × up to{" "}
+            {index.modelsPerBrand ?? "—"} models, volume-weighted Laspeyres,
+            daily updates. Continuous history from 2012 through today, indexed
+            to {formatIndexLevel(index.baseLevel)}.
           </p>
         </div>
         <div className="text-right">
@@ -219,6 +221,58 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             </>
           ) : null}
         </p>
+      </div>
+
+      <div className="border-t border-dash-border px-4 py-5 sm:px-5">
+        <h3 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text">
+          How does the index work?
+        </h3>
+        <div className="mt-4 space-y-4">
+          <div>
+            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-dash-faint">
+              How are the brands and models selected?
+            </p>
+            <p className="mt-1.5 text-sm leading-relaxed text-dash-muted">
+              {index.howItWorks.selection}
+            </p>
+          </div>
+          <div>
+            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-dash-faint">
+              How is the sneaker index calculated?
+            </p>
+            <p className="mt-1.5 text-sm leading-relaxed text-dash-muted">
+              {index.howItWorks.calculation}
+            </p>
+          </div>
+          <div>
+            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-dash-faint">
+              How often is the index updated?
+            </p>
+            <p className="mt-1.5 text-sm leading-relaxed text-dash-muted">
+              {index.howItWorks.updates}
+            </p>
+          </div>
+        </div>
+        {index.brands.length > 0 ? (
+          <div className="mt-5">
+            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-dash-faint">
+              Active basket · {formatNumber(index.constituents)} models ·{" "}
+              {index.brandCount ?? index.brands.length} brands
+              {index.rebalancedAt ? ` · rebalanced ${index.rebalancedAt}` : ""}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {index.brands.map((row) => (
+                <span
+                  key={row.brand}
+                  className="rounded-lg border border-dash-border bg-dash-elevated/60 px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.08em] text-dash-muted"
+                >
+                  {row.brand}
+                  <span className="text-dash-faint"> · {row.models}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );

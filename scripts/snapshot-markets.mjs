@@ -45,6 +45,8 @@ async function fetchTopSellers() {
     limit: String(TOP_SELLERS_LIMIT),
     sort: "rank",
     filters: 'product_type="sneakers"',
+    "display[traits]": "true",
+    "display[statistics]": "true",
   });
   const res = await fetch(`${BASE}/stockx/products?${query}`, {
     headers: {
@@ -104,7 +106,107 @@ async function upsertSnapshot(product) {
   );
 }
 
-function memberWeight(product, index) {
+const SPI_BRAND_COUNT = 14;
+const SPI_MODELS_PER_BRAND = 10;
+const SPI_REBALANCE_MONTHS = 6;
+
+function addMonths(isoDay, months) {
+  const [y, m, d] = isoDay.slice(0, 10).split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1 + months, d)).toISOString().slice(0, 10);
+}
+
+function selectChronoBasket(products, previous, rebalancedAt) {
+  const byBrand = new Map();
+  for (const product of products) {
+    if (!product.slug) continue;
+    const brand = (product.brand || "Unknown").trim() || "Unknown";
+    if (!byBrand.has(brand)) byBrand.set(brand, []);
+    byBrand.get(brand).push(product);
+  }
+  const brandTotals = [...byBrand.entries()]
+    .map(([brand, items]) => ({
+      brand,
+      items: items
+        .slice()
+        .sort(
+          (a, b) =>
+            (b.weekly_orders || 0) - (a.weekly_orders || 0) ||
+            (a.rank ?? 999) - (b.rank ?? 999),
+        ),
+      weight: items.reduce((sum, item) => sum + (item.weekly_orders || 0), 0),
+    }))
+    .sort((a, b) => b.weight - a.weight || a.brand.localeCompare(b.brand))
+    .slice(0, SPI_BRAND_COUNT);
+
+  const members = [];
+  const brands = [];
+  for (const row of brandTotals) {
+    const picked = row.items.slice(0, SPI_MODELS_PER_BRAND);
+    let brandWeight = 0;
+    for (const product of picked) {
+      const weight = Math.max(1, product.weekly_orders || 0);
+      brandWeight += weight;
+      members.push({
+        slug: product.slug,
+        brand: row.brand,
+        name: product.title || product.slug,
+        weight,
+        rank: product.rank ?? null,
+      });
+    }
+    brands.push({ brand: row.brand, models: picked.length, weight: brandWeight });
+  }
+
+  const prevSlugs = new Set((previous?.members ?? []).map((m) => m.slug));
+  const nextSlugs = new Set(members.map((m) => m.slug));
+  const added = members.map((m) => m.slug).filter((s) => !prevSlugs.has(s));
+  const removed = [...prevSlugs].filter((s) => !nextSlugs.has(s));
+  const prevChanges = previous?.changes ?? [];
+  const changes =
+    previous && (added.length || removed.length)
+      ? [...prevChanges, { date: rebalancedAt, added, removed }].slice(-12)
+      : prevChanges;
+
+  return {
+    id: "spi-chronopulse-basket",
+    name: "SneakerPulse ChronoPulse basket",
+    methodology: "chronopulse_laspeyres",
+    brandCount: brands.length,
+    modelsPerBrand: SPI_MODELS_PER_BRAND,
+    rebalancedAt,
+    nextRebalanceAt: addMonths(rebalancedAt, SPI_REBALANCE_MONTHS),
+    members,
+    brands,
+    changes,
+  };
+}
+
+async function loadOrRebalanceBasket(products, today) {
+  const basketPath = path.join(ROOT, "src/data/index/spi-chrono-basket.json");
+  let previous = null;
+  try {
+    previous = JSON.parse(await fs.readFile(basketPath, "utf8"));
+  } catch {
+    // new
+  }
+  const due =
+    !previous?.members?.length ||
+    !previous.nextRebalanceAt ||
+    today >= previous.nextRebalanceAt.slice(0, 10);
+  const basket = due
+    ? selectChronoBasket(products, previous, today)
+    : previous;
+  if (due) {
+    await fs.writeFile(basketPath, `${JSON.stringify(basket, null, 2)}\n`);
+    console.log(
+      `SPI basket rebalanced: ${basket.brandCount} brands, ${basket.members.length} models, next=${basket.nextRebalanceAt}`,
+    );
+  }
+  return basket;
+}
+
+function memberWeight(product, index, frozenWeight) {
+  if (frozenWeight != null) return Math.max(1, frozenWeight);
   return Math.max(
     1,
     product.weekly_orders ?? Math.max(1, TOP_SELLERS_LIMIT - index),
@@ -139,17 +241,22 @@ async function upsertSpiExtension(products) {
     "src/data/index/spi-daily-extension.json",
   );
   const statePath = path.join(ROOT, "src/data/index/spi-basket-state.json");
+  const chronoBasket = await loadOrRebalanceBasket(products, today);
+  const weightBySlug = new Map(
+    chronoBasket.members.map((m) => [m.slug, m.weight]),
+  );
+  const allowed = new Set(weightBySlug.keys());
 
   let extension = {
     id: "spi-daily-extension",
     name: "SneakerPulse Index daily extension",
-    source: "kicksdb_top_sellers_laspeyres",
-    note: "Append-only daily SPI continuation from live top StockX sellers (lowest ask, weekly_orders weights). Anchored to the last historical SPI level on the first recorded day so the long series can resume after the Jan 2022–present public-data gap. Run: npm run snapshot",
+    source: "chronopulse_laspeyres",
+    note: "Append-only daily SPI continuation on the ChronoPulse-style brand×model basket (lowest ask, frozen rebalance weights). Anchored to the last historical SPI level on the first recorded day.",
     anchorDate: HIST_END_DATE,
     anchorLevel: HIST_END_LEVEL,
     baseLevel: HIST_END_LEVEL,
     asOf: null,
-    constituents: TOP_SELLERS_LIMIT,
+    constituents: chronoBasket.members.length,
     gapBefore: "2022-01-01",
     points: [],
   };
@@ -176,17 +283,18 @@ async function upsertSpiExtension(products) {
   const members = {};
   for (let i = 0; i < products.length; i++) {
     const product = products[i];
+    if (!product.slug || !allowed.has(product.slug)) continue;
     const price = product.min_price ?? product.avg_price ?? null;
     if (price == null || !(price > 0)) continue;
     members[product.slug] = {
       price,
-      weight: memberWeight(product, i),
+      weight: memberWeight(product, i, weightBySlug.get(product.slug)),
     };
   }
 
   const memberCount = Object.keys(members).length;
   if (memberCount < 10) {
-    console.warn(`SPI skip: only ${memberCount} priced members`);
+    console.warn(`SPI skip: only ${memberCount} priced ChronoPulse members`);
     return;
   }
 
@@ -203,10 +311,7 @@ async function upsertSpiExtension(products) {
     );
   } else if (state.date === today) {
     const prior = state.previousMembers ?? {};
-    if (
-      state.previousLevel != null &&
-      Object.keys(prior).length >= 10
-    ) {
+    if (state.previousLevel != null && Object.keys(prior).length >= 10) {
       level = chainLaspeyres(state.previousLevel, prior, members);
     } else {
       level = state.level;
@@ -233,11 +338,13 @@ async function upsertSpiExtension(products) {
 
   const nextExtension = {
     ...extension,
+    source: "chronopulse_laspeyres",
     anchorDate: extension.anchorDate ?? HIST_END_DATE,
     anchorLevel: anchor,
     baseLevel: extension.baseLevel ?? anchor,
     asOf: today,
-    constituents: TOP_SELLERS_LIMIT,
+    constituents: memberCount,
+    brandCount: chronoBasket.brandCount,
     updatedAt: new Date().toISOString(),
     points,
   };
@@ -257,7 +364,7 @@ async function upsertSpiExtension(products) {
   );
   await fs.writeFile(statePath, `${JSON.stringify(nextState, null, 2)}\n`);
   console.log(
-    `SPI extension: ${points.length} points, today=${nextState.level} (members=${memberCount})`,
+    `SPI extension: ${points.length} points, today=${nextState.level} (chrono members=${memberCount}/${chronoBasket.members.length})`,
   );
 }
 

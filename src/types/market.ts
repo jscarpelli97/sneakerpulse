@@ -114,6 +114,18 @@ export type PriceAlert = {
 };
 
 /** Homepage market pulse — ChronoPulse-style basket index. */
+export type MarketIndexFaq = {
+  selection: string;
+  calculation: string;
+  updates: string;
+};
+
+export type MarketIndexBrand = {
+  brand: string;
+  models: number;
+  weight: number;
+};
+
 export type MarketIndex = {
   name: string;
   ticker: string;
@@ -135,8 +147,14 @@ export type MarketIndex = {
   historicalSeries: ChartPoint[];
   constituents: number;
   historicalConstituents: number | null;
+  brandCount: number | null;
+  modelsPerBrand: number | null;
+  brands: MarketIndexBrand[];
+  rebalancedAt: string | null;
+  nextRebalanceAt: string | null;
   historySource: HistorySource;
   methodology: string;
+  howItWorks: MarketIndexFaq;
   citation: string | null;
   fetchedAt: string;
 };
