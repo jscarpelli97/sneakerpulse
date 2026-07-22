@@ -30,8 +30,8 @@ export default async function AlertsPage() {
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
               {isPlus
-                ? `Threshold alerts to your inbox${access.gated ? "" : " across the Plus board"}. Restock & price-drop digests coming soon.`
-                : "Email price alerts are a Plus feature — restock & price-drop digests are coming soon for Plus too."}
+                ? `Threshold alerts to your inbox${access.gated ? "" : " across the Plus board"}. Restock Monitor coming soon.`
+                : "Email price alerts are a Plus feature — Restock Monitor (size restocks + soft drops) is coming soon for Plus too."}
             </p>
           </section>
           {access.gated && isPlus ? (

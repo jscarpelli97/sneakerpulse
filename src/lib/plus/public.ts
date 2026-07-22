@@ -1,7 +1,7 @@
 export const PLUS_BENEFITS = [
   "Full top-seller board (not just the free top 10)",
   "Email price alerts when asks cross your thresholds",
-  "Restock & price-drop digests (coming soon)",
+  "Restock Monitor — size restocks & soft price drops (coming soon)",
   "Live ask refresh (when feeds are connected)",
   "Portfolio cloud sync (rolling out)",
   "Early access to GOAT / Stadium Goods tape as APIs land",

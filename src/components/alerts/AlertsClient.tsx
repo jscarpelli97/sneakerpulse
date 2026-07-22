@@ -60,22 +60,22 @@ function ComingSoonCard() {
         Coming soon for Plus
       </p>
       <h3 className="mt-2 font-[family-name:var(--font-syne)] text-lg font-bold text-dash-text">
-        Restock &amp; price-drop digests
+        Restock Monitor
       </h3>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted">
-        Automatic restock pings and price-drop digests (without setting a
-        manual threshold) are on the Plus roadmap — same inbox as threshold
-        alerts once they ship.
+        A Plus watchlist that watches ask inventory for you — email when a size
+        or colorway comes back in stock, plus optional price-drop pings when
+        the market softens. Same inbox as threshold alerts once it ships.
       </p>
       <ul className="mt-4 grid gap-2 sm:grid-cols-2">
         {[
           {
-            title: "Restock alerts",
-            body: "Know when sizes or colorways come back in ask inventory.",
+            title: "Size restocks",
+            body: "Ping when your size flips from sold out back to a live ask.",
           },
           {
-            title: "Price-drop digests",
-            body: "Daily/weekly summary when pairs you watch soften.",
+            title: "Price softens",
+            body: "Optional drop alerts when the ask falls without a manual threshold.",
           },
         ].map((item) => (
           <li
@@ -194,8 +194,8 @@ export function AlertsClient({
           Email price alert
         </h2>
         <p className="mt-1 text-sm text-dash-muted">
-          Threshold alerts email your inbox when you check them. Restock and
-          automatic price-drop digests are coming soon for Plus.
+          Threshold alerts email your inbox when you check them. Restock
+          Monitor (size restocks + soft price drops) is coming soon for Plus.
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <label className="text-sm text-dash-muted md:col-span-2">
