@@ -5,13 +5,19 @@ import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
 export function MarketsHero({
   featured,
-  liveCount,
+  modeBadge,
+  modeSubtitle,
   totalMarkets,
 }: {
   featured: CatalogQuote;
-  liveCount: number;
+  modeBadge: string;
+  modeSubtitle: string;
   totalMarkets: number;
 }) {
+  const hasPrice = featured.price != null;
+  const hasOrders = featured.weeklyOrders != null;
+  const hasRank = featured.rank != null;
+
   return (
     <section className="dash-card animate-rise relative overflow-hidden">
       <div
@@ -27,11 +33,19 @@ export function MarketsHero({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-dash-border bg-dash-elevated/90 px-3 py-1 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-muted">
-              <span className="h-1.5 w-1.5 animate-blink rounded-full bg-dash-up" />
-              {liveCount}/{totalMarkets} markets live
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  modeBadge === "Live"
+                    ? "animate-blink bg-dash-up"
+                    : modeBadge === "Cached"
+                      ? "bg-dash-accent"
+                      : "bg-dash-faint"
+                }`}
+              />
+              {modeSubtitle}
             </span>
             <span className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-faint">
-              StockX via KicksDB
+              {modeBadge === "Live" ? "StockX via KicksDB" : "Free mode catalog"}
             </span>
           </div>
 
@@ -39,9 +53,9 @@ export function MarketsHero({
             SneakerPulse
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
-            Terminal-grade StockX market views. Live asks, volume, and size
-            ladders across the current top {totalMarkets} sellers — homepage
-            highlights the top 10.
+            Terminal-grade StockX market views. Asks, volume, and size ladders
+            across the current top {totalMarkets} sellers — homepage highlights
+            the top 10.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -91,7 +105,7 @@ export function MarketsHero({
                 Lowest ask
               </dt>
               <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-2xl font-semibold tabular-nums text-dash-text">
-                {featured.live ? formatMaybeMoney(featured.price) : "—"}
+                {hasPrice ? formatMaybeMoney(featured.price) : "—"}
               </dd>
             </div>
             <div>
@@ -99,9 +113,7 @@ export function MarketsHero({
                 Weekly orders
               </dt>
               <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-2xl font-semibold tabular-nums text-dash-text">
-                {featured.live && featured.weeklyOrders != null
-                  ? formatNumber(featured.weeklyOrders)
-                  : "—"}
+                {hasOrders ? formatNumber(featured.weeklyOrders!) : "—"}
               </dd>
             </div>
             <div>
@@ -109,9 +121,7 @@ export function MarketsHero({
                 StockX rank
               </dt>
               <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-lg font-medium tabular-nums text-dash-muted">
-                {featured.live && featured.rank != null
-                  ? `#${formatNumber(featured.rank)}`
-                  : "—"}
+                {hasRank ? `#${formatNumber(featured.rank!)}` : "—"}
               </dd>
             </div>
             <div>
