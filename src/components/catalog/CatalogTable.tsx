@@ -91,30 +91,36 @@ export function CatalogTable({
                   {row.ticker}
                 </td>
                 <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-dash-text sm:px-5">
-                  {row.live ? formatMaybeMoney(row.price) : "—"}
+                  {row.price != null ? formatMaybeMoney(row.price) : "—"}
                 </td>
                 <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
-                  {row.live && row.weeklyOrders != null
+                  {row.weeklyOrders != null
                     ? formatNumber(row.weeklyOrders)
                     : "—"}
                 </td>
                 <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
-                  {row.live && row.rank != null ? `#${row.rank}` : "—"}
+                  {row.rank != null ? `#${row.rank}` : "—"}
                 </td>
                 <td className="px-4 py-3.5 sm:px-5">
                   <span
                     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] ${
                       row.live
                         ? "bg-[rgba(38,166,154,0.12)] text-dash-up"
-                        : "bg-dash-elevated text-dash-faint"
+                        : row.price != null
+                          ? "bg-[rgba(212,160,23,0.12)] text-dash-accent"
+                          : "bg-dash-elevated text-dash-faint"
                     }`}
                   >
                     <span
                       className={`h-1.5 w-1.5 rounded-full ${
-                        row.live ? "animate-blink bg-dash-up" : "bg-dash-faint"
+                        row.live
+                          ? "animate-blink bg-dash-up"
+                          : row.price != null
+                            ? "bg-dash-accent"
+                            : "bg-dash-faint"
                       }`}
                     />
-                    {row.live ? "Live" : "Offline"}
+                    {row.live ? "Live" : row.price != null ? "Cached" : "Offline"}
                   </span>
                 </td>
               </tr>

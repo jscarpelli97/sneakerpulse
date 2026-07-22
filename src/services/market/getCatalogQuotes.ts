@@ -1,4 +1,5 @@
 import {
+  getOfflineCatalogQuotes,
   getTrackedCatalog,
   type SneakerCatalogEntry,
 } from "@/services/catalog/sneakers";
@@ -23,26 +24,12 @@ export async function getCatalogQuotes(
 ): Promise<CatalogQuote[]> {
   const apiKey = getKicksApiKey();
   if (!apiKey) {
-    const fallback = await getTrackedCatalog(limit);
-    return fallback.map((sneaker) => ({
-      ...sneaker,
-      price: null,
-      rank: sneaker.rank ?? null,
-      weeklyOrders: null,
-      live: false,
-    }));
+    return getOfflineCatalogQuotes(limit);
   }
 
   const res = await fetchTopStockxSneakers(apiKey, limit);
   if (!res.ok || !res.data.data?.length) {
-    const fallback = await getTrackedCatalog(limit);
-    return fallback.map((sneaker) => ({
-      ...sneaker,
-      price: null,
-      rank: sneaker.rank ?? null,
-      weeklyOrders: null,
-      live: false,
-    }));
+    return getOfflineCatalogQuotes(limit);
   }
 
   const quotes: CatalogQuote[] = [];
@@ -60,5 +47,21 @@ export async function getCatalogQuotes(
     });
   }
 
+  if (!quotes.length) {
+    return getOfflineCatalogQuotes(limit);
+  }
+
   return quotes.sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+}
+
+/** @deprecated Prefer getOfflineCatalogQuotes via getCatalogQuotes fallback. */
+export async function getCatalogQuotesFallback(limit = TOP_SELLERS_LIMIT) {
+  const fallback = await getTrackedCatalog(limit);
+  return fallback.map((sneaker) => ({
+    ...sneaker,
+    price: null,
+    rank: sneaker.rank ?? null,
+    weeklyOrders: null,
+    live: false,
+  }));
 }

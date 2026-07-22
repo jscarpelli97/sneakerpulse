@@ -1,4 +1,9 @@
 import {
+  getOfflineCatalogEntries,
+  getOfflineCatalogQuotes,
+  getOfflineQuoteBySlug,
+} from "@/services/catalog/offlineCatalog";
+import {
   mapListedProductToCatalog,
   TOP_SELLERS_LIMIT,
   HOMEPAGE_WATCHLIST_LIMIT,
@@ -15,42 +20,28 @@ export type { SneakerCatalogEntry };
 export { TOP_SELLERS_LIMIT, HOMEPAGE_WATCHLIST_LIMIT, STATIC_PARAMS_LIMIT };
 
 /**
- * Offline / no-key fallback. Live tracking uses StockX top sellers by rank.
+ * Offline / no-key / inactive-key fallback.
+ * Free mode serves the committed catalog under src/data/catalog/top-sellers.json.
  */
-export const FALLBACK_SNEAKERS: SneakerCatalogEntry[] = [
-  {
-    slug: "air-jordan-1-retro-high-dark-mocha",
-    ticker: "J1DMCH",
-    styleCode: "555088-105",
-    name: "Jordan 1 High Dark Mocha",
-    brand: "Jordan",
-    year: 2020,
-    releaseDate: "2020-10-31",
-    colorway: "Sail / Dark Mocha / Black",
-    retail: 170,
-    stockxUrl: "https://stockx.com/air-jordan-1-retro-high-dark-mocha",
-    fallbackImage:
-      "https://images.stockx.com/images/Air-Jordan-1-Retro-High-Dark-Mocha-2-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
-    featured: true,
-    rank: null,
-  },
-];
+export const FALLBACK_SNEAKERS: SneakerCatalogEntry[] =
+  getOfflineCatalogEntries(TOP_SELLERS_LIMIT);
 
 /** @deprecated Prefer getTrackedCatalog() — kept for offline fallbacks. */
 export const SNEAKERS = FALLBACK_SNEAKERS;
 
 /**
  * Live catalog: current top StockX sneakers by sales rank.
+ * Falls back to the free offline catalog when the key is missing or inactive.
  */
 export async function getTrackedCatalog(
   limit = TOP_SELLERS_LIMIT,
 ): Promise<SneakerCatalogEntry[]> {
   const apiKey = getKicksApiKey();
-  if (!apiKey) return FALLBACK_SNEAKERS;
+  if (!apiKey) return getOfflineCatalogEntries(limit);
 
   const res = await fetchTopStockxSneakers(apiKey, limit);
   if (!res.ok || !res.data.data?.length) {
-    return FALLBACK_SNEAKERS;
+    return getOfflineCatalogEntries(limit);
   }
 
   const mapped = res.data.data
@@ -62,7 +53,7 @@ export async function getTrackedCatalog(
     .filter((entry): entry is SneakerCatalogEntry => entry != null)
     .sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
 
-  return mapped.length ? mapped : FALLBACK_SNEAKERS;
+  return mapped.length ? mapped : getOfflineCatalogEntries(limit);
 }
 
 export async function getAllSneakerSlugs() {
@@ -80,6 +71,25 @@ export async function getSneakerBySlug(slug: string) {
   const hit = catalog.find((sneaker) => sneaker.slug === slug);
   if (hit) return hit;
 
+  const offline = getOfflineQuoteBySlug(slug);
+  if (offline) {
+    return {
+      slug: offline.slug,
+      ticker: offline.ticker,
+      styleCode: offline.styleCode,
+      name: offline.name,
+      brand: offline.brand,
+      year: offline.year,
+      releaseDate: offline.releaseDate,
+      colorway: offline.colorway,
+      retail: offline.retail,
+      stockxUrl: offline.stockxUrl,
+      fallbackImage: offline.fallbackImage,
+      featured: offline.featured,
+      rank: offline.rank,
+    };
+  }
+
   // Allow market pages for any StockX slug even if it falls out of the tracked top sellers.
   const apiKey = getKicksApiKey();
   if (!apiKey) return null;
@@ -87,3 +97,5 @@ export async function getSneakerBySlug(slug: string) {
   if (!res.ok) return null;
   return mapListedProductToCatalog(res.data.data);
 }
+
+export { getOfflineCatalogQuotes, getOfflineQuoteBySlug };

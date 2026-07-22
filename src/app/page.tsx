@@ -18,13 +18,18 @@ export default async function MarketsIndexPage() {
     getMarketIndex(TOP_SELLERS_LIMIT),
   ]);
   const liveCount = quotes.filter((row) => row.live).length;
+  const cachedCount = quotes.filter(
+    (row) => !row.live && row.price != null,
+  ).length;
   const featured =
     quotes.find((row) => row.featured) ?? quotes[0] ?? null;
   const watchlist = quotes.slice(0, HOMEPAGE_WATCHLIST_LIMIT);
 
   const statusLabel = liveCount
     ? `${liveCount}/${quotes.length} top sellers live`
-    : `${quotes.length} top StockX sellers`;
+    : cachedCount
+      ? `${cachedCount}/${quotes.length} cached (free mode)`
+      : `${quotes.length} top StockX sellers`;
 
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">

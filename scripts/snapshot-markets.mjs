@@ -349,6 +349,74 @@ async function upsertSpiExtension(products) {
   });
 }
 
+async function writeOfflineCatalog(products) {
+  function traitValue(traits, name) {
+    const hit = traits?.find(
+      (t) => String(t.trait || "").toLowerCase() === name.toLowerCase(),
+    );
+    const value = hit?.value?.trim();
+    return value || null;
+  }
+
+  function tickerFor(product) {
+    const sku = product.sku?.trim();
+    if (sku) {
+      return sku.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10) || sku;
+    }
+    if (product.rank != null) return `TOP${product.rank}`;
+    const slug = product.slug ?? product.id;
+    return String(slug).replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10);
+  }
+
+  const now = new Date().toISOString();
+  const mapped = [];
+  for (const [index, product] of products.entries()) {
+    const slug = product.slug?.trim();
+    if (!slug) continue;
+    const releaseDate =
+      traitValue(product.traits, "Release Date") ??
+      `${new Date().getUTCFullYear()}-01-01`;
+    const yearMatch = releaseDate.match(/^(\d{4})/);
+    const retailRaw = traitValue(product.traits, "Retail Price");
+    const retail = retailRaw
+      ? Number(String(retailRaw).replace(/[^0-9.]/g, ""))
+      : product.avg_price ?? product.min_price ?? 0;
+    mapped.push({
+      slug,
+      ticker: tickerFor(product),
+      styleCode: product.sku || slug,
+      name: product.title || slug,
+      brand: product.brand || "Unknown",
+      year: yearMatch ? Number(yearMatch[1]) : new Date().getUTCFullYear(),
+      releaseDate,
+      colorway: traitValue(product.traits, "Colorway") ?? "—",
+      retail: Number.isFinite(retail) ? retail : 0,
+      stockxUrl: product.link || `https://stockx.com/${slug}`,
+      fallbackImage: product.image || "",
+      featured: (product.rank ?? index + 1) === 1,
+      rank: product.rank ?? index + 1,
+      price: product.min_price ?? product.avg_price ?? null,
+      weeklyOrders: product.weekly_orders ?? null,
+      live: true,
+      capturedAt: now,
+    });
+  }
+
+  mapped.sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+  const out = {
+    source: "kicksdb_stockx_top_sellers",
+    note: "Free-tier offline catalog. Refreshed by npm run snapshot. Site serves this when live API key is inactive.",
+    asOf: now.slice(0, 10),
+    updatedAt: now,
+    count: mapped.length,
+    products: mapped,
+  };
+  const dest = path.join(ROOT, "src/data/catalog/top-sellers.json");
+  await fs.mkdir(path.dirname(dest), { recursive: true });
+  await fs.writeFile(dest, `${JSON.stringify(out, null, 2)}\n`);
+  console.log(`wrote offline catalog: ${mapped.length} products -> ${dest}`);
+}
+
 async function main() {
   if (!API_KEY) {
     console.error("KICKSDB_API_KEY is required");
@@ -357,6 +425,10 @@ async function main() {
 
   const products = await fetchTopSellers();
   console.log(`snapshotting ${products.length} top StockX sellers`);
+
+  // Free-tier friendly: rewrite the committed offline catalog so the site
+  // can serve asks without burning request quota on every page view.
+  await writeOfflineCatalog(products);
 
   for (const product of products) {
     try {

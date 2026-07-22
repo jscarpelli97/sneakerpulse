@@ -16,10 +16,10 @@ describe("catalog", () => {
     vi.unstubAllEnvs();
   });
 
-  it("falls back to Dark Mocha when no API key is set", async () => {
-    const mocha = await getSneakerBySlug("air-jordan-1-retro-high-dark-mocha");
-    expect(mocha?.ticker).toBe("J1DMCH");
-    expect(mocha?.featured).toBe(true);
+  it("falls back to the free offline catalog when no API key is set", async () => {
+    const featured = await getSneakerBySlug(FALLBACK_SNEAKERS[0]!.slug);
+    expect(featured?.slug).toBe(FALLBACK_SNEAKERS[0]!.slug);
+    expect(FALLBACK_SNEAKERS.length).toBeGreaterThan(50);
   });
 
   it("exposes all slugs for static params", async () => {

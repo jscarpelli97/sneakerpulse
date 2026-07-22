@@ -11,7 +11,11 @@ export async function GET(request: Request) {
   const hasKey = Boolean(getKicksApiKey());
   const logs = getRecentFetchLogs(15);
   const recentFailure = logs.find((log) => log.status !== 200);
-  const status = !hasKey ? "offline" : recentFailure ? "degraded" : "live";
+  const status = !hasKey
+    ? "cached"
+    : recentFailure
+      ? "degraded"
+      : "live";
 
   const token = process.env.STATUS_TOKEN?.trim();
   const provided = request.headers.get("x-status-token")?.trim();
@@ -28,6 +32,7 @@ export async function GET(request: Request) {
     ok: true,
     status,
     hasKey,
+    mode: hasKey ? "live_api" : "free_offline_catalog",
     cache: getCacheStats(),
     recentFetches: logs,
   });
