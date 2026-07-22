@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteSearch } from "@/components/layout/SiteSearch";
+import { PlusInterest } from "@/components/plus/PlusInterest";
 
 /** Site chrome uses the markets-terminal (homepage) look by default. */
 type ChromeVariant = "dashboard" | "light";
@@ -9,6 +10,8 @@ const NAV = [
   { href: "/markets", label: "All markets" },
   { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
+  { href: "/plus", label: "Plus" },
+  { href: "/about", label: "About" },
 ] as const;
 
 export function SiteHeader({
@@ -72,7 +75,11 @@ export function SiteHeader({
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-lg px-2 py-1.5 text-sm font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text sm:px-3"
+                className={`rounded-lg px-2 py-1.5 text-sm font-medium hover:bg-dash-elevated sm:px-3 ${
+                  item.href === "/plus"
+                    ? "text-dash-accent hover:text-dash-accent"
+                    : "text-dash-muted hover:text-dash-text"
+                }`}
               >
                 {item.label}
               </Link>
@@ -106,13 +113,40 @@ export function SiteFooter({
 
   return (
     <footer className="mt-auto border-t border-dash-border bg-dash-surface px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 text-sm text-dash-muted">
-        <span className="font-[family-name:var(--font-syne)] font-extrabold text-dash-text">
-          SneakerPulse
-        </span>
-        <span className="font-[family-name:var(--font-plex-mono)] text-xs tracking-wide">
-          StockX · KicksDB · Markets terminal
-        </span>
+      <div className="mx-auto flex max-w-[1400px] flex-col gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-4 text-sm text-dash-muted">
+          <div className="max-w-md space-y-1.5">
+            <span className="font-[family-name:var(--font-syne)] font-extrabold text-dash-text">
+              SneakerPulse
+            </span>
+            <p className="text-xs leading-relaxed text-dash-faint">
+              Independent markets terminal for sneaker asks and the SPI index.
+              Not affiliated with StockX.
+            </p>
+            <PlusInterest variant="footer" source="footer" />
+          </div>
+          <nav className="flex flex-wrap gap-x-4 gap-y-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
+            <Link href="/markets" className="hover:text-dash-text">
+              All markets
+            </Link>
+            <Link href="/compare" className="hover:text-dash-text">
+              Compare
+            </Link>
+            <Link href="/alerts" className="hover:text-dash-text">
+              Alerts
+            </Link>
+            <Link href="/about" className="hover:text-dash-text">
+              About
+            </Link>
+            <Link href="/plus" className="hover:text-dash-text">
+              Plus
+            </Link>
+          </nav>
+        </div>
+        <p className="border-t border-dash-border pt-3 text-xs leading-relaxed text-dash-faint">
+          Not financial advice. Resale markets are volatile — do your own
+          research. Data may be delayed or cached depending on feed mode.
+        </p>
       </div>
     </footer>
   );

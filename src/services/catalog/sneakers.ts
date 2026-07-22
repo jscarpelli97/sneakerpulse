@@ -14,6 +14,7 @@ import {
   fetchTopStockxSneakers,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
+import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 
 export type { SneakerCatalogEntry };
@@ -31,13 +32,16 @@ export const SNEAKERS = FALLBACK_SNEAKERS;
 
 /**
  * Live catalog: current top StockX sneakers by sales rank.
- * Falls back to the free offline catalog when the key is missing or inactive.
+ * Falls back to the free offline catalog when the key is missing, inactive,
+ * or live page reads are disabled (default).
  */
 export async function getTrackedCatalog(
   limit = TOP_SELLERS_LIMIT,
 ): Promise<SneakerCatalogEntry[]> {
   const apiKey = getKicksApiKey();
-  if (!apiKey) return getOfflineCatalogEntries(limit);
+  if (!apiKey || !kicksLiveReadsEnabled()) {
+    return getOfflineCatalogEntries(limit);
+  }
 
   const res = await fetchTopStockxSneakers(apiKey, limit);
   if (!res.ok || !res.data.data?.length) {
@@ -92,7 +96,7 @@ export async function getSneakerBySlug(slug: string) {
 
   // Allow market pages for any StockX slug even if it falls out of the tracked top sellers.
   const apiKey = getKicksApiKey();
-  if (!apiKey) return null;
+  if (!apiKey || !kicksLiveReadsEnabled()) return null;
   const res = await fetchStockxProduct(slug, apiKey);
   if (!res.ok) return null;
   return mapListedProductToCatalog(res.data.data);

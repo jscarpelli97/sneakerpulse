@@ -4,6 +4,7 @@ import {
   AreaSeries,
   ColorType,
   createChart,
+  type ISeriesApi,
   type Time,
 } from "lightweight-charts";
 import { useEffect, useRef } from "react";
@@ -11,13 +12,22 @@ import type { ChartPoint } from "@/types/market";
 
 type Props = {
   data: ChartPoint[];
-  /** Optional second segment drawn separately. */
+  /** Optional second segment drawn separately (e.g. live SPI after a data gap). */
   secondaryData?: ChartPoint[];
   up: boolean;
   /** Show calendar axis labels (useful for multi-year index charts). */
   showTime?: boolean;
   /** Optional reference price line (e.g. 100 = retail parity). */
   referenceLevel?: number;
+  referenceTitle?: string;
+  /** Optional boom-peak marker line. */
+  peakLevel?: number;
+  peakTitle?: string;
+  /**
+   * When true (dual-era SPI chart), primary series stays teal (boom)
+   * and secondary stays gold (today) regardless of up/down.
+   */
+  eraColors?: boolean;
 };
 
 function toChartPoints(data: ChartPoint[]) {
@@ -36,12 +46,33 @@ function toChartPoints(data: ChartPoint[]) {
   return points;
 }
 
+function addLevelLine(
+  series: ISeriesApi<"Area">,
+  price: number | undefined,
+  color: string,
+  title: string,
+) {
+  if (price == null || !Number.isFinite(price) || price <= 0) return;
+  series.createPriceLine({
+    price,
+    color,
+    lineWidth: 1,
+    lineStyle: 2,
+    axisLabelVisible: true,
+    title,
+  });
+}
+
 export function LightweightPriceChart({
   data,
   secondaryData,
   up,
   showTime = false,
   referenceLevel,
+  referenceTitle = "Retail",
+  peakLevel,
+  peakTitle = "Boom peak",
+  eraColors = false,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -78,15 +109,30 @@ export function LightweightPriceChart({
       handleScale: true,
     });
 
-    const line = up ? "#26a69a" : "#ef5350";
     const hasSecondary = Boolean(secondaryData && secondaryData.length >= 2);
+    const primaryLine = eraColors
+      ? "#26a69a"
+      : up
+        ? "#26a69a"
+        : "#ef5350";
+    const primaryTop = eraColors
+      ? "rgba(38, 166, 154, 0.32)"
+      : up
+        ? "rgba(38, 166, 154, 0.32)"
+        : "rgba(239, 83, 80, 0.32)";
+    const primaryBottom = eraColors
+      ? "rgba(38, 166, 154, 0.02)"
+      : up
+        ? "rgba(38, 166, 154, 0.02)"
+        : "rgba(239, 83, 80, 0.02)";
+
     const series = chart.addSeries(AreaSeries, {
-      lineColor: line,
-      topColor: up ? "rgba(38, 166, 154, 0.32)" : "rgba(239, 83, 80, 0.32)",
-      bottomColor: up ? "rgba(38, 166, 154, 0.02)" : "rgba(239, 83, 80, 0.02)",
+      lineColor: primaryLine,
+      topColor: primaryTop,
+      bottomColor: primaryBottom,
       lineWidth: 2,
       priceLineVisible: !hasSecondary,
-      lastValueVisible: true,
+      lastValueVisible: !hasSecondary,
     });
 
     const points = toChartPoints(data);
@@ -94,20 +140,13 @@ export function LightweightPriceChart({
       series.setData(points);
     }
 
-    if (
-      referenceLevel != null &&
-      Number.isFinite(referenceLevel) &&
-      referenceLevel > 0
-    ) {
-      series.createPriceLine({
-        price: referenceLevel,
-        color: "rgba(212, 160, 23, 0.85)",
-        lineWidth: 1,
-        lineStyle: 2,
-        axisLabelVisible: true,
-        title: "Retail",
-      });
-    }
+    addLevelLine(
+      series,
+      referenceLevel,
+      "rgba(139, 147, 167, 0.9)",
+      referenceTitle,
+    );
+    addLevelLine(series, peakLevel, "rgba(38, 166, 154, 0.75)", peakTitle);
 
     if (hasSecondary && secondaryData) {
       const secondary = chart.addSeries(AreaSeries, {
@@ -141,14 +180,24 @@ export function LightweightPriceChart({
       ro.disconnect();
       chart.remove();
     };
-  }, [data, secondaryData, up, showTime, referenceLevel]);
+  }, [
+    data,
+    secondaryData,
+    up,
+    showTime,
+    referenceLevel,
+    referenceTitle,
+    peakLevel,
+    peakTitle,
+    eraColors,
+  ]);
 
   return (
     <div
       ref={containerRef}
       className="h-full min-h-[260px] w-full"
       role="img"
-      aria-label="StockX historical price chart"
+      aria-label="SneakerPulse Index chart"
     />
   );
 }
