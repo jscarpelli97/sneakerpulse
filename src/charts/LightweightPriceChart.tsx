@@ -79,7 +79,7 @@ export function LightweightPriceChart({
     });
 
     const line = up ? "#26a69a" : "#ef5350";
-    const hasSecondary = Boolean(secondaryData && secondaryData.length > 1);
+    const hasSecondary = Boolean(secondaryData && secondaryData.length >= 2);
     const series = chart.addSeries(AreaSeries, {
       lineColor: line,
       topColor: up ? "rgba(38, 166, 154, 0.32)" : "rgba(239, 83, 80, 0.32)",

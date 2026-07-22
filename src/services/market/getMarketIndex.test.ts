@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildPremiumSeries } from "@/services/market/getMarketIndex";
+import {
+  buildPremiumSeries,
+  splitPremiumSegments,
+} from "@/services/market/getMarketIndex";
 import type { ChartPoint } from "@/types/market";
 
 function pt(date: string, price: number): ChartPoint {
@@ -7,24 +10,30 @@ function pt(date: string, price: number): ChartPoint {
 }
 
 describe("buildPremiumSeries", () => {
-  it("bridges daily from 2021 to today so ALL reaches the present", () => {
+  it("keeps only real points — no invented 2022–2025 bridge", () => {
     const historical = [pt("2021-12-25", 196), pt("2021-12-26", 195)];
     const out = buildPremiumSeries(historical, [], 90, "2026-07-22");
-    expect(out[0]?.date).toBe("2021-12-25");
-    expect(out.at(-1)?.date).toBe("2026-07-22");
-    expect(out.at(-1)?.price).toBe(90);
-    expect(out.length).toBeGreaterThan(1000);
-    // Mid-gap should be between boom and live — declining, not stuck at 195.
-    const mid = out.find((p) => p.date === "2024-01-01");
-    expect(mid).toBeTruthy();
-    expect(mid!.price).toBeLessThan(195);
-    expect(mid!.price).toBeGreaterThan(90);
+    expect(out.map((p) => p.date)).toEqual([
+      "2021-12-25",
+      "2021-12-26",
+      "2026-07-22",
+    ]);
+    expect(out.filter((p) => p.date.startsWith("2023")).length).toBe(0);
   });
+});
 
-  it("lets live premium win on the tip over extension", () => {
-    const historical = [pt("2021-12-26", 195)];
-    const extension = [pt("2026-07-22", 88)];
-    const out = buildPremiumSeries(historical, extension, 93, "2026-07-22");
-    expect(out.at(-1)?.price).toBe(93);
+describe("splitPremiumSegments", () => {
+  it("splits boom tape from live tip across the public-data gap", () => {
+    const points = [
+      pt("2021-12-25", 196),
+      pt("2021-12-26", 195),
+      pt("2026-07-22", 94),
+    ];
+    const { historical, live } = splitPremiumSegments(points);
+    expect(historical.map((p) => p.date)).toEqual([
+      "2021-12-25",
+      "2021-12-26",
+    ]);
+    expect(live.map((p) => p.date)).toEqual(["2026-07-22"]);
   });
 });

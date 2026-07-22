@@ -106,26 +106,12 @@ function peakOf(series: ChartPoint[]) {
   return { level: peak.price, date: peak.date };
 }
 
-function addDays(date: string, days: number): string {
-  const ms = Date.parse(`${date.slice(0, 10)}T00:00:00.000Z`);
-  if (!Number.isFinite(ms)) return date;
-  return new Date(ms + days * 86_400_000).toISOString().slice(0, 10);
-}
-
-function daysBetween(a: string, b: string): number {
-  const am = Date.parse(`${a.slice(0, 10)}T00:00:00.000Z`);
-  const bm = Date.parse(`${b.slice(0, 10)}T00:00:00.000Z`);
-  if (!Number.isFinite(am) || !Number.isFinite(bm)) return 0;
-  return Math.round((bm - am) / 86_400_000);
-}
-
 /**
  * Merge boom-era premium history with live/extension premiums.
  *
- * After Dec 2021 there is no public daily tape. To make ALL read through
- * today (not look stuck in 2021), we draw a straight-line bridge from the
- * last boom print to the live premium. That is illustrative of the cooling
- * — not invented "still hot" LOCF at the peak.
+ * There is no free public daily whole-market premium tape for most of
+ * 2022–mid‑2025. We do NOT invent a declining bridge across that hole —
+ * only real observed points (Flurin 2020–2021, then snapshot/live tips).
  */
 export function buildPremiumSeries(
   historical: ChartPoint[],
@@ -145,43 +131,34 @@ export function buildPremiumSeries(
   if (liveLevel != null && liveLevel > 0) {
     byDate.set(asOf.slice(0, 10), premiumPoint(asOf, liveLevel, 1));
   }
+  return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+}
 
-  let series = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
-  if (series.length < 2) return series;
-
-  const endDate = asOf.slice(0, 10);
-  const endLevel =
-    liveLevel != null && liveLevel > 0
-      ? liveLevel
-      : series.at(-1)!.price;
-
-  // Ensure the tip is today at the live/extension premium.
-  byDate.set(endDate, premiumPoint(endDate, endLevel, series.at(-1)!.orders ?? 1));
-  series = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
-
-  // Fill any calendar holes (esp. 2022→today) with a linear bridge so the
-  // time axis reaches the present and the post-boom cool-down is visible.
-  const filled: ChartPoint[] = [];
-  for (let i = 0; i < series.length; i++) {
-    const cur = series[i];
-    filled.push(cur);
-    if (i === series.length - 1) break;
-    const next = series[i + 1];
-    const gap = daysBetween(cur.date, next.date);
-    if (gap <= 1) continue;
-    for (let step = 1; step < gap; step++) {
-      const t = step / gap;
-      const price =
-        Math.round((cur.price * (1 - t) + next.price * t) * 100) / 100;
-      filled.push({
-        date: addDays(cur.date, step),
-        price,
-        orders: 0,
-      });
+/** Split on multi-month calendar holes so the chart does not draw a fake crash line. */
+export function splitPremiumSegments(points: ChartPoint[], gapDays = 60): {
+  historical: ChartPoint[];
+  live: ChartPoint[];
+} {
+  if (points.length < 2) return { historical: points, live: [] };
+  const dayMs = 86_400_000;
+  let splitAt = -1;
+  for (let i = 1; i < points.length; i++) {
+    const prev = Date.parse(points[i - 1].date.slice(0, 10));
+    const next = Date.parse(points[i].date.slice(0, 10));
+    if (
+      Number.isFinite(prev) &&
+      Number.isFinite(next) &&
+      next - prev > gapDays * dayMs
+    ) {
+      splitAt = i;
+      break;
     }
   }
-
-  return filled.filter((point) => point.date <= endDate);
+  if (splitAt < 0) return { historical: points, live: [] };
+  return {
+    historical: points.slice(0, splitAt),
+    live: points.slice(splitAt),
+  };
 }
 
 async function measureLivePremium(limit: number): Promise<{
@@ -256,12 +233,27 @@ export async function getMarketIndex(
     live?.level ?? null,
     asOf,
   );
-  if (continuous.length < 2) return null;
+  if (continuous.length < 2 && live == null) return null;
+  if (continuous.length < 1) return null;
 
-  const level = continuous.at(-1)!.price;
-  const histPeak = peakOf(continuous);
-  const yesterday = continuous.at(-2)?.price ?? null;
-  const monthAgo = continuous.at(-31)?.price ?? continuous[0]?.price ?? null;
+  const segments = splitPremiumSegments(continuous);
+  const histSeg = segments.historical;
+  const liveSeg = segments.live;
+  const level =
+    live?.level ??
+    liveSeg.at(-1)?.price ??
+    continuous.at(-1)?.price ??
+    PREMIUM_INDEX_BASE;
+  const histPeak = peakOf(histSeg.length ? histSeg : continuous);
+
+  // Day-over-day only from the live/snapshot tip — never vs a 2021 point.
+  const livePrior =
+    liveSeg.length >= 2 ? liveSeg.at(-2)?.price ?? null : null;
+  const liveMonth =
+    liveSeg.length >= 31
+      ? liveSeg.at(-31)?.price ?? null
+      : liveSeg[0]?.price ?? null;
+
   const howItWorks = howItWorksFaq(
     basket,
     live
@@ -272,29 +264,29 @@ export async function getMarketIndex(
       : null,
   );
 
-  const premiumPercent = Math.round((level - PREMIUM_INDEX_BASE) * 100) / 100;
+  const boomEnd = histSeg.at(-1)?.price ?? null;
 
   return {
     name: "SneakerPulse Index",
     ticker: "SPI",
     level,
     liveLevel: level,
-    historicalEndLevel: level,
+    historicalEndLevel: boomEnd,
     baseLevel: PREMIUM_INDEX_BASE,
-    baseDate: continuous[0].date,
-    asOf: continuous.at(-1)!.date,
-    changeToday: changeFromPrices(level, yesterday),
-    change30d: changeFromPrices(level, monthAgo),
-    change90d: changeFromPrices(
-      level,
-      continuous.at(-90)?.price ?? continuous[0]?.price ?? null,
-    ),
-    changeHistorical: changeFromPrices(level, continuous[0].price),
+    baseDate: continuous[0]?.date ?? asOf,
+    asOf: liveSeg.at(-1)?.date ?? continuous.at(-1)?.date ?? asOf,
+    changeToday: changeFromPrices(level, livePrior),
+    change30d: changeFromPrices(level, liveMonth),
+    change90d: changeFromPrices(level, liveSeg[0]?.price ?? null),
+    changeHistorical:
+      boomEnd != null && histSeg[0]
+        ? changeFromPrices(level, histSeg[0].price)
+        : changeFromPrices(level, continuous[0]?.price ?? null),
     peakLevel: histPeak.level,
     peakDate: histPeak.date,
     series: continuous,
-    liveSeries: continuous.slice(-120),
-    historicalSeries: continuous,
+    liveSeries: liveSeg.length ? liveSeg : continuous.slice(-1),
+    historicalSeries: histSeg.length ? histSeg : continuous,
     constituents: live?.constituents ?? basket?.members.length ?? 0,
     historicalConstituents: historical?.meta.productsCovered ?? null,
     brandCount: basket?.brandCount ?? null,
@@ -302,10 +294,13 @@ export async function getMarketIndex(
     brands: basket?.brands ?? [],
     rebalancedAt: basket?.rebalancedAt ?? null,
     nextRebalanceAt: basket?.nextRebalanceAt ?? null,
-    historySource: historical && live ? "hybrid" : historical ? "whole_market" : "bootstrap",
-    methodology: `${howItWorks.calculation} Boom-era tape (Nov 2020–Dec 2021) is Flurin17 daily StockX premiums. 2022→today has no public daily premium feed, so ALL draws a straight-line bridge from the last 2021 print down to today’s live basket (~${Math.round(level)}) — that shows the cool-down without faking a flat “still hot” market.`,
+    historySource:
+      historical && live ? "hybrid" : historical ? "whole_market" : "bootstrap",
+    methodology: `${howItWorks.calculation} Real daily premium tape exists for Nov 2020–Dec 2021 (Flurin17). There is no free public daily whole-market premium feed for 2022–mid‑2025 — that gap is empty on purpose, not a drawn-in decline. Today’s SPI is the live ChronoPulse basket; run npm run snapshot daily to grow real post-gap history.`,
     howItWorks,
-    citation: historical?.meta.citation ?? "https://github.com/Flurin17/stockXsalesData",
+    citation:
+      historical?.meta.citation ??
+      "https://github.com/Flurin17/stockXsalesData",
     fetchedAt: new Date().toISOString(),
   };
 }

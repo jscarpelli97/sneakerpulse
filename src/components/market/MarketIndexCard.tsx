@@ -28,6 +28,19 @@ function filterByRange(points: ChartPoint[], range: Range): ChartPoint[] {
   return filtered.length > 1 ? filtered : points.slice(-2);
 }
 
+/** Pad a single live tip so Lightweight Charts can draw the present segment. */
+function padLiveTip(points: ChartPoint[]): ChartPoint[] {
+  if (points.length !== 1) return points;
+  const tip = points[0];
+  const ms = Date.parse(`${tip.date}T00:00:00.000Z`);
+  if (!Number.isFinite(ms)) return points;
+  const prev = new Date(ms - 86_400_000).toISOString().slice(0, 10);
+  return [
+    { date: prev, price: tip.price, orders: 0 },
+    tip,
+  ];
+}
+
 function formatIndexLevel(value: number) {
   return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 1,
@@ -52,13 +65,40 @@ function formatIndexChange(change: MarketIndex["changeToday"]) {
 
 export function MarketIndexCard({ index }: { index: MarketIndex }) {
   const [range, setRange] = useState<Range>("ALL");
-  const data = useMemo(
-    () => filterByRange(index.series, range),
-    [index.series, range],
+
+  const { primary, secondary, gapNote } = useMemo(() => {
+    if (range === "ALL" || range === "1Y") {
+      const hist = filterByRange(index.historicalSeries, range);
+      const live = padLiveTip(filterByRange(index.liveSeries, range));
+      const hasGap =
+        hist.length >= 2 &&
+        live.length >= 1 &&
+        hist.at(-1)!.date.slice(0, 4) !== live[0]!.date.slice(0, 4);
+      return {
+        primary: hist.length >= 2 ? hist : filterByRange(index.series, range),
+        secondary: hasGap || live.length >= 2 ? live : undefined,
+        gapNote: hasGap
+          ? `No public daily premium tape ${hist.at(-1)!.date.slice(0, 4)}→${live.at(-1)!.date.slice(0, 4)} — gap left empty on purpose`
+          : null,
+      };
+    }
+    const live = filterByRange(
+      index.liveSeries.length >= 2 ? index.liveSeries : index.series,
+      range,
+    );
+    return {
+      primary: live.length >= 2 ? live : filterByRange(index.series, range),
+      secondary: undefined,
+      gapNote: null,
+    };
+  }, [index, range]);
+
+  const hasSeries = primary.length > 1;
+  const tip = secondary?.at(-1) ?? primary.at(-1);
+  const start = primary[0];
+  const isUp = Boolean(
+    tip && start && tip.price >= start.price && !secondary?.length,
   );
-  const hasSeries = data.length > 1;
-  const isUp = hasSeries && data[data.length - 1].price >= data[0].price;
-  const today = formatIndexChange(index.changeToday);
   const month = formatIndexChange(index.change30d);
   const historical = formatIndexChange(index.changeHistorical);
   const premiumLabel = formatPremiumPercent(index.level, index.baseLevel);
@@ -83,15 +123,14 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             {index.name}
           </h2>
           <p className="mt-1 max-w-3xl text-sm text-dash-muted">
-            Sneaker-native market health: volume-weighted ask ÷ retail across
-            the ChronoPulse-style basket. When shoes sit near or under retail,
-            SPI falls toward/below 100 — unlike a dollar price index that can
-            stay elevated after the 2021 boom.
+            Volume-weighted ask ÷ retail. Real daily history covers the 2020–2021
+            boom; 2022–2025 has no free public daily tape, so that stretch is a
+            gap — not a drawn-in line. Gold = live basket today.
           </p>
         </div>
         <div className="text-right">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            SPI premium
+            Live SPI
           </p>
           <p className="mt-1 font-[family-name:var(--font-syne)] text-3xl font-extrabold tabular-nums text-dash-text sm:text-4xl">
             {formatIndexLevel(index.level)}
@@ -109,21 +148,24 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
           {
             label: "vs retail",
             value: premiumLabel.replace(" vs retail", ""),
-            sub: `Index ${formatIndexLevel(index.level)} · base ${formatIndexLevel(index.baseLevel)}`,
+            sub: `Live ${formatIndexLevel(index.level)} · base ${formatIndexLevel(index.baseLevel)}`,
             tone: vsRetailTone,
           },
           {
-            label: "30d",
+            label: "30d live",
             value: month.percent,
-            sub: month.absolute === "—" ? "—" : month.absolute,
+            sub:
+              month.absolute === "—"
+                ? "Need more daily snapshots"
+                : month.absolute,
             tone: changeClass(index.change30d?.percent),
           },
           {
-            label: "Since 2020 tape",
+            label: "vs 2020 tape",
             value: historical.percent,
             sub:
               index.peakLevel != null
-                ? `Peak ${formatIndexLevel(index.peakLevel)} @ ${index.peakDate ?? "—"}`
+                ? `Boom peak ${formatIndexLevel(index.peakLevel)}`
                 : "Boom-era premium",
             tone: changeClass(index.changeHistorical?.percent),
           },
@@ -158,7 +200,9 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-2">
           <p className="text-sm text-dash-muted">
             {hasSeries
-              ? `Premium index · ${data[0]?.date} → ${data.at(-1)?.date} · ${formatNumber(data.length)} sessions`
+              ? secondary?.length
+                ? `Boom tape ${primary[0]?.date}→${primary.at(-1)?.date} · live ${secondary.at(-1)?.date}`
+                : `Premium · ${primary[0]?.date} → ${primary.at(-1)?.date}`
               : "Index series unavailable"}
           </p>
           <div className="flex flex-wrap gap-1 rounded-xl bg-dash-elevated p-1">
@@ -178,10 +222,16 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             ))}
           </div>
         </div>
+        {gapNote ? (
+          <p className="mb-3 px-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.08em] text-dash-accent">
+            {gapNote}
+          </p>
+        ) : null}
         <div className="relative h-[280px] w-full md:h-[340px]">
           {hasSeries ? (
             <LightweightPriceChart
-              data={data}
+              data={primary}
+              secondaryData={secondary}
               up={isUp}
               showTime
               referenceLevel={index.baseLevel}
