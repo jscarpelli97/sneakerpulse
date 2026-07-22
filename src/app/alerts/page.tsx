@@ -20,8 +20,8 @@ export default async function AlertsPage() {
               Price alerts
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
-              Set above/below thresholds on any of the current top 100 StockX
-              sellers. Optional webhook delivery on check.
+              Set above/below thresholds on any of the current top StockX
+              sellers (tracked universe). Optional webhook delivery on check.
             </p>
           </section>
           <div className="animate-rise stagger-2">

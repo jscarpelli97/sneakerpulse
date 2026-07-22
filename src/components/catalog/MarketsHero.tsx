@@ -39,8 +39,9 @@ export function MarketsHero({
             SneakerPulse
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
-            Terminal-grade StockX market views. Live watchlist of the current
-            top sellers by StockX sales rank — asks, volume, and size ladders.
+            Terminal-grade StockX market views. Live asks, volume, and size
+            ladders across the current top {totalMarkets} sellers — homepage
+            highlights the top 10.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -51,10 +52,10 @@ export function MarketsHero({
               Open {featured.ticker}
             </Link>
             <Link
-              href="/compare"
+              href="/markets"
               className="inline-flex items-center rounded-xl border border-dash-border bg-dash-elevated px-5 py-3 text-sm font-semibold text-dash-text hover:border-dash-muted hover:bg-dash-panel"
             >
-              Compare markets
+              Browse all {totalMarkets}
             </Link>
           </div>
         </div>

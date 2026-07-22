@@ -32,7 +32,7 @@ export default async function ComparePage({
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
               Side-by-side lowest ask, 30d change, volume, and rank across the
-              current top 100 StockX sellers.
+              current top StockX sellers.
             </p>
           </section>
           <div className="animate-rise stagger-2 dash-card p-4 md:p-5">

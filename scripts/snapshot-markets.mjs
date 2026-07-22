@@ -12,7 +12,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
-const TOP_SELLERS_LIMIT = 100;
+const TOP_SELLERS_LIMIT = 500;
+const PAGE_SIZE = 100;
 const PREMIUM_BASE = 100;
 
 async function loadEnvLocal() {
@@ -39,26 +40,34 @@ const API_KEY = process.env.KICKSDB_API_KEY?.trim();
 const BASE = "https://api.kicks.dev/v3";
 
 async function fetchTopSellers() {
-  const query = new URLSearchParams({
-    market: "US",
-    limit: String(TOP_SELLERS_LIMIT),
-    sort: "rank",
-    filters: 'product_type="sneakers"',
-    "display[traits]": "true",
-    "display[statistics]": "true",
-  });
-  const res = await fetch(`${BASE}/stockx/products?${query}`, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${API_KEY}`,
-    },
-  });
-  const body = await res.text();
-  if (!res.ok) {
-    throw new Error(`top sellers -> ${res.status} ${body.slice(0, 200)}`);
+  const products = [];
+  for (let page = 1; products.length < TOP_SELLERS_LIMIT && page <= 20; page += 1) {
+    const query = new URLSearchParams({
+      market: "US",
+      limit: String(PAGE_SIZE),
+      page: String(page),
+      sort: "rank",
+      filters: 'product_type="sneakers"',
+      "display[traits]": "true",
+      "display[statistics]": "true",
+    });
+    const res = await fetch(`${BASE}/stockx/products?${query}`, {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      },
+    });
+    const body = await res.text();
+    if (!res.ok) {
+      throw new Error(`top sellers page ${page} -> ${res.status} ${body.slice(0, 200)}`);
+    }
+    const json = JSON.parse(body);
+    const batch = (json.data ?? []).filter((p) => p?.slug);
+    if (!batch.length) break;
+    products.push(...batch);
+    if (batch.length < PAGE_SIZE) break;
   }
-  const json = JSON.parse(body);
-  return (json.data ?? []).filter((p) => p?.slug);
+  return products.slice(0, TOP_SELLERS_LIMIT);
 }
 
 async function upsertSnapshot(product) {

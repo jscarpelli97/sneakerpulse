@@ -17,4 +17,8 @@ export {
   SNEAKERS,
   TOP_SELLERS_LIMIT,
 } from "@/services/catalog/sneakers";
+export {
+  HOMEPAGE_WATCHLIST_LIMIT,
+  STATIC_PARAMS_LIMIT,
+} from "@/services/catalog/mapProductToCatalog";
 export type { SneakerCatalogEntry } from "@/types/catalog";

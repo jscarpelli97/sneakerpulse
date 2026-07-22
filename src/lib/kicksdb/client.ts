@@ -103,25 +103,63 @@ export async function fetchStockxProduct(slug: string, apiKey: string) {
 
 /**
  * Current top-selling StockX sneakers by sales rank (ascending rank = hotter).
+ * Pages in chunks of 100 — KicksDB list endpoints commonly cap per_page there.
  */
 export async function fetchTopStockxSneakers(
   apiKey: string,
   limit = TOP_SELLERS_LIMIT,
 ) {
-  const query = new URLSearchParams({
-    market: "US",
-    limit: String(limit),
-    sort: "rank",
-    filters: 'product_type="sneakers"',
-    "display[traits]": "true",
-    "display[statistics]": "true",
-  });
+  const pageSize = Math.min(100, Math.max(1, limit));
+  const products: KicksProduct[] = [];
+  let lastMeta: KicksProductListResponse["meta"];
+  let lastCacheHit = false;
+  let lastStatus = 200;
 
-  return kicksFetch<KicksProductListResponse>(
-    `/stockx/products?${query.toString()}`,
-    apiKey,
-    { ttlMs: TOP_SELLERS_TTL_MS },
-  );
+  for (let page = 1; products.length < limit && page <= 20; page += 1) {
+    const query = new URLSearchParams({
+      market: "US",
+      limit: String(pageSize),
+      page: String(page),
+      sort: "rank",
+      filters: 'product_type="sneakers"',
+      "display[traits]": "true",
+      "display[statistics]": "true",
+    });
+
+    const res = await kicksFetch<KicksProductListResponse>(
+      `/stockx/products?${query.toString()}`,
+      apiKey,
+      { ttlMs: TOP_SELLERS_TTL_MS },
+    );
+
+    if (!res.ok) {
+      if (products.length === 0) return res;
+      break;
+    }
+
+    lastCacheHit = res.cacheHit;
+    lastStatus = res.status;
+    lastMeta = res.data.meta;
+    const batch = res.data.data ?? [];
+    if (!batch.length) break;
+    products.push(...batch);
+    if (batch.length < pageSize) break;
+  }
+
+  return {
+    ok: true as const,
+    data: {
+      data: products.slice(0, limit),
+      meta: {
+        ...lastMeta,
+        current_page: 1,
+        per_page: limit,
+        total: products.length,
+      },
+    },
+    cacheHit: lastCacheHit,
+    status: lastStatus,
+  };
 }
 
 export async function fetchStockxDailySales(productId: string, apiKey: string) {

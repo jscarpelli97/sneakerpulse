@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { SiteSearch } from "@/components/layout/SiteSearch";
 
 /** Site chrome uses the markets-terminal (homepage) look by default. */
 type ChromeVariant = "dashboard" | "light";
 
 const NAV = [
-  { href: "/", label: "Markets" },
+  { href: "/", label: "Home" },
+  { href: "/markets", label: "All markets" },
   { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
 ] as const;
@@ -49,31 +51,34 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-40 border-b border-dash-border/90 bg-dash-surface/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-4 px-4 sm:h-16 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 items-center gap-4">
+      <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-3 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <Link
             href="/"
-            className="font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text transition-opacity hover:opacity-90 sm:text-xl"
+            className="shrink-0 font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text transition-opacity hover:opacity-90 sm:text-xl"
           >
             SneakerPulse
           </Link>
           {subtitle ? (
-            <span className="hidden truncate font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-muted md:inline">
+            <span className="hidden truncate font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-muted lg:inline">
               {subtitle}
             </span>
           ) : null}
         </div>
-        <nav className="flex items-center gap-1">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text sm:px-3"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <SiteSearch className="hidden sm:flex" />
+          <nav className="flex items-center gap-0.5 sm:gap-1">
+            {NAV.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-lg px-2 py-1.5 text-sm font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text sm:px-3"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
     </header>
   );

@@ -1,6 +1,8 @@
 import {
   mapListedProductToCatalog,
   TOP_SELLERS_LIMIT,
+  HOMEPAGE_WATCHLIST_LIMIT,
+  STATIC_PARAMS_LIMIT,
 } from "@/services/catalog/mapProductToCatalog";
 import {
   fetchStockxProduct,
@@ -10,7 +12,7 @@ import {
 import type { SneakerCatalogEntry } from "@/types/catalog";
 
 export type { SneakerCatalogEntry };
-export { TOP_SELLERS_LIMIT };
+export { TOP_SELLERS_LIMIT, HOMEPAGE_WATCHLIST_LIMIT, STATIC_PARAMS_LIMIT };
 
 /**
  * Offline / no-key fallback. Live tracking uses StockX top sellers by rank.
@@ -78,7 +80,7 @@ export async function getSneakerBySlug(slug: string) {
   const hit = catalog.find((sneaker) => sneaker.slug === slug);
   if (hit) return hit;
 
-  // Allow market pages for any StockX slug even if it falls out of the top 100.
+  // Allow market pages for any StockX slug even if it falls out of the tracked top sellers.
   const apiKey = getKicksApiKey();
   if (!apiKey) return null;
   const res = await fetchStockxProduct(slug, apiKey);

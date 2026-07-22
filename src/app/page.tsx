@@ -3,7 +3,10 @@ import { MarketsHero } from "@/components/catalog/MarketsHero";
 import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
 import { MarketIndexCard } from "@/components/market/MarketIndexCard";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
-import { TOP_SELLERS_LIMIT } from "@/services/catalog/mapProductToCatalog";
+import {
+  HOMEPAGE_WATCHLIST_LIMIT,
+  TOP_SELLERS_LIMIT,
+} from "@/services/catalog/mapProductToCatalog";
 import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
 import { getMarketIndex } from "@/services/market/getMarketIndex";
 
@@ -16,9 +19,8 @@ export default async function MarketsIndexPage() {
   ]);
   const liveCount = quotes.filter((row) => row.live).length;
   const featured =
-    quotes.find((row) => row.featured) ??
-    quotes[0] ??
-    null;
+    quotes.find((row) => row.featured) ?? quotes[0] ?? null;
+  const watchlist = quotes.slice(0, HOMEPAGE_WATCHLIST_LIMIT);
 
   const statusLabel = liveCount
     ? `${liveCount}/${quotes.length} top sellers live`
@@ -38,7 +40,16 @@ export default async function MarketsIndexPage() {
           ) : null}
           <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
           {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
-          <CatalogTable rows={quotes} variant="dashboard" />
+          <CatalogTable
+            rows={watchlist}
+            title="Top 10 watchlist"
+            subtitle={`Hottest ${watchlist.length} of ${quotes.length} tracked StockX sellers`}
+            hrefAll={{
+              href: "/markets",
+              label: `View all ${quotes.length}`,
+            }}
+            variant="dashboard"
+          />
         </div>
       </main>
       <SiteFooter variant="dashboard" />

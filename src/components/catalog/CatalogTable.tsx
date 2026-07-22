@@ -1,19 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { SneakerCatalogEntry } from "@/types/catalog";
+import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
 import { formatMaybeMoney, formatNumber } from "@/utils/format";
-
-type CatalogRow = SneakerCatalogEntry & {
-  price: number | null;
-  rank: number | null;
-  weeklyOrders: number | null;
-  live: boolean;
-};
 
 export function CatalogTable({
   rows,
+  title = "Market watchlist",
+  subtitle,
+  hrefAll,
 }: {
-  rows: CatalogRow[];
+  rows: CatalogQuote[];
+  title?: string;
+  subtitle?: string;
+  hrefAll?: { href: string; label: string };
   /** @deprecated Dashboard is the site-wide standard; prop ignored. */
   variant?: "light" | "dashboard";
 }) {
@@ -22,15 +21,25 @@ export function CatalogTable({
       <div className="flex flex-wrap items-end justify-between gap-3 border-b border-dash-border px-4 py-4 sm:px-5">
         <div>
           <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text">
-            Market watchlist
+            {title}
           </h2>
           <p className="mt-1 text-sm text-dash-muted">
-            Top {rows.length} StockX sneakers by live sales rank
+            {subtitle ?? `Top ${rows.length} StockX sneakers by live sales rank`}
           </p>
         </div>
-        <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-          {rows.length} listings
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          {hrefAll ? (
+            <Link
+              href={hrefAll.href}
+              className="rounded-lg border border-dash-border px-3 py-1.5 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-muted hover:bg-dash-elevated hover:text-dash-text"
+            >
+              {hrefAll.label}
+            </Link>
+          ) : null}
+          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
+            {rows.length} listings
+          </p>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">

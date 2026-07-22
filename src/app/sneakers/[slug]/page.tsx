@@ -14,6 +14,7 @@ import {
   getAllSneakerSlugs,
   getSneakerBySlug,
 } from "@/services/catalog/sneakers";
+import { STATIC_PARAMS_LIMIT } from "@/services/catalog/mapProductToCatalog";
 import {
   getMarketBySlug,
   getMarketFallback,
@@ -24,7 +25,7 @@ export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const slugs = await getAllSneakerSlugs();
-  return slugs.map((slug) => ({ slug }));
+  return slugs.slice(0, STATIC_PARAMS_LIMIT).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({

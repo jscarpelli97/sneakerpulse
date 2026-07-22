@@ -1,7 +1,12 @@
 import type { KicksProduct, KicksTrait } from "@/types/kicksdb";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 
-export const TOP_SELLERS_LIMIT = 100;
+/** Tracked StockX sneaker universe (sales rank). */
+export const TOP_SELLERS_LIMIT = 500;
+/** Homepage watchlist rows. */
+export const HOMEPAGE_WATCHLIST_LIMIT = 10;
+/** Pre-render this many market pages at build; rest use dynamicParams. */
+export const STATIC_PARAMS_LIMIT = 50;
 
 export function traitValue(
   traits: KicksTrait[] | null | undefined,

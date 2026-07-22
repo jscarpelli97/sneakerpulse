@@ -23,7 +23,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "SneakerPulse — StockX market views",
   description:
-    "Live StockX-style market views for the top 100 selling sneakers: price, change, volume, chart, and size asks.",
+    "Live StockX-style market views for the top 500 selling sneakers: price, change, volume, chart, and size asks.",
   openGraph: {
     title: "SneakerPulse — StockX market views",
     description:

@@ -1,6 +1,6 @@
 # SneakerPulse
 
-Next.js market app tracking StockX’s **current top 100 selling sneakers** (by sales rank) with live ask, volume, and market pages.
+Next.js market app tracking StockX’s **current top 500 selling sneakers** (by sales rank) with live ask, volume, and market pages.
 
 ## Design standard
 
@@ -100,22 +100,25 @@ Rule-based narrative card on each sneaker page (`MarketSummaryCard`).
 
 ## Routes
 
-- `/` — live watchlist of the current top 100 StockX sellers
-- `/sneakers/[slug]` — full market page for one SKU (top 100 or any StockX slug)
-- `/compare` — side-by-side live quotes across the top 100
+- `/` — homepage with SPI + top 10 watchlist
+- `/markets` — full top 500 list with search and column sorting
+- `/sneakers/[slug]` — full market page for one SKU (tracked set or any StockX slug)
+- `/compare` — side-by-side live quotes across the tracked top sellers
 - `/alerts` — browser-stored price alerts + evaluate API (no outbound webhooks)
 - `/api/market/[slug]` — JSON market payload
 - `/api/catalog` — catalog quotes for the top sellers
 - `/api/status` — coarse upstream health (`live` / `degraded` / `offline`); details only with `STATUS_TOKEN`
 - `/api/alerts/evaluate` — check alert thresholds in-process (webhooks disabled)
 
-## Catalog (top 100 sellers)
+## Catalog (top 500 sellers)
 
-The tracked set is **not** a hard-coded list. With `KICKSDB_API_KEY` set, the app loads:
+The tracked set is **not** a hard-coded list. With `KICKSDB_API_KEY` set, the app loads pages of:
 
 ```
-GET /v3/stockx/products?market=US&limit=100&sort=rank&filters=product_type="sneakers"
+GET /v3/stockx/products?market=US&limit=100&page=N&sort=rank&filters=product_type="sneakers"
 ```
+
+until **500** sneakers are collected (homepage shows the top **10**; `/markets` lists all).
 
 Rank 1 = hottest by StockX sales. Catalog quotes, compare, alerts, and the daily snapshot job all use this list. Without an API key, a single offline fallback SKU is used.
 
@@ -171,7 +174,7 @@ To put the site on the public internet, see **[DEPLOY.md](DEPLOY.md)**.
 - `npm run lint` — run ESLint
 - `npm run typecheck` — TypeScript check
 - `npm test` — run Vitest unit tests
-- `npm run snapshot` — append today’s lowest ask for each of the current top 100 sellers
+- `npm run snapshot` — append today’s lowest ask for each of the current top 500 sellers
 
 ## CI / snapshots
 
