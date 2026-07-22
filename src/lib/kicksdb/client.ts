@@ -114,6 +114,7 @@ export async function fetchTopStockxSneakers(
     sort: "rank",
     filters: 'product_type="sneakers"',
     "display[traits]": "true",
+    "display[statistics]": "true",
   });
 
   return kicksFetch<KicksProductListResponse>(

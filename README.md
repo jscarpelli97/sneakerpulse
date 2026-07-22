@@ -14,6 +14,16 @@ The **markets terminal** look from the homepage is the site-wide visual standard
 
 Do not reintroduce the old light ink/paper theme unless asked.
 
+## SneakerPulse Index (SPI100)
+
+Homepage market pulse inspired by Chrono24’s ChronoPulse:
+
+- Basket: current top StockX sellers (up to 100)
+- Weighting: weekly order volume (Laspeyres-style)
+- Base level: **1,000** at the start of the chart window
+- History: StockX range/average stats → bootstrap series until official `sales/daily` is available
+- Shown as `MarketIndexCard` under the homepage stat strip
+
 ```
 src/
   app/          Next.js App Router pages + route handlers (must stay here)

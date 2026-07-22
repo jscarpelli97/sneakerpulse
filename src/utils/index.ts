@@ -8,6 +8,7 @@ export {
 } from "@/utils/format";
 export {
   buildBootstrapSeries,
+  buildLaspeyresIndex,
   changeFromPrices,
   premiumVsRetail,
   salesToSeries,
@@ -16,3 +17,4 @@ export {
   toDay,
   upsertToday,
 } from "@/utils/metrics";
+export type { IndexMemberSeries } from "@/utils/metrics";

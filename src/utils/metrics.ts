@@ -136,6 +136,75 @@ export function buildBootstrapSeries(input: {
   return points;
 }
 
+export type IndexMemberSeries = {
+  id: string;
+  weight: number;
+  series: ChartPoint[];
+};
+
+/**
+ * ChronoPulse-style Laspeyres index: fixed basket, volume weights, base = 1000.
+ * Index_t = 1000 * Σ(w_i * P_i,t / P_i,base) / Σ(w_i)
+ */
+export function buildLaspeyresIndex(
+  members: IndexMemberSeries[],
+  options?: { baseLevel?: number },
+): ChartPoint[] {
+  const baseLevel = options?.baseLevel ?? 1000;
+  const usable = members.filter(
+    (member) =>
+      member.weight > 0 &&
+      member.series.length >= 2 &&
+      member.series[0].price > 0,
+  );
+  if (usable.length === 0) return [];
+
+  const dates = new Set<string>();
+  for (const member of usable) {
+    for (const point of member.series) dates.add(point.date);
+  }
+  const timeline = [...dates].sort((a, b) => a.localeCompare(b));
+  if (timeline.length < 2) return [];
+
+  const baseDate = timeline[0];
+  const lookups = usable.map((member) => {
+    const byDate = new Map(
+      member.series.map((point) => [point.date, point.price] as const),
+    );
+    const basePrice = byDate.get(baseDate) ?? member.series[0].price;
+    return { weight: member.weight, byDate, basePrice };
+  });
+
+  const totalWeight = lookups.reduce((sum, row) => sum + row.weight, 0);
+  if (!(totalWeight > 0)) return [];
+
+  const points: ChartPoint[] = [];
+  const lastPrices = lookups.map((row) => row.basePrice);
+
+  for (const date of timeline) {
+    let weighted = 0;
+    let weightUsed = 0;
+    lookups.forEach((row, index) => {
+      const price = row.byDate.get(date);
+      if (price != null && price > 0) {
+        lastPrices[index] = price;
+      }
+      const current = lastPrices[index];
+      if (!(row.basePrice > 0) || !(current > 0)) return;
+      weighted += row.weight * (current / row.basePrice);
+      weightUsed += row.weight;
+    });
+    if (!(weightUsed > 0)) continue;
+    points.push({
+      date,
+      price: Math.round(((baseLevel * weighted) / weightUsed) * 100) / 100,
+      orders: usable.length,
+    });
+  }
+
+  return points;
+}
+
 export function seriesWindowHighLow(points: ChartPoint[]) {
   if (points.length === 0) {
     return { high: null, low: null };

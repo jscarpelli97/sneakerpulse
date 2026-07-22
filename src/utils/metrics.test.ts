@@ -3,6 +3,7 @@ import { mapProductToMarket } from "@/lib/mapProductToMarket";
 import type { KicksProduct } from "@/types/kicksdb";
 import {
   buildBootstrapSeries,
+  buildLaspeyresIndex,
   changeFromPrices,
   premiumVsRetail,
   salesToSeries,
@@ -264,5 +265,38 @@ describe("buildBootstrapSeries", () => {
 
   it("returns empty when live price is missing", () => {
     expect(buildBootstrapSeries({ livePrice: 0 })).toEqual([]);
+  });
+});
+
+describe("buildLaspeyresIndex", () => {
+  it("starts near the base level and tracks relative moves", () => {
+    const series = buildLaspeyresIndex(
+      [
+        {
+          id: "a",
+          weight: 2,
+          series: [
+            { date: "2026-01-01", price: 100, orders: 1 },
+            { date: "2026-01-02", price: 110, orders: 1 },
+            { date: "2026-01-03", price: 120, orders: 1 },
+          ],
+        },
+        {
+          id: "b",
+          weight: 1,
+          series: [
+            { date: "2026-01-01", price: 200, orders: 1 },
+            { date: "2026-01-02", price: 200, orders: 1 },
+            { date: "2026-01-03", price: 180, orders: 1 },
+          ],
+        },
+      ],
+      { baseLevel: 1000 },
+    );
+
+    expect(series[0]?.price).toBe(1000);
+    // Day 2: (2*(110/100) + 1*(200/200)) / 3 * 1000 = (2.2 + 1) / 3 * 1000 = 1066.67
+    expect(series[1]?.price).toBeCloseTo(1066.67, 1);
+    expect(series.at(-1)?.date).toBe("2026-01-03");
   });
 });

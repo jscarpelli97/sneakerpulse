@@ -106,3 +106,21 @@ export type PriceAlert = {
   webhookUrl?: string;
   createdAt: string;
 };
+
+/** Homepage market pulse — ChronoPulse-style basket index. */
+export type MarketIndex = {
+  name: string;
+  ticker: string;
+  level: number;
+  baseLevel: number;
+  baseDate: string;
+  asOf: string;
+  changeToday: ChangeMetric;
+  change30d: ChangeMetric;
+  change90d: ChangeMetric;
+  series: ChartPoint[];
+  constituents: number;
+  historySource: HistorySource;
+  methodology: string;
+  fetchedAt: string;
+};

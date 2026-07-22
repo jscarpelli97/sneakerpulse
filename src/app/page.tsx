@@ -1,14 +1,19 @@
 import { CatalogTable } from "@/components/catalog/CatalogTable";
 import { MarketsHero } from "@/components/catalog/MarketsHero";
 import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
+import { MarketIndexCard } from "@/components/market/MarketIndexCard";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { TOP_SELLERS_LIMIT } from "@/services/catalog/mapProductToCatalog";
 import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
+import { getMarketIndex } from "@/services/market/getMarketIndex";
 
 export const revalidate = 300;
 
 export default async function MarketsIndexPage() {
-  const quotes = await getCatalogQuotes(TOP_SELLERS_LIMIT);
+  const [quotes, marketIndex] = await Promise.all([
+    getCatalogQuotes(TOP_SELLERS_LIMIT),
+    getMarketIndex(TOP_SELLERS_LIMIT),
+  ]);
   const liveCount = quotes.filter((row) => row.live).length;
   const featured =
     quotes.find((row) => row.featured) ??
@@ -32,6 +37,7 @@ export default async function MarketsIndexPage() {
             />
           ) : null}
           <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
+          {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
           <CatalogTable rows={quotes} variant="dashboard" />
         </div>
       </main>
