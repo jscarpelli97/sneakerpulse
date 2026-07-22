@@ -158,7 +158,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-2">
           <p className="text-sm text-dash-muted">
             {hasSeries
-              ? `Premium index · ${data.length} sessions · ${data[0]?.date} → ${data.at(-1)?.date}`
+              ? `Premium index · ${data[0]?.date} → ${data.at(-1)?.date} · ${formatNumber(data.length)} sessions`
               : "Index series unavailable"}
           </p>
           <div className="flex flex-wrap gap-1 rounded-xl bg-dash-elevated p-1">
@@ -180,7 +180,12 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
         </div>
         <div className="relative h-[280px] w-full md:h-[340px]">
           {hasSeries ? (
-            <LightweightPriceChart data={data} up={isUp} />
+            <LightweightPriceChart
+              data={data}
+              up={isUp}
+              showTime
+              referenceLevel={index.baseLevel}
+            />
           ) : (
             <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-dash-border bg-dash-elevated/40 text-sm text-dash-muted">
               No index points to plot yet.

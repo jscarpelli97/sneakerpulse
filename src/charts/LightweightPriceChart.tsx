@@ -11,9 +11,13 @@ import type { ChartPoint } from "@/types/market";
 
 type Props = {
   data: ChartPoint[];
-  /** Optional second segment (e.g. post-gap extension) drawn separately so we do not invent a line across missing years. */
+  /** Optional second segment drawn separately. */
   secondaryData?: ChartPoint[];
   up: boolean;
+  /** Show calendar axis labels (useful for multi-year index charts). */
+  showTime?: boolean;
+  /** Optional reference price line (e.g. 100 = retail parity). */
+  referenceLevel?: number;
 };
 
 function toChartPoints(data: ChartPoint[]) {
@@ -32,7 +36,13 @@ function toChartPoints(data: ChartPoint[]) {
   return points;
 }
 
-export function LightweightPriceChart({ data, secondaryData, up }: Props) {
+export function LightweightPriceChart({
+  data,
+  secondaryData,
+  up,
+  showTime = false,
+  referenceLevel,
+}: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -58,7 +68,7 @@ export function LightweightPriceChart({ data, secondaryData, up }: Props) {
       },
       timeScale: {
         borderVisible: false,
-        timeVisible: false,
+        timeVisible: showTime,
       },
       crosshair: {
         horzLine: { labelBackgroundColor: "#1b2130" },
@@ -76,12 +86,27 @@ export function LightweightPriceChart({ data, secondaryData, up }: Props) {
       bottomColor: up ? "rgba(38, 166, 154, 0.02)" : "rgba(239, 83, 80, 0.02)",
       lineWidth: 2,
       priceLineVisible: !hasSecondary,
-      lastValueVisible: !hasSecondary,
+      lastValueVisible: true,
     });
 
     const points = toChartPoints(data);
     if (points.length > 0) {
       series.setData(points);
+    }
+
+    if (
+      referenceLevel != null &&
+      Number.isFinite(referenceLevel) &&
+      referenceLevel > 0
+    ) {
+      series.createPriceLine({
+        price: referenceLevel,
+        color: "rgba(212, 160, 23, 0.85)",
+        lineWidth: 1,
+        lineStyle: 2,
+        axisLabelVisible: true,
+        title: "Retail",
+      });
     }
 
     if (hasSecondary && secondaryData) {
@@ -116,7 +141,7 @@ export function LightweightPriceChart({ data, secondaryData, up }: Props) {
       ro.disconnect();
       chart.remove();
     };
-  }, [data, secondaryData, up]);
+  }, [data, secondaryData, up, showTime, referenceLevel]);
 
   return (
     <div

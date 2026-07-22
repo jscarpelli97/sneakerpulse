@@ -68,7 +68,8 @@ function loadExtensionSeries(): ChartPoint[] {
   const file = extensionIndex as ExtensionFile;
   if (!file?.points?.length) return [];
   return file.points
-    .filter((point) => point.price > 0 && point.date)
+    // Premium index lives near 50–300. Drop legacy absolute-dollar seeds (~5000).
+    .filter((point) => point.price > 0 && point.price < 500 && point.date)
     .map((point) => ({
       date: point.date.slice(0, 10),
       price: point.price,
@@ -105,10 +106,26 @@ function peakOf(series: ChartPoint[]) {
   return { level: peak.price, date: peak.date };
 }
 
+function addDays(date: string, days: number): string {
+  const ms = Date.parse(`${date.slice(0, 10)}T00:00:00.000Z`);
+  if (!Number.isFinite(ms)) return date;
+  return new Date(ms + days * 86_400_000).toISOString().slice(0, 10);
+}
+
+function daysBetween(a: string, b: string): number {
+  const am = Date.parse(`${a.slice(0, 10)}T00:00:00.000Z`);
+  const bm = Date.parse(`${b.slice(0, 10)}T00:00:00.000Z`);
+  if (!Number.isFinite(am) || !Number.isFinite(bm)) return 0;
+  return Math.round((bm - am) / 86_400_000);
+}
+
 /**
  * Merge boom-era premium history with live/extension premiums.
- * Do NOT LOCF the 2021 peak across the missing years — that made the
- * post-boom dump look like the market stayed hot.
+ *
+ * After Dec 2021 there is no public daily tape. To make ALL read through
+ * today (not look stuck in 2021), we draw a straight-line bridge from the
+ * last boom print to the live premium. That is illustrative of the cooling
+ * — not invented "still hot" LOCF at the peak.
  */
 export function buildPremiumSeries(
   historical: ChartPoint[],
@@ -121,12 +138,50 @@ export function buildPremiumSeries(
     if (point.price > 0) byDate.set(point.date.slice(0, 10), { ...point });
   }
   for (const point of extension) {
-    if (point.price > 0) byDate.set(point.date.slice(0, 10), { ...point });
+    if (point.price > 0 && point.price < 500) {
+      byDate.set(point.date.slice(0, 10), { ...point });
+    }
   }
   if (liveLevel != null && liveLevel > 0) {
-    byDate.set(asOf, premiumPoint(asOf, liveLevel, 1));
+    byDate.set(asOf.slice(0, 10), premiumPoint(asOf, liveLevel, 1));
   }
-  return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+
+  let series = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+  if (series.length < 2) return series;
+
+  const endDate = asOf.slice(0, 10);
+  const endLevel =
+    liveLevel != null && liveLevel > 0
+      ? liveLevel
+      : series.at(-1)!.price;
+
+  // Ensure the tip is today at the live/extension premium.
+  byDate.set(endDate, premiumPoint(endDate, endLevel, series.at(-1)!.orders ?? 1));
+  series = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+
+  // Fill any calendar holes (esp. 2022→today) with a linear bridge so the
+  // time axis reaches the present and the post-boom cool-down is visible.
+  const filled: ChartPoint[] = [];
+  for (let i = 0; i < series.length; i++) {
+    const cur = series[i];
+    filled.push(cur);
+    if (i === series.length - 1) break;
+    const next = series[i + 1];
+    const gap = daysBetween(cur.date, next.date);
+    if (gap <= 1) continue;
+    for (let step = 1; step < gap; step++) {
+      const t = step / gap;
+      const price =
+        Math.round((cur.price * (1 - t) + next.price * t) * 100) / 100;
+      filled.push({
+        date: addDays(cur.date, step),
+        price,
+        orders: 0,
+      });
+    }
+  }
+
+  return filled.filter((point) => point.date <= endDate);
 }
 
 async function measureLivePremium(limit: number): Promise<{
@@ -248,7 +303,7 @@ export async function getMarketIndex(
     rebalancedAt: basket?.rebalancedAt ?? null,
     nextRebalanceAt: basket?.nextRebalanceAt ?? null,
     historySource: historical && live ? "hybrid" : historical ? "whole_market" : "bootstrap",
-    methodology: `${howItWorks.calculation} Boom-era tape (Nov 2020–Dec 2021) comes from Flurin17 daily StockX premiums; there is no honest public daily premium tape for 2022–mid‑2025, so the chart connects the 2021 print to today’s live basket without inventing a flat “still hot” bridge.`,
+    methodology: `${howItWorks.calculation} Boom-era tape (Nov 2020–Dec 2021) is Flurin17 daily StockX premiums. 2022→today has no public daily premium feed, so ALL draws a straight-line bridge from the last 2021 print down to today’s live basket (~${Math.round(level)}) — that shows the cool-down without faking a flat “still hot” market.`,
     howItWorks,
     citation: historical?.meta.citation ?? "https://github.com/Flurin17/stockXsalesData",
     fetchedAt: new Date().toISOString(),
