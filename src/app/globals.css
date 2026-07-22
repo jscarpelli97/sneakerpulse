@@ -12,6 +12,22 @@
   --down: #dc2626;
   --background: var(--paper);
   --foreground: var(--ink);
+
+  /* Financial dashboard (homepage) */
+  --dash-bg: #0c0e12;
+  --dash-surface: #12151c;
+  --dash-panel: #171b24;
+  --dash-elevated: #1c2230;
+  --dash-border: #2a3142;
+  --dash-border-subtle: #222836;
+  --dash-text: #e6e9ef;
+  --dash-muted: #8b93a7;
+  --dash-faint: #5c657a;
+  --dash-accent: #d4a017;
+  --dash-accent-soft: rgba(212, 160, 23, 0.12);
+  --dash-link: #3d9cf0;
+  --dash-up: #26a69a;
+  --dash-down: #ef5350;
 }
 
 @theme inline {
@@ -26,8 +42,21 @@
   --color-heat: var(--heat);
   --color-up: var(--up);
   --color-down: var(--down);
+  --color-dash-bg: var(--dash-bg);
+  --color-dash-surface: var(--dash-surface);
+  --color-dash-panel: var(--dash-panel);
+  --color-dash-elevated: var(--dash-elevated);
+  --color-dash-border: var(--dash-border);
+  --color-dash-text: var(--dash-text);
+  --color-dash-muted: var(--dash-muted);
+  --color-dash-faint: var(--dash-faint);
+  --color-dash-accent: var(--dash-accent);
+  --color-dash-link: var(--dash-link);
+  --color-dash-up: var(--dash-up);
+  --color-dash-down: var(--dash-down);
   --font-sans: var(--font-instrument);
   --font-display: var(--font-syne);
+  --font-mono: var(--font-plex-mono);
 }
 
 * {
@@ -48,6 +77,11 @@ body {
 ::selection {
   background: var(--signal);
   color: var(--ink);
+}
+
+.dashboard ::selection {
+  background: var(--dash-accent);
+  color: var(--dash-bg);
 }
 
 @keyframes blink {
