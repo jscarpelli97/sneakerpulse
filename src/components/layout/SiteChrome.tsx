@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteSearch } from "@/components/layout/SiteSearch";
+import { PlusInterest } from "@/components/plus/PlusInterest";
 
 /** Site chrome uses the markets-terminal (homepage) look by default. */
 type ChromeVariant = "dashboard" | "light";
@@ -117,6 +118,7 @@ export function SiteFooter({
               Independent markets terminal for sneaker asks and the SPI index.
               Not affiliated with StockX.
             </p>
+            <PlusInterest variant="footer" source="footer" />
           </div>
           <nav className="flex flex-wrap gap-x-4 gap-y-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
             <Link href="/markets" className="hover:text-dash-text">
@@ -130,6 +132,9 @@ export function SiteFooter({
             </Link>
             <Link href="/about" className="hover:text-dash-text">
               About
+            </Link>
+            <Link href="/#plus" className="hover:text-dash-text">
+              Plus
             </Link>
           </nav>
         </div>

@@ -5,6 +5,7 @@ import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
 import { DataModeBanner } from "@/components/layout/DataModeBanner";
 import { MarketIndexCard } from "@/components/market/MarketIndexCard";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
+import { PlusInterest } from "@/components/plus/PlusInterest";
 import { getDataModeLabel } from "@/lib/dataMode";
 import {
   HOMEPAGE_WATCHLIST_LIMIT,
@@ -68,6 +69,7 @@ export default async function MarketsIndexPage() {
             }}
             variant="dashboard"
           />
+          <PlusInterest variant="panel" source="home" />
         </div>
       </main>
       <SiteFooter variant="dashboard" />

@@ -188,6 +188,13 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
               {index.change30d
                 ? ` · 30d ${index.change30d.percent > 0 ? "+" : ""}${index.change30d.percent.toFixed(1)}%`
                 : ""}
+              {" · "}
+              <a
+                href="/#plus"
+                className="text-dash-faint underline-offset-2 hover:text-dash-accent hover:underline"
+              >
+                live tip · Plus soon
+              </a>
             </p>
           </div>
         </div>
