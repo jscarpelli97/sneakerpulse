@@ -1,3 +1,4 @@
+import localHistory from "@/data/darkMochaPriceHistory.json";
 import { DARK_MOCHA } from "@/data/darkMocha";
 import type {
   ChangeMetric,
@@ -95,9 +96,46 @@ function sumSales(points: ChartPoint[], days: number): VolumeMetric {
   };
 }
 
+function toDay(date: string) {
+  return date.slice(0, 10);
+}
+
+function loadLocalHistory(): ChartPoint[] {
+  return (localHistory.points ?? []).map((point) => ({
+    date: toDay(point.date),
+    price: point.price,
+    orders: point.orders,
+  }));
+}
+
+function salesToSeries(sales: DailySale[]): ChartPoint[] {
+  return sales
+    .slice()
+    .reverse()
+    .map((sale) => ({
+      date: toDay(sale.date),
+      price: sale.avg_amount,
+      orders: sale.orders,
+    }))
+    .filter((point) => point.price > 0);
+}
+
+function upsertToday(
+  series: ChartPoint[],
+  price: number,
+  orders: number,
+): ChartPoint[] {
+  const today = new Date().toISOString().slice(0, 10);
+  const next = series.filter((point) => point.date !== today);
+  next.push({ date: today, price, orders: Math.max(orders, 1) });
+  next.sort((a, b) => a.date.localeCompare(b.date));
+  return next;
+}
+
 function buildMarket(
   product: KicksProduct,
-  sales: DailySale[] | null,
+  chartSeries: ChartPoint[],
+  historySource: "sales" | "local",
 ): SneakerMarket {
   const variants = (product.variants ?? []).filter((variant) => !variant.hidden);
   const asks = variants
@@ -126,16 +164,6 @@ function buildMarket(
     (total, variant) => total + (variant.sales_count_60_days ?? 0),
     0,
   );
-
-  const chartSeries: ChartPoint[] = (sales ?? [])
-    .slice()
-    .reverse()
-    .map((sale) => ({
-      date: sale.date,
-      price: sale.avg_amount,
-      orders: sale.orders,
-    }))
-    .filter((point) => point.price > 0);
 
   const historyAvailable = chartSeries.length > 1;
   const latestHistory = chartSeries.at(-1)?.price ?? null;
@@ -185,11 +213,11 @@ function buildMarket(
       averageAsk: product.avg_price ?? null,
       askCount,
       high24h: historyAvailable
-        ? chartSeries.at(-1)?.price ?? null
-        : product.max_price ?? null,
+        ? (chartSeries.at(-1)?.price ?? null)
+        : (product.max_price ?? null),
       low24h: historyAvailable
-        ? chartSeries.at(-1)?.price ?? null
-        : product.min_price ?? null,
+        ? (chartSeries.at(-1)?.price ?? null)
+        : (product.min_price ?? null),
       high30d: last30.length
         ? Math.max(...last30.map((point) => point.price))
         : (stats?.last_90_days_range_high ?? product.max_price ?? null),
@@ -212,6 +240,7 @@ function buildMarket(
       annualSales: stats?.annual_sales_count ?? null,
     },
     chartSeries,
+    historySource,
     source: "stockx",
     provider: "kicksdb",
     fetchedAt: new Date().toISOString(),
@@ -258,16 +287,32 @@ export async function getDarkMochaMarket(): Promise<MarketLoadResult> {
   }
 
   const product = productRes.data.data;
-  let sales: DailySale[] | null = null;
+  let historySource: "sales" | "local" = "local";
+  let chartSeries = loadLocalHistory();
 
   const salesRes = await kicksFetch<{ data: DailySale[] | null }>(
     `/stockx/products/${product.id}/sales/daily?market=US`,
     apiKey,
   );
 
-  if (salesRes.ok) {
-    sales = salesRes.data.data ?? [];
+  if (salesRes.ok && (salesRes.data.data?.length ?? 0) > 1) {
+    chartSeries = salesToSeries(salesRes.data.data ?? []);
+    historySource = "sales";
   }
 
-  return { ok: true, data: buildMarket(product, sales) };
+  const livePrice =
+    product.min_price ??
+    product.avg_price ??
+    chartSeries.at(-1)?.price ??
+    0;
+  chartSeries = upsertToday(
+    chartSeries,
+    livePrice,
+    product.weekly_orders ? Math.round(product.weekly_orders / 7) : 1,
+  );
+
+  return {
+    ok: true,
+    data: buildMarket(product, chartSeries, historySource),
+  };
 }

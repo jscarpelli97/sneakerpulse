@@ -50,6 +50,7 @@ function fallbackMarket(): SneakerMarket {
       annualSales: null,
     },
     chartSeries: [],
+    historySource: "local",
     source: "stockx",
     provider: "kicksdb",
     fetchedAt: new Date().toISOString(),
@@ -75,7 +76,10 @@ export default async function Home() {
 
           {result.ok ? (
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1.7fr)_minmax(280px,1fr)]">
-              <PriceChart market={market} />
+              <PriceChart
+                series={market.chartSeries}
+                historySource={market.historySource}
+              />
               <StatsPanel market={market} />
             </div>
           ) : null}

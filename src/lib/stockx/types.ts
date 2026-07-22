@@ -56,6 +56,7 @@ export type SneakerMarket = {
   volume30d: VolumeMetric;
   stats: MarketStats;
   chartSeries: ChartPoint[];
+  historySource: "sales" | "local";
   source: "stockx";
   provider: "kicksdb";
   fetchedAt: string;

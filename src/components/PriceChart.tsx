@@ -1,39 +1,46 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import { CHART_RANGES } from "@/data/darkMocha";
-import type { SneakerMarket } from "@/lib/stockx/types";
+import { LightweightPriceChart } from "@/components/LightweightPriceChart";
+import type { ChartPoint } from "@/lib/stockx/types";
 import { formatMoney } from "@/lib/format";
 
-function buildPath(values: readonly number[], width: number, height: number) {
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const span = max - min || 1;
-  const step = values.length > 1 ? width / (values.length - 1) : width;
+type Range = (typeof CHART_RANGES)[number];
 
-  const points = values.map((value, index) => {
-    const x = index * step;
-    const y = height - ((value - min) / span) * (height - 24) - 12;
-    return { x, y };
-  });
+function filterByRange(points: ChartPoint[], range: Range): ChartPoint[] {
+  if (points.length === 0) return points;
+  if (range === "ALL") return points;
 
-  const line = points
-    .map((point, index) =>
-      index === 0 ? `M ${point.x} ${point.y}` : `L ${point.x} ${point.y}`,
-    )
-    .join(" ");
-
-  const area = `${line} L ${width} ${height} L 0 ${height} Z`;
-
-  return { line, area, min, max };
+  const last = Date.parse(points[points.length - 1].date.slice(0, 10));
+  const dayMs = 24 * 60 * 60 * 1000;
+  const lookback: Record<Exclude<Range, "ALL">, number> = {
+    "1D": 1,
+    "7D": 7,
+    "1M": 30,
+    "3M": 90,
+    "1Y": 365,
+  };
+  const from = last - lookback[range] * dayMs;
+  const filtered = points.filter((point) => Date.parse(point.date.slice(0, 10)) >= from);
+  return filtered.length > 1 ? filtered : points.slice(-2);
 }
 
-export function PriceChart({ market }: { market: SneakerMarket }) {
-  const width = 960;
-  const height = 360;
-  const prices = market.chartSeries.map((point) => point.price);
-  const hasSeries = prices.length > 1;
-  const { line, area, min, max } = hasSeries
-    ? buildPath(prices, width, height)
-    : { line: "", area: "", min: market.price, max: market.price };
-  const isUp = (market.changeToday?.percent ?? market.change30d?.percent ?? 0) >= 0;
+export function PriceChart({
+  series,
+  historySource,
+}: {
+  series: ChartPoint[];
+  historySource: "sales" | "local";
+}) {
+  const [range, setRange] = useState<Range>("3M");
+  const data = useMemo(() => filterByRange(series, range), [series, range]);
+  const hasSeries = data.length > 1;
+  const prices = data.map((point) => point.price);
+  const min = hasSeries ? Math.min(...prices) : 0;
+  const max = hasSeries ? Math.max(...prices) : 0;
+  const isUp =
+    hasSeries && data[data.length - 1].price >= data[0].price;
 
   return (
     <section className="border border-ink/10 bg-white">
@@ -44,81 +51,42 @@ export function PriceChart({ market }: { market: SneakerMarket }) {
           </h2>
           <p className="text-sm text-ink-soft">
             {hasSeries
-              ? `StockX daily average sales · ${market.chartSeries.length} sessions`
-              : "StockX sales history unavailable on free KicksDB tier"}
+              ? historySource === "sales"
+                ? `TradingView Lightweight Charts · StockX daily sales · ${data.length} sessions`
+                : `TradingView Lightweight Charts · historical series · ${data.length} sessions`
+              : "Historical price series unavailable"}
           </p>
         </div>
         <div className="flex flex-wrap gap-1">
-          {CHART_RANGES.map((range) => (
-            <span
-              key={range}
-              className={`px-2.5 py-1 text-xs font-semibold ${
-                range === "3M" ? "bg-ink text-white" : "bg-paper text-ink-soft"
+          {CHART_RANGES.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setRange(item)}
+              className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
+                range === item
+                  ? "bg-ink text-white"
+                  : "bg-paper text-ink-soft hover:text-ink"
               }`}
             >
-              {range}
-            </span>
+              {item}
+            </button>
           ))}
         </div>
       </div>
 
       <div className="relative px-2 py-4 md:px-4 md:py-5">
         <div className="mb-3 flex items-end justify-between px-2 text-xs text-ink/45">
-          <span>High {formatMoney(max)}</span>
-          <span>Low {formatMoney(min)}</span>
+          <span>High {hasSeries ? formatMoney(max) : "—"}</span>
+          <span>Low {hasSeries ? formatMoney(min) : "—"}</span>
         </div>
 
         <div className="relative h-[280px] w-full md:h-[360px]">
           {hasSeries ? (
-            <svg
-              viewBox={`0 0 ${width} ${height}`}
-              className="h-full w-full"
-              role="img"
-              aria-label={`${market.name} StockX price chart`}
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="0%"
-                    stopColor={isUp ? "#16a34a" : "#dc2626"}
-                    stopOpacity="0.28"
-                  />
-                  <stop
-                    offset="100%"
-                    stopColor={isUp ? "#16a34a" : "#dc2626"}
-                    stopOpacity="0.02"
-                  />
-                </linearGradient>
-                <pattern
-                  id="grid"
-                  width="80"
-                  height="48"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <path
-                    d="M 80 0 L 0 0 0 48"
-                    fill="none"
-                    stroke="rgba(18,20,26,0.06)"
-                    strokeWidth="1"
-                  />
-                </pattern>
-              </defs>
-
-              <rect width={width} height={height} fill="url(#grid)" />
-              <path d={area} fill="url(#chartFill)" />
-              <path
-                d={line}
-                fill="none"
-                stroke={isUp ? "#16a34a" : "#dc2626"}
-                strokeWidth="2.5"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
+            <LightweightPriceChart data={data} up={isUp} />
           ) : (
             <div className="flex h-full items-center justify-center border border-dashed border-ink/15 bg-paper/50 px-6 text-center text-sm text-ink-soft">
-              Live lowest ask is loaded from StockX. Upgrade KicksDB for daily
-              sales history to render the full chart.
+              No historical points to plot yet.
             </div>
           )}
         </div>
