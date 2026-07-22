@@ -1,12 +1,18 @@
-import { DARK_MOCHA } from "@/data/darkMocha";
+type SetupBannerProps = {
+  code: string;
+  message: string;
+  sneakerName?: string;
+  stockxUrl?: string;
+  styleCode?: string;
+};
 
 export function SetupBanner({
   code,
   message,
-}: {
-  code: string;
-  message: string;
-}) {
+  sneakerName,
+  stockxUrl,
+  styleCode,
+}: SetupBannerProps) {
   return (
     <section className="border border-ink/15 bg-white px-4 py-5 md:px-5">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink/45">
@@ -42,22 +48,33 @@ export function SetupBanner({
           .
         </li>
         <li>
-          Add it to <code className="bg-paper px-1.5 py-0.5 text-ink">.env.local</code>:
+          Add it to{" "}
+          <code className="bg-paper px-1.5 py-0.5 text-ink">.env.local</code>:
           <pre className="mt-2 overflow-x-auto bg-paper px-3 py-2 text-xs text-ink">{`KICKSDB_API_KEY=KICKS-xxxx-xxxx-xxxx-xxxxxxxxxxxx`}</pre>
         </li>
-        <li>Restart <code className="bg-paper px-1.5 py-0.5 text-ink">npm run dev</code>.</li>
+        <li>
+          Restart <code className="bg-paper px-1.5 py-0.5 text-ink">npm run dev</code>.
+        </li>
       </ol>
-      <p className="mt-4 text-xs text-ink/45">
-        Tracking {DARK_MOCHA.name} · {DARK_MOCHA.styleCode} ·{" "}
-        <a
-          href={DARK_MOCHA.stockxUrl}
-          className="underline-offset-2 hover:underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          StockX listing
-        </a>
-      </p>
+      {sneakerName ? (
+        <p className="mt-4 text-xs text-ink/45">
+          Tracking {sneakerName}
+          {styleCode ? ` · ${styleCode}` : ""}
+          {stockxUrl ? (
+            <>
+              {" · "}
+              <a
+                href={stockxUrl}
+                className="underline-offset-2 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                StockX listing
+              </a>
+            </>
+          ) : null}
+        </p>
+      ) : null}
     </section>
   );
 }

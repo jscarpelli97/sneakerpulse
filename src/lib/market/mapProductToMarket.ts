@@ -1,3 +1,4 @@
+import type { SneakerCatalogEntry } from "@/catalog/sneakers";
 import type { KicksProduct } from "@/lib/kicksdb/client";
 import {
   changeFromPrices,
@@ -11,17 +12,18 @@ import type {
   SneakerMarket,
 } from "@/lib/market/types";
 
-export type CatalogIdentity = {
-  year: number;
-  ticker: string;
-  styleCode: string;
-  colorway: string;
-  retail: number;
-  name: string;
-  brand: string;
-  fallbackImage: string;
-  stockxUrl: string;
-};
+export type CatalogIdentity = Pick<
+  SneakerCatalogEntry,
+  | "year"
+  | "ticker"
+  | "styleCode"
+  | "colorway"
+  | "retail"
+  | "name"
+  | "brand"
+  | "fallbackImage"
+  | "stockxUrl"
+>;
 
 export function mapProductToMarket(input: {
   product: KicksProduct;

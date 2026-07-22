@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CHART_RANGES } from "@/data/darkMocha";
+import { CHART_RANGES } from "@/catalog/sneakers";
 import { LightweightPriceChart } from "@/components/LightweightPriceChart";
 import { METRIC_DEFINITIONS } from "@/lib/market/definitions";
 import type { ChartPoint, HistorySource } from "@/lib/market/types";
