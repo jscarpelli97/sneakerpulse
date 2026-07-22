@@ -1,9 +1,10 @@
+import historicalIndex from "@/data/index/stockx-contest-2017-2019.json";
 import {
   fetchTopStockxSneakers,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
 import { TOP_SELLERS_LIMIT } from "@/services/catalog/mapProductToCatalog";
-import type { MarketIndex } from "@/types/market";
+import type { ChartPoint, MarketIndex } from "@/types/market";
 import {
   buildBootstrapSeries,
   buildLaspeyresIndex,
@@ -13,9 +14,47 @@ import {
 const INDEX_BASE = 1000;
 const INDEX_DAYS = 90;
 
-export async function getMarketIndex(
-  limit = TOP_SELLERS_LIMIT,
-): Promise<MarketIndex | null> {
+type HistoricalFile = {
+  name: string;
+  source: string;
+  note: string;
+  baseLevel: number;
+  baseDate: string;
+  asOf: string;
+  constituents: number;
+  citation?: string;
+  points: ChartPoint[];
+};
+
+function loadHistoricalSeries(): {
+  series: ChartPoint[];
+  meta: HistoricalFile;
+} | null {
+  const file = historicalIndex as HistoricalFile;
+  if (!file?.points?.length || file.points.length < 2) return null;
+  return {
+    series: file.points.map((point) => ({
+      date: point.date.slice(0, 10),
+      price: point.price,
+      orders: point.orders ?? 1,
+    })),
+    meta: file,
+  };
+}
+
+function peakOf(series: ChartPoint[]) {
+  if (!series.length) return { level: null, date: null };
+  let peak = series[0];
+  for (const point of series) {
+    if (point.price > peak.price) peak = point;
+  }
+  return { level: peak.price, date: peak.date };
+}
+
+async function buildLiveSeries(limit: number): Promise<{
+  series: ChartPoint[];
+  constituents: number;
+} | null> {
   const apiKey = getKicksApiKey();
   if (!apiKey) return null;
 
@@ -63,27 +102,60 @@ export async function getMarketIndex(
 
   const series = buildLaspeyresIndex(members, { baseLevel: INDEX_BASE });
   if (series.length < 2) return null;
+  return { series, constituents: members.length };
+}
 
-  const level = series.at(-1)!.price;
-  const yesterday = series.at(-2)?.price ?? null;
-  const monthAgo = series.at(-31)?.price ?? series[0]?.price ?? null;
-  const start = series[0]?.price ?? null;
+export async function getMarketIndex(
+  limit = TOP_SELLERS_LIMIT,
+): Promise<MarketIndex | null> {
+  const historical = loadHistoricalSeries();
+  const live = await buildLiveSeries(limit);
+
+  if (!historical && !live) return null;
+
+  const historicalSeries = historical?.series ?? [];
+  const liveSeries = live?.series ?? [];
+  const primary = historicalSeries.length >= 2 ? historicalSeries : liveSeries;
+  const liveLevel = liveSeries.at(-1)?.price ?? primary.at(-1)!.price;
+  const historicalEnd = historicalSeries.at(-1)?.price ?? null;
+  const histPeak = peakOf(historicalSeries);
+
+  const level = liveLevel;
+  const liveYesterday = liveSeries.at(-2)?.price ?? null;
+  const liveMonth = liveSeries.at(-31)?.price ?? liveSeries[0]?.price ?? null;
+  const liveStart = liveSeries[0]?.price ?? null;
 
   return {
     name: "SneakerPulse Index",
-    ticker: "SPI100",
+    ticker: historical ? "SPI · HIST" : "SPI100",
     level,
+    liveLevel,
+    historicalEndLevel: historicalEnd,
     baseLevel: INDEX_BASE,
-    baseDate: series[0].date,
-    asOf: series.at(-1)!.date,
-    changeToday: changeFromPrices(level, yesterday),
-    change30d: changeFromPrices(level, monthAgo),
-    change90d: changeFromPrices(level, start),
-    series,
-    constituents: members.length,
-    historySource: "bootstrap",
-    methodology:
-      "Volume-weighted Laspeyres basket of the current top StockX sellers (ChronoPulse-style). Levels are indexed to 1,000 at the start of the window. History uses StockX range/average stats until official sales/daily history is available.",
+    baseDate: primary[0].date,
+    asOf: liveSeries.at(-1)?.date ?? primary.at(-1)!.date,
+    changeToday: changeFromPrices(liveLevel, liveYesterday),
+    change30d: changeFromPrices(liveLevel, liveMonth),
+    change90d: changeFromPrices(liveLevel, liveStart),
+    changeHistorical:
+      historicalSeries.length >= 2
+        ? changeFromPrices(
+            historicalSeries.at(-1)!.price,
+            historicalSeries[0]!.price,
+          )
+        : null,
+    peakLevel: histPeak.level,
+    peakDate: histPeak.date,
+    series: primary,
+    liveSeries,
+    historicalSeries,
+    constituents: live?.constituents ?? historical?.meta.constituents ?? 0,
+    historicalConstituents: historical?.meta.constituents ?? null,
+    historySource: historical && live ? "hybrid" : historical ? "stockx_contest" : "bootstrap",
+    methodology: historical
+      ? `${historical.meta.note} Live SPI100 (current top StockX sellers) covers the recent window only — free KicksDB does not expose daily sales history through the 2021 hype peak.`
+      : "Volume-weighted Laspeyres basket of the current top StockX sellers. History uses StockX range/average stats until official sales/daily history is available.",
+    citation: historical?.meta.citation ?? null,
     fetchedAt: new Date().toISOString(),
   };
 }

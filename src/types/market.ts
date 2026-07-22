@@ -8,7 +8,13 @@ export type VolumeMetric = {
   notional: number | null;
 };
 
-export type HistorySource = "sales" | "snapshot" | "bootstrap";
+export type HistorySource =
+  | "sales"
+  | "snapshot"
+  | "bootstrap"
+  | "stockx_contest"
+  | "hybrid";
+
 
 export type UpstreamStatus = "live" | "degraded" | "cached" | "offline";
 
@@ -112,15 +118,25 @@ export type MarketIndex = {
   name: string;
   ticker: string;
   level: number;
+  liveLevel: number;
+  historicalEndLevel: number | null;
   baseLevel: number;
   baseDate: string;
   asOf: string;
   changeToday: ChangeMetric;
   change30d: ChangeMetric;
   change90d: ChangeMetric;
+  /** Full historical window change when long StockX contest series is present. */
+  changeHistorical: ChangeMetric;
+  peakLevel: number | null;
+  peakDate: string | null;
   series: ChartPoint[];
+  liveSeries: ChartPoint[];
+  historicalSeries: ChartPoint[];
   constituents: number;
+  historicalConstituents: number | null;
   historySource: HistorySource;
   methodology: string;
+  citation: string | null;
   fetchedAt: string;
 };

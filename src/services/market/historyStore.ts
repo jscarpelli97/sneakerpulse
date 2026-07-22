@@ -7,7 +7,7 @@ import darkMochaHistory from "@/data/history/air-jordan-1-retro-high-dark-mocha.
 import dunkHistory from "@/data/history/nike-dunk-low-retro-white-black-2021.json";
 import sambaHistory from "@/data/history/adidas-samba-og-cloud-white-core-black.json";
 import { toDay } from "@/utils/metrics";
-import type { ChartPoint, HistorySource } from "@/types/market";
+import type { ChartPoint } from "@/types/market";
 
 type HistoryFile = {
   source?: string;
@@ -45,7 +45,7 @@ function toPoints(file?: HistoryFile): ChartPoint[] {
  */
 export function resolveLocalHistory(slug: string): {
   series: ChartPoint[];
-  source: Exclude<HistorySource, "sales">;
+  source: "snapshot" | "bootstrap";
 } {
   const snapshots = toPoints(snapshotModules[slug]);
   if (snapshots.length >= 2) {

@@ -3,15 +3,12 @@
 import { useMemo, useState } from "react";
 import { CHART_RANGES } from "@/charts/constants";
 import { LightweightPriceChart } from "@/charts/LightweightPriceChart";
-import type { MarketIndex } from "@/types/market";
+import type { ChartPoint, MarketIndex } from "@/types/market";
 import { changeClass, formatNumber } from "@/utils/format";
 
 type Range = (typeof CHART_RANGES)[number];
 
-function filterByRange(
-  points: MarketIndex["series"],
-  range: Range,
-): MarketIndex["series"] {
+function filterByRange(points: ChartPoint[], range: Range): ChartPoint[] {
   if (points.length === 0) return points;
   if (range === "ALL") return points;
 
@@ -31,6 +28,14 @@ function filterByRange(
   return filtered.length > 1 ? filtered : points.slice(-2);
 }
 
+function seriesForRange(index: MarketIndex, range: Range): ChartPoint[] {
+  const useHistorical =
+    index.historicalSeries.length >= 2 &&
+    (range === "ALL" || range === "1Y" || index.liveSeries.length < 2);
+  const source = useHistorical ? index.historicalSeries : index.liveSeries;
+  return filterByRange(source, range);
+}
+
 function formatIndexLevel(value: number) {
   return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 1,
@@ -48,16 +53,16 @@ function formatIndexChange(change: MarketIndex["changeToday"]) {
 }
 
 export function MarketIndexCard({ index }: { index: MarketIndex }) {
-  const [range, setRange] = useState<Range>("3M");
-  const data = useMemo(
-    () => filterByRange(index.series, range),
-    [index.series, range],
-  );
+  const [range, setRange] = useState<Range>("ALL");
+  const data = useMemo(() => seriesForRange(index, range), [index, range]);
+  const showingHistorical =
+    index.historicalSeries.length >= 2 &&
+    (range === "ALL" || range === "1Y" || index.liveSeries.length < 2);
   const hasSeries = data.length > 1;
   const isUp = hasSeries && data[data.length - 1].price >= data[0].price;
   const today = formatIndexChange(index.changeToday);
   const month = formatIndexChange(index.change30d);
-  const window = formatIndexChange(index.change90d);
+  const historical = formatIndexChange(index.changeHistorical);
 
   return (
     <section className="dash-card animate-rise stagger-2 overflow-hidden">
@@ -71,56 +76,82 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
               {index.ticker}
             </span>
             <span className="rounded-full bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
-              Bootstrap window
+              {showingHistorical
+                ? "StockX contest · 2017–2019"
+                : "Live top 100"}
             </span>
           </div>
           <h2 className="mt-2 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
             {index.name}
           </h2>
-          <p className="mt-1 max-w-2xl text-sm text-dash-muted">
-            ChronoPulse-style pulse of the sneaker secondary market — volume-weighted
-            basket of the current top {formatNumber(index.constituents)} StockX
-            sellers, indexed to {formatIndexLevel(index.baseLevel)} on{" "}
-            {index.baseDate}.
+          <p className="mt-1 max-w-3xl text-sm text-dash-muted">
+            {showingHistorical
+              ? `Long-run StockX sample of Yeezy + Off-White transactions (Sep 2017–Feb 2019) — before the 2021 hype peak. Indexed to ${formatIndexLevel(index.baseLevel)} at the start of the sample.`
+              : `Live volume-weighted basket of the current top ${formatNumber(index.constituents)} StockX sellers (SPI100).`}
           </p>
         </div>
         <div className="text-right">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            Level
+            {showingHistorical ? "Sample end level" : "Live level"}
           </p>
           <p className="mt-1 font-[family-name:var(--font-syne)] text-3xl font-extrabold tabular-nums text-dash-text sm:text-4xl">
-            {formatIndexLevel(index.level)}
+            {formatIndexLevel(
+              showingHistorical
+                ? (index.historicalEndLevel ?? index.level)
+                : index.liveLevel,
+            )}
           </p>
           <p
-            className={`mt-1 font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums ${changeClass(index.changeToday?.percent)}`}
+            className={`mt-1 font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums ${changeClass(
+              showingHistorical
+                ? index.changeHistorical?.percent
+                : index.changeToday?.percent,
+            )}`}
           >
-            {today.percent} today
+            {showingHistorical
+              ? `${historical.percent} over sample`
+              : `${today.percent} today`}
           </p>
         </div>
       </div>
 
-      <div className="grid gap-3 border-b border-dash-border px-4 py-3 sm:grid-cols-3 sm:px-5">
+      <div className="grid gap-3 border-b border-dash-border px-4 py-3 sm:grid-cols-4 sm:px-5">
         {[
           {
-            label: "Today",
-            value: today.percent,
-            sub: today.absolute === "—" ? undefined : today.absolute,
+            label: "Live SPI100",
+            value: formatIndexLevel(index.liveLevel),
+            sub: today.percent === "—" ? "Recent top-100 basket" : `${today.percent} today`,
             tone: changeClass(index.changeToday?.percent),
           },
           {
-            label: "30 day",
+            label: "30d live",
             value: month.percent,
-            sub: month.absolute === "—" ? undefined : month.absolute,
+            sub: month.absolute === "—" ? "—" : month.absolute,
             tone: changeClass(index.change30d?.percent),
           },
           {
-            label: "Index window",
-            value: window.percent,
-            sub: `${formatNumber(index.constituents)} constituents`,
-            tone: changeClass(index.change90d?.percent),
+            label: "2017–19 change",
+            value: historical.percent,
+            sub:
+              index.historicalConstituents != null
+                ? `${formatNumber(index.historicalConstituents)} colorways`
+                : "No long sample",
+            tone: changeClass(index.changeHistorical?.percent),
+          },
+          {
+            label: "Sample peak",
+            value:
+              index.peakLevel != null
+                ? formatIndexLevel(index.peakLevel)
+                : "—",
+            sub: index.peakDate ?? "—",
+            tone: "text-dash-text",
           },
         ].map((metric) => (
-          <div key={metric.label} className="rounded-xl bg-dash-elevated/50 px-3 py-2.5">
+          <div
+            key={metric.label}
+            className="rounded-xl bg-dash-elevated/50 px-3 py-2.5"
+          >
             <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
               {metric.label}
             </p>
@@ -129,9 +160,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             >
               {metric.value}
             </p>
-            {metric.sub ? (
-              <p className="mt-0.5 text-xs text-dash-muted">{metric.sub}</p>
-            ) : null}
+            <p className="mt-0.5 text-xs text-dash-muted">{metric.sub}</p>
           </div>
         ))}
       </div>
@@ -140,7 +169,9 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-2">
           <p className="text-sm text-dash-muted">
             {hasSeries
-              ? `TradingView chart · ${data.length} sessions · as of ${index.asOf}`
+              ? showingHistorical
+                ? `Real StockX contest sales · ${data.length} sessions · ${data[0]?.date} → ${data.at(-1)?.date}`
+                : `Live SPI100 · ${data.length} sessions · as of ${index.asOf}`
               : "Index series unavailable"}
           </p>
           <div className="flex flex-wrap gap-1 rounded-xl bg-dash-elevated p-1">
@@ -160,7 +191,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             ))}
           </div>
         </div>
-        <div className="relative h-[260px] w-full md:h-[320px]">
+        <div className="relative h-[280px] w-full md:h-[340px]">
           {hasSeries ? (
             <LightweightPriceChart data={data} up={isUp} />
           ) : (
@@ -169,8 +200,26 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             </div>
           )}
         </div>
-        <p className="mt-3 px-2 text-xs leading-relaxed text-dash-faint" title={index.methodology}>
+        <p
+          className="mt-3 px-2 text-xs leading-relaxed text-dash-faint"
+          title={index.methodology}
+        >
           {index.methodology}
+          {index.citation ? (
+            <>
+              {" "}
+              Source:{" "}
+              <a
+                href={index.citation}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-dash-link underline-offset-2 hover:underline"
+              >
+                StockX Data Contest 2019
+              </a>
+              . Use 3M/1M for live SPI100; ALL/1Y for the pre-hype sample.
+            </>
+          ) : null}
         </p>
       </div>
     </section>

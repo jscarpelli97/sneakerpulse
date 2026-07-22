@@ -18,11 +18,17 @@ Do not reintroduce the old light ink/paper theme unless asked.
 
 Homepage market pulse inspired by Chrono24’s ChronoPulse:
 
-- Basket: current top StockX sellers (up to 100)
-- Weighting: weekly order volume (Laspeyres-style)
-- Base level: **1,000** at the start of the chart window
-- History: StockX range/average stats → bootstrap series until official `sales/daily` is available
-- Shown as `MarketIndexCard` under the homepage stat strip
+- **Long history (ALL / 1Y):** official StockX Data Contest 2019 sample — real U.S. Yeezy + Off-White sales, **Sep 2017 → Feb 2019** (pre-2021 hype). Growing equal-weight index, base 1,000. Data: `src/data/index/stockx-contest-2017-2019.json`
+- **Live window (3M / shorter):** volume-weighted Laspeyres basket of the current top StockX sellers
+- **Gap:** free KicksDB does not expose `sales/daily` through the 2021 peak; we do not invent a continuous line across that gap
+
+Rebuild historical JSON:
+
+```bash
+curl -L -o /tmp/stockx-contest.csv \
+  https://raw.githubusercontent.com/saromleang/stockx-dc19/master/StockX-Data-Contest-2019-3.csv
+node scripts/build-stockx-contest-index.mjs /tmp/stockx-contest.csv
+```
 
 ```
 src/
