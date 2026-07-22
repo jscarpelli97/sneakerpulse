@@ -144,6 +144,22 @@ Rank 1 = hottest by StockX sales. Catalog quotes, compare, alerts, and the daily
 
 Canonical definitions live in `src/lib/definitions.ts`.
 
+## Official StockX API (when approved)
+
+When StockX issues credentials, paste them here or into Vercel env — the scaffold is ready:
+
+| Env var | From StockX portal |
+| --- | --- |
+| `STOCKX_API_KEY` | Application `x-api-key` |
+| `STOCKX_CLIENT_ID` | Application client id |
+| `STOCKX_CLIENT_SECRET` | Application client secret |
+| `STOCKX_REDIRECT_URI` | `https://sneakerpulse.vercel.app/api/stockx/callback` (register this URI) |
+| `STOCKX_ACCESS_TOKEN` / `STOCKX_REFRESH_TOKEN` | After visiting `/api/stockx/auth` once |
+
+Flow: set the first three → redeploy → open `/api/stockx/auth` → authorize → copy tokens from the callback JSON into Vercel → redeploy. Catalog wiring will map StockX `/v2/catalog/search` into the existing watchlist.
+
+Until then the site runs in **free cached mode** from `src/data/catalog/top-sellers.json`.
+
 ## Live StockX data (free path)
 
 KicksDB **Free** is €0 / **1,000 requests per month** (Standard API, US market). That is enough if the site mostly reads a committed catalog and only refreshes once daily.
