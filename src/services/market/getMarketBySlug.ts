@@ -1,4 +1,8 @@
 import { getSneakerBySlug, getOfflineQuoteBySlug } from "@/services/catalog/sneakers";
+import {
+  getClothingBySlug,
+  getClothingCatalogQuotes,
+} from "@/services/catalog/clothing";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 import {
   fetchStockxDailySales,
@@ -22,16 +26,20 @@ import type {
 import type { KicksProduct } from "@/types/kicksdb";
 
 function marketFromCachedCatalog(slug: string): MarketLoadResult {
-  const quote = getOfflineQuoteBySlug(slug);
+  const quote =
+    getOfflineQuoteBySlug(slug) ??
+    getClothingCatalogQuotes().find((row) => row.slug === slug) ??
+    null;
   if (!quote) {
     return {
       ok: false,
       code: "not_found",
-      error: `Sneaker "${slug}" was not found in the free offline catalog.`,
+      error: `Item "${slug}" was not found in the free offline catalog.`,
     };
   }
 
-  const catalog: SneakerCatalogEntry = {
+  const clothing = getClothingBySlug(slug);
+  const catalog: SneakerCatalogEntry = clothing ?? {
     slug: quote.slug,
     ticker: quote.ticker,
     styleCode: quote.styleCode,

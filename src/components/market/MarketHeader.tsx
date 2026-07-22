@@ -32,6 +32,7 @@ export function MarketHeader({
           <nav className="hidden items-center gap-1 text-sm font-medium text-dash-muted sm:flex">
             {[
               { href: "/", label: "Markets" },
+              { href: "/clothing", label: "Clothing" },
               { href: "/compare", label: "Compare" },
               { href: "/alerts", label: "Alerts" },
             ].map((item) => (

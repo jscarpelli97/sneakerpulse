@@ -8,7 +8,8 @@ type ChromeVariant = "dashboard" | "light";
 
 const NAV_BASE = [
   { href: "/", label: "Home" },
-  { href: "/markets", label: "All markets" },
+  { href: "/markets", label: "Sneakers" },
+  { href: "/clothing", label: "Clothing" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
@@ -18,9 +19,9 @@ const NAV_BASE = [
 function navItems() {
   if (!plusPublicEnabled()) return [...NAV_BASE];
   return [
-    ...NAV_BASE.slice(0, 5),
+    ...NAV_BASE.slice(0, 6),
     { href: "/plus", label: "Plus" },
-    ...NAV_BASE.slice(5),
+    ...NAV_BASE.slice(6),
   ];
 }
 
@@ -144,7 +145,10 @@ export function SiteFooter({
           </div>
           <nav className="flex flex-wrap gap-x-4 gap-y-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
             <Link href="/markets" className="hover:text-dash-text">
-              All markets
+              Sneakers
+            </Link>
+            <Link href="/clothing" className="hover:text-dash-text">
+              Clothing
             </Link>
             <Link href="/portfolio" className="hover:text-dash-text">
               Portfolio
