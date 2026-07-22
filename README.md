@@ -161,6 +161,8 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+To put the site on the public internet, see **[DEPLOY.md](DEPLOY.md)**.
+
 ## Scripts
 
 - `npm run dev` — start the development server
