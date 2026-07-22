@@ -5,6 +5,7 @@ import {
   fetchStockxProduct,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
+import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
 import { resolveLocalHistory } from "@/services/market/historyStore";
 import { emptyMarket, mapProductToMarket } from "@/lib/mapProductToMarket";
@@ -98,7 +99,7 @@ function marketFromCachedCatalog(slug: string): MarketLoadResult {
 
 export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
   const apiKey = getKicksApiKey();
-  if (!apiKey) {
+  if (!apiKey || !kicksLiveReadsEnabled()) {
     return marketFromCachedCatalog(slug);
   }
 

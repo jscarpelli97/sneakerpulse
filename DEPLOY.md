@@ -28,7 +28,8 @@ CLI deploy works today. For push-to-deploy, link GitHub in the Vercel dashboard:
 
 | Name | Required | Where |
 | --- | --- | --- |
-| `KICKSDB_API_KEY` | yes | Vercel + GitHub Actions |
+| `KICKSDB_API_KEY` | for daily job | Vercel (optional) + GitHub Actions |
+| `KICKSDB_LIVE_READS` | no | Vercel — set to `1` only to allow page views to hit KicksDB (default: offline catalog) |
 | `STATUS_TOKEN` | no | Vercel (detailed `/api/status` via `x-status-token`) |
 
 ## Daily SPI snapshots
