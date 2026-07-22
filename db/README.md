@@ -8,7 +8,9 @@ psql "$DATABASE_URL" -f db/schema.sql
 ```
 
 This is a **design + migration artifact**. The live app still uses JSON snapshots
-in `src/data/snapshots/` until a database is wired in.
+in `src/data/` until a database is wired in. Portfolio accounts currently use a
+**device-local vault** (`src/lib/portfolio/vault.ts`); `db/users-schema.sql` is the
+future cloud-sync path.
 
 ## Tables
 

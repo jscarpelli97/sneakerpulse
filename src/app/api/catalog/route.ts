@@ -1,13 +1,25 @@
 import { NextResponse } from "next/server";
+import { gateCatalogRows, getPlusAccess } from "@/lib/plus/access";
 import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const quotes = await getCatalogQuotes();
+  const [{ isPlus }, quotes] = await Promise.all([
+    getPlusAccess(),
+    getCatalogQuotes(),
+  ]);
+  const access = gateCatalogRows(quotes, isPlus);
   return NextResponse.json({
     ok: true,
-    data: quotes,
+    data: access.rows,
+    meta: {
+      isPlus: access.isPlus,
+      gated: access.gated,
+      visible: access.visible,
+      total: access.total,
+      freeLimit: access.freeLimit,
+    },
     fetchedAt: new Date().toISOString(),
   });
 }
