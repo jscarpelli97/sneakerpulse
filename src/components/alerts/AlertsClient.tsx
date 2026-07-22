@@ -3,13 +3,17 @@
 import { useState } from "react";
 import { evaluateAlerts } from "@/api/alerts";
 import { usePriceAlerts } from "@/hooks/usePriceAlerts";
-import { SNEAKERS } from "@/services/catalog/sneakers";
+import type { SneakerCatalogEntry } from "@/types/catalog";
 import type { PriceAlert } from "@/types/market";
 import { formatMoney } from "@/utils/format";
 
-export function AlertsClient() {
+export function AlertsClient({
+  sneakers,
+}: {
+  sneakers: SneakerCatalogEntry[];
+}) {
   const { alerts, addAlert, removeAlert } = usePriceAlerts();
-  const [slug, setSlug] = useState(SNEAKERS[0]?.slug ?? "");
+  const [slug, setSlug] = useState(sneakers[0]?.slug ?? "");
   const [direction, setDirection] = useState<"above" | "below">("below");
   const [threshold, setThreshold] = useState("200");
   const [webhookUrl, setWebhookUrl] = useState("");
@@ -17,7 +21,7 @@ export function AlertsClient() {
   const [checking, setChecking] = useState(false);
 
   function handleAddAlert() {
-    const sneaker = SNEAKERS.find((item) => item.slug === slug);
+    const sneaker = sneakers.find((item) => item.slug === slug);
     if (!sneaker) return;
     const value = Number(threshold);
     if (!Number.isFinite(value) || value <= 0) return;
@@ -74,9 +78,9 @@ export function AlertsClient() {
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
             >
-              {SNEAKERS.map((s) => (
+              {sneakers.map((s) => (
                 <option key={s.slug} value={s.slug}>
-                  {s.ticker} · {s.name}
+                  #{s.rank ?? "—"} · {s.ticker} · {s.name}
                 </option>
               ))}
             </select>

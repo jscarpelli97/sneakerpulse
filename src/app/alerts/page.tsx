@@ -1,7 +1,12 @@
 import { AlertsClient } from "@/components/alerts/AlertsClient";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
+import { getTrackedCatalog } from "@/services/catalog/sneakers";
 
-export default function AlertsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AlertsPage() {
+  const sneakers = await getTrackedCatalog();
+
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader subtitle="Alerts" />
@@ -15,12 +20,12 @@ export default function AlertsPage() {
               Price alerts
             </h1>
             <p className="mt-3 text-base leading-relaxed text-ink-soft md:text-lg">
-              Set above/below thresholds on tracked sneakers. Optional webhook
-              delivery on check.
+              Set above/below thresholds on any of the current top 100 StockX
+              sellers. Optional webhook delivery on check.
             </p>
           </section>
           <div className="animate-rise stagger-2">
-            <AlertsClient />
+            <AlertsClient sneakers={sneakers} />
           </div>
         </div>
       </main>

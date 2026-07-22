@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Daily snapshot job: append today's lowest ask for every catalog sneaker.
+ * Daily snapshot job: append today's lowest ask for every top StockX seller.
  * Usage:
  *   npm run snapshot
  *   KICKSDB_API_KEY=... node scripts/snapshot-markets.mjs
@@ -9,6 +9,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
+const TOP_SELLERS_LIMIT = 100;
 
 async function loadEnvLocal() {
   if (process.env.KICKSDB_API_KEY?.trim()) return;
@@ -33,16 +34,14 @@ await loadEnvLocal();
 const API_KEY = process.env.KICKSDB_API_KEY?.trim();
 const BASE = "https://api.kicks.dev/v3";
 
-const SLUGS = [
-  "air-jordan-1-retro-high-dark-mocha",
-  "air-jordan-1-retro-high-og-chicago-reimagined-lost-and-found",
-  "nike-dunk-low-retro-white-black-2021",
-  "adidas-samba-og-cloud-white-core-black",
-];
-
-async function fetchProduct(slug) {
-  const query = new URLSearchParams({ market: "US" });
-  const res = await fetch(`${BASE}/stockx/products/${slug}?${query}`, {
+async function fetchTopSellers() {
+  const query = new URLSearchParams({
+    market: "US",
+    limit: String(TOP_SELLERS_LIMIT),
+    sort: "rank",
+    filters: 'product_type="sneakers"',
+  });
+  const res = await fetch(`${BASE}/stockx/products?${query}`, {
     headers: {
       Accept: "application/json",
       Authorization: `Bearer ${API_KEY}`,
@@ -50,12 +49,14 @@ async function fetchProduct(slug) {
   });
   const body = await res.text();
   if (!res.ok) {
-    throw new Error(`${slug} -> ${res.status} ${body.slice(0, 200)}`);
+    throw new Error(`top sellers -> ${res.status} ${body.slice(0, 200)}`);
   }
-  return JSON.parse(body).data;
+  const json = JSON.parse(body);
+  return (json.data ?? []).filter((p) => p?.slug);
 }
 
-async function upsertSnapshot(slug, product) {
+async function upsertSnapshot(product) {
+  const slug = product.slug;
   const file = path.join(ROOT, "src/data/snapshots", `${slug}.json`);
   let current = {
     productId: product.id,
@@ -93,7 +94,9 @@ async function upsertSnapshot(slug, product) {
     points,
   };
   await fs.writeFile(file, `${JSON.stringify(next, null, 2)}\n`);
-  console.log(`wrote ${slug}: ${points.length} points, today=${price}`);
+  console.log(
+    `wrote #${product.rank ?? "?"} ${slug}: ${points.length} points, today=${price}`,
+  );
 }
 
 async function main() {
@@ -101,13 +104,19 @@ async function main() {
     console.error("KICKSDB_API_KEY is required");
     process.exit(1);
   }
-  for (const slug of SLUGS) {
+
+  const products = await fetchTopSellers();
+  console.log(`snapshotting ${products.length} top StockX sellers`);
+
+  for (const product of products) {
     try {
-      const product = await fetchProduct(slug);
-      await upsertSnapshot(slug, product);
-      await new Promise((r) => setTimeout(r, 350));
+      await upsertSnapshot(product);
+      await new Promise((r) => setTimeout(r, 50));
     } catch (error) {
-      console.error(error instanceof Error ? error.message : error);
+      console.error(
+        product.slug,
+        error instanceof Error ? error.message : error,
+      );
     }
   }
 }

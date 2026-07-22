@@ -1,19 +1,40 @@
-import { describe, expect, it } from "vitest";
-import { getSneakerBySlug, getAllSneakerSlugs, SNEAKERS } from "@/services/catalog/sneakers";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  FALLBACK_SNEAKERS,
+  getAllSneakerSlugs,
+  getSneakerBySlug,
+  getTrackedCatalog,
+  TOP_SELLERS_LIMIT,
+} from "@/services/catalog/sneakers";
 
 describe("catalog", () => {
-  it("includes Dark Mocha as featured entry", () => {
-    const mocha = getSneakerBySlug("air-jordan-1-retro-high-dark-mocha");
-    expect(mocha?.ticker).toBe("J1-DMCH");
+  beforeEach(() => {
+    vi.stubEnv("KICKSDB_API_KEY", "");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("falls back to Dark Mocha when no API key is set", async () => {
+    const mocha = await getSneakerBySlug("air-jordan-1-retro-high-dark-mocha");
+    expect(mocha?.ticker).toBe("J1DMCH");
     expect(mocha?.featured).toBe(true);
   });
 
-  it("exposes all slugs for static params", () => {
-    expect(getAllSneakerSlugs()).toEqual(SNEAKERS.map((s) => s.slug));
-    expect(getAllSneakerSlugs().length).toBeGreaterThanOrEqual(1);
+  it("exposes all slugs for static params", async () => {
+    const slugs = await getAllSneakerSlugs();
+    expect(slugs).toEqual(FALLBACK_SNEAKERS.map((s) => s.slug));
+    expect(slugs.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("returns null for unknown slug", () => {
-    expect(getSneakerBySlug("not-a-real-shoe")).toBeNull();
+  it("returns null for unknown slug without API access", async () => {
+    expect(await getSneakerBySlug("not-a-real-shoe")).toBeNull();
+  });
+
+  it("caps tracked catalog at top sellers limit", async () => {
+    const catalog = await getTrackedCatalog();
+    expect(catalog.length).toBeGreaterThanOrEqual(1);
+    expect(catalog.length).toBeLessThanOrEqual(TOP_SELLERS_LIMIT);
   });
 });

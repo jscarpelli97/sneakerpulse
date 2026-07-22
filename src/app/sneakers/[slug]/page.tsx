@@ -20,9 +20,11 @@ import {
 } from "@/services/market/getMarketBySlug";
 
 export const revalidate = 300;
+export const dynamicParams = true;
 
-export function generateStaticParams() {
-  return getAllSneakerSlugs().map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllSneakerSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -31,7 +33,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const sneaker = getSneakerBySlug(slug);
+  const sneaker = await getSneakerBySlug(slug);
   if (!sneaker) {
     return { title: "Sneaker not found — SneakerPulse" };
   }
@@ -47,7 +49,7 @@ export default async function SneakerMarketPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const catalog = getSneakerBySlug(slug);
+  const catalog = await getSneakerBySlug(slug);
   if (!catalog) notFound();
 
   const result = await getMarketBySlug(slug);

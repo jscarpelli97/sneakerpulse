@@ -12,4 +12,6 @@ export type SneakerCatalogEntry = {
   stockxUrl: string;
   fallbackImage: string;
   featured?: boolean;
+  /** StockX sales rank when known (1 = top seller) */
+  rank?: number | null;
 };

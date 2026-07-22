@@ -1,18 +1,21 @@
 import { CompareClient } from "@/components/compare/CompareClient";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
-import { SNEAKERS } from "@/services/catalog/sneakers";
+import { getTrackedCatalog } from "@/services/catalog/sneakers";
+
+export const dynamic = "force-dynamic";
 
 export default async function ComparePage({
   searchParams,
 }: {
   searchParams: Promise<{ a?: string; b?: string }>;
 }) {
+  const sneakers = await getTrackedCatalog();
   const params = await searchParams;
-  const initialA = params.a ?? SNEAKERS[0]?.slug ?? "";
+  const initialA = params.a ?? sneakers[0]?.slug ?? "";
   const initialB =
     params.b ??
-    SNEAKERS.find((s) => s.slug !== initialA)?.slug ??
-    SNEAKERS[0]?.slug ??
+    sneakers.find((s) => s.slug !== initialA)?.slug ??
+    sneakers[0]?.slug ??
     "";
 
   return (
@@ -28,12 +31,16 @@ export default async function ComparePage({
               Compare sneakers
             </h1>
             <p className="mt-3 text-base leading-relaxed text-ink-soft md:text-lg">
-              Side-by-side lowest ask, 30d change, volume, and rank from live
-              StockX data.
+              Side-by-side lowest ask, 30d change, volume, and rank across the
+              current top 100 StockX sellers.
             </p>
           </section>
           <div className="animate-rise stagger-2 ui-card p-4 md:p-5">
-            <CompareClient initialA={initialA} initialB={initialB} />
+            <CompareClient
+              sneakers={sneakers}
+              initialA={initialA}
+              initialB={initialB}
+            />
           </div>
         </div>
       </main>

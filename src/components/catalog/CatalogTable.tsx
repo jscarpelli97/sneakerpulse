@@ -26,7 +26,7 @@ export function CatalogTable({
               Market watchlist
             </h2>
             <p className="mt-1 text-sm text-dash-muted">
-              Select a SKU to open its StockX market view
+              Top {rows.length} StockX sneakers by live sales rank
             </p>
           </div>
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">

@@ -1,6 +1,6 @@
 # SneakerPulse
 
-Next.js market app for tracked sneakers with live StockX data.
+Next.js market app tracking StockX’s **current top 100 selling sneakers** (by sales rank) with live ask, volume, and market pages.
 
 ## Architecture
 
@@ -47,16 +47,24 @@ Rule-based narrative card on each sneaker page (`MarketSummaryCard`).
 
 ## Routes
 
-- `/` — catalog index of tracked sneakers
-- `/sneakers/[slug]` — full market page for one SKU
-- `/compare` — side-by-side live quotes
+- `/` — live watchlist of the current top 100 StockX sellers
+- `/sneakers/[slug]` — full market page for one SKU (top 100 or any StockX slug)
+- `/compare` — side-by-side live quotes across the top 100
 - `/alerts` — browser-stored price alerts + evaluate API
 - `/api/market/[slug]` — JSON market payload
-- `/api/catalog` — catalog quotes
+- `/api/catalog` — catalog quotes for the top sellers
 - `/api/status` — upstream/cache health
 - `/api/alerts/evaluate` — check alert thresholds
 
-Add sneakers in `src/catalog/sneakers.ts`.
+## Catalog (top 100 sellers)
+
+The tracked set is **not** a hard-coded list. With `KICKSDB_API_KEY` set, the app loads:
+
+```
+GET /v3/stockx/products?market=US&limit=100&sort=rank&filters=product_type="sneakers"
+```
+
+Rank 1 = hottest by StockX sales. Catalog quotes, compare, alerts, and the daily snapshot job all use this list. Without an API key, a single offline fallback SKU is used.
 
 ## History priority
 
@@ -108,7 +116,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - `npm run lint` — run ESLint
 - `npm run typecheck` — TypeScript check
 - `npm test` — run Vitest unit tests
-- `npm run snapshot` — append today’s lowest ask for each catalog SKU
+- `npm run snapshot` — append today’s lowest ask for each of the current top 100 sellers
 
 ## CI / snapshots
 

@@ -1,3 +1,8 @@
+export type KicksTrait = {
+  trait: string;
+  value: string;
+};
+
 export type KicksStatistics = {
   annual_high?: number;
   annual_low?: number;
@@ -26,15 +31,28 @@ export type KicksProduct = {
   title: string;
   brand: string;
   sku?: string;
+  slug?: string;
   image?: string;
   link?: string;
+  product_type?: string;
+  category?: string;
   min_price?: number | null;
   max_price?: number | null;
   avg_price?: number | null;
   weekly_orders?: number | null;
   rank?: number | null;
+  traits?: KicksTrait[] | null;
   statistics?: KicksStatistics | null;
   variants?: KicksVariant[] | null;
+};
+
+export type KicksProductListResponse = {
+  data: KicksProduct[];
+  meta?: {
+    current_page?: number;
+    per_page?: number;
+    total?: number;
+  };
 };
 
 export type KicksDailySale = {

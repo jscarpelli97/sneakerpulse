@@ -1,12 +1,11 @@
-import {
-  getSneakerBySlug,
-  type SneakerCatalogEntry,
-} from "@/services/catalog/sneakers";
+import { getSneakerBySlug } from "@/services/catalog/sneakers";
+import type { SneakerCatalogEntry } from "@/types/catalog";
 import {
   fetchStockxDailySales,
   fetchStockxProduct,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
+import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
 import { resolveLocalHistory } from "@/services/market/historyStore";
 import { emptyMarket, mapProductToMarket } from "@/lib/mapProductToMarket";
 import { salesToSeries, upsertToday } from "@/utils/metrics";
@@ -17,15 +16,6 @@ import type {
 } from "@/types/market";
 
 export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
-  const catalog = getSneakerBySlug(slug);
-  if (!catalog) {
-    return {
-      ok: false,
-      code: "not_found",
-      error: `Sneaker "${slug}" is not in the SneakerPulse catalog.`,
-    };
-  }
-
   const apiKey = getKicksApiKey();
   if (!apiKey) {
     return {
@@ -36,13 +26,13 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
     };
   }
 
-  const productRes = await fetchStockxProduct(catalog.slug, apiKey);
+  const productRes = await fetchStockxProduct(slug, apiKey);
   if (!productRes.ok) {
     if (productRes.status === 404) {
       return {
         ok: false,
         code: "not_found",
-        error: `${catalog.name} was not found on StockX via KicksDB.`,
+        error: `Sneaker "${slug}" was not found on StockX via KicksDB.`,
       };
     }
     return {
@@ -53,6 +43,25 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
   }
 
   const product = productRes.data.data;
+  const catalogFromList = await getSneakerBySlug(slug);
+  const catalog =
+    catalogFromList ??
+    mapListedProductToCatalog(product) ??
+    ({
+      slug,
+      ticker: slug.slice(0, 8).toUpperCase(),
+      styleCode: product.sku || slug,
+      name: product.title || slug,
+      brand: product.brand || "Unknown",
+      year: new Date().getUTCFullYear(),
+      releaseDate: `${new Date().getUTCFullYear()}-01-01`,
+      colorway: "—",
+      retail: 0,
+      stockxUrl: `https://stockx.com/${slug}`,
+      fallbackImage: product.image || "",
+      rank: product.rank ?? null,
+    } satisfies SneakerCatalogEntry);
+
   let upstreamStatus: UpstreamStatus = productRes.cacheHit
     ? "cached"
     : "live";
@@ -69,7 +78,6 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
     upstreamStatus = productRes.cacheHit ? "cached" : "degraded";
   }
 
-  // Pin live ask onto non-sales series for continuity.
   if (historySource !== "sales") {
     const livePrice =
       product.min_price ??
@@ -82,9 +90,6 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
         livePrice,
         product.weekly_orders ? Math.round(product.weekly_orders / 7) : 1,
       );
-      if (historySource === "bootstrap" && chartSeries.length >= 2) {
-        // still bootstrap unless we already had snapshots
-      }
     }
   }
 

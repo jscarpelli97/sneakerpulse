@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useCompareMarkets } from "@/hooks/useCompareMarkets";
-import { SNEAKERS } from "@/services/catalog/sneakers";
+import type { SneakerCatalogEntry } from "@/types/catalog";
 
 export function CompareClient({
+  sneakers,
   initialA,
   initialB,
 }: {
+  sneakers: SneakerCatalogEntry[];
   initialA: string;
   initialB: string;
 }) {
@@ -33,9 +35,9 @@ export function CompareClient({
             value={a}
             onChange={(e) => setA(e.target.value)}
           >
-            {SNEAKERS.map((s) => (
+            {sneakers.map((s) => (
               <option key={s.slug} value={s.slug}>
-                {s.ticker} · {s.name}
+                #{s.rank ?? "—"} · {s.ticker} · {s.name}
               </option>
             ))}
           </select>
@@ -47,9 +49,9 @@ export function CompareClient({
             value={b}
             onChange={(e) => setB(e.target.value)}
           >
-            {SNEAKERS.map((s) => (
+            {sneakers.map((s) => (
               <option key={s.slug} value={s.slug}>
-                {s.ticker} · {s.name}
+                #{s.rank ?? "—"} · {s.ticker} · {s.name}
               </option>
             ))}
           </select>

@@ -1,21 +1,25 @@
 import { cacheGet, cacheSet } from "@/lib/kicksdb/cache";
 import { logFetch } from "@/lib/kicksdb/logger";
+import { TOP_SELLERS_LIMIT } from "@/services/catalog/mapProductToCatalog";
 import type {
   KicksDailySale,
   KicksFetchResult,
   KicksProduct,
+  KicksProductListResponse,
 } from "@/types/kicksdb";
 
 export type {
   KicksDailySale,
   KicksFetchResult,
   KicksProduct,
+  KicksProductListResponse,
   KicksStatistics,
   KicksVariant,
 } from "@/types/kicksdb";
 
 const KICKS_BASE = "https://api.kicks.dev/v3";
 const DEFAULT_TTL_MS = 5 * 60 * 1000;
+const TOP_SELLERS_TTL_MS = 15 * 60 * 1000;
 
 export function getKicksApiKey() {
   return process.env.KICKSDB_API_KEY?.trim() || "";
@@ -94,6 +98,28 @@ export async function fetchStockxProduct(slug: string, apiKey: string) {
   return kicksFetch<{ data: KicksProduct }>(
     `/stockx/products/${slug}?${query.toString()}`,
     apiKey,
+  );
+}
+
+/**
+ * Current top-selling StockX sneakers by sales rank (ascending rank = hotter).
+ */
+export async function fetchTopStockxSneakers(
+  apiKey: string,
+  limit = TOP_SELLERS_LIMIT,
+) {
+  const query = new URLSearchParams({
+    market: "US",
+    limit: String(limit),
+    sort: "rank",
+    filters: 'product_type="sneakers"',
+    "display[traits]": "true",
+  });
+
+  return kicksFetch<KicksProductListResponse>(
+    `/stockx/products?${query.toString()}`,
+    apiKey,
+    { ttlMs: TOP_SELLERS_TTL_MS },
   );
 }
 

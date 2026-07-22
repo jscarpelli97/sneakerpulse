@@ -28,12 +28,12 @@ export function MarketsStatStrip({
     {
       label: "Watchlist size",
       value: formatNumber(quotes.length),
-      note: "Tracked SKUs",
+      note: "Tracked top sellers",
     },
     {
       label: "Avg lowest ask",
       value: avgAsk != null ? formatMaybeMoney(avgAsk) : "—",
-      note: "Across live quotes",
+      note: "Across live top sellers",
     },
     {
       label: "Weekly volume",

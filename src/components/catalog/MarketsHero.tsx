@@ -39,9 +39,8 @@ export function MarketsHero({
             SneakerPulse
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
-            Terminal-grade StockX market views. Track lowest asks, volume, and
-            size ladders across the watchlist — TradingView layout, exchange
-            discipline.
+            Terminal-grade StockX market views. Live watchlist of the current
+            top sellers by StockX sales rank — asks, volume, and size ladders.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
