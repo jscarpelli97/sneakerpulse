@@ -9,27 +9,27 @@ type StatRow = {
 
 function StatList({ title, rows }: { title: string; rows: StatRow[] }) {
   return (
-    <section className="ui-card overflow-hidden">
-      <div className="border-b border-ink/8 px-4 py-3.5 md:px-5">
-        <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
+    <section className="dash-card overflow-hidden">
+      <div className="border-b border-dash-border px-4 py-3.5 md:px-5">
+        <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text">
           {title}
         </h2>
       </div>
-      <dl className="divide-y divide-ink/8">
+      <dl className="divide-y divide-dash-border">
         {rows.map((row) => (
           <div
             key={row.label}
-            className="flex items-start justify-between gap-4 px-4 py-3 text-sm transition-colors hover:bg-paper/50 md:px-5"
+            className="flex items-start justify-between gap-4 px-4 py-3 text-sm transition-colors hover:bg-dash-elevated/50 md:px-5"
           >
-            <dt className="text-ink/50">
+            <dt className="text-dash-muted">
               {row.label}
               {row.note ? (
-                <span className="mt-0.5 block text-[11px] text-ink/35">
+                <span className="mt-0.5 block text-[11px] text-dash-faint">
                   {row.note}
                 </span>
               ) : null}
             </dt>
-            <dd className="text-right font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-ink">
+            <dd className="text-right font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-dash-text">
               {row.value}
             </dd>
           </div>

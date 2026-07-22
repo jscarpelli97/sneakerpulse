@@ -43,7 +43,7 @@ export default function RootLayout({
       lang="en"
       className={`${instrument.variable} ${syne.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink">
+      <body className="dashboard flex min-h-full flex-col bg-dash-bg text-dash-text">
         {children}
       </body>
     </html>

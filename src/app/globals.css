@@ -10,8 +10,9 @@
   --heat: #ff4d2e;
   --up: #0f9f6e;
   --down: #e11d48;
-  --background: var(--paper);
-  --foreground: var(--ink);
+  /* Site-wide design standard: markets terminal (homepage look) */
+  --background: var(--dash-bg);
+  --foreground: var(--dash-text);
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -81,6 +82,7 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
@@ -93,11 +95,6 @@ body {
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--ink) 88%, white);
-  color: white;
-}
-
-.dashboard ::selection {
   background: var(--dash-accent);
   color: var(--dash-bg);
 }
@@ -117,43 +114,21 @@ textarea {
 }
 
 :focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--ink) 55%, transparent);
+  outline: 2px solid color-mix(in oklab, var(--dash-accent) 80%, white);
   outline-offset: 2px;
 }
 
-.dashboard :focus-visible {
-  outline-color: color-mix(in oklab, var(--dash-accent) 80%, white);
-}
-
-/* Surfaces */
+/* Surfaces — ui-card aliases the terminal dash-card standard */
+.dash-card,
 .ui-card {
-  border: 1px solid rgba(18, 20, 26, 0.08);
-  border-radius: var(--radius-lg);
-  background: #fff;
-  box-shadow: var(--shadow-sm);
-}
-
-.ui-card-hover {
-  transition:
-    border-color var(--duration) var(--ease-out),
-    box-shadow var(--duration) var(--ease-out),
-    transform var(--duration) var(--ease-out);
-}
-
-.ui-card-hover:hover {
-  border-color: rgba(18, 20, 26, 0.14);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-}
-
-.dash-card {
   border: 1px solid var(--dash-border);
   border-radius: var(--radius-lg);
   background: var(--dash-panel);
   box-shadow: var(--dash-shadow);
 }
 
-.dash-card-hover {
+.dash-card-hover,
+.ui-card-hover {
   transition:
     border-color var(--duration) var(--ease-out),
     background-color var(--duration) var(--ease-out),
@@ -161,7 +136,8 @@ textarea {
     transform var(--duration) var(--ease-out);
 }
 
-.dash-card-hover:hover {
+.dash-card-hover:hover,
+.ui-card-hover:hover {
   border-color: color-mix(in oklab, var(--dash-border) 70%, white);
   background: var(--dash-elevated);
   transform: translateY(-1px);
@@ -169,8 +145,9 @@ textarea {
 
 .page-shell {
   background:
-    radial-gradient(1200px 480px at 10% -10%, rgba(18, 20, 26, 0.04), transparent 60%),
-    var(--paper);
+    radial-gradient(900px 420px at 12% -8%, rgba(212, 160, 23, 0.05), transparent 55%),
+    var(--dash-bg);
+  color: var(--dash-text);
 }
 
 /* Motion */
@@ -228,23 +205,13 @@ textarea {
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(18, 20, 26, 0.06) 0%,
-    rgba(18, 20, 26, 0.1) 45%,
-    rgba(18, 20, 26, 0.06) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.4s linear infinite;
-  border-radius: var(--radius-sm);
-}
-
-.dashboard .skeleton {
-  background: linear-gradient(
-    90deg,
     rgba(255, 255, 255, 0.04) 0%,
     rgba(255, 255, 255, 0.09) 45%,
     rgba(255, 255, 255, 0.04) 100%
   );
   background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: var(--radius-sm);
 }
 
 .stagger-1 {

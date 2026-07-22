@@ -34,7 +34,7 @@ function chartMeta(historySource: HistorySource) {
     return {
       def: METRIC_DEFINITIONS.chartSales,
       badge: "Sales history",
-      badgeClass: "bg-up/15 text-up",
+      badgeClass: "bg-dash-up/15 text-dash-up",
       subtitle: (count: number) =>
         `TradingView Lightweight Charts · StockX daily sales · ${count} sessions`,
     };
@@ -43,7 +43,7 @@ function chartMeta(historySource: HistorySource) {
     return {
       def: METRIC_DEFINITIONS.chartSnapshot,
       badge: "Ask snapshots",
-      badgeClass: "bg-ink/10 text-ink/70",
+      badgeClass: "bg-dash-accent/10 text-dash-muted",
       subtitle: (count: number) =>
         `TradingView Lightweight Charts · lowest-ask snapshots · ${count} sessions`,
     };
@@ -51,7 +51,7 @@ function chartMeta(historySource: HistorySource) {
   return {
     def: METRIC_DEFINITIONS.chartBootstrap,
     badge: "Bootstrap",
-    badgeClass: "bg-paper text-ink/55",
+    badgeClass: "bg-dash-elevated text-dash-muted",
     subtitle: (count: number) =>
       `TradingView Lightweight Charts · bootstrap series (not official sales) · ${count} sessions`,
   };
@@ -74,13 +74,13 @@ export function PriceChart({
   const meta = chartMeta(historySource);
 
   return (
-    <section className="ui-card animate-rise overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/8 px-4 py-3.5 md:px-5">
+    <section className="dash-card animate-rise overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-dash-border px-4 py-3.5 md:px-5">
         <div>
-          <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
+          <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text">
             Price chart
           </h2>
-          <p className="mt-0.5 text-sm text-ink-soft" title={meta.def.definition}>
+          <p className="mt-0.5 text-sm text-dash-muted" title={meta.def.definition}>
             {hasSeries
               ? meta.subtitle(data.length)
               : "Historical price series unavailable"}
@@ -92,7 +92,7 @@ export function PriceChart({
           >
             {meta.badge}
           </span>
-          <div className="flex flex-wrap gap-1 rounded-xl bg-paper p-1">
+          <div className="flex flex-wrap gap-1 rounded-xl bg-dash-elevated p-1">
             {CHART_RANGES.map((item) => (
               <button
                 key={item}
@@ -100,8 +100,8 @@ export function PriceChart({
                 onClick={() => setRange(item)}
                 className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${
                   range === item
-                    ? "bg-ink text-white shadow-[var(--shadow-xs)]"
-                    : "text-ink-soft hover:bg-white hover:text-ink"
+                    ? "bg-dash-accent text-dash-bg shadow-[var(--shadow-xs)]"
+                    : "text-dash-muted hover:bg-dash-panel hover:text-dash-text"
                 }`}
               >
                 {item}
@@ -112,7 +112,7 @@ export function PriceChart({
       </div>
 
       <div className="relative px-2 py-4 md:px-4 md:py-5">
-        <div className="mb-3 flex items-end justify-between px-2 font-[family-name:var(--font-plex-mono)] text-xs text-ink/45">
+        <div className="mb-3 flex items-end justify-between px-2 font-[family-name:var(--font-plex-mono)] text-xs text-dash-faint">
           <span>High {hasSeries ? formatMoney(max) : "—"}</span>
           <span>Low {hasSeries ? formatMoney(min) : "—"}</span>
         </div>
@@ -121,14 +121,14 @@ export function PriceChart({
           {hasSeries ? (
             <LightweightPriceChart data={data} up={isUp} />
           ) : (
-            <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-ink/15 bg-paper/50 px-6 text-center text-sm text-ink-soft">
+            <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-dash-border bg-dash-elevated/50 px-6 text-center text-sm text-dash-muted">
               No historical points to plot yet.
             </div>
           )}
         </div>
 
         {historySource === "bootstrap" && hasSeries ? (
-          <p className="mt-3 px-2 text-xs text-ink/45">
+          <p className="mt-3 px-2 text-xs text-dash-faint">
             Bootstrap series is anchored to StockX range/average stats for chart
             continuity. It is not official daily sales history. % changes stay
             blank until sales or enough ask snapshots exist.
@@ -136,7 +136,7 @@ export function PriceChart({
         ) : null}
 
         {historySource === "snapshot" && hasSeries ? (
-          <p className="mt-3 px-2 text-xs text-ink/45">
+          <p className="mt-3 px-2 text-xs text-dash-faint">
             Ask-snapshot history is built by the daily snapshot job. Prefer
             StockX sales/daily when the API key can access it.
           </p>

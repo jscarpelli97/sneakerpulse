@@ -66,15 +66,15 @@ export function AlertsClient({
 
   return (
     <div className="space-y-6">
-      <section className="ui-card p-4 md:p-5">
+      <section className="dash-card p-4 md:p-5">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold">
           Create alert
         </h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <label className="text-sm text-ink-soft">
+          <label className="text-sm text-dash-muted">
             Sneaker
             <select
-              className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20"
+              className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
             >
@@ -85,10 +85,10 @@ export function AlertsClient({
               ))}
             </select>
           </label>
-          <label className="text-sm text-ink-soft">
+          <label className="text-sm text-dash-muted">
             Direction
             <select
-              className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20"
+              className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted"
               value={direction}
               onChange={(e) =>
                 setDirection(e.target.value as "above" | "below")
@@ -98,19 +98,19 @@ export function AlertsClient({
               <option value="above">Price goes above</option>
             </select>
           </label>
-          <label className="text-sm text-ink-soft">
+          <label className="text-sm text-dash-muted">
             Threshold (USD)
             <input
-              className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20"
+              className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted"
               value={threshold}
               onChange={(e) => setThreshold(e.target.value)}
               inputMode="decimal"
             />
           </label>
-          <label className="text-sm text-ink-soft">
+          <label className="text-sm text-dash-muted">
             Webhook URL (optional)
             <input
-              className="mt-1.5 w-full rounded-xl border border-ink/10 bg-paper px-3 py-2.5 text-ink outline-none hover:border-ink/20"
+              className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted"
               value={webhookUrl}
               onChange={(e) => setWebhookUrl(e.target.value)}
               placeholder="https://example.com/hooks/sneakerpulse"
@@ -121,7 +121,7 @@ export function AlertsClient({
           <button
             type="button"
             onClick={handleAddAlert}
-            className="rounded-xl bg-ink px-4 py-2.5 text-sm font-semibold text-white shadow-[var(--shadow-sm)] hover:opacity-90"
+            className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg shadow-[var(--shadow-sm)] hover:opacity-90"
           >
             Save alert
           </button>
@@ -129,42 +129,42 @@ export function AlertsClient({
             type="button"
             onClick={evaluate}
             disabled={!alerts.length || checking}
-            className="rounded-xl border border-ink/15 px-4 py-2.5 text-sm font-semibold text-ink hover:bg-paper disabled:opacity-40"
+            className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold text-dash-text hover:bg-dash-elevated disabled:opacity-40"
           >
             {checking ? "Checking…" : "Check alerts now"}
           </button>
         </div>
-        {result ? <p className="mt-3 text-sm text-ink-soft">{result}</p> : null}
+        {result ? <p className="mt-3 text-sm text-dash-muted">{result}</p> : null}
       </section>
 
-      <section className="ui-card overflow-hidden">
-        <div className="border-b border-ink/8 px-4 py-3.5 md:px-5">
+      <section className="dash-card overflow-hidden">
+        <div className="border-b border-dash-border px-4 py-3.5 md:px-5">
           <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold">
             Saved alerts
           </h2>
         </div>
         {alerts.length === 0 ? (
-          <p className="px-4 py-5 text-sm text-ink-soft md:px-5">
+          <p className="px-4 py-5 text-sm text-dash-muted md:px-5">
             No alerts yet. Alerts are stored in this browser.
           </p>
         ) : (
-          <ul className="divide-y divide-ink/8">
+          <ul className="divide-y divide-dash-border">
             {alerts.map((alert) => (
               <li
                 key={alert.id}
-                className="flex flex-wrap items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-paper/50 md:px-5"
+                className="flex flex-wrap items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-dash-elevated/50 md:px-5"
               >
                 <div>
-                  <p className="font-semibold text-ink">
+                  <p className="font-semibold text-dash-text">
                     {alert.ticker} {alert.direction}{" "}
                     {formatMoney(alert.threshold)}
                   </p>
-                  <p className="text-xs text-ink/45">{alert.name}</p>
+                  <p className="text-xs text-dash-faint">{alert.name}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => removeAlert(alert.id)}
-                  className="rounded-lg px-2 py-1 text-sm font-medium text-down hover:bg-down/10"
+                  className="rounded-lg px-2 py-1 text-sm font-medium text-dash-down hover:bg-dash-down/10"
                 >
                   Remove
                 </button>

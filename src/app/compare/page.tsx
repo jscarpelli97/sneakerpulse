@@ -19,23 +19,23 @@ export default async function ComparePage({
     "";
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
       <SiteHeader subtitle="Compare" />
-      <main className="page-shell flex-1">
-        <div className="mx-auto max-w-7xl space-y-7 px-4 py-7 md:px-6 md:py-10">
+      <main className="flex-1">
+        <div className="mx-auto max-w-[1400px] space-y-7 px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
           <section className="animate-rise max-w-2xl">
-            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.16em] text-ink/40">
+            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.16em] text-dash-faint">
               Tools
             </p>
-            <h1 className="mt-2 font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight text-ink md:text-5xl">
+            <h1 className="mt-2 font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight text-dash-text md:text-5xl">
               Compare sneakers
             </h1>
-            <p className="mt-3 text-base leading-relaxed text-ink-soft md:text-lg">
+            <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
               Side-by-side lowest ask, 30d change, volume, and rank across the
               current top 100 StockX sellers.
             </p>
           </section>
-          <div className="animate-rise stagger-2 ui-card p-4 md:p-5">
+          <div className="animate-rise stagger-2 dash-card p-4 md:p-5">
             <CompareClient
               sneakers={sneakers}
               initialA={initialA}

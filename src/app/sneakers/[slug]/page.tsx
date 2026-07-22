@@ -58,7 +58,7 @@ export default async function SneakerMarketPage({
   const summary = result.ok ? buildMarketSummary(result.data) : null;
 
   return (
-    <>
+    <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
       <MarketHeader
         market={market}
         live={live}
@@ -68,8 +68,8 @@ export default async function SneakerMarketPage({
           ) : undefined
         }
       />
-      <main className="page-shell flex-1">
-        <div className="mx-auto max-w-7xl space-y-5 px-4 py-5 md:space-y-6 md:px-6 md:py-7">
+      <main className="flex-1">
+        <div className="mx-auto max-w-[1400px] space-y-5 px-4 py-5 sm:px-6 md:space-y-6 md:py-7 lg:px-8">
           {!result.ok ? (
             <SetupBanner
               code={result.code}
@@ -100,7 +100,7 @@ export default async function SneakerMarketPage({
 
           {result.ok ? <MarketSizeSection market={market} /> : null}
 
-          <p className="pb-4 text-center text-xs text-ink/40 md:text-left">
+          <p className="pb-4 text-center text-xs text-dash-faint md:text-left">
             {result.ok
               ? `Live StockX market data for ${market.name}, refreshed about every 5 minutes. Source: StockX via KicksDB · chart=${market.historySource} · status=${market.upstreamStatus} · fetched ${new Date(market.fetchedAt).toLocaleString()}.`
               : `Connect KicksDB to stream live StockX pricing for ${catalog.name}.`}
@@ -108,6 +108,6 @@ export default async function SneakerMarketPage({
         </div>
       </main>
       <SiteFooter />
-    </>
+    </div>
   );
 }

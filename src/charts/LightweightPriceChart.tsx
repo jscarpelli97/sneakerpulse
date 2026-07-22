@@ -28,14 +28,14 @@ export function LightweightPriceChart({ data, up }: Props) {
     const chart = createChart(el, {
       autoSize: true,
       layout: {
-        background: { type: ColorType.Solid, color: "#ffffff" },
-        textColor: "#2a2e38",
+        background: { type: ColorType.Solid, color: "#151922" },
+        textColor: "#8b93a7",
         fontFamily: "var(--font-instrument), system-ui, sans-serif",
         fontSize: 12,
       },
       grid: {
-        vertLines: { color: "rgba(18, 20, 26, 0.06)" },
-        horzLines: { color: "rgba(18, 20, 26, 0.06)" },
+        vertLines: { color: "rgba(42, 49, 66, 0.65)" },
+        horzLines: { color: "rgba(42, 49, 66, 0.65)" },
       },
       rightPriceScale: {
         borderVisible: false,
@@ -45,18 +45,18 @@ export function LightweightPriceChart({ data, up }: Props) {
         timeVisible: false,
       },
       crosshair: {
-        horzLine: { labelBackgroundColor: "#12141a" },
-        vertLine: { labelBackgroundColor: "#12141a" },
+        horzLine: { labelBackgroundColor: "#1b2130" },
+        vertLine: { labelBackgroundColor: "#1b2130" },
       },
       handleScroll: true,
       handleScale: true,
     });
 
-    const line = up ? "#16a34a" : "#dc2626";
+    const line = up ? "#26a69a" : "#ef5350";
     const series = chart.addSeries(AreaSeries, {
       lineColor: line,
-      topColor: up ? "rgba(22, 163, 74, 0.28)" : "rgba(220, 38, 38, 0.28)",
-      bottomColor: up ? "rgba(22, 163, 74, 0.02)" : "rgba(220, 38, 38, 0.02)",
+      topColor: up ? "rgba(38, 166, 154, 0.32)" : "rgba(239, 83, 80, 0.32)",
+      bottomColor: up ? "rgba(38, 166, 154, 0.02)" : "rgba(239, 83, 80, 0.02)",
       lineWidth: 2,
       priceLineVisible: true,
       lastValueVisible: true,

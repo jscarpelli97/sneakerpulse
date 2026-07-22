@@ -20,20 +20,20 @@ export function SizeSelector({
   );
 
   return (
-    <section className="ui-card px-4 py-4 md:px-5">
+    <section className="dash-card px-4 py-4 md:px-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-ink">
+          <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text">
             Size focus
           </h2>
-          <p className="mt-1 text-sm text-ink-soft">
+          <p className="mt-1 text-sm text-dash-muted">
             Filter the ladder and focus metrics on one US size
           </p>
         </div>
-        <label className="text-sm text-ink-soft">
+        <label className="text-sm text-dash-muted">
           Size{" "}
           <select
-            className="ml-2 rounded-xl border border-ink/10 bg-paper px-3 py-2 text-ink outline-none hover:border-ink/20"
+            className="ml-2 rounded-xl border border-dash-border bg-dash-elevated px-3 py-2 text-dash-text outline-none hover:border-dash-muted"
             value={selected}
             onChange={(event) => {
               const value = event.target.value;
@@ -57,7 +57,7 @@ export function SizeSelector({
       {active ? (
         <div className="mt-4 grid gap-3 sm:grid-cols-4">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.12em] text-ink/40">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-dash-faint">
               Focus ask
             </p>
             <p className="mt-1 font-[family-name:var(--font-syne)] text-2xl font-extrabold">
@@ -65,7 +65,7 @@ export function SizeSelector({
             </p>
           </div>
           <div>
-            <p className="text-[11px] uppercase tracking-[0.12em] text-ink/40">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-dash-faint">
               Asks
             </p>
             <p className="mt-1 text-lg font-semibold">
@@ -73,7 +73,7 @@ export function SizeSelector({
             </p>
           </div>
           <div>
-            <p className="text-[11px] uppercase tracking-[0.12em] text-ink/40">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-dash-faint">
               Sales 30d
             </p>
             <p className="mt-1 text-lg font-semibold">
@@ -81,7 +81,7 @@ export function SizeSelector({
             </p>
           </div>
           <div>
-            <p className="text-[11px] uppercase tracking-[0.12em] text-ink/40">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-dash-faint">
               vs market low
             </p>
             <p className="mt-1 text-lg font-semibold">

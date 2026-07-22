@@ -91,33 +91,33 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
         <article
           key={metric.label}
           title={metric.definition}
-          className={`ui-card ui-card-hover animate-rise px-4 py-4 sm:px-5 stagger-${(index % 4) + 1}`}
+          className={`dash-card dash-card-hover animate-rise px-4 py-4 sm:px-5 stagger-${(index % 4) + 1}`}
         >
-          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-ink/40">
+          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-dash-faint">
             {metric.label}
           </p>
           <p
             className={`mt-2 font-[family-name:var(--font-syne)] text-2xl font-extrabold tracking-tight md:text-3xl ${
-              metric.tone ?? "text-ink"
+              metric.tone ?? "text-dash-text"
             }`}
           >
             {metric.value}
           </p>
           {metric.sub ? (
-            <p className={`mt-1.5 text-sm ${metric.tone ?? "text-ink-soft"}`}>
+            <p className={`mt-1.5 text-sm ${metric.tone ?? "text-dash-muted"}`}>
               {metric.sub}
             </p>
           ) : null}
         </article>
       ))}
       {market.historySource === "bootstrap" ? (
-        <p className="text-xs text-ink/45 sm:col-span-2 xl:col-span-4">
+        <p className="text-xs text-dash-faint sm:col-span-2 xl:col-span-4">
           Today/30d change stay blank until StockX daily sales or enough lowest-ask
           snapshots exist. Live lowest ask and size asks are still from StockX.
         </p>
       ) : null}
       {market.historySource === "snapshot" ? (
-        <p className="text-xs text-ink/45 sm:col-span-2 xl:col-span-4">
+        <p className="text-xs text-dash-faint sm:col-span-2 xl:col-span-4">
           Change metrics use accumulated lowest-ask snapshots (free-tier path).
           Official sales history replaces this when KicksDB sales/daily is available.
         </p>

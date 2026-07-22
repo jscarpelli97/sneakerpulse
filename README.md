@@ -2,7 +2,17 @@
 
 Next.js market app tracking StockX’s **current top 100 selling sneakers** (by sales rank) with live ask, volume, and market pages.
 
-## Architecture
+## Design standard
+
+The **markets terminal** look from the homepage is the site-wide visual standard until explicitly changed:
+
+- Dark surfaces (`dash-bg` / `dash-panel`), Syne + Instrument + Plex Mono
+- Gold accent CTAs, teal/red for up/down
+- `dash-card` panels, sticky terminal chrome, `max-w-[1400px]` shells
+- Tokens and surfaces live in `src/app/globals.css` (`--dash-*`, `.dash-card`)
+- Root layout applies the `dashboard` class by default; `SiteHeader` / `SiteFooter` default to `variant="dashboard"`
+
+Do not reintroduce the old light ink/paper theme unless asked.
 
 ```
 src/

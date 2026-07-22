@@ -19,10 +19,10 @@ function formatCompact(value: number) {
 }
 
 function changeClass(value: number | null | undefined) {
-  if (value == null) return "text-ink-soft";
-  if (value > 0) return "text-up";
-  if (value < 0) return "text-down";
-  return "text-ink-soft";
+  if (value == null) return "text-dash-muted";
+  if (value > 0) return "text-dash-up";
+  if (value < 0) return "text-dash-down";
+  return "text-dash-muted";
 }
 
 function formatChange(
