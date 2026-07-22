@@ -8,6 +8,7 @@ type ChromeVariant = "dashboard" | "light";
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/markets", label: "All markets" },
+  { href: "/portfolio", label: "Portfolio" },
   { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
   { href: "/plus", label: "Plus" },
@@ -128,6 +129,9 @@ export function SiteFooter({
           <nav className="flex flex-wrap gap-x-4 gap-y-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
             <Link href="/markets" className="hover:text-dash-text">
               All markets
+            </Link>
+            <Link href="/portfolio" className="hover:text-dash-text">
+              Portfolio
             </Link>
             <Link href="/compare" className="hover:text-dash-text">
               Compare
