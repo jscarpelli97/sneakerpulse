@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { PLUS_BENEFITS } from "@/lib/plus/public";
+import { PlusPlanOverview } from "@/components/plus/PlusPlanOverview";
 import type { PlusChargeView } from "@/lib/plus/public";
 import type { PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
@@ -164,59 +164,48 @@ export function PlusApp() {
   // ——— Member (after pay) ———
   if (session && isMember) {
     return (
-      <div className="space-y-8">
-        <header className="space-y-3">
+      <div className="space-y-10">
+        <PlusPlanOverview priceUsd={me?.priceUsd} termDays={me?.termDays} />
+
+        <section className="dash-card space-y-4 border-dash-up/30 p-5 sm:p-6">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-up">
             Plus member · @{session.username}
           </p>
-          <h1 className="font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight sm:text-5xl">
+          <h2 className="font-[family-name:var(--font-syne)] text-2xl font-extrabold tracking-tight sm:text-3xl">
             You&apos;re in
-          </h1>
-          <p className="max-w-2xl text-lg text-dash-muted">
+          </h2>
+          <p className="text-sm text-dash-muted sm:text-base">
             Thanks for supporting SneakerPulse. Your Plus access is active
             {me?.expiresAt ? ` through ${formatExpiry(me.expiresAt)}` : ""}.
+            Everything in the checklist above marked Plus is yours for this
+            term.
           </p>
-        </header>
-
-        <section className="dash-card space-y-4 border-dash-up/30 p-5 sm:p-6">
-          <h2 className="font-[family-name:var(--font-syne)] text-xl font-bold">
-            What&apos;s unlocked
-          </h2>
-          <ul className="space-y-2 text-sm text-dash-muted">
-            {PLUS_BENEFITS.map((item) => (
-              <li key={item} className="flex gap-2">
-                <span className="text-dash-up">✓</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
           <p className="text-xs text-dash-faint">
             Live feeds turn on as StockX / GOAT / Stadium Goods access lands.
             Until then you keep the full free terminal plus member status.
           </p>
+          <div className="flex flex-wrap gap-3 pt-1">
+            <Link
+              href="/portfolio"
+              className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
+            >
+              Open portfolio
+            </Link>
+            <Link
+              href="/markets"
+              className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold hover:bg-dash-elevated"
+            >
+              Browse markets
+            </Link>
+            <button
+              type="button"
+              onClick={onLogout}
+              className="rounded-xl border border-dash-border px-4 py-2.5 text-sm text-dash-muted hover:bg-dash-elevated"
+            >
+              Log out
+            </button>
+          </div>
         </section>
-
-        <div className="flex flex-wrap gap-3">
-          <Link
-            href="/portfolio"
-            className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
-          >
-            Open portfolio
-          </Link>
-          <Link
-            href="/markets"
-            className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold hover:bg-dash-elevated"
-          >
-            Browse markets
-          </Link>
-          <button
-            type="button"
-            onClick={onLogout}
-            className="rounded-xl border border-dash-border px-4 py-2.5 text-sm text-dash-muted hover:bg-dash-elevated"
-          >
-            Log out
-          </button>
-        </div>
       </div>
     );
   }
@@ -355,21 +344,24 @@ export function PlusApp() {
   // ——— Logged out ———
   if (!session) {
     return (
-      <div className="mx-auto max-w-lg space-y-6">
-        <header className="space-y-3">
+      <div className="space-y-10">
+        <PlusPlanOverview priceUsd={me?.priceUsd} termDays={me?.termDays} />
+
+        <section
+          id="checkout"
+          className="dash-card scroll-mt-24 space-y-4 border-dash-accent/25 p-5 sm:p-6"
+        >
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-accent">
-            SneakerPulse Plus
+            Upgrade
           </p>
-          <h1 className="font-[family-name:var(--font-syne)] text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Sign in to upgrade
-          </h1>
-          <p className="text-sm leading-relaxed text-dash-muted sm:text-base">
+          <h2 className="font-[family-name:var(--font-syne)] text-2xl font-extrabold tracking-tight">
+            Sign in to checkout
+          </h2>
+          <p className="text-sm leading-relaxed text-dash-muted">
             Plus checkout needs an account so we can attach your Bitcoin /
             Lightning payment to you. Same email + password as Portfolio.
           </p>
-        </header>
 
-        <div className="dash-card space-y-4 p-5 sm:p-6">
           <div className="flex gap-2 rounded-xl bg-dash-elevated p-1">
             {(["login", "register"] as const).map((item) => (
               <button
@@ -424,10 +416,14 @@ export function PlusApp() {
               disabled={busy}
               className="w-full rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110 disabled:opacity-60"
             >
-              {busy ? "Working…" : authMode === "register" ? "Create account" : "Log in"}
+              {busy
+                ? "Working…"
+                : authMode === "register"
+                  ? "Create account"
+                  : "Log in"}
             </button>
           </form>
-        </div>
+        </section>
       </div>
     );
   }
@@ -435,44 +431,16 @@ export function PlusApp() {
   // ——— Logged in, not member (before pay) ———
   return (
     <div className="space-y-10">
-      <header className="space-y-4">
-        <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-accent">
-          SneakerPulse Plus · @{session.username}
-        </p>
-        <h1 className="font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight sm:text-5xl">
-          Live tape for collectors and shops
-        </h1>
-        <p className="max-w-2xl text-lg leading-relaxed text-dash-muted">
-          Free SneakerPulse shows the top 10. Plus unlocks the full board —
-          fresher asks when feeds are live, and tools for finding the next pair
-          or deciding what belongs on the shelf.
-        </p>
-      </header>
+      <PlusPlanOverview priceUsd={me?.priceUsd} termDays={me?.termDays} />
 
-      <section className="grid gap-4 sm:grid-cols-2">
-        <div className="border-l-2 border-dash-accent/50 pl-4">
-          <p className="font-[family-name:var(--font-syne)] font-bold">
-            Collectors
-          </p>
-          <p className="mt-1.5 text-sm text-dash-muted">
-            Spot under-retail asks and momentum without influencer spin.
-          </p>
-        </div>
-        <div className="border-l-2 border-dash-up/50 pl-4">
-          <p className="font-[family-name:var(--font-syne)] font-bold">
-            Resellers & storefronts
-          </p>
-          <p className="mt-1.5 text-sm text-dash-muted">
-            A cleaner keep-vs-dump read across your inventory.
-          </p>
-        </div>
-      </section>
-
-      <section className="dash-card space-y-5 border-dash-accent/25 p-5 sm:p-6">
+      <section
+        id="checkout"
+        className="dash-card scroll-mt-24 space-y-5 border-dash-accent/25 p-5 sm:p-6"
+      >
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-              Membership
+              Checkout · @{session.username}
             </p>
             <p className="mt-1 font-[family-name:var(--font-syne)] text-3xl font-extrabold tabular-nums">
               ${me?.priceUsd ?? 10}
@@ -487,12 +455,6 @@ export function PlusApp() {
             <strong className="text-dash-text">on-chain Bitcoin</strong> only.
           </p>
         </div>
-
-        <ul className="space-y-2 text-sm text-dash-muted">
-          {PLUS_BENEFITS.map((item) => (
-            <li key={item}>• {item}</li>
-          ))}
-        </ul>
 
         {me?.mockCheckout ? (
           <p className="rounded-xl border border-dash-border bg-dash-elevated/50 px-3 py-2 text-xs text-dash-faint">

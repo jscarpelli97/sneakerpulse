@@ -78,12 +78,11 @@ export default function AboutPage() {
             <p className="text-sm text-dash-faint leading-relaxed">
               Official StockX Developer API access is pending. Until then,
               listings may show a Cached badge instead of Live.{" "}
-              <Link href="/plus" className="text-dash-accent hover:underline">
+              <Link href="/plus#compare" className="text-dash-accent hover:underline">
                 SneakerPulse Plus
               </Link>{" "}
-              is on the roadmap for live asks across StockX first, then GOAT,
-              Stadium Goods, and more — leave your email there if you want a
-              heads-up.
+              unlocks the full board and email alerts — see the free vs Plus
+              checklist, or leave your email for launch notes.
             </p>
           </section>
 

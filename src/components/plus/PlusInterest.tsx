@@ -142,7 +142,14 @@ export function PlusInterest({
           </h2>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-dash-muted">
             Live tape for collectors and shop floors. Pay with Lightning or
-            on-chain Bitcoin — free mode stays.
+            on-chain Bitcoin — free mode stays.{" "}
+            <Link
+              href="/plus#compare"
+              className="text-dash-accent underline-offset-2 hover:underline"
+            >
+              See free vs Plus
+            </Link>
+            .
           </p>
           <Link
             href="/plus"

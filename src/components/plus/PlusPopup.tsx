@@ -67,7 +67,7 @@ export function PlusPopup() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.16em] text-dash-accent">
-                SneakerPulse Plus · coming soon
+                SneakerPulse Plus
               </p>
               <h2
                 id={titleId}
@@ -113,11 +113,11 @@ export function PlusPopup() {
 
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
             <Link
-              href="/plus"
+              href="/plus#compare"
               onClick={dismiss}
               className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-accent underline-offset-4 hover:underline"
             >
-              Full Plus page →
+              Free vs Plus checklist →
             </Link>
             <button
               type="button"
