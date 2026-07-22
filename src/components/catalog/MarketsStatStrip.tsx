@@ -8,22 +8,21 @@ export function MarketsStatStrip({
   quotes: CatalogQuote[];
   liveCount: number;
 }) {
-  const priced = quotes.filter((row) => row.live && row.price != null);
+  const priced = quotes.filter((row) => row.price != null);
   const avgAsk =
     priced.length > 0
       ? priced.reduce((sum, row) => sum + (row.price ?? 0), 0) / priced.length
       : null;
   const volume = quotes.reduce(
-    (sum, row) =>
-      sum + (row.live && row.weeklyOrders != null ? row.weeklyOrders : 0),
+    (sum, row) => sum + (row.weeklyOrders != null ? row.weeklyOrders : 0),
     0,
   );
 
   const cards = [
     {
-      label: "Live feeds",
-      value: `${liveCount}/${quotes.length}`,
-      note: "KicksDB · StockX",
+      label: liveCount > 0 ? "Live feeds" : "Cached feeds",
+      value: `${liveCount > 0 ? liveCount : priced.length}/${quotes.length}`,
+      note: liveCount > 0 ? "KicksDB · StockX" : "Free offline catalog",
     },
     {
       label: "Watchlist size",
@@ -33,7 +32,7 @@ export function MarketsStatStrip({
     {
       label: "Avg lowest ask",
       value: avgAsk != null ? formatMaybeMoney(avgAsk) : "—",
-      note: "Across live top sellers",
+      note: "Across priced top sellers",
     },
     {
       label: "Weekly volume",

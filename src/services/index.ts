@@ -1,5 +1,10 @@
 export { getCatalogQuotes, type CatalogQuote } from "@/services/market/getCatalogQuotes";
 export { getMarketIndex } from "@/services/market/getMarketIndex";
+export { getQuickLook } from "@/services/market/getQuickLook";
+export type {
+  MarketsQuickLook,
+  QuickLookPick,
+} from "@/services/market/getQuickLook";
 export {
   getMarketBySlug,
   getMarketFallback,

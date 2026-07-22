@@ -1,5 +1,6 @@
 import { CatalogTable } from "@/components/catalog/CatalogTable";
 import { MarketsHero } from "@/components/catalog/MarketsHero";
+import { MarketsQuickLook } from "@/components/catalog/MarketsQuickLook";
 import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
 import { MarketIndexCard } from "@/components/market/MarketIndexCard";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
@@ -9,6 +10,7 @@ import {
 } from "@/services/catalog/mapProductToCatalog";
 import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
 import { getMarketIndex } from "@/services/market/getMarketIndex";
+import { getQuickLook } from "@/services/market/getQuickLook";
 
 export const revalidate = 300;
 
@@ -17,6 +19,7 @@ export default async function MarketsIndexPage() {
     getCatalogQuotes(TOP_SELLERS_LIMIT),
     getMarketIndex(TOP_SELLERS_LIMIT),
   ]);
+  const quickLook = await getQuickLook(quotes);
   const liveCount = quotes.filter((row) => row.live).length;
   const cachedCount = quotes.filter(
     (row) => !row.live && row.price != null,
@@ -39,11 +42,12 @@ export default async function MarketsIndexPage() {
           {featured ? (
             <MarketsHero
               featured={featured}
-              liveCount={liveCount}
+              liveCount={liveCount || cachedCount}
               totalMarkets={quotes.length}
             />
           ) : null}
           <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
+          <MarketsQuickLook look={quickLook} />
           {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
           <CatalogTable
             rows={watchlist}
