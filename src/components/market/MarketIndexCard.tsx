@@ -35,6 +35,12 @@ function formatIndexLevel(value: number) {
   }).format(value);
 }
 
+function formatPremiumPercent(level: number, baseLevel: number) {
+  const premium = level - baseLevel;
+  const sign = premium > 0 ? "+" : "";
+  return `${sign}${premium.toFixed(1)}% vs retail`;
+}
+
 function formatIndexChange(change: MarketIndex["changeToday"]) {
   if (!change) return { absolute: "—", percent: "—" };
   const sign = change.absolute > 0 ? "+" : "";
@@ -46,7 +52,6 @@ function formatIndexChange(change: MarketIndex["changeToday"]) {
 
 export function MarketIndexCard({ index }: { index: MarketIndex }) {
   const [range, setRange] = useState<Range>("ALL");
-  // One continuous SPI series (2012 → today); range buttons only zoom.
   const data = useMemo(
     () => filterByRange(index.series, range),
     [index.series, range],
@@ -56,7 +61,8 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
   const today = formatIndexChange(index.changeToday);
   const month = formatIndexChange(index.change30d);
   const historical = formatIndexChange(index.changeHistorical);
-  const endYear = index.series.at(-1)?.date?.slice(0, 4) ?? "now";
+  const premiumLabel = formatPremiumPercent(index.level, index.baseLevel);
+  const vsRetailTone = changeClass(index.level - index.baseLevel);
 
   return (
     <section className="dash-card animate-rise stagger-2 overflow-hidden">
@@ -70,37 +76,30 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
               {index.ticker}
             </span>
             <span className="rounded-full bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
-              Whole market · 2012→{endYear}
+              Premium vs retail · 100 = retail
             </span>
           </div>
           <h2 className="mt-2 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
             {index.name}
           </h2>
           <p className="mt-1 max-w-3xl text-sm text-dash-muted">
-            ChronoPulse-style StockX sneaker index — top{" "}
-            {index.brandCount ?? "—"} brands × up to{" "}
-            {index.modelsPerBrand ?? "—"} models, volume-weighted Laspeyres,
-            daily updates. Continuous history from 2012 through today, indexed
-            to {formatIndexLevel(index.baseLevel)}.
+            Sneaker-native market health: volume-weighted ask ÷ retail across
+            the ChronoPulse-style basket. When shoes sit near or under retail,
+            SPI falls toward/below 100 — unlike a dollar price index that can
+            stay elevated after the 2021 boom.
           </p>
         </div>
         <div className="text-right">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            SPI level
+            SPI premium
           </p>
           <p className="mt-1 font-[family-name:var(--font-syne)] text-3xl font-extrabold tabular-nums text-dash-text sm:text-4xl">
             {formatIndexLevel(index.level)}
           </p>
           <p
-            className={`mt-1 font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums ${changeClass(
-              range === "ALL"
-                ? index.changeHistorical?.percent
-                : index.changeToday?.percent,
-            )}`}
+            className={`mt-1 font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums ${vsRetailTone}`}
           >
-            {range === "ALL"
-              ? `${historical.percent} since 2012`
-              : `${today.percent} today`}
+            {premiumLabel}
           </p>
         </div>
       </div>
@@ -108,13 +107,10 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
       <div className="grid gap-3 border-b border-dash-border px-4 py-3 sm:grid-cols-4 sm:px-5">
         {[
           {
-            label: "SPI",
-            value: formatIndexLevel(index.level),
-            sub:
-              today.percent === "—"
-                ? `As of ${index.asOf}`
-                : `${today.percent} today`,
-            tone: changeClass(index.changeToday?.percent),
+            label: "vs retail",
+            value: premiumLabel.replace(" vs retail", ""),
+            sub: `Index ${formatIndexLevel(index.level)} · base ${formatIndexLevel(index.baseLevel)}`,
+            tone: vsRetailTone,
           },
           {
             label: "30d",
@@ -123,21 +119,21 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             tone: changeClass(index.change30d?.percent),
           },
           {
-            label: "2012→now",
+            label: "Since 2020 tape",
             value: historical.percent,
             sub:
-              index.historicalConstituents != null
-                ? `Top ${formatNumber(index.historicalConstituents)} rotate`
-                : "Whole market",
+              index.peakLevel != null
+                ? `Peak ${formatIndexLevel(index.peakLevel)} @ ${index.peakDate ?? "—"}`
+                : "Boom-era premium",
             tone: changeClass(index.changeHistorical?.percent),
           },
           {
-            label: "Market peak",
-            value:
-              index.peakLevel != null
-                ? formatIndexLevel(index.peakLevel)
-                : "—",
-            sub: index.peakDate ?? "—",
+            label: "Basket",
+            value: formatNumber(index.constituents),
+            sub:
+              index.brandCount != null
+                ? `${index.brandCount} brands × ≤${index.modelsPerBrand ?? "—"}`
+                : "Live models",
             tone: "text-dash-text",
           },
         ].map((metric) => (
@@ -162,7 +158,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-2">
           <p className="text-sm text-dash-muted">
             {hasSeries
-              ? `SPI · ${data.length} sessions · ${data[0]?.date} → ${data.at(-1)?.date}`
+              ? `Premium index · ${data.length} sessions · ${data[0]?.date} → ${data.at(-1)?.date}`
               : "Index series unavailable"}
           </p>
           <div className="flex flex-wrap gap-1 rounded-xl bg-dash-elevated p-1">
@@ -191,26 +187,14 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             </div>
           )}
         </div>
-        <p
-          className="mt-3 px-2 text-xs leading-relaxed text-dash-faint"
-          title={index.methodology}
-        >
+        <p className="mt-3 px-2 text-xs leading-relaxed text-dash-faint">
           {index.methodology}
           {index.citation ? (
             <>
               {" "}
-              Sources:{" "}
+              Boom-era premiums via{" "}
               <a
                 href={index.citation}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-dash-link underline-offset-2 hover:underline"
-              >
-                embSneakers
-              </a>
-              {" · "}
-              <a
-                href="https://github.com/Flurin17/stockXsalesData"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-dash-link underline-offset-2 hover:underline"

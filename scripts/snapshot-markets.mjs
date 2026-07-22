@@ -13,8 +13,7 @@ import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const TOP_SELLERS_LIMIT = 100;
-const HIST_END_LEVEL = 5304.94;
-const HIST_END_DATE = "2021-12-26";
+const PREMIUM_BASE = 100;
 
 async function loadEnvLocal() {
   if (process.env.KICKSDB_API_KEY?.trim()) return;
@@ -205,33 +204,39 @@ async function loadOrRebalanceBasket(products, today) {
   return basket;
 }
 
-function memberWeight(product, index, frozenWeight) {
-  if (frozenWeight != null) return Math.max(1, frozenWeight);
-  return Math.max(
-    1,
-    product.weekly_orders ?? Math.max(1, TOP_SELLERS_LIMIT - index),
+function parseRetail(product) {
+  const traits = product.traits ?? [];
+  const hit = traits.find(
+    (t) => String(t.trait || "").toLowerCase() === "retail price",
   );
+  if (!hit?.value) return null;
+  const n = Number(String(hit.value).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-function chainLaspeyres(prevLevel, prevMembers, nextMembers) {
-  const basket = [];
-  for (const [id, next] of Object.entries(nextMembers)) {
-    const prev = prevMembers[id];
-    if (!prev || !(prev.price > 0) || !(next.price > 0)) continue;
-    basket.push({
-      weight: Math.max(1, next.weight || prev.weight || 1),
-      ratio: next.price / prev.price,
-    });
+function measurePremium(products, chronoBasket) {
+  const weightBySlug = new Map(
+    chronoBasket.members.map((m) => [m.slug, m.weight]),
+  );
+  let num = 0;
+  let den = 0;
+  let count = 0;
+  let atOrBelow = 0;
+  for (const product of products) {
+    if (!product.slug || !weightBySlug.has(product.slug)) continue;
+    const ask = product.min_price ?? product.avg_price ?? null;
+    const retail = parseRetail(product);
+    if (!(ask > 0) || !(retail > 0)) continue;
+    const weight = Math.max(1, weightBySlug.get(product.slug) || 1);
+    const ratio = ask / retail;
+    num += weight * ratio;
+    den += weight;
+    count += 1;
+    if (ratio <= 1) atOrBelow += 1;
   }
-  if (basket.length < 10) {
-    console.warn(
-      `SPI: only ${basket.length} overlapping members — holding level`,
-    );
-    return prevLevel;
-  }
-  const den = basket.reduce((s, b) => s + b.weight, 0);
-  const num = basket.reduce((s, b) => s + b.weight * b.ratio, 0);
-  return prevLevel * (num / den);
+  if (!(den > 0) || count < 3) return null;
+  const level = Math.round(((PREMIUM_BASE * num) / den) * 100) / 100;
+  return { level, count, atOrBelow };
 }
 
 async function upsertSpiExtension(products) {
@@ -242,21 +247,20 @@ async function upsertSpiExtension(products) {
   );
   const statePath = path.join(ROOT, "src/data/index/spi-basket-state.json");
   const chronoBasket = await loadOrRebalanceBasket(products, today);
-  const weightBySlug = new Map(
-    chronoBasket.members.map((m) => [m.slug, m.weight]),
-  );
-  const allowed = new Set(weightBySlug.keys());
+  const measured = measurePremium(products, chronoBasket);
+  if (!measured) {
+    console.warn("SPI premium skip: not enough ask/retail pairs");
+    return;
+  }
 
   let extension = {
     id: "spi-daily-extension",
-    name: "SneakerPulse Index daily extension",
-    source: "chronopulse_laspeyres",
-    note: "Append-only daily SPI continuation on the ChronoPulse-style brand×model basket (lowest ask, frozen rebalance weights). Anchored to the last historical SPI level on the first recorded day.",
-    anchorDate: HIST_END_DATE,
-    anchorLevel: HIST_END_LEVEL,
-    baseLevel: HIST_END_LEVEL,
+    name: "SneakerPulse Premium Index daily extension",
+    source: "premium_vs_retail",
+    note: "Daily volume-weighted ask/retail × 100 for the ChronoPulse-style basket. 100 = retail parity.",
+    baseLevel: PREMIUM_BASE,
     asOf: null,
-    constituents: chronoBasket.members.length,
+    constituents: measured.count,
     gapBefore: "2022-01-01",
     points: [],
   };
@@ -266,96 +270,35 @@ async function upsertSpiExtension(products) {
     // defaults
   }
 
-  let state = {
-    date: null,
-    level: null,
-    members: {},
-    previousDate: null,
-    previousLevel: null,
-    previousMembers: {},
-  };
-  try {
-    state = { ...state, ...JSON.parse(await fs.readFile(statePath, "utf8")) };
-  } catch {
-    // defaults
-  }
-
-  const members = {};
-  for (let i = 0; i < products.length; i++) {
-    const product = products[i];
-    if (!product.slug || !allowed.has(product.slug)) continue;
-    const price = product.min_price ?? product.avg_price ?? null;
-    if (price == null || !(price > 0)) continue;
-    members[product.slug] = {
-      price,
-      weight: memberWeight(product, i, weightBySlug.get(product.slug)),
-    };
-  }
-
-  const memberCount = Object.keys(members).length;
-  if (memberCount < 10) {
-    console.warn(`SPI skip: only ${memberCount} priced ChronoPulse members`);
-    return;
-  }
-
-  const anchor = extension.anchorLevel ?? HIST_END_LEVEL;
-  let level;
-  let previousDate = state.previousDate ?? null;
-  let previousLevel = state.previousLevel ?? null;
-  let previousMembers = state.previousMembers ?? {};
-
-  if (state.level == null || !Object.keys(state.members ?? {}).length) {
-    level = anchor;
-    console.log(
-      `SPI seed: anchoring first day ${today} at historical end level ${level}`,
-    );
-  } else if (state.date === today) {
-    const prior = state.previousMembers ?? {};
-    if (state.previousLevel != null && Object.keys(prior).length >= 10) {
-      level = chainLaspeyres(state.previousLevel, prior, members);
-    } else {
-      level = state.level;
-    }
-    previousDate = state.previousDate ?? null;
-    previousLevel = state.previousLevel ?? null;
-    previousMembers = prior;
-  } else {
-    level = chainLaspeyres(state.level, state.members, members);
-    previousDate = state.date;
-    previousLevel = state.level;
-    previousMembers = state.members;
-  }
-
   const points = (extension.points ?? []).filter(
     (p) => p.date.slice(0, 10) !== today,
   );
-  points.push({
+  // Drop old absolute-dollar seed points (~5000) if present from prior methodology.
+  const cleaned = points.filter((p) => p.price > 0 && p.price < 500);
+  cleaned.push({
     date: today,
-    price: Math.round(level * 100) / 100,
-    orders: memberCount,
+    price: measured.level,
+    orders: measured.count,
   });
-  points.sort((a, b) => a.date.localeCompare(b.date));
+  cleaned.sort((a, b) => a.date.localeCompare(b.date));
 
   const nextExtension = {
     ...extension,
-    source: "chronopulse_laspeyres",
-    anchorDate: extension.anchorDate ?? HIST_END_DATE,
-    anchorLevel: anchor,
-    baseLevel: extension.baseLevel ?? anchor,
+    source: "premium_vs_retail",
+    baseLevel: PREMIUM_BASE,
     asOf: today,
-    constituents: memberCount,
+    constituents: measured.count,
     brandCount: chronoBasket.brandCount,
+    atOrBelowRetail: measured.atOrBelow,
     updatedAt: new Date().toISOString(),
-    points,
+    points: cleaned,
   };
 
   const nextState = {
     date: today,
-    level: Math.round(level * 100) / 100,
-    members,
-    previousDate,
-    previousLevel,
-    previousMembers,
+    level: measured.level,
+    atOrBelowRetail: measured.atOrBelow,
+    constituents: measured.count,
   };
 
   await fs.writeFile(
@@ -364,7 +307,7 @@ async function upsertSpiExtension(products) {
   );
   await fs.writeFile(statePath, `${JSON.stringify(nextState, null, 2)}\n`);
   console.log(
-    `SPI extension: ${points.length} points, today=${nextState.level} (chrono members=${memberCount}/${chronoBasket.members.length})`,
+    `SPI premium: ${cleaned.length} points, today=${measured.level} (${measured.atOrBelow}/${measured.count} ≤ retail)`,
   );
 }
 

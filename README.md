@@ -16,23 +16,21 @@ Do not reintroduce the old light ink/paper theme unless asked.
 
 ## SneakerPulse Index (SPI)
 
-Homepage market pulse inspired by Chrono24’s ChronoPulse — same three rules:
+Sneaker-native market health index (ChronoPulse-inspired basket, different equation):
 
-1. **How are brands and models selected?** Up to **14 bestselling StockX sneaker brands** from the current top-seller pool; each brand contributes up to **10** bestselling / most important models (`src/data/index/spi-chrono-basket.json`).
-2. **How is the index calculated?** Volume-weighted **Laspeyres** on those models (weekly StockX order flow as the volume weight).
-3. **How often is it updated?** **Daily** prices via `npm run snapshot`. Brand/model selection and weights **rebalance every six months** (adds/removes recorded on the basket).
+1. **Selection:** Up to **14 bestselling StockX brands** × **10 models** each (`spi-chrono-basket.json`).
+2. **Calculation:** Volume-weighted **ask ÷ retail × 100**. **100 = at retail**, above 100 = premiums, below 100 = sitting under retail. Absolute-dollar Laspeyres stays “high” when retail prices rise and after the 2021 boom; premium vs retail matches how the market feels when everything is available near retail.
+3. **Updates:** Daily via `npm run snapshot`. Basket rebalances every six months.
 
-Long chart history still stitches embSneakers (2012–2020) + Flurin17 (2020–2021) and bridges through today so ALL reaches the present.Rebuild / extend:
+Boom-era chart tape: Flurin17 daily premiums (Nov 2020–Dec 2021). No honest public daily premium feed for most of 2022–mid‑2025 — the chart connects 2021 → today without inventing a flat “still hot” bridge.
+
+Rebuild / extend:
 
 ```bash
-# embSneakers Dropbox dump (bit.ly/3DvnC6p) → 2012–2020 segment
-node scripts/build-whole-market-index.mjs /path/to/emb.zip
+# Flurin17 Drive JSON → premium history (optional rebuild)
+# node scripts/build-flurin-index.mjs /path/to/flurin.json
 
-# Flurin17 Drive JSON → 2020–2021 segment, then merge
-node scripts/build-flurin-index.mjs /path/to/flurin.json
-node scripts/merge-market-index.mjs
-
-# Daily: product ask snapshots + SPI extension point (keeps the series going past today)
+# Daily: product ask snapshots + SPI premium point
 npm run snapshot
 ```
 
