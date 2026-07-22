@@ -28,6 +28,15 @@ Each snapshot stores: timestamp, lowest ask, highest bid, last sale, average sal
 
 The app still reads JSON under `src/data/snapshots/` until a `DATABASE_URL` collector is wired.
 
+## AI Market Summary
+
+Rule-based narrative card on each sneaker page (`MarketSummaryCard`).
+
+- Signals: price direction (30d / today / series) × inventory proxy (asks ÷ weekly orders)
+- Playbook: `src/lib/summary/rules.ts` (e.g. price↑ + inventory↓ → “Demand appears to be increasing while supply is tightening.”)
+- API: `GET /api/market/[slug]/summary`
+- Generator flagged as `rules` today — ready to swap in an LLM composer later without changing the card contract
+
 ## Stack
 
 - Next.js (App Router)

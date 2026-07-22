@@ -2,12 +2,14 @@ import { notFound } from "next/navigation";
 import { MarketHeader } from "@/components/market/MarketHeader";
 import { MarketSizeSection } from "@/components/market/MarketSizeSection";
 import { MarketSnapshot } from "@/components/market/MarketSnapshot";
+import { MarketSummaryCard } from "@/components/market/MarketSummaryCard";
 import { PriceChart } from "@/charts/PriceChart";
 import { PriceOverview } from "@/components/market/PriceOverview";
 import { SetupBanner } from "@/components/market/SetupBanner";
 import { StatsPanel } from "@/components/market/StatsPanel";
 import { UpstreamStatusBadge } from "@/components/market/UpstreamStatusBadge";
 import { SiteFooter } from "@/components/layout/SiteChrome";
+import { buildMarketSummary } from "@/lib/summary/buildMarketSummary";
 import {
   getAllSneakerSlugs,
   getSneakerBySlug,
@@ -51,6 +53,7 @@ export default async function SneakerMarketPage({
   const result = await getMarketBySlug(slug);
   const live = result.ok;
   const market = result.ok ? result.data : getMarketFallback(catalog);
+  const summary = result.ok ? buildMarketSummary(result.data) : null;
 
   return (
     <>
@@ -76,6 +79,10 @@ export default async function SneakerMarketPage({
           ) : null}
 
           {result.ok ? <PriceOverview market={market} /> : null}
+
+          {result.ok && summary ? (
+            <MarketSummaryCard market={market} summary={summary} />
+          ) : null}
 
           {result.ok ? <MarketSnapshot market={market} /> : null}
 
