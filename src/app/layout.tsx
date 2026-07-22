@@ -17,11 +17,11 @@ const syne = Syne({
 export const metadata: Metadata = {
   title: "Jordan 1 High Dark Mocha — SneakerPulse",
   description:
-    "Market view for the Jordan 1 High Dark Mocha (2020): live-style price, change, volume, chart, and statistics.",
+    "Live StockX market view for the Jordan 1 High Dark Mocha (2020): price, change, volume, chart, and statistics.",
   openGraph: {
     title: "Jordan 1 High Dark Mocha — SneakerPulse",
     description:
-      "TradingView and CoinMarketCap–inspired sneaker market page with dummy data.",
+      "TradingView and CoinMarketCap–inspired sneaker market page powered by live StockX data.",
     siteName: "SneakerPulse",
     type: "website",
   },

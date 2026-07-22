@@ -18,13 +18,20 @@ function formatCompact(value: number) {
   }).format(value);
 }
 
-function changeClass(value: number) {
+function changeClass(value: number | null | undefined) {
+  if (value == null) return "text-ink-soft";
   if (value > 0) return "text-up";
   if (value < 0) return "text-down";
   return "text-ink-soft";
 }
 
-function formatChange(absolute: number, percent: number) {
+function formatChange(
+  absolute: number | null | undefined,
+  percent: number | null | undefined,
+) {
+  if (absolute == null || percent == null) {
+    return { absolute: "—", percent: "—" };
+  }
   const sign = absolute > 0 ? "+" : "";
   return {
     absolute: `${sign}${formatMoney(absolute)}`,
@@ -32,10 +39,16 @@ function formatChange(absolute: number, percent: number) {
   };
 }
 
+function formatMaybeMoney(value: number | null | undefined) {
+  if (value == null) return "—";
+  return formatMoney(value);
+}
+
 export {
   changeClass,
   formatChange,
   formatCompact,
+  formatMaybeMoney,
   formatMoney,
   formatNumber,
 };

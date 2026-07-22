@@ -1,4 +1,4 @@
-import { market, sneaker } from "@/data/darkMocha";
+import type { SneakerMarket } from "@/lib/stockx/types";
 import {
   changeClass,
   formatChange,
@@ -13,38 +13,52 @@ type Metric = {
   tone?: string;
 };
 
-export function PriceOverview() {
+export function PriceOverview({ market }: { market: SneakerMarket }) {
   const today = formatChange(
-    market.changeToday.absolute,
-    market.changeToday.percent,
+    market.changeToday?.absolute,
+    market.changeToday?.percent,
   );
   const month = formatChange(
-    market.change30d.absolute,
-    market.change30d.percent,
+    market.change30d?.absolute,
+    market.change30d?.percent,
   );
+
+  const volumeLabel = market.historyAvailable ? "24h volume" : "Weekly volume";
+  const volumeValue =
+    market.volume24h.notional != null
+      ? formatMoney(market.volume24h.notional)
+      : market.volume24h.pairs
+        ? formatNumber(market.volume24h.pairs)
+        : "—";
+  const volumeSub =
+    market.volume24h.notional != null
+      ? `${formatNumber(market.volume24h.pairs)} pairs`
+      : market.historyAvailable
+        ? undefined
+        : "pairs this week (StockX)";
 
   const metrics: Metric[] = [
     {
       label: "Current price",
       value: formatMoney(market.price),
-      sub: `Retail ${formatMoney(sneaker.retail)}`,
+      sub: `Lowest ask · Retail ${formatMoney(market.retail)}`,
     },
     {
       label: "Today’s change",
       value: today.percent,
       sub: today.absolute,
-      tone: changeClass(market.changeToday.percent),
+      tone: changeClass(market.changeToday?.percent),
     },
     {
       label: "30-day change",
       value: month.percent,
       sub: month.absolute,
-      tone: changeClass(market.change30d.percent),
+      tone: changeClass(market.change30d?.percent),
     },
     {
-      label: "24h volume",
-      value: formatMoney(market.volume24h.notional),
-      sub: `${formatNumber(market.volume24h.pairs)} pairs`,
+      label: volumeLabel,
+      value: volumeValue,
+      sub: volumeSub,
     },
   ];
 
@@ -72,6 +86,12 @@ export function PriceOverview() {
           ) : null}
         </article>
       ))}
+      {!market.historyAvailable ? (
+        <p className="text-xs text-ink/45 sm:col-span-2 xl:col-span-4">
+          Daily change and dollar volume need StockX sales history (KicksDB paid
+          tier). Live lowest ask and size asks are still from StockX.
+        </p>
+      ) : null}
     </section>
   );
 }

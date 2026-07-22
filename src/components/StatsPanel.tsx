@@ -1,7 +1,6 @@
-import { market, sneaker } from "@/data/darkMocha";
+import type { SneakerMarket } from "@/lib/stockx/types";
 import {
-  formatCompact,
-  formatMoney,
+  formatMaybeMoney,
   formatNumber,
 } from "@/lib/format";
 
@@ -9,52 +8,6 @@ type StatRow = {
   label: string;
   value: string;
 };
-
-const primaryStats: StatRow[] = [
-  { label: "Market cap", value: formatMoney(market.stats.marketCap) },
-  {
-    label: "Circulating pairs",
-    value: formatCompact(market.stats.circulatingSupply),
-  },
-  { label: "24h high", value: formatMoney(market.stats.high24h) },
-  { label: "24h low", value: formatMoney(market.stats.low24h) },
-  { label: "30d high", value: formatMoney(market.stats.high30d) },
-  { label: "30d low", value: formatMoney(market.stats.low30d) },
-  { label: "Avg sale (30d)", value: formatMoney(market.stats.avgSale30d) },
-  {
-    label: "Last sale",
-    value: `${formatMoney(market.stats.lastSale)} · ${market.stats.lastSaleSize}`,
-  },
-];
-
-const secondaryStats: StatRow[] = [
-  {
-    label: "All-time high",
-    value: `${formatMoney(market.stats.ath)} (${market.stats.athDate})`,
-  },
-  {
-    label: "All-time low",
-    value: `${formatMoney(market.stats.atl)} (${market.stats.atlDate})`,
-  },
-  {
-    label: "30d volume",
-    value: `${formatMoney(market.volume30d.notional)} · ${formatNumber(market.volume30d.pairs)} pairs`,
-  },
-  {
-    label: "30d volatility",
-    value: `${market.stats.volatility30d.toFixed(1)}%`,
-  },
-  {
-    label: "Bid–ask spread",
-    value: `${market.stats.bidAskSpread.toFixed(1)}%`,
-  },
-  {
-    label: "Liquidity score",
-    value: `${market.stats.liquidityScore}/100`,
-  },
-  { label: "Retail price", value: formatMoney(sneaker.retail) },
-  { label: "Style code", value: sneaker.styleCode },
-];
 
 function StatList({ title, rows }: { title: string; rows: StatRow[] }) {
   return (
@@ -79,7 +32,91 @@ function StatList({ title, rows }: { title: string; rows: StatRow[] }) {
   );
 }
 
-export function StatsPanel() {
+export function StatsPanel({ market }: { market: SneakerMarket }) {
+  const primaryStats: StatRow[] = [
+    {
+      label: "Lowest ask",
+      value: formatMaybeMoney(market.stats.lowestAsk),
+    },
+    {
+      label: "Highest ask",
+      value: formatMaybeMoney(market.stats.highestAsk),
+    },
+    {
+      label: "Average ask",
+      value: formatMaybeMoney(market.stats.averageAsk),
+    },
+    {
+      label: "Active asks",
+      value: formatNumber(market.stats.askCount),
+    },
+    {
+      label: "30d high",
+      value: formatMaybeMoney(market.stats.high30d),
+    },
+    {
+      label: "30d low",
+      value: formatMaybeMoney(market.stats.low30d),
+    },
+    {
+      label: "Avg sale (30d)",
+      value: formatMaybeMoney(market.stats.avgSale30d),
+    },
+    {
+      label: "Last avg sale",
+      value: formatMaybeMoney(market.stats.lastSale),
+    },
+  ];
+
+  const secondaryStats: StatRow[] = [
+    {
+      label: "Sales (15d)",
+      value: formatNumber(market.stats.sales15d),
+    },
+    {
+      label: "Sales (30d)",
+      value: formatNumber(market.stats.sales30d),
+    },
+    {
+      label: "Sales (60d)",
+      value: formatNumber(market.stats.sales60d),
+    },
+    {
+      label: "Weekly orders",
+      value:
+        market.stats.weeklyOrders != null
+          ? formatNumber(market.stats.weeklyOrders)
+          : "—",
+    },
+    {
+      label: "StockX rank",
+      value: market.stats.rank != null ? `#${formatNumber(market.stats.rank)}` : "—",
+    },
+    {
+      label: "Annual high",
+      value: formatMaybeMoney(market.stats.annualHigh),
+    },
+    {
+      label: "Annual low",
+      value: formatMaybeMoney(market.stats.annualLow),
+    },
+    {
+      label: "Annual volatility",
+      value:
+        market.stats.annualVolatility != null
+          ? `${(market.stats.annualVolatility * 100).toFixed(1)}%`
+          : "—",
+    },
+    {
+      label: "Retail price",
+      value: formatMaybeMoney(market.retail),
+    },
+    {
+      label: "Style code",
+      value: market.styleCode,
+    },
+  ];
+
   return (
     <div className="grid gap-3">
       <StatList title="Statistics" rows={primaryStats} />

@@ -1,21 +1,28 @@
 # SneakerPulse
 
-Next.js market page for the **Jordan 1 High Dark Mocha (2020)**, inspired by TradingView and CoinMarketCap.
+Next.js market page for the **Jordan 1 High Dark Mocha (2020)** with live StockX data.
 
 ## Stack
 
 - Next.js (App Router)
 - TypeScript
 - Tailwind CSS
+- [KicksDB](https://kicks.dev) StockX product API
 
-## Features
+## Live StockX data
 
-- Asset header with ticker and live-style status
-- Current price, today’s change, 30-day change, and 24h volume
-- Large chart placeholder with dummy 90-day series
-- Statistics panel (ATH/ATL, highs/lows, liquidity, and more)
+StockX blocks direct datacenter access, so pricing is loaded through KicksDB’s StockX endpoints.
 
-All figures are dummy data for demo purposes.
+1. Create a free API key at [kicks.dev/register](https://kicks.dev/register)
+2. Copy `.env.example` to `.env.local` and set:
+
+```bash
+KICKSDB_API_KEY=KICKS-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+```
+
+3. Restart the dev server
+
+Free tier covers live lowest/avg/highest asks and size-level asks. Daily sales history (chart + day/30d change) requires a paid KicksDB plan.
 
 ## Getting started
 
