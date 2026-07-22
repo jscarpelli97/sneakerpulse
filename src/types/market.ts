@@ -12,7 +12,7 @@ export type HistorySource =
   | "sales"
   | "snapshot"
   | "bootstrap"
-  | "stockx_contest"
+  | "whole_market"
   | "hybrid";
 
 

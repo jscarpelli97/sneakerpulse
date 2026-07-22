@@ -29,6 +29,8 @@ function filterByRange(points: ChartPoint[], range: Range): ChartPoint[] {
 }
 
 function seriesForRange(index: MarketIndex, range: Range): ChartPoint[] {
+  // ALL / 1Y: whole-market historical series (ChronoPulse-style long view).
+  // Shorter ranges: live rotating top-seller basket.
   const useHistorical =
     index.historicalSeries.length >= 2 &&
     (range === "ALL" || range === "1Y" || index.liveSeries.length < 2);
@@ -77,8 +79,8 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             </span>
             <span className="rounded-full bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
               {showingHistorical
-                ? "StockX contest · 2017–2019"
-                : "Live top 100"}
+                ? "Whole market · 2012–2020"
+                : "Live top sellers"}
             </span>
           </div>
           <h2 className="mt-2 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
@@ -86,13 +88,13 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
           </h2>
           <p className="mt-1 max-w-3xl text-sm text-dash-muted">
             {showingHistorical
-              ? `Long-run StockX sample of Yeezy + Off-White transactions (Sep 2017–Feb 2019) — before the 2021 hype peak. Indexed to ${formatIndexLevel(index.baseLevel)} at the start of the sample.`
-              : `Live volume-weighted basket of the current top ${formatNumber(index.constituents)} StockX sellers (SPI100).`}
+              ? `ChronoPulse-style StockX market pulse — rotating basket of the most traded colorways across the whole catalog (not one brand). Shoes enter and exit as liquidity shifts. Indexed to ${formatIndexLevel(index.baseLevel)} in Apr 2012.`
+              : `Live ChronoPulse-style basket of the current top ${formatNumber(index.constituents)} StockX sellers by sales rank. Constituents rotate with the market.`}
           </p>
         </div>
         <div className="text-right">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            {showingHistorical ? "Sample end level" : "Live level"}
+            {showingHistorical ? "2020 level" : "Live level"}
           </p>
           <p className="mt-1 font-[family-name:var(--font-syne)] text-3xl font-extrabold tabular-nums text-dash-text sm:text-4xl">
             {formatIndexLevel(
@@ -109,7 +111,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             )}`}
           >
             {showingHistorical
-              ? `${historical.percent} over sample`
+              ? `${historical.percent} since 2012`
               : `${today.percent} today`}
           </p>
         </div>
@@ -118,9 +120,12 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
       <div className="grid gap-3 border-b border-dash-border px-4 py-3 sm:grid-cols-4 sm:px-5">
         {[
           {
-            label: "Live SPI100",
+            label: "Live SPI",
             value: formatIndexLevel(index.liveLevel),
-            sub: today.percent === "—" ? "Recent top-100 basket" : `${today.percent} today`,
+            sub:
+              today.percent === "—"
+                ? "Current top sellers"
+                : `${today.percent} today`,
             tone: changeClass(index.changeToday?.percent),
           },
           {
@@ -130,16 +135,16 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
             tone: changeClass(index.change30d?.percent),
           },
           {
-            label: "2017–19 change",
+            label: "2012→2020",
             value: historical.percent,
             sub:
               index.historicalConstituents != null
-                ? `${formatNumber(index.historicalConstituents)} colorways`
+                ? `Top ${formatNumber(index.historicalConstituents)} rotate`
                 : "No long sample",
             tone: changeClass(index.changeHistorical?.percent),
           },
           {
-            label: "Sample peak",
+            label: "Market peak",
             value:
               index.peakLevel != null
                 ? formatIndexLevel(index.peakLevel)
@@ -170,8 +175,8 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
           <p className="text-sm text-dash-muted">
             {hasSeries
               ? showingHistorical
-                ? `Real StockX contest sales · ${data.length} sessions · ${data[0]?.date} → ${data.at(-1)?.date}`
-                : `Live SPI100 · ${data.length} sessions · as of ${index.asOf}`
+                ? `Whole StockX market · ${data.length} sessions · ${data[0]?.date} → ${data.at(-1)?.date}`
+                : `Live top sellers · ${data.length} sessions · as of ${index.asOf}`
               : "Index series unavailable"}
           </p>
           <div className="flex flex-wrap gap-1 rounded-xl bg-dash-elevated p-1">
@@ -208,16 +213,16 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
           {index.citation ? (
             <>
               {" "}
-              Source:{" "}
+              Historical transactions via{" "}
               <a
                 href={index.citation}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-dash-link underline-offset-2 hover:underline"
               >
-                StockX Data Contest 2019
+                embSneakers / StockX crawl (WWW 2022)
               </a>
-              . Use 3M/1M for live SPI100; ALL/1Y for the pre-hype sample.
+              . ALL/1Y = long market series; 3M = live rotating basket.
             </>
           ) : null}
         </p>

@@ -1,4 +1,4 @@
-import historicalIndex from "@/data/index/stockx-contest-2017-2019.json";
+import historicalIndex from "@/data/index/stockx-whole-market-2012-2020.json";
 import {
   fetchTopStockxSneakers,
   getKicksApiKey,
@@ -22,7 +22,9 @@ type HistoricalFile = {
   baseDate: string;
   asOf: string;
   constituents: number;
+  productsCovered?: number;
   citation?: string;
+  paper?: string;
   points: ChartPoint[];
 };
 
@@ -43,7 +45,7 @@ function loadHistoricalSeries(): {
 }
 
 function peakOf(series: ChartPoint[]) {
-  if (!series.length) return { level: null, date: null };
+  if (!series.length) return { level: null as number | null, date: null as string | null };
   let peak = series[0];
   for (const point of series) {
     if (point.price > peak.price) peak = point;
@@ -105,6 +107,12 @@ async function buildLiveSeries(limit: number): Promise<{
   return { series, constituents: members.length };
 }
 
+/**
+ * ChronoPulse-style whole-market index:
+ * - Long history: rotating top-200 StockX colorways from embSneakers
+ *   whole-catalog transactions (2012–2020)
+ * - Live window: rotating top StockX sellers by current sales rank
+ */
 export async function getMarketIndex(
   limit = TOP_SELLERS_LIMIT,
 ): Promise<MarketIndex | null> {
@@ -120,15 +128,16 @@ export async function getMarketIndex(
   const historicalEnd = historicalSeries.at(-1)?.price ?? null;
   const histPeak = peakOf(historicalSeries);
 
-  const level = liveLevel;
   const liveYesterday = liveSeries.at(-2)?.price ?? null;
   const liveMonth = liveSeries.at(-31)?.price ?? liveSeries[0]?.price ?? null;
   const liveStart = liveSeries[0]?.price ?? null;
 
+  const productsCovered = historical?.meta.productsCovered;
+
   return {
     name: "SneakerPulse Index",
-    ticker: historical ? "SPI · HIST" : "SPI100",
-    level,
+    ticker: "SPI",
+    level: liveLevel,
     liveLevel,
     historicalEndLevel: historicalEnd,
     baseLevel: INDEX_BASE,
@@ -151,10 +160,15 @@ export async function getMarketIndex(
     historicalSeries,
     constituents: live?.constituents ?? historical?.meta.constituents ?? 0,
     historicalConstituents: historical?.meta.constituents ?? null,
-    historySource: historical && live ? "hybrid" : historical ? "stockx_contest" : "bootstrap",
+    historySource:
+      historical && live
+        ? "hybrid"
+        : historical
+          ? "whole_market"
+          : "bootstrap",
     methodology: historical
-      ? `${historical.meta.note} Live SPI100 (current top StockX sellers) covers the recent window only — free KicksDB does not expose daily sales history through the 2021 hype peak.`
-      : "Volume-weighted Laspeyres basket of the current top StockX sellers. History uses StockX range/average stats until official sales/daily history is available.",
+      ? `ChronoPulse-style whole StockX market index. Long history uses a rotating monthly basket of the top ${historical.meta.constituents} colorways by sales (from ${productsCovered?.toLocaleString?.() ?? productsCovered ?? "11k+"} products, Apr 2012–Jul 2020). Shoes enter and exit as liquidity shifts. Live window uses the current top StockX sellers. No free public daily sales feed fills Aug 2020 through today, so ALL shows the long market series and 3M shows live SPI.`
+      : "Volume-weighted Laspeyres basket of the current top StockX sellers. Shoes rotate with live sales rank.",
     citation: historical?.meta.citation ?? null,
     fetchedAt: new Date().toISOString(),
   };
