@@ -45,12 +45,12 @@ export default async function ComparePage({
               Tools
             </p>
             <h1 className="mt-2 font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight text-dash-text md:text-5xl">
-              Compare sneakers
+              Head-to-head
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
-              Side-by-side lowest ask, 30d change, volume, and rank
+              Visual matchup on ask, premium vs retail, momentum, and volume
               {access.gated
-                ? ` across the free top ${FREE_CATALOG_LIMIT}.`
+                ? ` — free top ${FREE_CATALOG_LIMIT}.`
                 : " across the full Plus board."}
             </p>
           </section>
@@ -61,7 +61,7 @@ export default async function ComparePage({
               freeLimit={access.freeLimit}
             />
           ) : null}
-          <div className="animate-rise stagger-2 dash-card p-4 md:p-5">
+          <div className="animate-rise stagger-2">
             <CompareClient
               sneakers={sneakers}
               initialA={initialA}

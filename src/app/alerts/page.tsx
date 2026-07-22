@@ -1,7 +1,7 @@
 import { AlertsClient } from "@/components/alerts/AlertsClient";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { PlusCatalogGate } from "@/components/plus/PlusCatalogGate";
-import { FREE_CATALOG_LIMIT, gateCatalogRows, getPlusAccess } from "@/lib/plus/access";
+import { gateCatalogRows, getPlusAccess } from "@/lib/plus/access";
 import { getTrackedCatalog } from "@/services/catalog/sneakers";
 
 export const dynamic = "force-dynamic";
@@ -17,11 +17,7 @@ export default async function AlertsPage() {
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
       <SiteHeader
-        subtitle={
-          access.gated
-            ? `Alerts · free top ${FREE_CATALOG_LIMIT}`
-            : "Alerts"
-        }
+        subtitle={isPlus ? "Alerts · Plus" : "Alerts · Plus feature"}
       />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-7 px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
@@ -30,16 +26,15 @@ export default async function AlertsPage() {
               Tools
             </p>
             <h1 className="mt-2 font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight text-dash-text md:text-5xl">
-              Price alerts
+              Email alerts
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
-              Set above/below thresholds
-              {access.gated
-                ? ` on the free top ${FREE_CATALOG_LIMIT} sellers.`
-                : " on any pair on the Plus board."}
+              {isPlus
+                ? `Threshold alerts to your inbox${access.gated ? "" : " across the Plus board"}. Restock & price-drop digests coming soon.`
+                : "Email price alerts are a Plus feature — restock & price-drop digests are coming soon for Plus too."}
             </p>
           </section>
-          {access.gated ? (
+          {access.gated && isPlus ? (
             <PlusCatalogGate
               visible={access.visible}
               total={access.total}
@@ -47,7 +42,7 @@ export default async function AlertsPage() {
             />
           ) : null}
           <div className="animate-rise stagger-2">
-            <AlertsClient sneakers={sneakers} />
+            <AlertsClient sneakers={sneakers} isPlus={isPlus} />
           </div>
         </div>
       </main>
