@@ -2,7 +2,7 @@
 /**
  * Daily snapshot job:
  * 1) Append today's lowest ask for every top StockX seller
- * 2) Append today's SPI level (chained Laspeyres on that basket)
+ * 2) Append today's SPI level (volume-weighted ask÷retail×100 on ChronoPulse basket)
  *
  * Usage:
  *   npm run snapshot

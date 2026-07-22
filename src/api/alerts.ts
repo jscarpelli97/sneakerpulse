@@ -5,6 +5,7 @@ export type EvaluateAlertsResponse = {
   ok: boolean;
   checked?: number;
   triggered?: Array<PriceAlert & { price: number }>;
+  webhooks?: string;
   error?: string;
 };
 

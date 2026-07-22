@@ -1,11 +1,9 @@
-import chicagoSnap from "@/data/snapshots/air-jordan-1-retro-high-og-chicago-reimagined-lost-and-found.json";
-import darkMochaSnap from "@/data/snapshots/air-jordan-1-retro-high-dark-mocha.json";
-import dunkSnap from "@/data/snapshots/nike-dunk-low-retro-white-black-2021.json";
-import sambaSnap from "@/data/snapshots/adidas-samba-og-cloud-white-core-black.json";
 import chicagoHistory from "@/data/history/air-jordan-1-retro-high-og-chicago-reimagined-lost-and-found.json";
 import darkMochaHistory from "@/data/history/air-jordan-1-retro-high-dark-mocha.json";
 import dunkHistory from "@/data/history/nike-dunk-low-retro-white-black-2021.json";
 import sambaHistory from "@/data/history/adidas-samba-og-cloud-white-core-black.json";
+import fs from "node:fs";
+import path from "node:path";
 import { toDay } from "@/utils/metrics";
 import type { ChartPoint } from "@/types/market";
 
@@ -21,12 +19,7 @@ const bootstrapModules: Record<string, HistoryFile> = {
   "adidas-samba-og-cloud-white-core-black": sambaHistory,
 };
 
-const snapshotModules: Record<string, HistoryFile> = {
-  "air-jordan-1-retro-high-dark-mocha": darkMochaSnap,
-  "air-jordan-1-retro-high-og-chicago-reimagined-lost-and-found": chicagoSnap,
-  "nike-dunk-low-retro-white-black-2021": dunkSnap,
-  "adidas-samba-og-cloud-white-core-black": sambaSnap,
-};
+const SNAPSHOT_DIR = path.join(process.cwd(), "src/data/snapshots");
 
 function toPoints(file?: HistoryFile): ChartPoint[] {
   if (!file?.points?.length) return [];
@@ -35,6 +28,16 @@ function toPoints(file?: HistoryFile): ChartPoint[] {
     price: point.price,
     orders: point.orders,
   }));
+}
+
+function loadSnapshotFile(slug: string): HistoryFile | undefined {
+  const filePath = path.join(SNAPSHOT_DIR, `${slug}.json`);
+  try {
+    if (!fs.existsSync(filePath)) return undefined;
+    return JSON.parse(fs.readFileSync(filePath, "utf8")) as HistoryFile;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -47,7 +50,7 @@ export function resolveLocalHistory(slug: string): {
   series: ChartPoint[];
   source: "snapshot" | "bootstrap";
 } {
-  const snapshots = toPoints(snapshotModules[slug]);
+  const snapshots = toPoints(loadSnapshotFile(slug));
   if (snapshots.length >= 2) {
     return { series: snapshots, source: "snapshot" };
   }

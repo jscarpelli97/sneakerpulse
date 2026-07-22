@@ -4,11 +4,7 @@ Daily **StockX sneaker market premium index** for anyone to chart, research, or 
 
 **100 = at retail.** Above 100 = asking premiums. Below 100 = sitting under retail.
 
-| Field | Meaning |
-| --- | --- |
-| Live SPI (2026-07-22) | **93.93** (−6.1% vs retail) |
-| Boom-era tape | Nov 2020 – Dec 2021 (Flurin17 daily premiums) |
-| Going forward | This folder, updated daily by GitHub Actions |
+See `spi/latest.json` for the current tip and `spi/daily.csv` for the growing series.
 
 ## Files
 
@@ -43,11 +39,9 @@ members/
 ## Quick start
 
 ```bash
-# CSV
-curl -sL https://raw.githubusercontent.com/<you>/sneakerpulse-index/main/spi/daily.csv
-
-# Latest tip
-curl -sL https://raw.githubusercontent.com/<you>/sneakerpulse-index/main/spi/latest.json
+# After this folder is published to GitHub:
+curl -sL https://raw.githubusercontent.com/<owner>/sneakerpulse-index/main/spi/daily.csv
+curl -sL https://raw.githubusercontent.com/<owner>/sneakerpulse-index/main/spi/latest.json
 ```
 
 ```python
@@ -58,7 +52,7 @@ print(df.tail())
 
 ## How this is updated
 
-The parent **SneakerPulse** app runs `npm run snapshot` daily (GitHub Action, ~13:00 UTC). That job:
+The parent **SneakerPulse** app runs `npm run snapshot` daily (GitHub Action `daily-spi.yml`, ~13:05 UTC). That job:
 
 1. Pulls the current top StockX sellers via [KicksDB](https://kicks.dev)  
 2. Measures the premium index + writes member rows  
@@ -68,6 +62,12 @@ To grow history yourself:
 
 ```bash
 KICKSDB_API_KEY=... npm run snapshot
+```
+
+Publish this folder as its own public repo:
+
+```bash
+./scripts/publish-open-data-repo.sh yourname/sneakerpulse-index
 ```
 
 ## What this is not
@@ -84,5 +84,5 @@ Data in this folder is dedicated to the public domain under [CC0 1.0](LICENSE). 
 
 ```
 SneakerPulse Index (SPI), open daily premium series.
-https://github.com/<you>/sneakerpulse-index
+https://github.com/<owner>/sneakerpulse-index
 ```

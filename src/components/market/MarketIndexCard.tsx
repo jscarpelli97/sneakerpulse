@@ -82,14 +82,16 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
           : null,
       };
     }
-    const live = filterByRange(
-      index.liveSeries.length >= 2 ? index.liveSeries : index.series,
-      range,
-    );
+    // Short ranges must never bridge the 2022–2025 gap by falling back to
+    // the concatenated series (that drew a fake crash from ~196 → ~94).
+    const live = padLiveTip(filterByRange(index.liveSeries, range));
     return {
-      primary: live.length >= 2 ? live : filterByRange(index.series, range),
+      primary: live.length >= 2 ? live : [],
       secondary: undefined,
-      gapNote: null,
+      gapNote:
+        live.length < 2
+          ? "Need at least two live daily captures for this range — ALL / 1Y show the historical tape"
+          : null,
     };
   }, [index, range]);
 

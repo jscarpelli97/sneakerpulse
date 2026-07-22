@@ -103,11 +103,11 @@ Rule-based narrative card on each sneaker page (`MarketSummaryCard`).
 - `/` — live watchlist of the current top 100 StockX sellers
 - `/sneakers/[slug]` — full market page for one SKU (top 100 or any StockX slug)
 - `/compare` — side-by-side live quotes across the top 100
-- `/alerts` — browser-stored price alerts + evaluate API
+- `/alerts` — browser-stored price alerts + evaluate API (no outbound webhooks)
 - `/api/market/[slug]` — JSON market payload
 - `/api/catalog` — catalog quotes for the top sellers
-- `/api/status` — upstream/cache health
-- `/api/alerts/evaluate` — check alert thresholds
+- `/api/status` — coarse upstream health (`live` / `degraded` / `offline`); details only with `STATUS_TOKEN`
+- `/api/alerts/evaluate` — check alert thresholds in-process (webhooks disabled)
 
 ## Catalog (top 100 sellers)
 
@@ -139,7 +139,7 @@ Rank 1 = hottest by StockX sales. Catalog quotes, compare, alerts, and the daily
 | Chart sales | Official StockX daily average sale series |
 | Chart snapshots | Periodic lowest-ask snapshots from the daily job |
 
-Canonical definitions live in `src/lib/market/definitions.ts`.
+Canonical definitions live in `src/lib/definitions.ts`.
 
 ## Live StockX data
 
@@ -174,4 +174,10 @@ Open [http://localhost:3000](http://localhost:3000).
 ## CI / snapshots
 
 - `.github/workflows/ci.yml` — typecheck, test, lint, build
-- `.github/workflows/snapshot.yml` — daily ask snapshots (needs `KICKSDB_API_KEY` secret)
+- `.github/workflows/daily-spi.yml` — daily ask snapshots + SPI open-data commit (needs `KICKSDB_API_KEY` secret)
+
+## Preliminary public deploy notes
+
+- Set `KICKSDB_API_KEY` in the host env (never commit it). Optional `STATUS_TOKEN` for detailed `/api/status`.
+- `/api/catalog`, `/api/market/*`, and `/api/alerts/evaluate` are unauthenticated and will burn KicksDB quota if scraped — add edge rate limits (Vercel/Cloudflare) before wide traffic.
+- SPI chart: historical premium tape ends Dec 2021; live daily tape starts mid-2026. Short ranges (1D–3M) only show live captures — they do not bridge the gap.

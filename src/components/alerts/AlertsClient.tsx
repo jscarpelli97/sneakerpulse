@@ -16,7 +16,6 @@ export function AlertsClient({
   const [slug, setSlug] = useState(sneakers[0]?.slug ?? "");
   const [direction, setDirection] = useState<"above" | "below">("below");
   const [threshold, setThreshold] = useState("200");
-  const [webhookUrl, setWebhookUrl] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
 
@@ -31,7 +30,6 @@ export function AlertsClient({
       name: sneaker.name,
       direction,
       threshold: value,
-      webhookUrl: webhookUrl.trim() || undefined,
     });
   }
 
@@ -98,7 +96,7 @@ export function AlertsClient({
               <option value="above">Price goes above</option>
             </select>
           </label>
-          <label className="text-sm text-dash-muted">
+          <label className="text-sm text-dash-muted md:col-span-2">
             Threshold (USD)
             <input
               className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted"
@@ -107,16 +105,11 @@ export function AlertsClient({
               inputMode="decimal"
             />
           </label>
-          <label className="text-sm text-dash-muted">
-            Webhook URL (optional)
-            <input
-              className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted"
-              value={webhookUrl}
-              onChange={(e) => setWebhookUrl(e.target.value)}
-              placeholder="https://example.com/hooks/sneakerpulse"
-            />
-          </label>
         </div>
+        <p className="mt-3 text-xs text-dash-faint">
+          Alerts stay in this browser. Check now evaluates against live asks;
+          outbound webhooks are disabled for public deploys.
+        </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <button
             type="button"

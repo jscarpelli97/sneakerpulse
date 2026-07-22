@@ -6,6 +6,13 @@ type EvaluateBody = {
   alerts?: PriceAlert[];
 };
 
+const MAX_ALERTS_PER_REQUEST = 25;
+
+/**
+ * Evaluates client-stored alert thresholds against live quotes.
+ * Webhook delivery is intentionally disabled: an open endpoint that
+ * server-fetches arbitrary URLs is an SSRF footgun for public deploys.
+ */
 export async function POST(request: Request) {
   let body: EvaluateBody = {};
   try {
@@ -17,8 +24,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const alerts = body.alerts ?? [];
-  if (!Array.isArray(alerts) || alerts.length === 0) {
+  const alerts = (body.alerts ?? []).slice(0, MAX_ALERTS_PER_REQUEST);
+  if (!Array.isArray(body.alerts) || alerts.length === 0) {
     return NextResponse.json({ ok: true, triggered: [], checked: 0 });
   }
 
@@ -26,6 +33,7 @@ export async function POST(request: Request) {
   const triggered: Array<PriceAlert & { price: number }> = [];
 
   for (const alert of alerts) {
+    if (!alert?.slug || typeof alert.threshold !== "number") continue;
     if (!bySlug.has(alert.slug)) {
       const market = await getMarketBySlug(alert.slug);
       bySlug.set(alert.slug, market.ok ? market.data.price : null);
@@ -37,23 +45,7 @@ export async function POST(request: Request) {
         ? price >= alert.threshold
         : price <= alert.threshold;
     if (hit) {
-      triggered.push({ ...alert, price });
-      if (alert.webhookUrl) {
-        try {
-          await fetch(alert.webhookUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              type: "sneakerpulse.alert",
-              alert,
-              price,
-              at: new Date().toISOString(),
-            }),
-          });
-        } catch {
-          // webhook best-effort
-        }
-      }
+      triggered.push({ ...alert, price, webhookUrl: undefined });
     }
   }
 
@@ -61,5 +53,6 @@ export async function POST(request: Request) {
     ok: true,
     checked: alerts.length,
     triggered,
+    webhooks: "disabled",
   });
 }
