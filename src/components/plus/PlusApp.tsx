@@ -443,9 +443,9 @@ export function PlusApp() {
           Live tape for collectors and shops
         </h1>
         <p className="max-w-2xl text-lg leading-relaxed text-dash-muted">
-          Free SneakerPulse stays. Plus is the paid layer for fresher asks,
-          deeper coverage, and tools that help you find the next pair — or
-          decide what belongs on the shelf.
+          Free SneakerPulse shows the top 10. Plus unlocks the full board —
+          fresher asks when feeds are live, and tools for finding the next pair
+          or deciding what belongs on the shelf.
         </p>
       </header>
 

@@ -1,6 +1,6 @@
 export const PLUS_BENEFITS = [
+  "Full top-seller board (not just the free top 10)",
   "Live ask refresh (when feeds are connected)",
-  "Deeper coverage beyond the free watchlist",
   "Richer alerts and portfolio cloud sync (rolling out)",
   "Early access to GOAT / Stadium Goods tape as APIs land",
 ] as const;
