@@ -14,7 +14,8 @@ export function PlusPausedNotice() {
         <p className="text-lg leading-relaxed text-dash-muted">
           We&apos;re waiting on StockX API access before selling or marketing a
           paid tier that leans on their market data. Until that&apos;s clear,
-          SPI Markets stays a free fan project — no Plus checkout, no upsells.
+          SPI Markets (formerly SneakerPulse) stays a free fan project — no Plus
+          checkout, no upsells.
         </p>
       </header>
 

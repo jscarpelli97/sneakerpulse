@@ -52,6 +52,9 @@ export function MarketsHero({
           <h1 className="mt-5 font-[family-name:var(--font-syne)] text-4xl font-extrabold leading-[1.02] tracking-tight text-dash-text sm:text-5xl lg:text-[3.5rem]">
             SPI Markets
           </h1>
+          <p className="mt-1.5 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
+            Formerly SneakerPulse
+          </p>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
             Ask board and premium index for sneakers &amp; streetwear. StockX
             tape first across the top {totalMarkets} sellers — homepage

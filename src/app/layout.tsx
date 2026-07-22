@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Instrument_Sans, Syne } from "next/font/google";
 import { PwaRegister } from "@/components/layout/PwaRegister";
-import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
+import { BRAND_NAME, BRAND_NAME_WITH_FORMER, BRAND_TAGLINE } from "@/lib/brand";
 import "./globals.css";
 
 const instrument = Instrument_Sans({
@@ -23,7 +23,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: `${BRAND_NAME} — sneakers & streetwear asks`,
+  title: `${BRAND_NAME_WITH_FORMER} — sneakers & streetwear asks`,
   description: BRAND_TAGLINE,
   applicationName: BRAND_NAME,
   appleWebApp: {
@@ -42,9 +42,9 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: `${BRAND_NAME} — sneakers & streetwear asks`,
-    description: BRAND_TAGLINE,
-    siteName: BRAND_NAME,
+    title: `${BRAND_NAME_WITH_FORMER} — sneakers & streetwear asks`,
+    description: `${BRAND_TAGLINE}. Formerly SneakerPulse.`,
+    siteName: BRAND_NAME_WITH_FORMER,
     type: "website",
   },
 };

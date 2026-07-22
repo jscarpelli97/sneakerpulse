@@ -134,8 +134,9 @@ export function SiteFooter({
               SPI Markets
             </span>
             <p className="text-xs leading-relaxed text-dash-faint">
-              Independent markets terminal for sneakers &amp; streetwear asks —
-              plus the SPI index. Not affiliated with StockX.
+              Formerly SneakerPulse. Independent markets terminal for sneakers
+              &amp; streetwear asks — plus the SPI index. Not affiliated with
+              StockX.
             </p>
             {publicPlus ? (
               <PlusInterest variant="footer" source="footer" />

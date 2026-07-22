@@ -2,7 +2,9 @@ import Link from "next/link";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import {
   BRAND_BLURB,
+  BRAND_FORMER_NAME,
   BRAND_NAME,
+  BRAND_NAME_WITH_FORMER,
   INDEX_LONG_NAME,
   INDEX_NAME,
 } from "@/lib/brand";
@@ -10,7 +12,7 @@ import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 
 export const metadata = {
   title: `About — ${BRAND_NAME}`,
-  description: `What ${BRAND_NAME} is, how the ${INDEX_NAME} index works, and how we source market data.`,
+  description: `What ${BRAND_NAME_WITH_FORMER} is, how the ${INDEX_NAME} index works, and how we source market data.`,
 };
 
 export default function AboutPage() {
@@ -28,10 +30,15 @@ export default function AboutPage() {
             <h1 className="font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight sm:text-5xl">
               {BRAND_NAME}
             </h1>
+            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
+              Formerly {BRAND_FORMER_NAME}
+            </p>
             <p className="text-lg leading-relaxed text-dash-muted">
               {BRAND_BLURB} Starting with StockX sneakers — watchlists, size
               ladders, and a premium-vs-retail index — with room to grow into
-              streetwear and apparel.
+              streetwear and apparel. Same project as before; we renamed to
+              avoid confusion with other “SneakerPulse” products and to keep
+              the focus on the SPI index.
             </p>
           </header>
 
@@ -106,7 +113,7 @@ export default function AboutPage() {
               Disclaimer
             </h2>
             <p className="text-dash-muted leading-relaxed">
-              {BRAND_NAME} is an independent fan project. It is{" "}
+              {BRAND_NAME_WITH_FORMER} is an independent fan project. It is{" "}
               <strong className="text-dash-text">
                 not affiliated with, endorsed by, or partnered with StockX
               </strong>
