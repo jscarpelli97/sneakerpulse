@@ -75,7 +75,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Email alerts require SneakerPulse Plus",
+          error: "Email alerts require SPI Plus",
           checked: alerts.length,
           triggered,
           emailed: 0,
@@ -104,8 +104,8 @@ export async function POST(request: Request) {
     );
     const subject =
       triggered.length === 1
-        ? `SneakerPulse alert: ${triggered[0].ticker}`
-        : `SneakerPulse: ${triggered.length} alerts triggered`;
+        ? `SPI Markets alert: ${triggered[0].ticker}`
+        : `SPI Markets: ${triggered.length} alerts triggered`;
 
     try {
       const res = await fetch(`https://formsubmit.co/ajax/${email}`, {
@@ -115,11 +115,11 @@ export async function POST(request: Request) {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          name: "SneakerPulse Alerts",
+          name: "SPI Markets Alerts",
           email,
           _replyto: "noreply@sneakerpulse.app",
           _subject: subject,
-          message: `Your SneakerPulse Plus alerts fired:\n\n${lines.join("\n")}\n\nOpen https://sneakerpulse.vercel.app/alerts to manage them.`,
+          message: `Your SPI Plus alerts fired:\n\n${lines.join("\n")}\n\nOpen https://sneakerpulse.vercel.app/alerts to manage them.`,
         }),
       });
       if (res.ok) {

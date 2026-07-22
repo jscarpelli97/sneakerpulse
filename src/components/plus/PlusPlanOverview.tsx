@@ -49,7 +49,7 @@ export function PlusPlanOverview({
     <div className="space-y-10">
       <header className="space-y-4">
         <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-accent">
-          SneakerPulse Plus
+          SPI Plus
         </p>
         <h1 className="font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight sm:text-5xl">
           What you get

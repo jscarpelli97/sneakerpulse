@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Instrument_Sans, Syne } from "next/font/google";
 import { PwaRegister } from "@/components/layout/PwaRegister";
+import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 import "./globals.css";
 
 const instrument = Instrument_Sans({
@@ -22,14 +23,13 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SneakerPulse — StockX market views",
-  description:
-    "Live StockX-style market views for the top 500 selling sneakers: price, change, volume, chart, and size asks.",
-  applicationName: "SneakerPulse",
+  title: `${BRAND_NAME} — sneakers & streetwear asks`,
+  description: BRAND_TAGLINE,
+  applicationName: BRAND_NAME,
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "SneakerPulse",
+    title: BRAND_NAME,
   },
   formatDetection: {
     telephone: false,
@@ -42,10 +42,9 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: "SneakerPulse — StockX market views",
-    description:
-      "TradingView and CoinMarketCap–inspired sneaker markets powered by live StockX data.",
-    siteName: "SneakerPulse",
+    title: `${BRAND_NAME} — sneakers & streetwear asks`,
+    description: BRAND_TAGLINE,
+    siteName: BRAND_NAME,
     type: "website",
   },
 };

@@ -9,10 +9,10 @@ export const dynamic = "force-dynamic";
 export function generateMetadata(): Metadata {
   const publicPlus = plusPublicEnabled();
   return {
-    title: "Plus — SneakerPulse",
+    title: "Plus — SPI Markets",
     description: publicPlus
       ? "Free vs Plus checklist: full board, email alerts, Restock Monitor. Upgrade with Bitcoin or Lightning."
-      : "SneakerPulse Plus is paused while StockX API access is pending.",
+      : "SPI Plus is paused while StockX API access is pending.",
   };
 }
 

@@ -25,7 +25,7 @@ function clientIp(request: Request) {
 
 /**
  * Captures Plus waitlist interest and emails the owner:
- * "{email} signed up for SneakerPulse Plus".
+ * "{email} signed up for SPI Plus".
  */
 export async function POST(request: Request) {
   if (!plusPublicEnabled()) {
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
     email,
     source,
     at,
-    message: `${email} signed up for SneakerPulse Plus`,
+    message: `${email} signed up for SPI Plus`,
   };
 
   console.info("[plus-interest]", JSON.stringify(payload));
@@ -118,8 +118,8 @@ export async function POST(request: Request) {
           name: email,
           email,
           _replyto: email,
-          _subject: `${email} signed up for SneakerPulse Plus`,
-          message: `${email} signed up for SneakerPulse Plus.\n\nSource: ${source}\nAt: ${at}`,
+          _subject: `${email} signed up for SPI Plus`,
+          message: `${email} signed up for SPI Plus.\n\nSource: ${source}\nAt: ${at}`,
         }),
       });
       notified = res.ok;

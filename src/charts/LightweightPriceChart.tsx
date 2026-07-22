@@ -197,7 +197,7 @@ export function LightweightPriceChart({
       ref={containerRef}
       className="h-full min-h-[260px] w-full"
       role="img"
-      aria-label="SneakerPulse Index chart"
+      aria-label="SPI Index chart"
     />
   );
 }

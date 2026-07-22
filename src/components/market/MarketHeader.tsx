@@ -26,7 +26,7 @@ export function MarketHeader({
             href="/"
             className="shrink-0 font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text transition-opacity hover:opacity-90 sm:text-xl"
           >
-            SneakerPulse
+            SPI Markets
           </Link>
           <span className="hidden text-dash-faint sm:inline">/</span>
           <nav className="hidden items-center gap-1 text-sm font-medium text-dash-muted sm:flex">

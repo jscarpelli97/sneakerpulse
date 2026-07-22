@@ -67,7 +67,7 @@ export function PlusPopup() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.16em] text-dash-accent">
-                SneakerPulse Plus
+                SPI Plus
               </p>
               <h2
                 id={titleId}

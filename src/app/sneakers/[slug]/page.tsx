@@ -42,10 +42,10 @@ export async function generateMetadata({
   const { slug } = await params;
   const sneaker = await getSneakerBySlug(slug);
   if (!sneaker) {
-    return { title: "Sneaker not found — SneakerPulse" };
+    return { title: "Sneaker not found — SPI Markets" };
   }
   return {
-    title: `${sneaker.name} — SneakerPulse`,
+    title: `${sneaker.name} — SPI Markets`,
     description: `Live StockX market view for ${sneaker.name} (${sneaker.year}).`,
   };
 }

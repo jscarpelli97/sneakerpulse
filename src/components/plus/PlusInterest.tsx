@@ -135,7 +135,7 @@ export function PlusInterest({
       <div className="grid gap-6 px-5 py-5 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] sm:items-end sm:px-6 sm:py-6">
         <div>
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-accent">
-            SneakerPulse Plus
+            SPI Plus
           </p>
           <h2 className="mt-2 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
             Spot the next pair — and what to keep on the shelf

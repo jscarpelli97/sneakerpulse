@@ -89,7 +89,7 @@ export async function createPlusCharge(input: {
     body: JSON.stringify({
       amount: input.amountUsd,
       currency: "USD",
-      description: "SneakerPulse Plus",
+      description: "SPI Plus",
       customer_email: email,
       order_id: orderId,
       callback_url: `${origin}/api/plus/webhook`,

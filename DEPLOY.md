@@ -1,4 +1,4 @@
-# Deploy SneakerPulse
+# Deploy SPI Markets
 
 **Live production:** https://sneakerpulse.vercel.app  
 **GitHub:** https://github.com/jscarpelli97/sneakerpulse  

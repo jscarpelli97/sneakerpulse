@@ -260,7 +260,7 @@ function howItWorksFaq(
 }
 
 /**
- * SneakerPulse Index — premium-vs-retail market health (ChronoPulse-inspired
+ * SPI Index — premium-vs-retail market health (ChronoPulse-inspired
  * basket, but a sneaker-native equation).
  */
 export async function getMarketIndex(
@@ -314,7 +314,7 @@ export async function getMarketIndex(
   const boomEnd = histSeg.at(-1)?.price ?? null;
 
   return {
-    name: "SneakerPulse Index",
+    name: "SPI Index",
     ticker: "SPI",
     level,
     liveLevel: level,

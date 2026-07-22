@@ -1,6 +1,6 @@
-# SneakerPulse
+# SPI Markets
 
-Next.js market app tracking StockX’s **current top 500 selling sneakers** (by sales rank) with live ask, volume, and market pages.
+Next.js markets terminal for **sneakers & streetwear** asks — starting with StockX’s **current top 500 selling sneakers**, built so apparel can join the same board later.
 
 ## Design standard
 
@@ -14,9 +14,9 @@ The **markets terminal** look from the homepage is the site-wide visual standard
 
 Do not reintroduce the old light ink/paper theme unless asked.
 
-## SneakerPulse Index (SPI)
+## SPI Index
 
-Sneaker-native market health index (ChronoPulse-inspired basket, different equation):
+Premium-vs-retail market health index (ChronoPulse-inspired basket; equation works for sneakers now and streetwear later):
 
 1. **Selection:** Up to **14 bestselling StockX brands** × **10 models** each (`spi-chrono-basket.json`).
 2. **Calculation:** Volume-weighted **ask ÷ retail × 100**. **100 = at retail**, above 100 = premiums, below 100 = sitting under retail. Absolute-dollar Laspeyres stays “high” when retail prices rise and after the 2021 boom; premium vs retail matches how the market feels when everything is available near retail.
@@ -169,7 +169,7 @@ KicksDB **Free** is €0 / **1,000 requests per month** (Standard API, US market
 3. Leave `KICKSDB_LIVE_READS` unset (or not `1`) so page views serve the offline catalog and do not burn quota. Set `KICKSDB_LIVE_READS=1` only when you intentionally want live page reads.
 4. Run `npm run snapshot` (or wait for `daily-spi.yml`) — that updates `src/data/catalog/top-sellers.json`.
 
-If the key is inactive/missing, or live page reads are off, SneakerPulse still runs in **free cached mode** from `src/data/catalog/top-sellers.json` (asks labeled Cached).
+If the key is inactive/missing, or live page reads are off, SPI Markets still runs in **free cached mode** from `src/data/catalog/top-sellers.json` (asks labeled Cached).
 
 ## Getting started
 
@@ -184,7 +184,7 @@ To put the site on the public internet, see **[DEPLOY.md](DEPLOY.md)**.
 
 ## Install as an app (PWA)
 
-SneakerPulse is installable from the browser:
+SPI Markets is installable from the browser:
 
 - **Android / Chrome / Edge:** use the Install banner, or menu → **Install app**
 - **iPhone / iPad (Safari):** Share → **Add to Home Screen**

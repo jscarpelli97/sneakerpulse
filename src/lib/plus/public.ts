@@ -14,7 +14,7 @@ export const PLUS_BENEFITS = [
 /** Free-tier bullets for marketing / plan pages. */
 export const FREE_BENEFITS = [
   `Top ${FREE_TOP} sellers on Markets, Compare, and detail pages`,
-  "SneakerPulse Index and the free markets terminal",
+  "SPI Index and the free markets terminal",
   "Device-local portfolio with USD cost basis",
   "No account required to browse the free board",
 ] as const;
@@ -59,7 +59,7 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
   },
   {
     id: "index",
-    feature: "SneakerPulse Index",
+    feature: "SPI Index",
     detail: "Basket read of market premium vs retail — free for everyone.",
     free: { label: "Included", state: "yes" },
     plus: { label: "Included", state: "yes" },

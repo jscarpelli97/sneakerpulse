@@ -1,11 +1,16 @@
 import Link from "next/link";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
+import {
+  BRAND_BLURB,
+  BRAND_NAME,
+  INDEX_LONG_NAME,
+  INDEX_NAME,
+} from "@/lib/brand";
 import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 
 export const metadata = {
-  title: "About — SneakerPulse",
-  description:
-    "What SneakerPulse is, how the SPI index works, and how we source market data.",
+  title: `About — ${BRAND_NAME}`,
+  description: `What ${BRAND_NAME} is, how the ${INDEX_NAME} index works, and how we source market data.`,
 };
 
 export default function AboutPage() {
@@ -21,12 +26,12 @@ export default function AboutPage() {
               About
             </p>
             <h1 className="font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight sm:text-5xl">
-              SneakerPulse
+              {BRAND_NAME}
             </h1>
             <p className="text-lg leading-relaxed text-dash-muted">
-              A read-only markets terminal for StockX sneakers — watchlists,
-              size ladders, quick look signals, and a premium-vs-retail index.
-              Built for collectors and casual buyers who want a clearer tape.
+              {BRAND_BLURB} Starting with StockX sneakers — watchlists, size
+              ladders, and a premium-vs-retail index — with room to grow into
+              streetwear and apparel.
             </p>
           </header>
 
@@ -39,15 +44,16 @@ export default function AboutPage() {
               <li>Per-pair market pages with charts and size asks</li>
               <li>Compare, browser alerts, and installable PWA</li>
               <li>
-                <strong className="text-dash-text">SPI</strong> — SneakerPulse
-                Index, volume-weighted ask ÷ retail × 100 (100 = at retail)
+                <strong className="text-dash-text">{INDEX_NAME}</strong> —{" "}
+                {INDEX_LONG_NAME}, volume-weighted ask ÷ retail × 100 (100 = at
+                retail). Same math can extend to streetwear items later.
               </li>
             </ul>
           </section>
 
           <section className="dash-card space-y-3 p-5 sm:p-6">
             <h2 className="font-[family-name:var(--font-syne)] text-xl font-bold">
-              How SPI is calculated
+              How {INDEX_NAME} is calculated
             </h2>
             <p className="text-dash-muted leading-relaxed">
               We take a ChronoPulse-style basket (up to 14 brands × 10 models
@@ -69,7 +75,7 @@ export default function AboutPage() {
             </h2>
             <p className="text-dash-muted leading-relaxed">
               When upstream access is available, asks refresh from StockX market
-              data providers. When it isn’t, SneakerPulse serves a{" "}
+              data providers. When it isn’t, {BRAND_NAME} serves a{" "}
               <strong className="text-dash-text">cached free-mode catalog</strong>
               {asOf ? ` (last snapshot ${asOf})` : ""} so the site stays usable.
               Page views are designed not to burn third-party API quotas; bulk
@@ -77,7 +83,7 @@ export default function AboutPage() {
             </p>
             <p className="text-sm text-dash-faint leading-relaxed">
               Official StockX Developer API access is pending. Until then,
-              listings may show a Cached badge instead of Live. SneakerPulse is
+              listings may show a Cached badge instead of Live. {BRAND_NAME} is
               an independent fan project — not affiliated with StockX.
             </p>
           </section>
@@ -100,11 +106,12 @@ export default function AboutPage() {
               Disclaimer
             </h2>
             <p className="text-dash-muted leading-relaxed">
-              SneakerPulse is an independent fan project. It is{" "}
-              <strong className="text-dash-text">not affiliated with, endorsed
-              by, or partnered with StockX</strong>
+              {BRAND_NAME} is an independent fan project. It is{" "}
+              <strong className="text-dash-text">
+                not affiliated with, endorsed by, or partnered with StockX
+              </strong>
               . Market data can be delayed, incomplete, or cached. Do your own
-              research before buying or selling sneakers.
+              research before buying or selling sneakers or streetwear.
             </p>
           </section>
 

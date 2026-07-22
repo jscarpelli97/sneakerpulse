@@ -175,7 +175,7 @@ export function PlusApp() {
             You&apos;re in
           </h2>
           <p className="text-sm text-dash-muted sm:text-base">
-            Thanks for supporting SneakerPulse. Your Plus access is active
+            Thanks for supporting SPI Markets. Your Plus access is active
             {me?.expiresAt ? ` through ${formatExpiry(me.expiresAt)}` : ""}.
             Everything in the checklist above marked Plus is yours for this
             term.

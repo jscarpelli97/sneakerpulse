@@ -41,7 +41,7 @@ export function SiteHeader({
             href="/"
             className="font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-ink transition-opacity hover:opacity-80"
           >
-            SneakerPulse
+            SPI Markets
           </Link>
           <div className="flex items-center gap-3 sm:gap-5">
             {subtitle ? (
@@ -72,7 +72,7 @@ export function SiteHeader({
             href="/"
             className="shrink-0 font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text transition-opacity hover:opacity-90 sm:text-xl"
           >
-            SneakerPulse
+            SPI Markets
           </Link>
           {subtitle ? (
             <span className="hidden truncate font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-muted lg:inline">
@@ -115,7 +115,7 @@ export function SiteFooter({
       <footer className="mt-auto border-t border-ink/8 bg-white px-4 py-6 md:px-6">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 text-sm text-ink-soft">
           <span className="font-[family-name:var(--font-syne)] font-extrabold text-ink">
-            SneakerPulse
+            SPI Markets
           </span>
           <span className="text-xs sm:text-sm">
             StockX market view · TradingView / CoinMarketCap layout
@@ -131,11 +131,11 @@ export function SiteFooter({
         <div className="flex flex-wrap items-start justify-between gap-4 text-sm text-dash-muted">
           <div className="max-w-md space-y-1.5">
             <span className="font-[family-name:var(--font-syne)] font-extrabold text-dash-text">
-              SneakerPulse
+              SPI Markets
             </span>
             <p className="text-xs leading-relaxed text-dash-faint">
-              Independent markets terminal for sneaker asks and the SPI index.
-              Not affiliated with StockX.
+              Independent markets terminal for sneakers &amp; streetwear asks —
+              plus the SPI index. Not affiliated with StockX.
             </p>
             {publicPlus ? (
               <PlusInterest variant="footer" source="footer" />
