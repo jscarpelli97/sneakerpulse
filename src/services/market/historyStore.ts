@@ -6,8 +6,8 @@ import chicagoHistory from "@/data/history/air-jordan-1-retro-high-og-chicago-re
 import darkMochaHistory from "@/data/history/air-jordan-1-retro-high-dark-mocha.json";
 import dunkHistory from "@/data/history/nike-dunk-low-retro-white-black-2021.json";
 import sambaHistory from "@/data/history/adidas-samba-og-cloud-white-core-black.json";
-import { toDay } from "@/lib/market/metrics";
-import type { ChartPoint, HistorySource } from "@/lib/market/types";
+import { toDay } from "@/utils/metrics";
+import type { ChartPoint, HistorySource } from "@/types/market";
 
 type HistoryFile = {
   source?: string;

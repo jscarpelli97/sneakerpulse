@@ -2,6 +2,24 @@
 
 Next.js market app for tracked sneakers with live StockX data.
 
+## Architecture
+
+```
+src/
+  app/          Next.js App Router pages + route handlers (must stay here)
+  api/          Browser HTTP clients for /api/* endpoints
+  charts/       Chart UI + chart range constants
+  components/   Presentational UI (market, catalog, layout, alerts, compare)
+  hooks/        React hooks (alerts storage, compare markets)
+  lib/          Domain mappers + KicksDB infra (cache, client, logger)
+  services/     Server-side catalog + market data orchestration
+  types/        Shared TypeScript types
+  utils/        Pure helpers (formatters, metric math)
+  data/         Bootstrap history + ask snapshot JSON
+```
+
+Next.js requires API routes under `src/app/api/*`. Shared fetch helpers live in `src/api/*` so UI code does not call `fetch` ad hoc.
+
 ## Stack
 
 - Next.js (App Router)

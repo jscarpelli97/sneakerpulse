@@ -1,5 +1,5 @@
-import type { SneakerMarket } from "@/lib/market/types";
-import { formatMaybeMoney, formatNumber } from "@/lib/format";
+import type { SneakerMarket } from "@/types/market";
+import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
 type StatRow = {
   label: string;

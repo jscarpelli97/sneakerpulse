@@ -1,20 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { SNEAKERS } from "@/catalog/sneakers";
-import { formatMaybeMoney, formatNumber } from "@/lib/format";
-
-type Quote = {
-  slug: string;
-  name: string;
-  ticker: string;
-  price: number | null;
-  weeklyOrders: number | null;
-  rank: number | null;
-  change30d: number | null;
-  image: string;
-};
+import { useCompareMarkets } from "@/hooks/useCompareMarkets";
+import { SNEAKERS } from "@/services/catalog/sneakers";
 
 export function CompareClient({
   initialA,
@@ -23,80 +11,17 @@ export function CompareClient({
   initialA: string;
   initialB: string;
 }) {
-  const [a, setA] = useState(initialA);
-  const [b, setB] = useState(initialB);
-  const [quotes, setQuotes] = useState<Record<string, Quote | null>>({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function load() {
-    setLoading(true);
-    setError(null);
-    try {
-      const [ra, rb] = await Promise.all([
-        fetch(`/api/market/${a}`).then((r) => r.json()),
-        fetch(`/api/market/${b}`).then((r) => r.json()),
-      ]);
-      const next: Record<string, Quote | null> = {};
-      for (const [slug, res] of [
-        [a, ra],
-        [b, rb],
-      ] as const) {
-        if (!res.ok) {
-          next[slug] = null;
-          continue;
-        }
-        const d = res.data;
-        next[slug] = {
-          slug: d.slug,
-          name: d.name,
-          ticker: d.ticker,
-          price: d.price,
-          weeklyOrders: d.stats.weeklyOrders,
-          rank: d.stats.rank,
-          change30d: d.change30d?.percent ?? null,
-          image: d.image,
-        };
-      }
-      setQuotes(next);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Compare failed");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const rows = useMemo(() => {
-    const left = quotes[a];
-    const right = quotes[b];
-    if (!left && !right) return [];
-    return [
-      {
-        label: "Lowest ask",
-        left: formatMaybeMoney(left?.price),
-        right: formatMaybeMoney(right?.price),
-      },
-      {
-        label: "30d change",
-        left:
-          left?.change30d != null ? `${left.change30d.toFixed(2)}%` : "—",
-        right:
-          right?.change30d != null ? `${right.change30d.toFixed(2)}%` : "—",
-      },
-      {
-        label: "Weekly orders",
-        left:
-          left?.weeklyOrders != null ? formatNumber(left.weeklyOrders) : "—",
-        right:
-          right?.weeklyOrders != null ? formatNumber(right.weeklyOrders) : "—",
-      },
-      {
-        label: "StockX rank",
-        left: left?.rank != null ? `#${left.rank}` : "—",
-        right: right?.rank != null ? `#${right.rank}` : "—",
-      },
-    ];
-  }, [a, b, quotes]);
+  const {
+    a,
+    b,
+    setA,
+    setB,
+    quotes,
+    rows,
+    loading,
+    error,
+    compare,
+  } = useCompareMarkets(initialA, initialB);
 
   return (
     <div className="space-y-6">
@@ -131,7 +56,7 @@ export function CompareClient({
         </label>
         <button
           type="button"
-          onClick={load}
+          onClick={compare}
           disabled={loading || a === b}
           className="self-end bg-ink px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-40"
         >

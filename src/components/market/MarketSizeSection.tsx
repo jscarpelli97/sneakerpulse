@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { SizeAsksTable } from "@/components/SizeAsksTable";
-import { SizeSelector } from "@/components/SizeSelector";
-import type { SizeAsk, SneakerMarket } from "@/lib/market/types";
+import { SizeAsksTable } from "@/components/market/SizeAsksTable";
+import { SizeSelector } from "@/components/market/SizeSelector";
+import type { SizeAsk, SneakerMarket } from "@/types/market";
 
 export function MarketSizeSection({ market }: { market: SneakerMarket }) {
   const [focused, setFocused] = useState<SizeAsk | null>(null);

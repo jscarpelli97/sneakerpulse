@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getMarketBySlug } from "@/lib/market/getMarketBySlug";
+import { getMarketBySlug } from "@/services/market/getMarketBySlug";
 
 export const revalidate = 300;
 

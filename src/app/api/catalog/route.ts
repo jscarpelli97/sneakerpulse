@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCatalogQuotes } from "@/lib/market/getCatalogQuotes";
+import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
 
 export const revalidate = 300;
 

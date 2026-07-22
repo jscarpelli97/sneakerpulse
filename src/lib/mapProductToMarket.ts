@@ -1,17 +1,17 @@
-import type { SneakerCatalogEntry } from "@/catalog/sneakers";
-import type { KicksProduct } from "@/lib/kicksdb/client";
+import type { SneakerCatalogEntry } from "@/types/catalog";
+import type { KicksProduct } from "@/types/kicksdb";
 import {
   changeFromPrices,
   seriesWindowHighLow,
   sumSales,
-} from "@/lib/market/metrics";
+} from "@/utils/metrics";
 import type {
   ChartPoint,
   HistorySource,
   SizeAsk,
   SneakerMarket,
   UpstreamStatus,
-} from "@/lib/market/types";
+} from "@/types/market";
 
 export type CatalogIdentity = Pick<
   SneakerCatalogEntry,

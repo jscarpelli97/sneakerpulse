@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { mapProductToMarket } from "@/lib/market/mapProductToMarket";
-import type { KicksProduct } from "@/lib/kicksdb/client";
+import { mapProductToMarket } from "@/lib/mapProductToMarket";
+import type { KicksProduct } from "@/types/kicksdb";
 import {
   changeFromPrices,
   premiumVsRetail,
   salesToSeries,
   sumSales,
   upsertToday,
-} from "@/lib/market/metrics";
-import { resolveLocalHistory } from "@/lib/market/historyStore";
+} from "@/utils/metrics";
+import { resolveLocalHistory } from "@/services/market/historyStore";
 
 const catalog = {
   slug: "air-jordan-1-retro-high-dark-mocha",

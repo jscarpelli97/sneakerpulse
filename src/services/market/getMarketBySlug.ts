@@ -1,20 +1,20 @@
 import {
   getSneakerBySlug,
   type SneakerCatalogEntry,
-} from "@/catalog/sneakers";
+} from "@/services/catalog/sneakers";
 import {
   fetchStockxDailySales,
   fetchStockxProduct,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
-import { resolveLocalHistory } from "@/lib/market/historyStore";
-import { emptyMarket, mapProductToMarket } from "@/lib/market/mapProductToMarket";
-import { salesToSeries, upsertToday } from "@/lib/market/metrics";
+import { resolveLocalHistory } from "@/services/market/historyStore";
+import { emptyMarket, mapProductToMarket } from "@/lib/mapProductToMarket";
+import { salesToSeries, upsertToday } from "@/utils/metrics";
 import type {
   HistorySource,
   MarketLoadResult,
   UpstreamStatus,
-} from "@/lib/market/types";
+} from "@/types/market";
 
 export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
   const catalog = getSneakerBySlug(slug);

@@ -1,21 +1,21 @@
 import { notFound } from "next/navigation";
-import { MarketHeader } from "@/components/MarketHeader";
-import { MarketSizeSection } from "@/components/MarketSizeSection";
-import { MarketSnapshot } from "@/components/MarketSnapshot";
-import { PriceChart } from "@/components/PriceChart";
-import { PriceOverview } from "@/components/PriceOverview";
-import { SetupBanner } from "@/components/SetupBanner";
-import { StatsPanel } from "@/components/StatsPanel";
-import { UpstreamStatusBadge } from "@/components/UpstreamStatusBadge";
+import { MarketHeader } from "@/components/market/MarketHeader";
+import { MarketSizeSection } from "@/components/market/MarketSizeSection";
+import { MarketSnapshot } from "@/components/market/MarketSnapshot";
+import { PriceChart } from "@/charts/PriceChart";
+import { PriceOverview } from "@/components/market/PriceOverview";
+import { SetupBanner } from "@/components/market/SetupBanner";
+import { StatsPanel } from "@/components/market/StatsPanel";
+import { UpstreamStatusBadge } from "@/components/market/UpstreamStatusBadge";
 import { SiteFooter } from "@/components/layout/SiteChrome";
 import {
   getAllSneakerSlugs,
   getSneakerBySlug,
-} from "@/catalog/sneakers";
+} from "@/services/catalog/sneakers";
 import {
   getMarketBySlug,
   getMarketFallback,
-} from "@/lib/market/getMarketBySlug";
+} from "@/services/market/getMarketBySlug";
 
 export const revalidate = 300;
 

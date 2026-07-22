@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { SizeAsk, SneakerMarket } from "@/lib/market/types";
-import { formatMaybeMoney, formatNumber } from "@/lib/format";
+import type { SizeAsk, SneakerMarket } from "@/types/market";
+import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
 export function SizeSelector({
   market,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getSneakerBySlug, getAllSneakerSlugs, SNEAKERS } from "@/catalog/sneakers";
+import { getSneakerBySlug, getAllSneakerSlugs, SNEAKERS } from "@/services/catalog/sneakers";
 
 describe("catalog", () => {
   it("includes Dark Mocha as featured entry", () => {

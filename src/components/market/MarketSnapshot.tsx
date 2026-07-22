@@ -1,10 +1,10 @@
-import type { SneakerMarket } from "@/lib/market/types";
-import { premiumVsRetail } from "@/lib/market/metrics";
+import type { SneakerMarket } from "@/types/market";
+import { premiumVsRetail } from "@/utils/metrics";
 import {
   formatChange,
   formatMaybeMoney,
   formatNumber,
-} from "@/lib/format";
+} from "@/utils/format";
 
 type SnapshotRow = {
   label: string;

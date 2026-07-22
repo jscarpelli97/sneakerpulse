@@ -1,5 +1,5 @@
-import type { SizeAsk } from "@/lib/market/types";
-import { formatMaybeMoney, formatNumber } from "@/lib/format";
+import type { SizeAsk } from "@/types/market";
+import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
 export function SizeAsksTable({ sizes }: { sizes: SizeAsk[] }) {
   if (sizes.length === 0) {

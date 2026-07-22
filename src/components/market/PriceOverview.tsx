@@ -1,11 +1,11 @@
-import { METRIC_DEFINITIONS } from "@/lib/market/definitions";
-import type { SneakerMarket } from "@/lib/market/types";
+import { METRIC_DEFINITIONS } from "@/lib/definitions";
+import type { SneakerMarket } from "@/types/market";
 import {
   changeClass,
   formatChange,
   formatMoney,
   formatNumber,
-} from "@/lib/format";
+} from "@/utils/format";
 
 type Metric = {
   label: string;

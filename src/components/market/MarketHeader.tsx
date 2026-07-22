@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import type { SneakerMarket } from "@/lib/market/types";
-import { changeClass, formatChange, formatMoney } from "@/lib/format";
+import type { SneakerMarket } from "@/types/market";
+import { changeClass, formatChange, formatMoney } from "@/utils/format";
 
 export function MarketHeader({
   market,

@@ -1,4 +1,4 @@
-import type { ChangeMetric, ChartPoint, VolumeMetric } from "@/lib/market/types";
+import type { ChangeMetric, ChartPoint, VolumeMetric } from "@/types/market";
 
 export function changeFromPrices(
   current: number,

@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CHART_RANGES } from "@/catalog/sneakers";
-import { LightweightPriceChart } from "@/components/LightweightPriceChart";
-import { METRIC_DEFINITIONS } from "@/lib/market/definitions";
-import type { ChartPoint, HistorySource } from "@/lib/market/types";
-import { formatMoney } from "@/lib/format";
+import { CHART_RANGES } from "@/charts/constants";
+import { LightweightPriceChart } from "@/charts/LightweightPriceChart";
+import { METRIC_DEFINITIONS } from "@/lib/definitions";
+import type { ChartPoint, HistorySource } from "@/types/market";
+import { formatMoney } from "@/utils/format";
 
 type Range = (typeof CHART_RANGES)[number];
 

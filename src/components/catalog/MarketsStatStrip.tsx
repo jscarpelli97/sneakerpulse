@@ -1,5 +1,5 @@
-import type { CatalogQuote } from "@/lib/market/getCatalogQuotes";
-import { formatMaybeMoney, formatNumber } from "@/lib/format";
+import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
+import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
 export function MarketsStatStrip({
   quotes,

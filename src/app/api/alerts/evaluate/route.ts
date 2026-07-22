@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getMarketBySlug } from "@/lib/market/getMarketBySlug";
-import type { PriceAlert } from "@/lib/market/types";
+import { getMarketBySlug } from "@/services/market/getMarketBySlug";
+import type { PriceAlert } from "@/types/market";
 
 type EvaluateBody = {
   alerts?: PriceAlert[];

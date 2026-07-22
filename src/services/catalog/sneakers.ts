@@ -1,18 +1,6 @@
-export type SneakerCatalogEntry = {
-  slug: string;
-  ticker: string;
-  styleCode: string;
-  name: string;
-  brand: string;
-  year: number;
-  /** ISO date (YYYY-MM-DD) of original retail release */
-  releaseDate: string;
-  colorway: string;
-  retail: number;
-  stockxUrl: string;
-  fallbackImage: string;
-  featured?: boolean;
-};
+import type { SneakerCatalogEntry } from "@/types/catalog";
+
+export type { SneakerCatalogEntry };
 
 /**
  * Tracked sneakers. Add entries here to expose new market pages at
@@ -92,5 +80,3 @@ export function getAllSneakerSlugs() {
 export function getFeaturedSneaker() {
   return SNEAKERS.find((sneaker) => sneaker.featured) ?? SNEAKERS[0];
 }
-
-export const CHART_RANGES = ["1D", "7D", "1M", "3M", "1Y", "ALL"] as const;

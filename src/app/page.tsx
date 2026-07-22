@@ -2,8 +2,8 @@ import { CatalogTable } from "@/components/catalog/CatalogTable";
 import { MarketsHero } from "@/components/catalog/MarketsHero";
 import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
-import { getFeaturedSneaker, SNEAKERS } from "@/catalog/sneakers";
-import { getCatalogQuotes } from "@/lib/market/getCatalogQuotes";
+import { getFeaturedSneaker, SNEAKERS } from "@/services/catalog/sneakers";
+import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
 
 export const revalidate = 300;
 

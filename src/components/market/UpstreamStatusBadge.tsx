@@ -1,4 +1,4 @@
-import type { UpstreamStatus } from "@/lib/market/types";
+import type { UpstreamStatus } from "@/types/market";
 
 const LABELS: Record<UpstreamStatus, string> = {
   live: "Live",

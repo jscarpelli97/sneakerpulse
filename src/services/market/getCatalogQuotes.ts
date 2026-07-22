@@ -1,7 +1,7 @@
 import {
   SNEAKERS,
   type SneakerCatalogEntry,
-} from "@/catalog/sneakers";
+} from "@/services/catalog/sneakers";
 import {
   fetchStockxProduct,
   getKicksApiKey,

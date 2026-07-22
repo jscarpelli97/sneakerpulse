@@ -1,6 +1,6 @@
 import { CompareClient } from "@/components/compare/CompareClient";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
-import { SNEAKERS } from "@/catalog/sneakers";
+import { SNEAKERS } from "@/services/catalog/sneakers";
 
 export default async function ComparePage({
   searchParams,

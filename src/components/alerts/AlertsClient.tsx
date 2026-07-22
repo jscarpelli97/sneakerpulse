@@ -1,60 +1,14 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
-import { SNEAKERS } from "@/catalog/sneakers";
-import type { PriceAlert } from "@/lib/market/types";
-import { formatMoney } from "@/lib/format";
-
-const STORAGE_KEY = "sneakerpulse.alerts";
-
-let memoryAlerts: PriceAlert[] | null = null;
-const listeners = new Set<() => void>();
-
-function emit() {
-  for (const listener of listeners) listener();
-}
-
-function loadAlerts(): PriceAlert[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as PriceAlert[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveAlerts(alerts: PriceAlert[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(alerts));
-}
-
-function subscribe(onStoreChange: () => void) {
-  listeners.add(onStoreChange);
-  return () => listeners.delete(onStoreChange);
-}
-
-function getSnapshot(): PriceAlert[] {
-  if (memoryAlerts == null) {
-    memoryAlerts = loadAlerts();
-  }
-  return memoryAlerts;
-}
-
-function getServerSnapshot(): PriceAlert[] {
-  return [];
-}
-
-function persist(next: PriceAlert[]) {
-  memoryAlerts = next;
-  saveAlerts(next);
-  emit();
-}
+import { useState } from "react";
+import { evaluateAlerts } from "@/api/alerts";
+import { usePriceAlerts } from "@/hooks/usePriceAlerts";
+import { SNEAKERS } from "@/services/catalog/sneakers";
+import type { PriceAlert } from "@/types/market";
+import { formatMoney } from "@/utils/format";
 
 export function AlertsClient() {
-  const alerts = useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot,
-  );
+  const { alerts, addAlert, removeAlert } = usePriceAlerts();
   const [slug, setSlug] = useState(SNEAKERS[0]?.slug ?? "");
   const [direction, setDirection] = useState<"above" | "below">("below");
   const [threshold, setThreshold] = useState("200");
@@ -62,43 +16,31 @@ export function AlertsClient() {
   const [result, setResult] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
 
-  function addAlert() {
+  function handleAddAlert() {
     const sneaker = SNEAKERS.find((item) => item.slug === slug);
     if (!sneaker) return;
     const value = Number(threshold);
     if (!Number.isFinite(value) || value <= 0) return;
-    const next: PriceAlert = {
-      id: crypto.randomUUID(),
+    addAlert({
       slug: sneaker.slug,
       ticker: sneaker.ticker,
       name: sneaker.name,
       direction,
       threshold: value,
       webhookUrl: webhookUrl.trim() || undefined,
-      createdAt: new Date().toISOString(),
-    };
-    persist([next, ...alerts]);
-  }
-
-  function removeAlert(id: string) {
-    persist(alerts.filter((alert) => alert.id !== id));
+    });
   }
 
   async function evaluate() {
     setChecking(true);
     setResult(null);
     try {
-      const res = await fetch("/api/alerts/evaluate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ alerts }),
-      });
-      const json = await res.json();
+      const json = await evaluateAlerts(alerts);
       if (!json.ok) {
         setResult(json.error ?? "Evaluation failed");
         return;
       }
-      if (!json.triggered.length) {
+      if (!json.triggered?.length) {
         setResult(`Checked ${json.checked} alerts · none triggered`);
       } else {
         setResult(
@@ -174,7 +116,7 @@ export function AlertsClient() {
         <div className="mt-4 flex flex-wrap gap-3">
           <button
             type="button"
-            onClick={addAlert}
+            onClick={handleAddAlert}
             className="bg-ink px-4 py-2 text-sm font-semibold text-white"
           >
             Save alert

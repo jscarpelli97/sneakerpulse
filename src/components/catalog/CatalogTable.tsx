@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { SneakerCatalogEntry } from "@/catalog/sneakers";
-import { formatMaybeMoney, formatNumber } from "@/lib/format";
+import type { SneakerCatalogEntry } from "@/types/catalog";
+import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
 type CatalogRow = SneakerCatalogEntry & {
   price: number | null;
