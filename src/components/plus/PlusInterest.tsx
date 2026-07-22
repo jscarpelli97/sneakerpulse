@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { DEFAULT_PLUS_INTEREST_EMAIL } from "@/lib/plusInterest";
 
 type Variant = "panel" | "footer";
 
@@ -40,15 +39,9 @@ export function PlusInterest({
       setEmail("");
     } catch {
       setStatus("error");
-      setError("Network error — try again or email directly");
+      setError("Network error — try again in a moment");
     }
   }
-
-  const mailto = `mailto:${DEFAULT_PLUS_INTEREST_EMAIL}?subject=${encodeURIComponent(
-    "SneakerPulse Plus interest",
-  )}&body=${encodeURIComponent(
-    "Hi — I'd like early access to SneakerPulse Plus (live asks).\n\nMy email: ",
-  )}`;
 
   if (variant === "footer") {
     return (
@@ -58,14 +51,7 @@ export function PlusInterest({
           href="/#plus"
           className="text-dash-muted underline-offset-2 hover:text-dash-text hover:underline"
         >
-          show interest
-        </a>
-        {" · "}
-        <a
-          href={mailto}
-          className="text-dash-muted underline-offset-2 hover:text-dash-text hover:underline"
-        >
-          email me
+          leave your email
         </a>
       </p>
     );
@@ -137,17 +123,11 @@ export function PlusInterest({
           )}
           {error ? (
             <p className="mt-2 text-xs text-dash-down">{error}</p>
-          ) : null}
-          <p className="mt-2 text-xs text-dash-faint">
-            Or{" "}
-            <a
-              href={mailto}
-              className="text-dash-muted underline-offset-2 hover:text-dash-text hover:underline"
-            >
-              email me directly
-            </a>
-            . No spam — launch note only.
-          </p>
+          ) : (
+            <p className="mt-2 text-xs text-dash-faint">
+              No spam — launch note only.
+            </p>
+          )}
         </div>
       </div>
     </section>

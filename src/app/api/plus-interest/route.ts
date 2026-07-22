@@ -23,8 +23,8 @@ function clientIp(request: Request) {
 }
 
 /**
- * Captures Plus waitlist interest and notifies the owner.
- * Prefers WAITLIST_WEBHOOK_URL; otherwise emails via FormSubmit to PLUS_INTEREST_EMAIL.
+ * Captures Plus waitlist interest and emails the owner:
+ * "{email} signed up for SneakerPulse Plus".
  */
 export async function POST(request: Request) {
   let body: Body = {};
@@ -64,16 +64,20 @@ export async function POST(request: Request) {
       ? body.source.trim().slice(0, 64)
       : "site";
 
+  const at = new Date().toISOString();
   const payload = {
     type: "sneakerpulse_plus_interest",
     email,
     source,
-    at: new Date().toISOString(),
+    at,
+    message: `${email} signed up for SneakerPulse Plus`,
   };
 
   console.info("[plus-interest]", JSON.stringify(payload));
 
   const webhook = process.env.WAITLIST_WEBHOOK_URL?.trim();
+  let notified = false;
+
   if (webhook) {
     try {
       const res = await fetch(webhook, {
@@ -81,13 +85,16 @@ export async function POST(request: Request) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      notified = res.ok;
       if (!res.ok) {
         console.error("[plus-interest] webhook failed", res.status);
       }
     } catch (err) {
       console.error("[plus-interest] webhook error", err);
     }
-  } else {
+  }
+
+  if (!notified) {
     const notify = plusInterestEmail();
     try {
       const res = await fetch(`https://formsubmit.co/ajax/${notify}`, {
@@ -97,18 +104,28 @@ export async function POST(request: Request) {
           Accept: "application/json",
         },
         body: JSON.stringify({
+          name: email,
           email,
-          source,
-          _subject: `SneakerPulse Plus interest — ${email}`,
-          message: `${email} wants early access to SneakerPulse Plus (live asks).\nSource: ${source}\nAt: ${payload.at}`,
+          _replyto: email,
+          _subject: `${email} signed up for SneakerPulse Plus`,
+          message: `${email} signed up for SneakerPulse Plus.\n\nSource: ${source}\nAt: ${at}`,
         }),
       });
+      notified = res.ok;
       if (!res.ok) {
-        console.error("[plus-interest] formsubmit failed", res.status);
+        const text = await res.text().catch(() => "");
+        console.error("[plus-interest] formsubmit failed", res.status, text);
       }
     } catch (err) {
       console.error("[plus-interest] formsubmit error", err);
     }
+  }
+
+  if (!notified) {
+    return NextResponse.json(
+      { ok: false, error: "Could not save interest — try again shortly" },
+      { status: 502 },
+    );
   }
 
   return NextResponse.json({ ok: true });
