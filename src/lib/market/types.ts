@@ -25,6 +25,8 @@ export type SizeAsk = {
 export type MarketStats = {
   lowestAsk: number | null;
   highestAsk: number | null;
+  /** Highest bid when the upstream feed provides it; otherwise null. */
+  highestBid: number | null;
   averageAsk: number | null;
   askCount: number;
   high24h: number | null;
@@ -62,6 +64,7 @@ export type SneakerMarket = {
   year: number;
   ticker: string;
   styleCode: string;
+  releaseDate: string;
   colorway: string;
   retail: number;
   image: string;

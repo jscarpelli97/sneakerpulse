@@ -63,3 +63,22 @@ export function seriesWindowHighLow(points: ChartPoint[]) {
     low: Math.min(...prices),
   };
 }
+
+/** Premium of current ask vs retail: absolute $ and percent. */
+export function premiumVsRetail(
+  ask: number | null | undefined,
+  retail: number | null | undefined,
+): ChangeMetric {
+  if (
+    ask == null ||
+    retail == null ||
+    retail <= 0 ||
+    !Number.isFinite(ask) ||
+    !Number.isFinite(retail)
+  ) {
+    return null;
+  }
+  const absolute = ask - retail;
+  const percent = (absolute / retail) * 100;
+  return { absolute, percent };
+}

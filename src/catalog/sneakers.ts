@@ -5,6 +5,8 @@ export type SneakerCatalogEntry = {
   name: string;
   brand: string;
   year: number;
+  /** ISO date (YYYY-MM-DD) of original retail release */
+  releaseDate: string;
   colorway: string;
   retail: number;
   stockxUrl: string;
@@ -24,6 +26,7 @@ export const SNEAKERS: SneakerCatalogEntry[] = [
     name: "Jordan 1 High Dark Mocha",
     brand: "Jordan",
     year: 2020,
+    releaseDate: "2020-10-31",
     colorway: "Sail / Dark Mocha / Black",
     retail: 170,
     stockxUrl: "https://stockx.com/air-jordan-1-retro-high-dark-mocha",
@@ -38,6 +41,7 @@ export const SNEAKERS: SneakerCatalogEntry[] = [
     name: "Jordan 1 High OG Chicago Lost & Found",
     brand: "Jordan",
     year: 2022,
+    releaseDate: "2022-11-19",
     colorway: "Varsity Red / Black / Sail / Muslin",
     retail: 180,
     stockxUrl:
@@ -52,6 +56,7 @@ export const SNEAKERS: SneakerCatalogEntry[] = [
     name: "Nike Dunk Low Retro White Black Panda",
     brand: "Nike",
     year: 2021,
+    releaseDate: "2021-03-10",
     colorway: "White / Black",
     retail: 100,
     stockxUrl: "https://stockx.com/nike-dunk-low-retro-white-black-2021",
@@ -65,6 +70,7 @@ export const SNEAKERS: SneakerCatalogEntry[] = [
     name: "adidas Samba OG Cloud White Core Black",
     brand: "adidas",
     year: 2018,
+    releaseDate: "2018-01-01",
     colorway: "Cloud White / Core Black / Clear Granite",
     retail: 100,
     stockxUrl: "https://stockx.com/adidas-samba-og-cloud-white-core-black",

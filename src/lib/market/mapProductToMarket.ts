@@ -19,6 +19,7 @@ export type CatalogIdentity = Pick<
   | "year"
   | "ticker"
   | "styleCode"
+  | "releaseDate"
   | "colorway"
   | "retail"
   | "name"
@@ -127,6 +128,7 @@ export function mapProductToMarket(input: {
     year: catalog.year,
     ticker: catalog.ticker,
     styleCode: product.sku || catalog.styleCode,
+    releaseDate: catalog.releaseDate,
     colorway: catalog.colorway,
     retail: catalog.retail,
     image: product.image || catalog.fallbackImage,
@@ -150,6 +152,7 @@ export function mapProductToMarket(input: {
     stats: {
       lowestAsk: product.min_price ?? (asks.length ? Math.min(...asks) : null),
       highestAsk: product.max_price ?? (asks.length ? Math.max(...asks) : null),
+      highestBid: null,
       averageAsk: product.avg_price ?? null,
       askCount,
       high24h: trustedHistory ? last1Bounds.high : null,
@@ -219,6 +222,7 @@ export function emptyMarket(catalog: CatalogIdentity): SneakerMarket {
     year: catalog.year,
     ticker: catalog.ticker,
     styleCode: catalog.styleCode,
+    releaseDate: catalog.releaseDate,
     colorway: catalog.colorway,
     retail: catalog.retail,
     image: catalog.fallbackImage,
@@ -234,6 +238,7 @@ export function emptyMarket(catalog: CatalogIdentity): SneakerMarket {
     stats: {
       lowestAsk: null,
       highestAsk: null,
+      highestBid: null,
       averageAsk: null,
       askCount: 0,
       high24h: null,

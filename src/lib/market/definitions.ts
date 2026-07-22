@@ -62,6 +62,11 @@ export const METRIC_DEFINITIONS = {
     definition:
       "Periodic StockX lowest-ask snapshots accumulated by the daily snapshot job. Prefer sales history when available.",
   },
+  marketSnapshot: {
+    label: "Market Snapshot",
+    definition:
+      "Yahoo Finance–style key statistics: identity fields, premium vs retail, asks/bids, and sale counts.",
+  },
 } as const;
 
 export type MetricKey = keyof typeof METRIC_DEFINITIONS;

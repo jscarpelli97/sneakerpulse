@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { MarketHeader } from "@/components/MarketHeader";
 import { MarketSizeSection } from "@/components/MarketSizeSection";
+import { MarketSnapshot } from "@/components/MarketSnapshot";
 import { PriceChart } from "@/components/PriceChart";
 import { PriceOverview } from "@/components/PriceOverview";
 import { SetupBanner } from "@/components/SetupBanner";
@@ -75,6 +76,8 @@ export default async function SneakerMarketPage({
           ) : null}
 
           {result.ok ? <PriceOverview market={market} /> : null}
+
+          {result.ok ? <MarketSnapshot market={market} /> : null}
 
           {result.ok ? (
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1.7fr)_minmax(280px,1fr)]">

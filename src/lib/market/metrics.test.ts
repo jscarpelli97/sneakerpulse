@@ -3,6 +3,7 @@ import { mapProductToMarket } from "@/lib/market/mapProductToMarket";
 import type { KicksProduct } from "@/lib/kicksdb/client";
 import {
   changeFromPrices,
+  premiumVsRetail,
   salesToSeries,
   sumSales,
   upsertToday,
@@ -14,6 +15,7 @@ const catalog = {
   year: 2020,
   ticker: "J1-DMCH",
   styleCode: "555088-105",
+  releaseDate: "2020-10-31",
   colorway: "Sail / Dark Mocha / Black",
   retail: 170,
   name: "Jordan 1 High Dark Mocha",
@@ -87,6 +89,20 @@ describe("changeFromPrices", () => {
   });
 });
 
+describe("premiumVsRetail", () => {
+  it("returns null without ask or retail", () => {
+    expect(premiumVsRetail(null, 170)).toBeNull();
+    expect(premiumVsRetail(200, 0)).toBeNull();
+  });
+
+  it("computes premium over retail", () => {
+    expect(premiumVsRetail(204, 170)).toEqual({
+      absolute: 34,
+      percent: 20,
+    });
+  });
+});
+
 describe("sumSales", () => {
   it("sums pairs and notional for a window", () => {
     const points = [
@@ -134,7 +150,9 @@ describe("mapProductToMarket", () => {
     });
 
     expect(market.slug).toBe(catalog.slug);
+    expect(market.releaseDate).toBe("2020-10-31");
     expect(market.price).toBe(202);
+    expect(market.stats.highestBid).toBeNull();
     expect(market.sizes.map((size) => size.size)).toEqual(["9", "10"]);
     expect(market.stats.askCount).toBe(7);
     expect(market.stats.sales30d).toBe(8);
