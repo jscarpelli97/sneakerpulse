@@ -74,17 +74,64 @@ function roundLevel(value: number) {
   return Math.round(value * 100) / 100;
 }
 
+function todayUtc(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function addDays(date: string, days: number): string {
+  const ms = Date.parse(`${date.slice(0, 10)}T00:00:00.000Z`);
+  if (!Number.isFinite(ms)) return date;
+  return new Date(ms + days * 86_400_000).toISOString().slice(0, 10);
+}
+
+/** Fill every calendar day through `throughDate` using last-observation-carried-forward. */
+export function appendLocfThrough(
+  points: ChartPoint[],
+  throughDate: string,
+): ChartPoint[] {
+  if (!points.length) return points;
+  const through = throughDate.slice(0, 10);
+  const sorted = points
+    .map((point) => ({
+      date: point.date.slice(0, 10),
+      price: point.price,
+      orders: point.orders ?? 0,
+    }))
+    .filter((point) => point.price > 0)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  if (!sorted.length) return [];
+
+  const out: ChartPoint[] = [];
+  for (let i = 0; i < sorted.length; i++) {
+    const cur = sorted[i];
+    if (out.length === 0 || out[out.length - 1].date !== cur.date) {
+      out.push({ ...cur });
+    } else {
+      out[out.length - 1] = { ...cur };
+    }
+    const nextBound =
+      i + 1 < sorted.length ? sorted[i + 1].date : addDays(through, 1);
+    let cursor = addDays(cur.date, 1);
+    while (cursor < nextBound && cursor <= through) {
+      out.push({ date: cursor, price: cur.price, orders: 0 });
+      cursor = addDays(cursor, 1);
+    }
+  }
+
+  // If last observed point is after `through`, trim; if before, loop above already filled.
+  return out.filter((point) => point.date <= through);
+}
+
 /**
- * One continuous SPI line from the earliest history through today:
- * - keep long history until the live window starts
- * - carry the last historical level across the public-data gap
- * - apply live day-over-day returns through the present
- * - prefer real daily extension points (from `npm run snapshot`) once we have a chain
+ * One continuous SPI line from the earliest history through today.
+ * Always extends the time axis to `asOf` (default: today) so ALL is never stuck in 2021.
  */
-function buildContinuousSeries(
+export function buildContinuousSeries(
   historical: ChartPoint[],
   extension: ChartPoint[],
   live: ChartPoint[],
+  asOf = todayUtc(),
 ): ChartPoint[] {
   const core = historical
     .filter((point) => point.price > 0 && point.date)
@@ -104,51 +151,100 @@ function buildContinuousSeries(
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
-  if (core.length < 2 && live.length < 2) {
-    return ext.length >= 2 ? ext : core.length ? core : ext;
+  const liveSeries = live
+    .filter((point) => point.price > 0 && point.date)
+    .map((point) => ({
+      date: point.date.slice(0, 10),
+      price: point.price,
+      orders: point.orders ?? 1,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  if (core.length < 2 && liveSeries.length < 2 && ext.length < 1) {
+    return [];
   }
 
-  let continuous = core.slice();
+  // 1) Start from long history (or live alone).
+  let continuous = core.length ? core.slice() : liveSeries.slice();
 
-  if (live.length >= 2) {
-    const liveStart = live[0].date.slice(0, 10);
-    const head = continuous.filter((point) => point.date < liveStart);
-    const anchor = head.at(-1) ?? continuous.at(-1);
+  // 2) Always bridge calendar days through today so ALL reaches the present.
+  continuous = appendLocfThrough(continuous, asOf);
+
+  // 3) Paint live day-over-day returns onto the bridged tail (same SPI level).
+  if (liveSeries.length >= 2) {
+    const liveStart = liveSeries[0].date;
+    const byDate = new Map(continuous.map((point) => [point.date, point]));
+    const anchorDate = addDays(liveStart, -1);
+    const anchor =
+      byDate.get(anchorDate) ??
+      [...byDate.values()].reverse().find((point) => point.date < liveStart) ??
+      continuous.at(-1);
+
     if (anchor) {
       let level = anchor.price;
-      const tail: ChartPoint[] = [];
-      for (let i = 0; i < live.length; i++) {
+      for (let i = 0; i < liveSeries.length; i++) {
         if (i > 0) {
-          const prev = live[i - 1].price;
-          const curr = live[i].price;
+          const prev = liveSeries[i - 1].price;
+          const curr = liveSeries[i].price;
           if (prev > 0 && curr > 0) level *= curr / prev;
         }
-        tail.push({
-          date: live[i].date.slice(0, 10),
+        const date = liveSeries[i].date;
+        if (date > asOf) break;
+        byDate.set(date, {
+          date,
           price: roundLevel(level),
-          orders: live[i].orders ?? 1,
+          orders: liveSeries[i].orders ?? 1,
         });
       }
-      continuous = [...head, ...tail];
+      continuous = [...byDate.values()].sort((a, b) =>
+        a.date.localeCompare(b.date),
+      );
     }
   }
 
-  // Real snapshot chain (≥2 days) replaces the overlapping live tail on SPI scale.
-  if (ext.length >= 2) {
-    const extStart = ext[0].date;
-    const head = continuous.filter((point) => point.date < extStart);
-    const headLevel = head.at(-1)?.price ?? ext[0].price;
-    const scale = ext[0].price > 0 ? headLevel / ext[0].price : 1;
-    const extTail = ext.map((point) => ({
-      date: point.date,
-      price: roundLevel(point.price * scale),
-      orders: point.orders ?? 1,
-    }));
-    continuous = [...head, ...extTail];
-  } else if (ext.length === 1 && live.length < 2) {
+  // 4) Real snapshot extension points always win on their dates (SPI scale).
+  if (ext.length >= 1) {
     const byDate = new Map(continuous.map((point) => [point.date, point]));
-    byDate.set(ext[0].date, ext[0]);
-    continuous = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+    if (ext.length >= 2) {
+      const extStart = ext[0].date;
+      const prior =
+        [...byDate.values()].reverse().find((point) => point.date < extStart) ??
+        null;
+      const headLevel = prior?.price ?? ext[0].price;
+      const scale = ext[0].price > 0 ? headLevel / ext[0].price : 1;
+      for (const point of ext) {
+        byDate.set(point.date, {
+          date: point.date,
+          price: roundLevel(point.price * scale),
+          orders: point.orders ?? 1,
+        });
+      }
+      // LOCF from last extension through asOf so we don't drop the tip.
+      const lastExt = ext[ext.length - 1];
+      let cursor = addDays(lastExt.date, 1);
+      const lastPrice = roundLevel(lastExt.price * scale);
+      while (cursor <= asOf) {
+        if (!byDate.has(cursor)) {
+          byDate.set(cursor, { date: cursor, price: lastPrice, orders: 0 });
+        }
+        cursor = addDays(cursor, 1);
+      }
+    } else {
+      byDate.set(ext[0].date, { ...ext[0] });
+      // Carry extension level forward if it's the newest observation.
+      let cursor = addDays(ext[0].date, 1);
+      while (cursor <= asOf) {
+        byDate.set(cursor, {
+          date: cursor,
+          price: ext[0].price,
+          orders: 0,
+        });
+        cursor = addDays(cursor, 1);
+      }
+    }
+    continuous = [...byDate.values()]
+      .filter((point) => point.date <= asOf)
+      .sort((a, b) => a.date.localeCompare(b.date));
   }
 
   return continuous;
@@ -221,8 +317,8 @@ async function buildLiveSeries(limit: number): Promise<{
 /**
  * ChronoPulse-style whole-market index:
  * - Long history: embSneakers 2012–2020 + Flurin17 daily 2020–2021
- * - Extension: daily top-seller Laspeyres from `npm run snapshot`
- * - Live window: rotating top StockX sellers (bootstrap when extension is thin)
+ * - Bridge through today (LOCF) so ALL always reaches the present
+ * - Live window + daily extension overlay on that continuous axis
  */
 export async function getMarketIndex(
   limit = TOP_SELLERS_LIMIT,
@@ -230,8 +326,9 @@ export async function getMarketIndex(
   const historical = loadHistoricalSeries();
   const extension = loadExtensionSeries();
   const live = await buildLiveSeries(limit);
+  const asOf = todayUtc();
 
-  if (!historical && !live && extension.length < 2) return null;
+  if (!historical && !live && extension.length < 1) return null;
 
   const coreHistorical = historical?.series ?? [];
   const liveSeries = live?.series ?? [];
@@ -239,6 +336,7 @@ export async function getMarketIndex(
     coreHistorical,
     extension,
     liveSeries,
+    asOf,
   );
   if (continuous.length < 2) return null;
 
@@ -247,15 +345,10 @@ export async function getMarketIndex(
 
   const yesterday = continuous.at(-2)?.price ?? null;
   const monthAgo = continuous.at(-31)?.price ?? continuous[0]?.price ?? null;
-  const windowStart = continuous[0]?.price ?? null;
 
-  // Live-window slice of the same continuous series (for short-range charts).
-  const liveWindow = (() => {
-    if (liveSeries.length < 2) return continuous.slice(-90);
-    const from = liveSeries[0].date.slice(0, 10);
-    const sliced = continuous.filter((point) => point.date >= from);
-    return sliced.length >= 2 ? sliced : continuous.slice(-90);
-  })();
+  const liveWindow = continuous.filter(
+    (point) => point.date >= addDays(asOf, -(INDEX_DAYS - 1)),
+  );
 
   const productsCovered = historical?.meta.productsCovered;
   const citation =
@@ -274,13 +367,13 @@ export async function getMarketIndex(
     change30d: changeFromPrices(level, monthAgo),
     change90d: changeFromPrices(
       level,
-      liveWindow[0]?.price ?? windowStart,
+      continuous.at(-90)?.price ?? continuous[0]?.price ?? null,
     ),
     changeHistorical: changeFromPrices(level, continuous[0].price),
     peakLevel: histPeak.level,
     peakDate: histPeak.date,
     series: continuous,
-    liveSeries: liveWindow,
+    liveSeries: liveWindow.length >= 2 ? liveWindow : continuous.slice(-90),
     historicalSeries: continuous,
     constituents: live?.constituents ?? historical?.meta.constituents ?? 0,
     historicalConstituents: historical?.meta.constituents ?? null,
@@ -291,7 +384,7 @@ export async function getMarketIndex(
           ? "whole_market"
           : "bootstrap",
     methodology: historical
-      ? `One continuous ChronoPulse-style SPI from ${continuous[0].date} through ${continuous.at(-1)!.date}. Apr 2012–Jul 2020: embSneakers rotating top ${historical.meta.constituents} (${productsCovered?.toLocaleString?.() ?? productsCovered ?? "11k+"} products). Nov 2020–Dec 2021: Flurin17 daily top-200. The Jan 2022 public-data gap is bridged at the last known level, then live top-seller returns carry the series to today; daily snapshots take over as they accumulate.`
+      ? `One continuous ChronoPulse-style SPI from ${continuous[0].date} through ${continuous.at(-1)!.date}. Apr 2012–Jul 2020: embSneakers rotating top ${historical.meta.constituents} (${productsCovered?.toLocaleString?.() ?? productsCovered ?? "11k+"} products). Nov 2020–Dec 2021: Flurin17 daily top-200. Missing public daily tape after Dec 2021 is bridged at the last known level through today; live top-seller returns and daily snapshots overlay the recent window.`
       : "Volume-weighted Laspeyres basket of the current top StockX sellers. Shoes rotate with live sales rank.",
     citation,
     fetchedAt: new Date().toISOString(),

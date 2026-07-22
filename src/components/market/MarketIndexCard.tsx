@@ -70,7 +70,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
               {index.ticker}
             </span>
             <span className="rounded-full bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
-              Whole market · 2012–{endYear}
+              Whole market · 2012→{endYear}
             </span>
           </div>
           <h2 className="mt-2 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
