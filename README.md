@@ -166,9 +166,10 @@ KicksDB **Free** is €0 / **1,000 requests per month** (Standard API, US market
 
 1. Sign up at [kicks.dev/register](https://kicks.dev/register) and open [API Keys](https://kicks.dev/api-keys) — you need **at least one active** free key (not an expired trial).
 2. Set `KICKSDB_API_KEY` in `.env.local`, Vercel, and GitHub Actions.
-3. Run `npm run snapshot` (or wait for `daily-spi.yml`) — that updates `src/data/catalog/top-sellers.json`.
+3. Leave `KICKSDB_LIVE_READS` unset (or not `1`) so page views serve the offline catalog and do not burn quota. Set `KICKSDB_LIVE_READS=1` only when you intentionally want live page reads.
+4. Run `npm run snapshot` (or wait for `daily-spi.yml`) — that updates `src/data/catalog/top-sellers.json`.
 
-If the key is inactive/missing, SneakerPulse still runs in **free cached mode** from `src/data/catalog/top-sellers.json` (asks labeled Cached).
+If the key is inactive/missing, or live page reads are off, SneakerPulse still runs in **free cached mode** from `src/data/catalog/top-sellers.json` (asks labeled Cached).
 
 ## Getting started
 
