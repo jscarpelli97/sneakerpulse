@@ -230,8 +230,15 @@ export async function getDarkMochaMarket(): Promise<MarketLoadResult> {
     };
   }
 
+  const productQuery = new URLSearchParams({
+    "display[variants]": "true",
+    "display[prices]": "true",
+    "display[statistics]": "true",
+    market: "US",
+  });
+
   const productRes = await kicksFetch<{ data: KicksProduct }>(
-    `/stockx/products/${SLUG}?display[variants]=true&display[prices]=true&display[statistics]=true&market=US`,
+    `/stockx/products/${SLUG}?${productQuery.toString()}`,
     apiKey,
   );
 
