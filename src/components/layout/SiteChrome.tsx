@@ -10,6 +10,7 @@ const NAV = [
   { href: "/markets", label: "All markets" },
   { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
+  { href: "/plus", label: "Plus" },
   { href: "/about", label: "About" },
 ] as const;
 
@@ -74,7 +75,11 @@ export function SiteHeader({
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-lg px-2 py-1.5 text-sm font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text sm:px-3"
+                className={`rounded-lg px-2 py-1.5 text-sm font-medium hover:bg-dash-elevated sm:px-3 ${
+                  item.href === "/plus"
+                    ? "text-dash-accent hover:text-dash-accent"
+                    : "text-dash-muted hover:text-dash-text"
+                }`}
               >
                 {item.label}
               </Link>
@@ -133,7 +138,7 @@ export function SiteFooter({
             <Link href="/about" className="hover:text-dash-text">
               About
             </Link>
-            <Link href="/#plus" className="hover:text-dash-text">
+            <Link href="/plus" className="hover:text-dash-text">
               Plus
             </Link>
           </nav>

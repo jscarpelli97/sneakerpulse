@@ -6,6 +6,8 @@ import { DataModeBanner } from "@/components/layout/DataModeBanner";
 import { MarketIndexCard } from "@/components/market/MarketIndexCard";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { PlusInterest } from "@/components/plus/PlusInterest";
+import { PlusPopup } from "@/components/plus/PlusPopup";
+import { PlusTopCallout } from "@/components/plus/PlusTopCallout";
 import { getDataModeLabel } from "@/lib/dataMode";
 import {
   HOMEPAGE_WATCHLIST_LIMIT,
@@ -40,6 +42,7 @@ export default async function MarketsIndexPage() {
 
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
+      <PlusTopCallout />
       <SiteHeader subtitle={dataMode.subtitle} variant="dashboard" />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
@@ -73,6 +76,7 @@ export default async function MarketsIndexPage() {
         </div>
       </main>
       <SiteFooter variant="dashboard" />
+      <PlusPopup />
     </div>
   );
 }

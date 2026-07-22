@@ -190,7 +190,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
                 : ""}
               {" · "}
               <a
-                href="/#plus"
+                href="/plus"
                 className="text-dash-faint underline-offset-2 hover:text-dash-accent hover:underline"
               >
                 live tip · Plus soon
