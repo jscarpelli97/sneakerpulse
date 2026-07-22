@@ -70,16 +70,88 @@ function loadExtensionSeries(): ChartPoint[] {
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
-/** Merge historical + extension without inventing the 2022–gap years. */
-function mergeHistoricalAndExtension(
+function roundLevel(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+/**
+ * One continuous SPI line from the earliest history through today:
+ * - keep long history until the live window starts
+ * - carry the last historical level across the public-data gap
+ * - apply live day-over-day returns through the present
+ * - prefer real daily extension points (from `npm run snapshot`) once we have a chain
+ */
+function buildContinuousSeries(
   historical: ChartPoint[],
   extension: ChartPoint[],
+  live: ChartPoint[],
 ): ChartPoint[] {
-  if (!extension.length) return historical;
-  const byDate = new Map<string, ChartPoint>();
-  for (const point of historical) byDate.set(point.date, point);
-  for (const point of extension) byDate.set(point.date, point);
-  return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+  const core = historical
+    .filter((point) => point.price > 0 && point.date)
+    .map((point) => ({
+      date: point.date.slice(0, 10),
+      price: point.price,
+      orders: point.orders ?? 1,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const ext = extension
+    .filter((point) => point.price > 0 && point.date)
+    .map((point) => ({
+      date: point.date.slice(0, 10),
+      price: point.price,
+      orders: point.orders ?? 1,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  if (core.length < 2 && live.length < 2) {
+    return ext.length >= 2 ? ext : core.length ? core : ext;
+  }
+
+  let continuous = core.slice();
+
+  if (live.length >= 2) {
+    const liveStart = live[0].date.slice(0, 10);
+    const head = continuous.filter((point) => point.date < liveStart);
+    const anchor = head.at(-1) ?? continuous.at(-1);
+    if (anchor) {
+      let level = anchor.price;
+      const tail: ChartPoint[] = [];
+      for (let i = 0; i < live.length; i++) {
+        if (i > 0) {
+          const prev = live[i - 1].price;
+          const curr = live[i].price;
+          if (prev > 0 && curr > 0) level *= curr / prev;
+        }
+        tail.push({
+          date: live[i].date.slice(0, 10),
+          price: roundLevel(level),
+          orders: live[i].orders ?? 1,
+        });
+      }
+      continuous = [...head, ...tail];
+    }
+  }
+
+  // Real snapshot chain (≥2 days) replaces the overlapping live tail on SPI scale.
+  if (ext.length >= 2) {
+    const extStart = ext[0].date;
+    const head = continuous.filter((point) => point.date < extStart);
+    const headLevel = head.at(-1)?.price ?? ext[0].price;
+    const scale = ext[0].price > 0 ? headLevel / ext[0].price : 1;
+    const extTail = ext.map((point) => ({
+      date: point.date,
+      price: roundLevel(point.price * scale),
+      orders: point.orders ?? 1,
+    }));
+    continuous = [...head, ...extTail];
+  } else if (ext.length === 1 && live.length < 2) {
+    const byDate = new Map(continuous.map((point) => [point.date, point]));
+    byDate.set(ext[0].date, ext[0]);
+    continuous = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  return continuous;
 }
 
 function peakOf(series: ChartPoint[]) {
@@ -162,51 +234,54 @@ export async function getMarketIndex(
   if (!historical && !live && extension.length < 2) return null;
 
   const coreHistorical = historical?.series ?? [];
-  const historicalSeries = mergeHistoricalAndExtension(
+  const liveSeries = live?.series ?? [];
+  const continuous = buildContinuousSeries(
     coreHistorical,
     extension,
+    liveSeries,
   );
-  const liveSeries = live?.series ?? [];
-  const primary =
-    historicalSeries.length >= 2 ? historicalSeries : liveSeries;
-  const liveLevel = liveSeries.at(-1)?.price ?? primary.at(-1)!.price;
-  const historicalEnd = historicalSeries.at(-1)?.price ?? null;
-  const histPeak = peakOf(historicalSeries);
+  if (continuous.length < 2) return null;
 
-  const liveYesterday = liveSeries.at(-2)?.price ?? null;
-  const liveMonth = liveSeries.at(-31)?.price ?? liveSeries[0]?.price ?? null;
-  const liveStart = liveSeries[0]?.price ?? null;
+  const level = continuous.at(-1)!.price;
+  const histPeak = peakOf(continuous);
+
+  const yesterday = continuous.at(-2)?.price ?? null;
+  const monthAgo = continuous.at(-31)?.price ?? continuous[0]?.price ?? null;
+  const windowStart = continuous[0]?.price ?? null;
+
+  // Live-window slice of the same continuous series (for short-range charts).
+  const liveWindow = (() => {
+    if (liveSeries.length < 2) return continuous.slice(-90);
+    const from = liveSeries[0].date.slice(0, 10);
+    const sliced = continuous.filter((point) => point.date >= from);
+    return sliced.length >= 2 ? sliced : continuous.slice(-90);
+  })();
 
   const productsCovered = historical?.meta.productsCovered;
-  const gapAfter = historical?.meta.gapAfter ?? "2021-12-26";
-  const hasExtension = extension.length > 0;
   const citation =
     historical?.meta.citations?.[0] ?? historical?.meta.citation ?? null;
 
   return {
     name: "SneakerPulse Index",
     ticker: "SPI",
-    level: liveLevel,
-    liveLevel,
-    historicalEndLevel: historicalEnd,
+    level,
+    liveLevel: level,
+    historicalEndLevel: level,
     baseLevel: INDEX_BASE,
-    baseDate: primary[0].date,
-    asOf: liveSeries.at(-1)?.date ?? primary.at(-1)!.date,
-    changeToday: changeFromPrices(liveLevel, liveYesterday),
-    change30d: changeFromPrices(liveLevel, liveMonth),
-    change90d: changeFromPrices(liveLevel, liveStart),
-    changeHistorical:
-      historicalSeries.length >= 2
-        ? changeFromPrices(
-            historicalSeries.at(-1)!.price,
-            historicalSeries[0]!.price,
-          )
-        : null,
+    baseDate: continuous[0].date,
+    asOf: continuous.at(-1)!.date,
+    changeToday: changeFromPrices(level, yesterday),
+    change30d: changeFromPrices(level, monthAgo),
+    change90d: changeFromPrices(
+      level,
+      liveWindow[0]?.price ?? windowStart,
+    ),
+    changeHistorical: changeFromPrices(level, continuous[0].price),
     peakLevel: histPeak.level,
     peakDate: histPeak.date,
-    series: primary,
-    liveSeries,
-    historicalSeries,
+    series: continuous,
+    liveSeries: liveWindow,
+    historicalSeries: continuous,
     constituents: live?.constituents ?? historical?.meta.constituents ?? 0,
     historicalConstituents: historical?.meta.constituents ?? null,
     historySource:
@@ -216,7 +291,7 @@ export async function getMarketIndex(
           ? "whole_market"
           : "bootstrap",
     methodology: historical
-      ? `ChronoPulse-style whole StockX market index. Apr 2012–Jul 2020: rotating monthly top ${historical.meta.constituents} colorways (embSneakers, ${productsCovered?.toLocaleString?.() ?? productsCovered ?? "11k+"} products). Nov 2020–Dec 2021: daily top-200 from Flurin17 snapshots (~4k products). Aug–Oct 2020 held flat. ${hasExtension ? `Daily extension resumes from snapshots after the public-data gap. ` : `No free public whole-market daily feed fills ${gapAfter} → today yet — run npm run snapshot daily to extend. `}ALL/1Y = long market series; 3M = live top sellers.`
+      ? `One continuous ChronoPulse-style SPI from ${continuous[0].date} through ${continuous.at(-1)!.date}. Apr 2012–Jul 2020: embSneakers rotating top ${historical.meta.constituents} (${productsCovered?.toLocaleString?.() ?? productsCovered ?? "11k+"} products). Nov 2020–Dec 2021: Flurin17 daily top-200. The Jan 2022 public-data gap is bridged at the last known level, then live top-seller returns carry the series to today; daily snapshots take over as they accumulate.`
       : "Volume-weighted Laspeyres basket of the current top StockX sellers. Shoes rotate with live sales rank.",
     citation,
     fetchedAt: new Date().toISOString(),

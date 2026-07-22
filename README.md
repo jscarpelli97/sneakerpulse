@@ -18,14 +18,14 @@ Do not reintroduce the old light ink/paper theme unless asked.
 
 Homepage market pulse inspired by Chrono24’s ChronoPulse — **whole StockX market**, not a single brand:
 
-- **Long history (ALL / 1Y):** chained Laspeyres on rotating top-200 colorways
+- **Long history → present (one chart):** chained Laspeyres on rotating top-200 colorways, merged into a **single continuous SPI series**
   - **Apr 2012 → Jul 2020:** embSneakers whole-catalog StockX transactions (~13M trades / ~12k products), monthly LOCF daily — `stockx-whole-market-2012-2020.json`
   - **Aug → early Nov 2020:** level held (no public daily feed)
   - **Nov 2020 → Dec 2021:** Flurin17 daily StockX snapshots (~4k products, lowest ask) — merged into `stockx-whole-market-2012-2021.json`
-- **Daily extension (from first `npm run snapshot` onward):** live top-100 Laspeyres appended to `spi-daily-extension.json` (anchored to the Dec 2021 level so the long series can resume)
-- **Live window (3M / shorter):** rotating basket of the current top StockX sellers by sales rank (bootstrap from StockX stats when needed)
-- **Gap:** no free public whole-market daily feed for **Jan 2022 → day before extension starts**. Charts draw the pre-gap and extension segments separately (no invented line across missing years).
-
+  - **Jan 2022 public-data gap → live window:** last known level is carried forward, then live top-seller day-over-day returns continue the same index through today
+  - **Daily extension:** `npm run snapshot` appends real Laspeyres points to `spi-daily-extension.json` (takes over as the chain grows)
+- **Range buttons** only zoom that one series (ALL / 1Y / 3M / …)
+- **Gap note:** there is still no free public whole-market daily tape for most of 2022–mid‑2025; that stretch is a level bridge, not invented trade prints.
 Rebuild / extend:
 
 ```bash
