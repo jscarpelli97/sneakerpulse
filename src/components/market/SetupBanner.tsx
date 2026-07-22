@@ -22,7 +22,7 @@ export function SetupBanner({
         Live StockX data needs an API key
       </h2>
       <p className="mt-3 max-w-3xl text-sm leading-relaxed text-dash-muted">
-        {message} StockX blocks direct datacenter scrapes, so SneakerPulse loads
+        {message} StockX blocks direct datacenter scrapes, so SPI Markets loads
         market data through{" "}
         <a
           href="https://kicks.dev"

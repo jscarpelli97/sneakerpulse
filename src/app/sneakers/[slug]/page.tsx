@@ -9,9 +9,15 @@ import { SetupBanner } from "@/components/market/SetupBanner";
 import { StatsPanel } from "@/components/market/StatsPanel";
 import { UpstreamStatusBadge } from "@/components/market/UpstreamStatusBadge";
 import { SiteFooter } from "@/components/layout/SiteChrome";
+import { PlusMarketLock } from "@/components/plus/PlusCatalogGate";
 import { buildMarketSummary } from "@/lib/summary/buildMarketSummary";
 import {
+  FREE_CATALOG_LIMIT,
+  getPlusAccess,
+} from "@/lib/plus/access";
+import {
   getAllSneakerSlugs,
+  getOfflineCatalogQuotes,
   getSneakerBySlug,
 } from "@/services/catalog/sneakers";
 import { STATIC_PARAMS_LIMIT } from "@/services/catalog/mapProductToCatalog";
@@ -20,7 +26,7 @@ import {
   getMarketFallback,
 } from "@/services/market/getMarketBySlug";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
@@ -36,10 +42,10 @@ export async function generateMetadata({
   const { slug } = await params;
   const sneaker = await getSneakerBySlug(slug);
   if (!sneaker) {
-    return { title: "Sneaker not found — SneakerPulse" };
+    return { title: "Sneaker not found — SPI Markets" };
   }
   return {
-    title: `${sneaker.name} — SneakerPulse`,
+    title: `${sneaker.name} — SPI Markets`,
     description: `Live StockX market view for ${sneaker.name} (${sneaker.year}).`,
   };
 }
@@ -52,6 +58,23 @@ export default async function SneakerMarketPage({
   const { slug } = await params;
   const catalog = await getSneakerBySlug(slug);
   if (!catalog) notFound();
+
+  const { isPlus, publicPlus } = await getPlusAccess();
+  if (publicPlus && !isPlus) {
+    const freeSlugs = new Set(
+      getOfflineCatalogQuotes(FREE_CATALOG_LIMIT).map((row) => row.slug),
+    );
+    if (!freeSlugs.has(slug)) {
+      return (
+        <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
+          <main className="flex flex-1 items-center justify-center px-4 py-16">
+            <PlusMarketLock name={catalog.name} />
+          </main>
+          <SiteFooter />
+        </div>
+      );
+    }
+  }
 
   const result = await getMarketBySlug(slug);
   const live = result.ok;
