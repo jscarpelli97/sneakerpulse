@@ -10,10 +10,12 @@ import type {
   HistorySource,
   SizeAsk,
   SneakerMarket,
+  UpstreamStatus,
 } from "@/lib/market/types";
 
 export type CatalogIdentity = Pick<
   SneakerCatalogEntry,
+  | "slug"
   | "year"
   | "ticker"
   | "styleCode"
@@ -30,11 +32,13 @@ export function mapProductToMarket(input: {
   catalog: CatalogIdentity;
   chartSeries: ChartPoint[];
   historySource: HistorySource;
+  upstreamStatus?: UpstreamStatus;
   fetchedAt?: string;
 }): SneakerMarket {
   const { product, catalog, historySource } = input;
   const chartSeries = input.chartSeries;
-  const salesHistory = historySource === "sales";
+  const trustedHistory =
+    historySource === "sales" || historySource === "snapshot";
 
   const variants = (product.variants ?? []).filter((variant) => !variant.hidden);
   const asks = variants
@@ -86,19 +90,19 @@ export function mapProductToMarket(input: {
   const last30Bounds = seriesWindowHighLow(last30);
   const last1Bounds = seriesWindowHighLow(last1);
 
-  // Trust-critical % changes only from official sales history.
-  const changeToday = salesHistory
+  // % change from sales or accumulated snapshots — never bootstrap.
+  const changeToday = trustedHistory
     ? changeFromPrices(latestHistory ?? price, yesterday)
     : null;
-  const change30d = salesHistory
+  const change30d = trustedHistory
     ? changeFromPrices(latestHistory ?? price, monthAgo)
     : null;
 
-  const volume24h = salesHistory
+  const volume24h = trustedHistory
     ? sumSales(chartSeries, 1)
     : { pairs: product.weekly_orders ?? 0, notional: null };
 
-  const volume30d = salesHistory
+  const volume30d = trustedHistory
     ? sumSales(chartSeries, 30)
     : {
         pairs: sales30d,
@@ -106,8 +110,18 @@ export function mapProductToMarket(input: {
           product.avg_price != null ? product.avg_price * sales30d : null,
       };
 
+  const rangeSource =
+    historySource === "sales"
+      ? "sales"
+      : historySource === "snapshot"
+        ? "snapshot"
+        : stats?.last_90_days_range_high != null
+          ? "stockx_stats"
+          : null;
+
   return {
     id: product.id,
+    slug: catalog.slug,
     name: product.title || catalog.name,
     brand: product.brand || catalog.brand,
     year: catalog.year,
@@ -116,50 +130,64 @@ export function mapProductToMarket(input: {
     colorway: catalog.colorway,
     retail: catalog.retail,
     image: product.image || catalog.fallbackImage,
-    stockxUrl: product.link || catalog.stockxUrl,
+    stockxUrl: catalog.stockxUrl,
     price,
     currency: "USD",
     changeToday,
     change30d,
     volume24h,
-    volume24hSource: salesHistory ? "sales" : "weekly_orders",
+    volume24hSource: trustedHistory
+      ? historySource === "sales"
+        ? "sales"
+        : "snapshot"
+      : "weekly_orders",
     volume30d,
-    volume30dSource: salesHistory ? "sales" : "variant_sales",
+    volume30dSource: trustedHistory
+      ? historySource === "sales"
+        ? "sales"
+        : "snapshot"
+      : "variant_sales",
     stats: {
       lowestAsk: product.min_price ?? (asks.length ? Math.min(...asks) : null),
       highestAsk: product.max_price ?? (asks.length ? Math.max(...asks) : null),
       averageAsk: product.avg_price ?? null,
       askCount,
-      high24h: salesHistory ? last1Bounds.high : null,
-      low24h: salesHistory ? last1Bounds.low : null,
-      high30d: salesHistory
+      high24h: trustedHistory ? last1Bounds.high : null,
+      low24h: trustedHistory ? last1Bounds.low : null,
+      high30d: trustedHistory
         ? last30Bounds.high
         : (stats?.last_90_days_range_high ?? null),
-      high30dSource: salesHistory
-        ? "sales"
-        : stats?.last_90_days_range_high != null
+      high30dSource: trustedHistory
+        ? historySource === "sales"
+          ? "sales"
+          : "snapshot"
+        : rangeSource === "stockx_stats"
           ? "stockx_stats"
           : null,
-      low30d: salesHistory
+      low30d: trustedHistory
         ? last30Bounds.low
         : (stats?.last_90_days_range_low ?? null),
-      low30dSource: salesHistory
-        ? "sales"
+      low30dSource: trustedHistory
+        ? historySource === "sales"
+          ? "sales"
+          : "snapshot"
         : stats?.last_90_days_range_low != null
           ? "stockx_stats"
           : null,
-      avgSale30d: salesHistory
+      avgSale30d: trustedHistory
         ? last30.length
           ? last30.reduce((total, point) => total + point.price, 0) /
             last30.length
           : null
         : (stats?.last_90_days_average_price ?? null),
-      avgSale30dSource: salesHistory
-        ? "sales"
+      avgSale30dSource: trustedHistory
+        ? historySource === "sales"
+          ? "sales"
+          : "snapshot"
         : stats?.last_90_days_average_price != null
           ? "stockx_stats"
           : null,
-      lastSale: salesHistory ? latestHistory : null,
+      lastSale: trustedHistory ? latestHistory : null,
       sales15d,
       sales30d,
       sales60d,
@@ -174,6 +202,7 @@ export function mapProductToMarket(input: {
     sizes,
     chartSeries,
     historySource,
+    upstreamStatus: input.upstreamStatus ?? "live",
     source: "stockx",
     provider: "kicksdb",
     fetchedAt: input.fetchedAt ?? new Date().toISOString(),
@@ -184,6 +213,7 @@ export function mapProductToMarket(input: {
 export function emptyMarket(catalog: CatalogIdentity): SneakerMarket {
   return {
     id: catalog.styleCode,
+    slug: catalog.slug,
     name: catalog.name,
     brand: catalog.brand,
     year: catalog.year,
@@ -229,6 +259,7 @@ export function emptyMarket(catalog: CatalogIdentity): SneakerMarket {
     sizes: [],
     chartSeries: [],
     historySource: "bootstrap",
+    upstreamStatus: "offline",
     source: "stockx",
     provider: "kicksdb",
     fetchedAt: new Date().toISOString(),

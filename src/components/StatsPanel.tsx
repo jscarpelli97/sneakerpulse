@@ -37,8 +37,11 @@ function StatList({ title, rows }: { title: string; rows: StatRow[] }) {
   );
 }
 
-function sourceNote(source: "sales" | "stockx_stats" | null) {
+function sourceNote(
+  source: "sales" | "stockx_stats" | "snapshot" | null,
+) {
   if (source === "sales") return "From StockX daily sales";
+  if (source === "snapshot") return "From ask snapshots";
   if (source === "stockx_stats") return "From StockX 90d stats";
   return undefined;
 }
@@ -85,7 +88,9 @@ export function StatsPanel({ market }: { market: SneakerMarket }) {
       note:
         market.historySource === "sales"
           ? "From StockX daily sales"
-          : "Unavailable without sales history",
+          : market.historySource === "snapshot"
+            ? "Latest ask snapshot"
+            : "Unavailable without sales or snapshots",
     },
   ];
 

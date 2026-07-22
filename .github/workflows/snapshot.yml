@@ -1,0 +1,35 @@
+name: Daily market snapshots
+
+on:
+  schedule:
+    # 13:00 UTC daily
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Append lowest-ask snapshots
+        env:
+          KICKSDB_API_KEY: ${{ secrets.KICKSDB_API_KEY }}
+        run: npm run snapshot
+      - name: Commit snapshot updates
+        run: |
+          git config user.name "sneakerpulse-bot"
+          git config user.email "sneakerpulse-bot@users.noreply.github.com"
+          git add src/data/snapshots
+          if git diff --staged --quiet; then
+            echo "No snapshot changes"
+            exit 0
+          fi
+          git commit -m "chore: daily lowest-ask snapshots"
+          git push

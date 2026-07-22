@@ -16,7 +16,8 @@ type Metric = {
 };
 
 export function PriceOverview({ market }: { market: SneakerMarket }) {
-  const salesHistory = market.historySource === "sales";
+  const trustedHistory =
+    market.historySource === "sales" || market.historySource === "snapshot";
   const today = formatChange(
     market.changeToday?.absolute,
     market.changeToday?.percent,
@@ -27,9 +28,12 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
   );
 
   const volumeIsWeekly = market.volume24hSource === "weekly_orders";
+  const volumeIsSnapshot = market.volume24hSource === "snapshot";
   const volumeDef = volumeIsWeekly
     ? METRIC_DEFINITIONS.volumeWeekly
-    : METRIC_DEFINITIONS.volume24h;
+    : volumeIsSnapshot
+      ? METRIC_DEFINITIONS.volumeSnapshot
+      : METRIC_DEFINITIONS.volume24h;
   const volumeValue =
     market.volume24h.notional != null
       ? formatMoney(market.volume24h.notional)
@@ -41,7 +45,16 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
       ? `${formatNumber(market.volume24h.pairs)} pairs`
       : volumeIsWeekly
         ? "StockX weekly orders"
-        : undefined;
+        : volumeIsSnapshot
+          ? "From ask snapshots"
+          : undefined;
+
+  const changeSubNote =
+    market.historySource === "sales"
+      ? null
+      : market.historySource === "snapshot"
+        ? "From ask snapshots"
+        : "Needs sales or ask snapshots";
 
   const metrics: Metric[] = [
     {
@@ -53,14 +66,14 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
     {
       label: METRIC_DEFINITIONS.changeToday.label,
       value: today.percent,
-      sub: salesHistory ? today.absolute : "Needs StockX sales history",
+      sub: trustedHistory && today.absolute !== "—" ? today.absolute : (changeSubNote ?? undefined),
       tone: changeClass(market.changeToday?.percent),
       definition: METRIC_DEFINITIONS.changeToday.definition,
     },
     {
       label: METRIC_DEFINITIONS.change30d.label,
       value: month.percent,
-      sub: salesHistory ? month.absolute : "Needs StockX sales history",
+      sub: trustedHistory && month.absolute !== "—" ? month.absolute : (changeSubNote ?? undefined),
       tone: changeClass(market.change30d?.percent),
       definition: METRIC_DEFINITIONS.change30d.definition,
     },
@@ -97,10 +110,16 @@ export function PriceOverview({ market }: { market: SneakerMarket }) {
           ) : null}
         </article>
       ))}
-      {!salesHistory ? (
+      {market.historySource === "bootstrap" ? (
         <p className="text-xs text-ink/45 sm:col-span-2 xl:col-span-4">
-          Today/30d change stay blank until StockX daily sales history is
-          available. Live lowest ask and size asks are still from StockX.
+          Today/30d change stay blank until StockX daily sales or enough lowest-ask
+          snapshots exist. Live lowest ask and size asks are still from StockX.
+        </p>
+      ) : null}
+      {market.historySource === "snapshot" ? (
+        <p className="text-xs text-ink/45 sm:col-span-2 xl:col-span-4">
+          Change metrics use accumulated lowest-ask snapshots (free-tier path).
+          Official sales history replaces this when KicksDB sales/daily is available.
         </p>
       ) : null}
     </section>

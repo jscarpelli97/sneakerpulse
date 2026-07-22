@@ -14,19 +14,34 @@ Next.js market app for tracked sneakers with live StockX data.
 
 - `/` — catalog index of tracked sneakers
 - `/sneakers/[slug]` — full market page for one SKU
+- `/compare` — side-by-side live quotes
+- `/alerts` — browser-stored price alerts + evaluate API
+- `/api/market/[slug]` — JSON market payload
+- `/api/catalog` — catalog quotes
+- `/api/status` — upstream/cache health
+- `/api/alerts/evaluate` — check alert thresholds
 
-Add sneakers in `src/catalog/sneakers.ts`. Optional bootstrap history lives in `src/data/history/[slug].json`.
+Add sneakers in `src/catalog/sneakers.ts`.
+
+## History priority
+
+1. StockX daily sales (when KicksDB `sales/daily` is available)
+2. Accumulated lowest-ask snapshots (`src/data/snapshots/[slug].json`)
+3. Bootstrap series (`src/data/history/[slug].json`) — illustrative only
+
+**Current price** is always live StockX lowest ask. Today/30d % change comes from sales or snapshots — never bootstrap.
 
 ## Metric definitions
 
 | Metric | Meaning |
 | --- | --- |
 | Current price | Live StockX **lowest ask** across sizes |
-| Today’s / 30-day change | From StockX **daily average sales** only (blank on bootstrap history) |
-| Weekly volume | StockX weekly orders when sales history is unavailable |
-| 24h volume | Latest daily sales pairs + notional when sales history exists |
-| Chart bootstrap | Illustrative series anchored to StockX range/avg stats — **not** official sales |
+| Today’s / 30-day change | From StockX **daily average sales** or **ask snapshots** (blank on bootstrap) |
+| Weekly volume | StockX weekly orders when sales/snapshots are unavailable |
+| Snapshot volume | Estimated from latest ask-snapshot point |
+| Chart bootstrap | Illustrative — **not** official sales |
 | Chart sales | Official StockX daily average sale series |
+| Chart snapshots | Periodic lowest-ask snapshots from the daily job |
 
 Canonical definitions live in `src/lib/market/definitions.ts`.
 
@@ -56,4 +71,11 @@ Open [http://localhost:3000](http://localhost:3000).
 - `npm run build` — create a production build
 - `npm run start` — serve the production build
 - `npm run lint` — run ESLint
+- `npm run typecheck` — TypeScript check
 - `npm test` — run Vitest unit tests
+- `npm run snapshot` — append today’s lowest ask for each catalog SKU
+
+## CI / snapshots
+
+- `.github/workflows/ci.yml` — typecheck, test, lint, build
+- `.github/workflows/snapshot.yml` — daily ask snapshots (needs `KICKSDB_API_KEY` secret)

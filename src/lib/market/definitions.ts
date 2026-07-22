@@ -11,17 +11,22 @@ export const METRIC_DEFINITIONS = {
   changeToday: {
     label: "Today’s change",
     definition:
-      "Change in StockX daily average sale price vs the prior day. Requires sales history.",
+      "Change vs the prior day from StockX daily average sales, or from accumulated lowest-ask snapshots when sales history is unavailable. Never derived from bootstrap.",
   },
   change30d: {
     label: "30-day change",
     definition:
-      "Change in StockX daily average sale price vs ~30 days earlier. Requires sales history.",
+      "Change vs ~30 days earlier from StockX daily average sales, or from ask snapshots when sales history is unavailable. Never derived from bootstrap.",
   },
   volume24h: {
     label: "24h volume",
     definition:
       "Pairs and notional from StockX daily sales for the latest day. Requires sales history.",
+  },
+  volumeSnapshot: {
+    label: "Snapshot volume",
+    definition:
+      "Estimated pairs/notional from the latest lowest-ask snapshot point when sales history is unavailable.",
   },
   volumeWeekly: {
     label: "Weekly volume",
@@ -36,12 +41,12 @@ export const METRIC_DEFINITIONS = {
   high30d: {
     label: "30d high",
     definition:
-      "Highest daily average sale in the last ~30 days, or StockX last-90-day range high as fallback.",
+      "Highest daily average sale or ask snapshot in the last ~30 days, or StockX last-90-day range high as fallback.",
   },
   low30d: {
     label: "30d low",
     definition:
-      "Lowest daily average sale in the last ~30 days, or StockX last-90-day range low as fallback.",
+      "Lowest daily average sale or ask snapshot in the last ~30 days, or StockX last-90-day range low as fallback.",
   },
   chartBootstrap: {
     label: "Chart (bootstrap)",
@@ -51,6 +56,11 @@ export const METRIC_DEFINITIONS = {
   chartSales: {
     label: "Chart (sales)",
     definition: "StockX daily average sale prices from KicksDB sales history.",
+  },
+  chartSnapshot: {
+    label: "Chart (snapshots)",
+    definition:
+      "Periodic StockX lowest-ask snapshots accumulated by the daily snapshot job. Prefer sales history when available.",
   },
 } as const;
 

@@ -8,7 +8,9 @@ export type VolumeMetric = {
   notional: number | null;
 };
 
-export type HistorySource = "sales" | "bootstrap";
+export type HistorySource = "sales" | "snapshot" | "bootstrap";
+
+export type UpstreamStatus = "live" | "degraded" | "cached" | "offline";
 
 export type SizeAsk = {
   size: string;
@@ -25,18 +27,14 @@ export type MarketStats = {
   highestAsk: number | null;
   averageAsk: number | null;
   askCount: number;
-  /** Present only when derived from StockX daily sales history. */
   high24h: number | null;
-  /** Present only when derived from StockX daily sales history. */
   low24h: number | null;
-  /** 30d sale high when sales history exists; otherwise StockX 90d range high. */
   high30d: number | null;
-  high30dSource: "sales" | "stockx_stats" | null;
-  /** 30d sale low when sales history exists; otherwise StockX 90d range low. */
+  high30dSource: "sales" | "stockx_stats" | "snapshot" | null;
   low30d: number | null;
-  low30dSource: "sales" | "stockx_stats" | null;
+  low30dSource: "sales" | "stockx_stats" | "snapshot" | null;
   avgSale30d: number | null;
-  avgSale30dSource: "sales" | "stockx_stats" | null;
+  avgSale30dSource: "sales" | "stockx_stats" | "snapshot" | null;
   lastSale: number | null;
   sales15d: number;
   sales30d: number;
@@ -58,6 +56,7 @@ export type ChartPoint = {
 
 export type SneakerMarket = {
   id: string;
+  slug: string;
   name: string;
   brand: string;
   year: number;
@@ -67,31 +66,19 @@ export type SneakerMarket = {
   retail: number;
   image: string;
   stockxUrl: string;
-  /** Headline price = live StockX lowest ask across sizes. */
   price: number;
   currency: "USD";
-  /**
-   * Day-over-day change from StockX daily average sale prices.
-   * Null when sales history is unavailable (bootstrap chart does not drive this).
-   */
   changeToday: ChangeMetric;
-  /**
-   * ~30-day change from StockX daily average sale prices.
-   * Null when sales history is unavailable.
-   */
   change30d: ChangeMetric;
-  /**
-   * When sales history exists: last 1 day of sale notional/pairs.
-   * Otherwise: weekly order count only (pairs), notional null.
-   */
   volume24h: VolumeMetric;
-  volume24hSource: "sales" | "weekly_orders";
+  volume24hSource: "sales" | "weekly_orders" | "snapshot";
   volume30d: VolumeMetric;
-  volume30dSource: "sales" | "variant_sales";
+  volume30dSource: "sales" | "variant_sales" | "snapshot";
   stats: MarketStats;
   sizes: SizeAsk[];
   chartSeries: ChartPoint[];
   historySource: HistorySource;
+  upstreamStatus: UpstreamStatus;
   source: "stockx";
   provider: "kicksdb";
   fetchedAt: string;
@@ -100,4 +87,19 @@ export type SneakerMarket = {
 
 export type MarketLoadResult =
   | { ok: true; data: SneakerMarket }
-  | { ok: false; error: string; code: "missing_key" | "upstream" | "not_found" };
+  | {
+      ok: false;
+      error: string;
+      code: "missing_key" | "upstream" | "not_found";
+    };
+
+export type PriceAlert = {
+  id: string;
+  slug: string;
+  ticker: string;
+  name: string;
+  direction: "above" | "below";
+  threshold: number;
+  webhookUrl?: string;
+  createdAt: string;
+};

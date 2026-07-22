@@ -7,8 +7,10 @@ import {
   sumSales,
   upsertToday,
 } from "@/lib/market/metrics";
+import { resolveLocalHistory } from "@/lib/market/historyStore";
 
 const catalog = {
+  slug: "air-jordan-1-retro-high-dark-mocha",
   year: 2020,
   ticker: "J1-DMCH",
   styleCode: "555088-105",
@@ -37,9 +39,6 @@ function productFixture(): KicksProduct {
       last_90_days_average_price: 264,
       annual_high: 644,
       annual_low: 172,
-      annual_average_price: 294,
-      annual_volatility: 0.2,
-      annual_sales_count: 2000,
     },
     variants: [
       {
@@ -134,10 +133,12 @@ describe("mapProductToMarket", () => {
       historySource: "bootstrap",
     });
 
+    expect(market.slug).toBe(catalog.slug);
     expect(market.price).toBe(202);
     expect(market.sizes.map((size) => size.size)).toEqual(["9", "10"]);
     expect(market.stats.askCount).toBe(7);
     expect(market.stats.sales30d).toBe(8);
+    expect(market.upstreamStatus).toBe("live");
   });
 
   it("does not derive % change from bootstrap history", () => {
@@ -178,5 +179,31 @@ describe("mapProductToMarket", () => {
     expect(market.volume24h).toEqual({ pairs: 4, notional: 880 });
     expect(market.volume24hSource).toBe("sales");
     expect(market.stats.high30dSource).toBe("sales");
+  });
+
+  it("derives % change from snapshot history", () => {
+    const market = mapProductToMarket({
+      product: productFixture(),
+      catalog,
+      chartSeries: [
+        { date: "2026-01-01", price: 190, orders: 1 },
+        { date: "2026-01-02", price: 209, orders: 1 },
+      ],
+      historySource: "snapshot",
+      upstreamStatus: "cached",
+    });
+
+    expect(market.changeToday).toEqual({ absolute: 19, percent: 10 });
+    expect(market.volume24hSource).toBe("snapshot");
+    expect(market.stats.high30dSource).toBe("snapshot");
+    expect(market.upstreamStatus).toBe("cached");
+  });
+});
+
+describe("resolveLocalHistory", () => {
+  it("prefers multi-point snapshots over bootstrap for Dark Mocha", () => {
+    const local = resolveLocalHistory("air-jordan-1-retro-high-dark-mocha");
+    expect(local.source).toBe("snapshot");
+    expect(local.series.length).toBeGreaterThanOrEqual(2);
   });
 });

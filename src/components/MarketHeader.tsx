@@ -1,14 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { SneakerMarket } from "@/lib/market/types";
 import { changeClass, formatChange, formatMoney } from "@/lib/format";
 
 export function MarketHeader({
   market,
   live,
+  statusBadge,
 }: {
   market: SneakerMarket;
   live: boolean;
+  statusBadge?: ReactNode;
 }) {
   const today = formatChange(
     market.changeToday?.absolute,
@@ -26,18 +29,26 @@ export function MarketHeader({
             SneakerPulse
           </Link>
           <span className="hidden text-ink/25 sm:inline">/</span>
-          <Link
-            href="/"
-            className="hidden text-sm font-medium text-ink-soft hover:text-ink sm:inline"
-          >
-            Markets
-          </Link>
+          <nav className="hidden items-center gap-3 text-sm font-medium text-ink-soft sm:flex">
+            <Link href="/" className="hover:text-ink">
+              Markets
+            </Link>
+            <Link href="/compare" className="hover:text-ink">
+              Compare
+            </Link>
+            <Link href="/alerts" className="hover:text-ink">
+              Alerts
+            </Link>
+          </nav>
         </div>
-        <div className="hidden items-center gap-2 rounded-sm border border-ink/10 bg-paper px-3 py-1.5 text-xs font-medium text-ink-soft sm:flex">
-          <span
-            className={`h-1.5 w-1.5 ${live ? "animate-blink bg-up" : "bg-ink/30"}`}
-          />
-          {live ? "StockX live via KicksDB" : "Waiting for StockX credentials"}
+        <div className="flex items-center gap-2">
+          {statusBadge}
+          <div className="hidden items-center gap-2 rounded-sm border border-ink/10 bg-paper px-3 py-1.5 text-xs font-medium text-ink-soft sm:flex">
+            <span
+              className={`h-1.5 w-1.5 ${live ? "animate-blink bg-up" : "bg-ink/30"}`}
+            />
+            {live ? "StockX live via KicksDB" : "Waiting for StockX credentials"}
+          </div>
         </div>
         <div className="text-right text-xs text-ink-soft md:text-sm">
           <span className="font-semibold text-ink">{market.ticker}</span>

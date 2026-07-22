@@ -15,11 +15,30 @@ export function SiteHeader({
           SneakerPulse
         </Link>
         {subtitle ? (
-          <p className="text-sm text-ink-soft">{subtitle}</p>
+          <div className="flex items-center gap-4">
+            <p className="text-sm text-ink-soft">{subtitle}</p>
+            <nav className="hidden items-center gap-4 text-sm font-medium text-ink-soft sm:flex">
+              <Link href="/" className="hover:text-ink">
+                Markets
+              </Link>
+              <Link href="/compare" className="hover:text-ink">
+                Compare
+              </Link>
+              <Link href="/alerts" className="hover:text-ink">
+                Alerts
+              </Link>
+            </nav>
+          </div>
         ) : (
           <nav className="flex items-center gap-4 text-sm font-medium text-ink-soft">
             <Link href="/" className="hover:text-ink">
               Markets
+            </Link>
+            <Link href="/compare" className="hover:text-ink">
+              Compare
+            </Link>
+            <Link href="/alerts" className="hover:text-ink">
+              Alerts
             </Link>
           </nav>
         )}

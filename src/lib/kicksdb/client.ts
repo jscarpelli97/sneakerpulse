@@ -1,3 +1,6 @@
+import { cacheGet, cacheSet } from "@/lib/kicksdb/cache";
+import { logFetch } from "@/lib/kicksdb/logger";
+
 export type KicksStatistics = {
   annual_high?: number;
   annual_low?: number;
@@ -44,10 +47,16 @@ export type KicksDailySale = {
 };
 
 export type KicksFetchResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; status: number; body: string };
+  | { ok: true; data: T; cacheHit: boolean; status: number }
+  | {
+      ok: false;
+      status: number;
+      body: string;
+      cacheHit: boolean;
+    };
 
 const KICKS_BASE = "https://api.kicks.dev/v3";
+const DEFAULT_TTL_MS = 5 * 60 * 1000;
 
 export function getKicksApiKey() {
   return process.env.KICKSDB_API_KEY?.trim() || "";
@@ -56,21 +65,63 @@ export function getKicksApiKey() {
 export async function kicksFetch<T>(
   path: string,
   apiKey: string,
+  options?: { ttlMs?: number; bypassCache?: boolean },
 ): Promise<KicksFetchResult<T>> {
-  const response = await fetch(`${KICKS_BASE}${path}`, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    next: { revalidate: 300 },
-  });
+  const ttlMs = options?.ttlMs ?? DEFAULT_TTL_MS;
+  const cacheKey = `kicks:${path}`;
 
-  const body = await response.text();
-  if (!response.ok) {
-    return { ok: false, status: response.status, body };
+  if (!options?.bypassCache) {
+    const cached = cacheGet<T>(cacheKey);
+    if (cached != null) {
+      logFetch({ path, status: 200, cacheHit: true, ms: 0 });
+      return { ok: true, data: cached, cacheHit: true, status: 200 };
+    }
   }
 
-  return { ok: true, data: JSON.parse(body) as T };
+  const started = Date.now();
+  try {
+    const response = await fetch(`${KICKS_BASE}${path}`, {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      next: { revalidate: Math.round(ttlMs / 1000) },
+    });
+
+    const body = await response.text();
+    const ms = Date.now() - started;
+
+    if (!response.ok) {
+      logFetch({
+        path,
+        status: response.status,
+        cacheHit: false,
+        ms,
+        detail: body.slice(0, 180),
+      });
+      return {
+        ok: false,
+        status: response.status,
+        body,
+        cacheHit: false,
+      };
+    }
+
+    const data = JSON.parse(body) as T;
+    cacheSet(cacheKey, data, ttlMs);
+    logFetch({ path, status: response.status, cacheHit: false, ms });
+    return { ok: true, data, cacheHit: false, status: response.status };
+  } catch (error) {
+    const ms = Date.now() - started;
+    const detail = error instanceof Error ? error.message : "unknown error";
+    logFetch({ path, status: "error", cacheHit: false, ms, detail });
+    return {
+      ok: false,
+      status: 0,
+      body: detail,
+      cacheHit: false,
+    };
+  }
 }
 
 export async function fetchStockxProduct(slug: string, apiKey: string) {
@@ -91,5 +142,6 @@ export async function fetchStockxDailySales(productId: string, apiKey: string) {
   return kicksFetch<{ data: KicksDailySale[] | null }>(
     `/stockx/products/${productId}/sales/daily?market=US`,
     apiKey,
+    { ttlMs: 15 * 60 * 1000 },
   );
 }
