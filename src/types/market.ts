@@ -62,6 +62,29 @@ export type ChartPoint = {
   orders: number;
 };
 
+/** Active eBay listing comps (Browse API) — optional / feature-flagged. */
+export type EbayListingComp = {
+  itemId: string;
+  title: string;
+  price: number | null;
+  currency: string;
+  condition: string | null;
+  url: string;
+  shipping: number | null;
+};
+
+export type EbayComps = {
+  status: "live" | "link_only" | "error";
+  query: string;
+  searchUrl: string;
+  lowestAsk: number | null;
+  medianAsk: number | null;
+  listingCount: number;
+  listings: EbayListingComp[];
+  fetchedAt: string | null;
+  error?: string;
+};
+
 export type SneakerMarket = {
   id: string;
   slug: string;
@@ -92,6 +115,8 @@ export type SneakerMarket = {
   provider: "kicksdb";
   fetchedAt: string;
   historyAvailable: boolean;
+  /** Present only when NEXT_PUBLIC_EBAY_PUBLIC is on. */
+  ebay?: EbayComps | null;
 };
 
 export type MarketLoadResult =
