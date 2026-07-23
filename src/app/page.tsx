@@ -68,6 +68,7 @@ export default async function MarketsIndexPage() {
       />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
+          {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
           {featured ? (
             <MarketsHero
               featured={featured}
@@ -103,7 +104,6 @@ export default async function MarketsIndexPage() {
                   : `View all ${access.total}`,
             }}
           />
-          {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
           <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
           <MarketsQuickLook look={quickLook} />
           {publicPlus ? <PlusInterest variant="panel" source="home" /> : null}
