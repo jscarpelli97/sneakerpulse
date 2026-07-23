@@ -5,7 +5,6 @@ import { SiteJsonLd } from "@/components/seo/JsonLd";
 import {
   BRAND_BLURB,
   BRAND_NAME,
-  BRAND_NAME_WITH_FORMER,
   BRAND_TAGLINE,
   siteUrl,
 } from "@/lib/brand";
@@ -37,7 +36,7 @@ export const metadata: Metadata = {
     default: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
     template: `%s | ${BRAND_NAME}`,
   },
-  description: `${BRAND_BLURB} Formerly SneakerPulse.`,
+  description: BRAND_BLURB,
   applicationName: BRAND_NAME,
   alternates: {
     canonical: "/",
@@ -58,7 +57,7 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: `${BRAND_NAME_WITH_FORMER} — sneakers & streetwear asks`,
+    title: `${BRAND_NAME} — sneakers & streetwear asks`,
     description: BRAND_TAGLINE,
     siteName: BRAND_NAME,
     type: "website",

@@ -2,9 +2,7 @@ import Link from "next/link";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import {
   BRAND_BLURB,
-  BRAND_FORMER_NAME,
   BRAND_NAME,
-  BRAND_NAME_WITH_FORMER,
   CONTACT_EMAIL,
   FOUNDER_NAME,
   FOUNDER_ROLE,
@@ -15,7 +13,7 @@ import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 
 export const metadata = {
   title: "About",
-  description: `${BRAND_NAME_WITH_FORMER} is an independent sneaker markets terminal built by ${FOUNDER_NAME}. How we source asks and calculate ${INDEX_NAME}.`,
+  description: `${BRAND_NAME} is an independent sneaker markets terminal built by ${FOUNDER_NAME}. How we source asks and calculate ${INDEX_NAME}.`,
   alternates: { canonical: "/about" },
 };
 
@@ -35,9 +33,6 @@ export default function AboutPage() {
             <h1 className="font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight sm:text-5xl">
               {BRAND_NAME}
             </h1>
-            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-              Formerly {BRAND_FORMER_NAME}
-            </p>
             <p className="text-lg leading-relaxed text-dash-muted">
               {BRAND_BLURB}
             </p>
@@ -120,7 +115,7 @@ export default function AboutPage() {
               Disclaimer
             </h2>
             <p className="text-dash-muted leading-relaxed">
-              {BRAND_NAME_WITH_FORMER} is an independent project. It is{" "}
+              {BRAND_NAME} is an independent project. It is{" "}
               <strong className="text-dash-text">
                 not affiliated with, endorsed by, or partnered with StockX
               </strong>

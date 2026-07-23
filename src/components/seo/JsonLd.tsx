@@ -1,7 +1,6 @@
 import {
   BRAND_BLURB,
   BRAND_NAME,
-  BRAND_NAME_WITH_FORMER,
   CONTACT_EMAIL,
   FOUNDER_NAME,
   siteUrl,
@@ -17,7 +16,6 @@ export function SiteJsonLd() {
         "@type": "Organization",
         "@id": `${base}/#organization`,
         name: BRAND_NAME,
-        alternateName: [BRAND_NAME_WITH_FORMER, "SneakerPulse"],
         url: base,
         email: CONTACT_EMAIL,
         description: BRAND_BLURB,
