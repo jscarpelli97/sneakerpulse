@@ -57,17 +57,26 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: `${BRAND_NAME} — sneaker asks`,
-    description: BRAND_TAGLINE,
+    title: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+    description: BRAND_BLURB,
     siteName: BRAND_NAME,
     type: "website",
     url: base,
     locale: "en_US",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: `${BRAND_NAME} logo`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
     description: BRAND_BLURB,
+    images: ["/og.png"],
   },
   robots: {
     index: true,

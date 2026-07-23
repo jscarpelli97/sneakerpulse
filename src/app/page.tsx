@@ -30,6 +30,9 @@ export const metadata = {
   title: "Sneaker ask board",
   description: BRAND_TAGLINE,
   alternates: { canonical: "/" },
+  openGraph: {
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "SPI Markets" }],
+  },
 };
 export default async function MarketsIndexPage() {
   const [{ isPlus, publicPlus }, allQuotes, marketIndex] = await Promise.all([

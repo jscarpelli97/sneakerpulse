@@ -87,13 +87,13 @@ export function MarketsHero({
                 {featured.brand} · {featured.styleCode} · {featured.year}
               </p>
             </div>
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-dash-border bg-dash-panel transition-transform duration-300 hover:scale-[1.03] sm:h-24 sm:w-24">
+            <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-dash-accent/40 bg-dash-panel sm:h-24 sm:w-24">
               <Image
-                src={featured.fallbackImage}
-                alt={featured.name}
-                fill
-                className="object-contain p-2"
-                sizes="96px"
+                src="/icons/icon-512.png"
+                alt={`${BRAND_NAME} logo`}
+                width={96}
+                height={96}
+                className="h-full w-full object-contain p-2"
                 priority
               />
             </div>
