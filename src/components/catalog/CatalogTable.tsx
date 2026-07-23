@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
+import { SneakerThumb } from "@/components/catalog/SneakerThumb";
 import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
 import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
@@ -65,15 +67,12 @@ export function CatalogTable({
                     href={`/sneakers/${row.slug}`}
                     className="flex items-center gap-3"
                   >
-                    <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-elevated transition-transform group-hover:scale-[1.03]">
-                      <Image
-                        src={row.fallbackImage}
-                        alt={row.name}
-                        fill
-                        className="object-contain p-1"
-                        sizes="44px"
-                      />
-                    </span>
+                    <SneakerThumb
+                      src={row.fallbackImage}
+                      alt={row.name}
+                      size={44}
+                      previewWidth={280}
+                    />
                     <span>
                       <span className="block font-semibold text-dash-text transition-colors group-hover:text-white">
                         {row.name}
@@ -118,7 +117,11 @@ export function CatalogTable({
                             : "bg-dash-faint"
                       }`}
                     />
-                    {row.live ? "Live" : row.price != null ? "Snapshot" : "Offline"}
+                    {row.live
+                      ? "Live"
+                      : row.price != null
+                        ? "Snapshot"
+                        : "Offline"}
                   </span>
                 </td>
               </tr>
