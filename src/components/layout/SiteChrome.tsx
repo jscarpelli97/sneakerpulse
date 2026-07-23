@@ -1,30 +1,35 @@
 import Link from "next/link";
 import { SiteSearch } from "@/components/layout/SiteSearch";
 import { PlusInterest } from "@/components/plus/PlusInterest";
-import { BRAND_NAME, FOUNDER_NAME } from "@/lib/brand";
+import { BRAND_NAME, FOUNDER_NAME, PRODUCT_FOOTNOTE } from "@/lib/brand";
 import { plusPublicEnabled } from "@/lib/plus/config";
 
-const NAV_BASE = [
-  { href: "/", label: "Home" },
-  { href: "/markets", label: "All markets" },
+/** Primary chrome — what people do every day. */
+const NAV_PRIMARY = [
+  { href: "/markets", label: "Markets" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/wardrobe", label: "Wardrobe" },
-  { href: "/compare", label: "Compare" },
-  { href: "/alerts", label: "Alerts" },
   { href: "/about", label: "About" },
 ] as const;
 
-function navItems() {
-  if (!plusPublicEnabled()) return [...NAV_BASE];
+/** Tools + index — footer / secondary. */
+const NAV_TOOLS = [
+  { href: "/compare", label: "Compare" },
+  { href: "/alerts", label: "Alerts" },
+  { href: "/spi", label: "SPI index" },
+] as const;
+
+function primaryNav() {
+  if (!plusPublicEnabled()) return [...NAV_PRIMARY];
   return [
-    ...NAV_BASE.slice(0, 6),
+    ...NAV_PRIMARY.slice(0, 3),
     { href: "/plus", label: "Plus" },
-    ...NAV_BASE.slice(6),
+    ...NAV_PRIMARY.slice(3),
   ];
 }
 
 export function SiteHeader({ subtitle }: { subtitle?: string }) {
-  const nav = navItems();
+  const nav = primaryNav();
 
   return (
     <header className="sticky top-0 z-40 border-b border-dash-border/90 bg-dash-surface/90 backdrop-blur-xl">
@@ -78,7 +83,7 @@ export function SiteFooter() {
               {BRAND_NAME}
             </span>
             <p className="text-xs leading-relaxed text-dash-faint">
-              {`Built by ${FOUNDER_NAME}. Soft launch: price board, Sneaker Price Index (SPI), portfolio — with more in store. Not affiliated with StockX.`}
+              {`Built by ${FOUNDER_NAME}. ${PRODUCT_FOOTNOTE} Not affiliated with StockX.`}
             </p>
             <p className="text-xs text-dash-faint">
               <Link href="/about#contact" className="text-dash-accent hover:underline">
@@ -93,7 +98,7 @@ export function SiteFooter() {
           </div>
           <nav className="flex flex-wrap gap-x-4 gap-y-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
             <Link href="/markets" className="hover:text-dash-text">
-              All markets
+              Markets
             </Link>
             <Link href="/portfolio" className="hover:text-dash-text">
               Portfolio
@@ -101,15 +106,11 @@ export function SiteFooter() {
             <Link href="/wardrobe" className="hover:text-dash-text">
               Wardrobe
             </Link>
-            <Link href="/compare" className="hover:text-dash-text">
-              Compare
-            </Link>
-            <Link href="/alerts" className="hover:text-dash-text">
-              Alerts
-            </Link>
-            <Link href="/spi" className="hover:text-dash-text">
-              SPI index
-            </Link>
+            {NAV_TOOLS.map((item) => (
+              <Link key={item.href} href={item.href} className="hover:text-dash-text">
+                {item.label}
+              </Link>
+            ))}
             <Link href="/about" className="hover:text-dash-text">
               About
             </Link>

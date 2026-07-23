@@ -13,12 +13,9 @@ const FEED_LABEL: Record<UpstreamStatus, string> = {
 };
 
 const NAV = [
-  { href: "/", label: "Home" },
-  { href: "/markets", label: "All markets" },
+  { href: "/markets", label: "Markets" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/wardrobe", label: "Wardrobe" },
-  { href: "/compare", label: "Compare" },
-  { href: "/alerts", label: "Alerts" },
   { href: "/about", label: "About" },
 ] as const;
 

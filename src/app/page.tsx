@@ -2,6 +2,7 @@ import { CatalogTable } from "@/components/catalog/CatalogTable";
 import { MarketsHero } from "@/components/catalog/MarketsHero";
 import { MarketsQuickLook } from "@/components/catalog/MarketsQuickLook";
 import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
+import { ProductDoors } from "@/components/catalog/ProductDoors";
 import { MarketIndexCard } from "@/components/market/MarketIndexCard";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { PlusInterest } from "@/components/plus/PlusInterest";
@@ -69,6 +70,7 @@ export default async function MarketsIndexPage() {
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
           {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
+          <ProductDoors />
           {featured ? (
             <MarketsHero
               featured={featured}

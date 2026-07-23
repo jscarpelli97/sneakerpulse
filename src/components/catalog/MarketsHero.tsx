@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_HERO_LINE, BRAND_NAME } from "@/lib/brand";
 import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
 export function MarketsHero({
@@ -54,24 +54,32 @@ export function MarketsHero({
             {BRAND_NAME}
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
-            Three things on day one: a price board, the Sneaker Price Index, and
-            a portfolio. More in store beyond that — this is the start.
+            {BRAND_HERO_LINE}
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
-              href={`/sneakers/${featured.slug}`}
+              href="/markets"
               className="inline-flex items-center rounded-xl bg-dash-accent px-5 py-3 text-sm font-semibold text-dash-bg shadow-[0_8px_24px_rgba(212,160,23,0.22)] hover:brightness-110 active:translate-y-px"
             >
-              Open {featured.ticker}
+              Browse markets
             </Link>
             <Link
-              href="/markets"
+              href="/portfolio"
               className="inline-flex items-center rounded-xl border border-dash-border bg-dash-elevated px-5 py-3 text-sm font-semibold text-dash-text hover:border-dash-muted hover:bg-dash-panel"
             >
-              Browse all {totalMarkets}
+              Open portfolio
+            </Link>
+            <Link
+              href="/wardrobe"
+              className="inline-flex items-center rounded-xl border border-dash-border px-5 py-3 text-sm font-semibold text-dash-muted hover:border-dash-muted hover:bg-dash-elevated hover:text-dash-text"
+            >
+              Wardrobe
             </Link>
           </div>
+          <p className="mt-3 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
+            {totalMarkets} pairs on the board · deal check on every market page
+          </p>
         </div>
 
         <aside className="rounded-2xl border border-dash-border bg-dash-elevated/85 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-5">

@@ -8,14 +8,15 @@ import {
   FOUNDER_ROLE,
   INDEX_LONG_NAME,
   INDEX_NAME,
-  SOFT_LAUNCH_MORE,
-  SOFT_LAUNCH_PILLARS,
+  PRODUCT_FOOTNOTE,
+  PRODUCT_PILLARS,
+  PRODUCT_TOOLS,
 } from "@/lib/brand";
 import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 
 export const metadata = {
   title: "About",
-  description: `${BRAND_NAME} — current sneaker prices, the ${INDEX_NAME} (Sneaker Price Index), and a portfolio built by ${FOUNDER_NAME}.`,
+  description: `${BRAND_NAME} — ${BRAND_BLURB}`,
   alternates: { canonical: "/about" },
 };
 
@@ -51,9 +52,10 @@ export default function AboutPage() {
             <p className="text-dash-muted leading-relaxed">
               Built for people who wear and collect sneakers. I got tired of
               bouncing between StockX tabs, screenshots, and spreadsheets just
-              to see prices and what I own. Soft launch is three things: a price
-              board, the {INDEX_LONG_NAME} ({INDEX_NAME}), and a portfolio —
-              clearer numbers, less noise.
+              to see prices and what I own. {BRAND_NAME} started with the{" "}
+              {INDEX_LONG_NAME} ({INDEX_NAME}) — then grew into a board,
+              portfolio, wardrobe, and the tools around them. Clearer numbers,
+              less noise.
             </p>
             <p className="text-sm text-dash-faint">
               Questions or ideas?{" "}
@@ -64,22 +66,49 @@ export default function AboutPage() {
             </p>
           </section>
 
-          <section className="dash-card space-y-3 p-5 sm:p-6">
+          <section className="dash-card space-y-4 p-5 sm:p-6">
             <h2 className="font-[family-name:var(--font-syne)] text-xl font-bold">
-              Soft launch — three things
+              What’s on the site
             </h2>
             <ol className="list-decimal space-y-3 pl-5 text-dash-muted">
-              {SOFT_LAUNCH_PILLARS.map((pillar) => (
+              {PRODUCT_PILLARS.map((pillar) => (
                 <li key={pillar.title}>
-                  <strong className="text-dash-text">{pillar.title}</strong>
+                  <Link
+                    href={pillar.href}
+                    className="font-semibold text-dash-text hover:text-dash-accent"
+                  >
+                    {pillar.title}
+                  </Link>
                   {" — "}
                   {pillar.body}
                 </li>
               ))}
             </ol>
+            <div className="border-t border-dash-border pt-4">
+              <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
+                Tools on the board
+              </p>
+              <ul className="mt-3 space-y-2 text-dash-muted">
+                {PRODUCT_TOOLS.map((tool) => (
+                  <li key={tool.title}>
+                    {"href" in tool && tool.href ? (
+                      <Link
+                        href={tool.href}
+                        className="font-semibold text-dash-text hover:text-dash-accent"
+                      >
+                        {tool.title}
+                      </Link>
+                    ) : (
+                      <strong className="text-dash-text">{tool.title}</strong>
+                    )}
+                    {" — "}
+                    {tool.body}
+                  </li>
+                ))}
+              </ul>
+            </div>
             <p className="text-sm text-dash-faint leading-relaxed">
-              {SOFT_LAUNCH_MORE} Pair pages, compare, and browser alerts are on
-              the site today too.
+              {PRODUCT_FOOTNOTE}
             </p>
           </section>
 
@@ -133,33 +162,13 @@ export default function AboutPage() {
               </strong>
               . Market data can be delayed, incomplete, or snapshot-based. Not
               financial advice — do your own research before buying or selling
-              sneakers.
+              sneakers. Deal check is a relative read vs this board, not a
+              recommendation to buy or sell.
             </p>
             <p className="text-xs text-dash-faint">
               © {year} {FOUNDER_NAME} / {BRAND_NAME}
             </p>
           </section>
-
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/"
-              className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
-            >
-              Back to markets
-            </Link>
-            <Link
-              href="/markets"
-              className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold text-dash-text hover:bg-dash-elevated"
-            >
-              Browse all pairs
-            </Link>
-            <Link
-              href="/spi"
-              className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold text-dash-text hover:bg-dash-elevated"
-            >
-              {INDEX_NAME} methodology
-            </Link>
-          </div>
         </div>
       </main>
       <SiteFooter />

@@ -11,33 +11,74 @@ export const INDEX_EXPANSION = "Sneaker Price Index";
 export const INDEX_LONG_NAME = "Sneaker Price Index";
 
 /** Short line for titles, OG, PWA — plain English. */
-export const BRAND_TAGLINE = "See what sneakers are selling for";
+export const BRAND_TAGLINE =
+  "Sneaker prices, the index, and your collection — in one place";
 
 /**
- * Soft-launch pillars (rule of three) + room for more later.
  * One-paragraph description for SEO, About, and LinkedIn.
+ * Covers what’s live today without underselling.
  */
 export const BRAND_BLURB =
-  "SPI Markets: see what popular sneakers are selling for, check the Sneaker Price Index (SPI), and track what you own — with more on the way. Independent and honest about the data.";
+  "SPI Markets tracks what sneakers are selling for, how expensive the market is vs retail (SPI), and what you own or wear — with deal checks, compares, and alerts on top. Independent and honest about the data.";
 
-/** The three soft-launch pillars — keep marketing in threes. */
-export const SOFT_LAUNCH_PILLARS = [
-  {
-    title: "Price board",
-    body: "Current prices for popular sneakers in one place.",
-  },
+/** Hero supporting line under the brand name. */
+export const BRAND_HERO_LINE =
+  "Start with the index. Dig into the board. Track what you own and wear.";
+
+/**
+ * Core product doors — thesis, workbench, yours.
+ * Keep marketing focused on these four.
+ */
+export const PRODUCT_PILLARS = [
   {
     title: "Sneaker Price Index",
-    body: "SPI — how expensive the market is vs retail (100 ≈ retail).",
+    href: "/spi",
+    body: "Is the market cheap or rich vs retail? 100 ≈ retail.",
+  },
+  {
+    title: "Price board",
+    href: "/markets",
+    body: "Top sellers, size asks, charts, and buy/stretch/pass on every pair.",
   },
   {
     title: "Portfolio",
-    body: "Track what you own and what you paid vs today’s prices.",
+    href: "/portfolio",
+    body: "Cost basis vs live asks — synced across your devices.",
+  },
+  {
+    title: "Wardrobe",
+    href: "/wardrobe",
+    body: "Closet + fits from real outfit ideas.",
   },
 ] as const;
 
-export const SOFT_LAUNCH_MORE =
-  "Compare, alerts, wardrobe, and more are already in progress — this is just the start.";
+/** Helper tools — secondary nav / About. */
+export const PRODUCT_TOOLS = [
+  {
+    title: "Deal check",
+    body: "Size + price → buy, stretch, or pass vs that size’s ask.",
+  },
+  {
+    title: "Compare",
+    href: "/compare",
+    body: "Stack two pairs on ask, retail, premium, and flow.",
+  },
+  {
+    title: "Alerts",
+    href: "/alerts",
+    body: "Browser alerts when an ask crosses your level.",
+  },
+] as const;
+
+/** @deprecated Prefer PRODUCT_PILLARS — kept for any stale imports. */
+export const SOFT_LAUNCH_PILLARS = PRODUCT_PILLARS;
+
+/** Short line for footers / About closing. */
+export const PRODUCT_FOOTNOTE =
+  "SPI · markets · portfolio · wardrobe — with deal checks, compare, and alerts on the board.";
+
+/** @deprecated Prefer PRODUCT_FOOTNOTE */
+export const SOFT_LAUNCH_MORE = PRODUCT_FOOTNOTE;
 
 /** Public site origin — prefer custom domain in production. */
 export function siteUrl() {
