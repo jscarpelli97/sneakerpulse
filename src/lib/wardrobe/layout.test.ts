@@ -124,10 +124,10 @@ describe("fit export math", () => {
     const box = pieceBox(
       { id: "1", closetItemId: "c", x: 36, y: 20, scale: 1, zIndex: 1 },
       1080,
-      1350,
+      1080,
     );
     expect(box.boxW).toBeCloseTo(1080 * 0.34, 5);
     expect(box.x).toBeCloseTo(1080 * 0.36, 5);
-    expect(box.y).toBeCloseTo(1350 * 0.2, 5);
+    expect(box.y).toBeCloseTo(1080 * 0.2, 5);
   });
 });

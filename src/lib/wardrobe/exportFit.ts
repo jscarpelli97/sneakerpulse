@@ -5,9 +5,9 @@ import {
 import { isDataImageUrl } from "@/lib/wardrobe/image";
 import type { ClosetItem, FitBoard, FitPiece } from "@/lib/wardrobe/types";
 
-/** Instagram feed portrait (4:5). */
+/** Instagram square (1:1) — matches the fit board. */
 export const FIT_EXPORT_WIDTH = 1080;
-export const FIT_EXPORT_HEIGHT = 1350;
+export const FIT_EXPORT_HEIGHT = 1080;
 
 export type FitExportOptions = {
   width?: number;

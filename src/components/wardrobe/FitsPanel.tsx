@@ -426,7 +426,7 @@ function FitEditor({
         </div>
         <p className="text-[11px] text-dash-faint">
           Remove backgrounds → transparent PNGs, then Auto arrange stacks them
-          centered on the board. Export = white Instagram JPEG.
+          centered on the square board. Export = white 1:1 Instagram JPEG.
         </p>
         {missing ? (
           <p className="text-xs text-dash-down">
@@ -671,7 +671,7 @@ function FitCanvas({
       </div>
       <div
         ref={ref}
-        className={`relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-dash-border sm:aspect-[3/4] ${
+        className={`relative aspect-square w-full overflow-hidden rounded-2xl border border-dash-border ${
           whitePreview ? "bg-white" : "bg-[#0d1018]"
         }`}
         style={
