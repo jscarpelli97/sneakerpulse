@@ -1,7 +1,4 @@
-import {
-  FIT_BASE_SIZE,
-  centerToOrigin,
-} from "@/lib/wardrobe/layout";
+import { FIT_BASE_SIZE } from "@/lib/wardrobe/layout";
 import { isDataImageUrl } from "@/lib/wardrobe/image";
 import type { ClosetItem, FitBoard, FitPiece } from "@/lib/wardrobe/types";
 
@@ -23,38 +20,60 @@ function sameOriginImageSrc(src: string) {
   if (isDataImageUrl(src) || src.startsWith("/") || src.startsWith("blob:")) {
     return src;
   }
-  // Route remote StockX (etc.) through Next image optimizer so canvas isn't tainted.
-  return `/_next/image?url=${encodeURIComponent(src)}&w=640&q=85`;
+  return `/_next/image?url=${encodeURIComponent(src)}&w=640&q=90`;
 }
 
-function loadImage(src: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.decoding = "async";
-    // data/blob/same-origin don't need crossOrigin; remote via /_next/image is same-origin.
-    if (!isDataImageUrl(src) && !src.startsWith("/") && !src.startsWith("blob:")) {
-      img.crossOrigin = "anonymous";
-    }
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`Could not load image`));
-    img.src = sameOriginImageSrc(src);
-  });
+/**
+ * Load an image into an ImageBitmap without tainting the canvas.
+ * Prefers fetch→blob so StockX via /_next/image and data URLs both work.
+ */
+async function loadBitmap(src: string): Promise<ImageBitmap> {
+  const url = sameOriginImageSrc(src);
+
+  if (isDataImageUrl(url) || url.startsWith("blob:")) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Could not read cutout");
+    const blob = await res.blob();
+    return createImageBitmap(blob);
+  }
+
+  // Same-origin Next image optimizer (or absolute same-origin path).
+  const res = await fetch(url, { credentials: "same-origin" });
+  if (!res.ok) {
+    // Last resort: HTMLImageElement (may fail CORS for raw remote).
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = () => reject(new Error("Image load failed"));
+      el.src = url;
+    });
+    return createImageBitmap(img);
+  }
+  const blob = await res.blob();
+  return createImageBitmap(blob);
 }
 
 function drawContain(
   ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
+  img: ImageBitmap | HTMLImageElement,
   boxX: number,
   boxY: number,
   boxW: number,
   boxH: number,
 ) {
-  const scale = Math.min(boxW / img.naturalWidth, boxH / img.naturalHeight);
-  const w = img.naturalWidth * scale;
-  const h = img.naturalHeight * scale;
+  const iw = "naturalWidth" in img ? img.naturalWidth : img.width;
+  const ih = "naturalHeight" in img ? img.naturalHeight : img.height;
+  if (!iw || !ih) return;
+  const scale = Math.min(boxW / iw, boxH / ih);
+  const w = iw * scale;
+  const h = ih * scale;
   const x = boxX + (boxW - w) / 2;
   const y = boxY + (boxH - h) / 2;
   ctx.drawImage(img, x, y, w, h);
+}
+
+function pieceSource(item: ClosetItem) {
+  return item.cutoutImage || item.image || "";
 }
 
 /**
@@ -90,14 +109,26 @@ export async function exportFitJpeg(
   ctx.fillRect(0, 0, width, height);
 
   let drawn = 0;
+  const errors: string[] = [];
+
   for (const piece of pieces) {
-        const item = closetById.get(piece.closetItemId);
-    if (!item?.image && !item?.cutoutImage) continue;
+    const item = closetById.get(piece.closetItemId);
+    if (!item) {
+      errors.push("missing closet item");
+      continue;
+    }
+    const src = pieceSource(item);
+    if (!src) {
+      errors.push(`${item.name}: no image`);
+      continue;
+    }
+
+    let bitmap: ImageBitmap | null = null;
     try {
-      const img = await loadImage(item.cutoutImage || item.image);
+      bitmap = await loadBitmap(src);
       const sizePct = FIT_BASE_SIZE * piece.scale;
       const boxW = (sizePct / 100) * width;
-      const boxH = (sizePct / 100) * width; // square cell like the UI
+      const boxH = (sizePct / 100) * height;
       const x = (piece.x / 100) * width;
       const y = (piece.y / 100) * height;
       const rotation = ((piece.rotation ?? 0) * Math.PI) / 180;
@@ -105,18 +136,24 @@ export async function exportFitJpeg(
       ctx.save();
       ctx.translate(x + boxW / 2, y + boxH / 2);
       ctx.rotate(rotation);
-      drawContain(ctx, img, -boxW / 2, -boxH / 2, boxW, boxH);
+      drawContain(ctx, bitmap, -boxW / 2, -boxH / 2, boxW, boxH);
       ctx.restore();
       drawn += 1;
-    } catch {
-      // Skip broken/tainted images; keep exporting the rest.
+    } catch (err) {
+      errors.push(
+        `${item.name}: ${err instanceof Error ? err.message : "load failed"}`,
+      );
+    } finally {
+      bitmap?.close();
     }
   }
 
   if (drawn === 0) {
     return {
       ok: false,
-      error: "Couldn't load piece images for export — try again in a moment",
+      error:
+        errors[0] ??
+        "Couldn't load piece images for export — try Remove backgrounds first",
     };
   }
 
@@ -127,10 +164,34 @@ export async function exportFitJpeg(
     ctx.fillText(board.name.trim().slice(0, 48), width / 2, height - 36);
   }
 
-  const blob = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob((b) => resolve(b), "image/jpeg", quality),
-  );
-  if (!blob) return { ok: false, error: "Could not encode JPEG" };
+  let blob: Blob | null = null;
+  try {
+    blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob((b) => resolve(b), "image/jpeg", quality);
+    });
+  } catch (err) {
+    return {
+      ok: false,
+      error:
+        err instanceof Error
+          ? err.message
+          : "Could not encode JPEG (canvas may be blocked)",
+    };
+  }
+
+  if (!blob) {
+    // Fallback via data URL → blob (works when toBlob is flaky).
+    try {
+      const dataUrl = canvas.toDataURL("image/jpeg", quality);
+      const res = await fetch(dataUrl);
+      blob = await res.blob();
+    } catch {
+      return {
+        ok: false,
+        error: "Could not encode JPEG — try Remove backgrounds, then export again",
+      };
+    }
+  }
 
   const safe = board.name
     .trim()
@@ -147,8 +208,15 @@ export function downloadBlob(blob: Blob, filename: string) {
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
+  a.rel = "noopener";
+  a.style.display = "none";
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  // Keep the object URL alive briefly so the browser can start the download.
+  window.setTimeout(() => {
+    URL.revokeObjectURL(url);
+    a.remove();
+  }, 1500);
 }
 
 /** @internal helper for tests — placement math shared with export. */
@@ -168,5 +236,3 @@ export function pieceBox(
     rotation: piece.rotation ?? 0,
   };
 }
-
-export { centerToOrigin };

@@ -209,7 +209,9 @@ function FitEditor({
     const needs = boardItemIds
       .map((id) => byId.get(id))
       .filter((item): item is ClosetItem => Boolean(item && !item.cutoutImage));
-    if (needs.length === 0) return { updated: 0, failed: 0 };
+    if (needs.length === 0) {
+      return { updated: 0, failed: 0, closet };
+    }
 
     setCuttingOut(true);
     let updated = 0;
@@ -228,11 +230,17 @@ function FitEditor({
         );
       }
       if (updated > 0) onClosetChange(nextCloset);
-      return { updated, failed };
+      return { updated, failed, closet: nextCloset };
     } finally {
       setCuttingOut(false);
     }
   }, [boardItemIds, byId, closet, onClosetChange]);
+
+  function mapFromCloset(list: ClosetItem[]) {
+    const map = new Map<string, ClosetItem>();
+    for (const item of list) map.set(item.id, item);
+    return map;
+  }
 
   // Auto-cutout when pieces are added to the board.
   useEffect(() => {
@@ -278,18 +286,20 @@ function FitEditor({
     patchPiece(id, { zIndex: maxZ + 1 });
   }
 
-  async function autoArrange() {
+  /** Factory layout: equal locked slots, no overlap, even margins. */
+  async function resetToFactory() {
     if (board.pieces.length === 0) {
       onFlash("Add pieces first");
       return;
     }
     const cut = await ensureCutouts();
-    onChange({ pieces: autoOrganizePieces(board.pieces, byId) });
-    onFlash(
-      cut.updated
-        ? `Cut out ${cut.updated} · locked in equal slots`
-        : "Locked in equal slots — no overlap",
-    );
+    const map = mapFromCloset(cut.closet);
+    onChange({ pieces: autoOrganizePieces(board.pieces, map) });
+    onFlash("Reset to factory layout");
+  }
+
+  async function autoArrange() {
+    await resetToFactory();
   }
 
   function alignCenter() {
@@ -327,8 +337,9 @@ function FitEditor({
     if (exporting) return;
     setExporting(true);
     try {
-      await ensureCutouts();
-      const result = await exportFitJpeg(board, byId, {
+      const cut = await ensureCutouts();
+      const map = mapFromCloset(cut.closet);
+      const result = await exportFitJpeg(board, map, {
         background: "#ffffff",
         showName: true,
       });
@@ -337,7 +348,9 @@ function FitEditor({
         return;
       }
       downloadBlob(result.blob, result.filename);
-      onFlash("Downloaded white JPEG — ready for Instagram");
+      onFlash("Downloaded — check your downloads folder");
+    } catch (err) {
+      onFlash(err instanceof Error ? err.message : "Export failed");
     } finally {
       setExporting(false);
     }
@@ -383,6 +396,14 @@ function FitEditor({
           </button>
           <button
             type="button"
+            onClick={() => void resetToFactory()}
+            disabled={board.pieces.length === 0}
+            className="rounded-xl border border-dash-border px-3 py-2 text-sm font-semibold text-dash-text hover:border-dash-muted disabled:opacity-40"
+          >
+            Reset to factory
+          </button>
+          <button
+            type="button"
             onClick={() => void autoArrange()}
             className="rounded-xl border border-dash-border px-3 py-2 text-sm font-semibold text-dash-text hover:border-dash-muted"
           >
@@ -425,8 +446,8 @@ function FitEditor({
           </button>
         </div>
         <p className="text-[11px] text-dash-faint">
-          Remove backgrounds → transparent PNGs. Auto arrange locks pieces into
-          equal slots (no overlap, even margins). Export = white 1:1 JPEG.
+          Reset to factory restores the locked equal-slot layout. Export uses
+          cutouts on a white 1:1 JPEG.
         </p>
         {missing ? (
           <p className="text-xs text-dash-down">
