@@ -43,7 +43,7 @@ export const PRODUCT_PILLARS = [
   {
     title: "Portfolio",
     href: "/portfolio",
-    body: "Cost basis vs live asks — synced across your devices.",
+    body: "What you own — marked to your size’s ask, not the all-size low.",
   },
   {
     title: "Wardrobe",

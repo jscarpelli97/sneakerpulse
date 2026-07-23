@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { fetchMarket } from "@/api/market";
 import { plusPublicEnabled } from "@/lib/plus/config";
+import { resolveHoldingAsk } from "@/lib/portfolio/resolveHoldingAsk";
 import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
 import {
@@ -15,6 +17,7 @@ import {
   saveHoldings,
   updateUsername,
 } from "@/lib/portfolio/vault";
+import type { SizeAsk } from "@/types/market";
 import { changeClass, formatMaybeMoney, formatMoney } from "@/utils/format";
 import { useCatalogSearch } from "@/hooks/useCatalogSearch";
 import type { FormEvent } from "react";
@@ -30,10 +33,20 @@ type CatalogRow = {
   retail: number;
 };
 
+type MarketAskCache = {
+  sizes: SizeAsk[];
+  price: number | null;
+  statsLowestAsk: number | null;
+};
+
 export function PortfolioApp() {
   const [session, setSession] = useState<PortfolioSession | null>(null);
   const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [catalog, setCatalog] = useState<CatalogRow[]>([]);
+  const [marketBySlug, setMarketBySlug] = useState<
+    Record<string, MarketAskCache>
+  >({});
+  const [asksBusy, setAsksBusy] = useState(false);
   const [mode, setMode] = useState<"login" | "register">("register");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -94,28 +107,86 @@ export function PortfolioApp() {
     if (mode === "register") setUsername(usernameFromEmail(email));
   }, [email, mode, username]);
 
-  const priceBySlug = useMemo(() => {
+  const holdingSlugs = useMemo(() => {
+    return [...new Set(holdings.map((row) => row.slug).filter(Boolean))];
+  }, [holdings]);
+
+  useEffect(() => {
+    if (holdingSlugs.length === 0) {
+      setMarketBySlug({});
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      setAsksBusy(true);
+      const next: Record<string, MarketAskCache> = {};
+      await Promise.all(
+        holdingSlugs.map(async (slug) => {
+          try {
+            const result = await fetchMarket(slug);
+            if (!result.ok) return;
+            next[slug] = {
+              sizes: result.data.sizes ?? [],
+              price: result.data.price > 0 ? result.data.price : null,
+              statsLowestAsk:
+                result.data.stats.lowestAsk != null &&
+                result.data.stats.lowestAsk > 0
+                  ? result.data.stats.lowestAsk
+                  : null,
+            };
+          } catch {
+            /* ignore per-slug failures */
+          }
+        }),
+      );
+      if (!cancelled) {
+        setMarketBySlug(next);
+        setAsksBusy(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [holdingSlugs]);
+
+  const catalogPriceBySlug = useMemo(() => {
     const map = new Map<string, number | null>();
     for (const row of catalog) map.set(row.slug, row.price);
     return map;
   }, [catalog]);
 
+  const askForHolding = useCallback(
+    (row: PortfolioHolding) => {
+      const market = marketBySlug[row.slug];
+      return resolveHoldingAsk({
+        holdingSize: row.size,
+        sizes: market?.sizes,
+        catalogPrice: catalogPriceBySlug.get(row.slug) ?? null,
+        marketPrice: market?.price ?? null,
+        statsLowestAsk: market?.statsLowestAsk ?? null,
+      });
+    },
+    [marketBySlug, catalogPriceBySlug],
+  );
+
   const totals = useMemo(() => {
     let market = 0;
     let costBasis = 0;
     let pairs = 0;
+    let sizedLines = 0;
     for (const row of holdings) {
-      const ask = priceBySlug.get(row.slug) ?? null;
+      const { ask, source } = askForHolding(row);
       const q = row.quantity || 0;
       pairs += q;
       if (ask != null) market += ask * q;
+      if (source === "size") sizedLines += 1;
       if (row.costBasisUsd != null) costBasis += row.costBasisUsd * q;
     }
     const pnl = costBasis > 0 ? market - costBasis : null;
     const pnlPct =
       costBasis > 0 && pnl != null ? (pnl / costBasis) * 100 : null;
-    return { market, costBasis, pairs, pnl, pnlPct };
-  }, [holdings, priceBySlug]);
+    return { market, costBasis, pairs, pnl, pnlPct, sizedLines };
+  }, [holdings, askForHolding]);
 
   const { hits: liveHits, busy: searchBusy } = useCatalogSearch(query, true);
 
@@ -249,7 +320,9 @@ export function PortfolioApp() {
           </h1>
           <p className="text-sm leading-relaxed text-dash-muted sm:text-base">
             Create a simple account (email + password) to log pairs you own,
-            mark cost basis in USD, and see market asks vs what you paid. Log in
+            mark cost basis in USD, and see{" "}
+            <span className="text-dash-text">your size’s ask</span> vs what you
+            paid — not StockX’s all-size low. Log in
             on any device to pick up where you left off.
           </p>
         </header>
@@ -399,7 +472,11 @@ export function PortfolioApp() {
           {
             label: "Market (asks)",
             value: formatMoney(totals.market),
-            sub: "Lowest ask × qty",
+            sub: asksBusy
+              ? "Loading size asks…"
+              : totals.sizedLines > 0
+                ? `Size asks · ${totals.sizedLines}/${holdings.length} lines`
+                : "Size ask × qty when available",
           },
           {
             label: "Cost basis",
@@ -553,7 +630,7 @@ export function PortfolioApp() {
         ) : (
           <ul className="divide-y divide-dash-border">
             {holdings.map((row) => {
-              const ask = priceBySlug.get(row.slug) ?? null;
+              const { ask, source } = askForHolding(row);
               const lineMarket = ask != null ? ask * row.quantity : null;
               const lineCost =
                 row.costBasisUsd != null
@@ -596,6 +673,15 @@ export function PortfolioApp() {
                   <div className="text-right">
                     <p className="font-[family-name:var(--font-plex-mono)] text-sm tabular-nums text-dash-text">
                       {formatMaybeMoney(lineMarket)}
+                    </p>
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-dash-faint">
+                      {source === "size"
+                        ? `Size ${row.size} ask`
+                        : source === "fallback"
+                          ? "All-size fallback"
+                          : asksBusy
+                            ? "Loading…"
+                            : "No ask"}
                     </p>
                     <p
                       className={`text-xs tabular-nums ${changeClass(linePnl)}`}
