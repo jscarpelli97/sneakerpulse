@@ -1,0 +1,293 @@
+{
+  "note": "Curated Wardrobe starter picks. Add sneakers by slug (resolved from top-sellers.json) or full clothing rows with image URLs. Tell the agent: add these to starter-closet.",
+  "updatedAt": "2026-07-23",
+  "count": 26,
+  "items": [
+    {
+      "id": "starter-air-jordan-1-retro-high-dark-mocha",
+      "kind": "sneaker",
+      "slug": "air-jordan-1-retro-high-dark-mocha",
+      "name": "Jordan 1 Retro High Dark Mocha",
+      "brand": "Jordan",
+      "styleCode": "555088-105",
+      "image": "https://images.stockx.com/images/Air-Jordan-1-Retro-High-Dark-Mocha-2-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-air-jordan-4-retro-toro-bravo-2026",
+      "kind": "sneaker",
+      "slug": "air-jordan-4-retro-toro-bravo-2026",
+      "name": "Jordan 4 Retro Toro Bravo (2026)",
+      "brand": "Jordan",
+      "styleCode": "FQ8138-600",
+      "image": "https://images.stockx.com/images/Air-Jordan-4-Retro-Toro-Bravo-2026-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784232937",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-air-jordan-4-retro-black-cat-2025",
+      "kind": "sneaker",
+      "slug": "air-jordan-4-retro-black-cat-2025",
+      "name": "Jordan 4 Retro Black Cat (2025)",
+      "brand": "Jordan",
+      "styleCode": "FV5029-010",
+      "image": "https://images.stockx.com/images/Air-Jordan-4-Retro-Black-Cat-2025-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784238263",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-air-jordan-4-retro-white-cement-2025",
+      "kind": "sneaker",
+      "slug": "air-jordan-4-retro-white-cement-2025",
+      "name": "Jordan 4 Retro White Cement (2025)",
+      "brand": "Jordan",
+      "styleCode": "FV5029-100",
+      "image": "https://images.stockx.com/images/Air-Jordan-4-Retro-White-Cement-2025-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784246197",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-air-jordan-1-retro-low-og-sp-travis-scott-sail-tropical-pink-ps",
+      "kind": "sneaker",
+      "slug": "air-jordan-1-retro-low-og-sp-travis-scott-sail-tropical-pink-ps",
+      "name": "Jordan 1 Retro Low OG SP Travis Scott Sail Tropical Pink (PS)",
+      "brand": "Jordan",
+      "styleCode": "IQ7605-101",
+      "image": "https://images.stockx.com/images/Air-Jordan-1-Retro-Low-OG-SP-Travis-Scott-Sail-Tropical-Pink-PS-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1780712747",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-air-jordan-11-retro-gamma-blue-2025",
+      "kind": "sneaker",
+      "slug": "air-jordan-11-retro-gamma-blue-2025",
+      "name": "Jordan 11 Retro Gamma Blue (2025)",
+      "brand": "Jordan",
+      "styleCode": "CT8012-047",
+      "image": "https://images.stockx.com/images/Air-Jordan-11-Retro-Gamma-Blue-2025-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1783949626",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-air-jordan-5-retro-wolf-grey-2026",
+      "kind": "sneaker",
+      "slug": "air-jordan-5-retro-wolf-grey-2026",
+      "name": "Jordan 5 Retro Wolf Grey (2026)",
+      "brand": "Jordan",
+      "styleCode": "DD0587-002",
+      "image": "https://images.stockx.com/images/Air-Jordan-5-Retro-Wolf-Grey-2026-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784237219",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-air-jordan-3-retro-true-blue-2026",
+      "kind": "sneaker",
+      "slug": "air-jordan-3-retro-true-blue-2026",
+      "name": "Jordan 3 Retro True Blue (2026)",
+      "brand": "Jordan",
+      "styleCode": "IF4396-104",
+      "image": "https://images.stockx.com/images/Air-Jordan-3-Retro-True-Blue-2026-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784214931",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-nike-air-force-1-low-white-07",
+      "kind": "sneaker",
+      "slug": "nike-air-force-1-low-white-07",
+      "name": "Nike Air Force 1 Low '07 White",
+      "brand": "Nike",
+      "styleCode": "315122-111/CW2288-111",
+      "image": "https://images.stockx.com/images/Nike-Air-Force-1-Low-White-07_V2-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-nike-dunk-low-grey-fog",
+      "kind": "sneaker",
+      "slug": "nike-dunk-low-grey-fog",
+      "name": "Nike Dunk Low Grey Fog",
+      "brand": "Nike",
+      "styleCode": "DD1391-103",
+      "image": "https://images.stockx.com/images/Nike-Dunk-Low-Grey-Fog-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-adidas-samba-og-cloud-white-core-black",
+      "kind": "sneaker",
+      "slug": "adidas-samba-og-cloud-white-core-black",
+      "name": "adidas Samba OG Cloud White Core Black",
+      "brand": "adidas",
+      "styleCode": "BZ0057/B75806",
+      "image": "https://images.stockx.com/images/adidas-Samba-OG-Cloud-White-Core-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-adidas-yeezy-boost-350-v2-onyx",
+      "kind": "sneaker",
+      "slug": "adidas-yeezy-boost-350-v2-onyx",
+      "name": "adidas Yeezy Boost 350 V2 Onyx",
+      "brand": "adidas",
+      "styleCode": "HQ4540",
+      "image": "https://images.stockx.com/images/adidas-Yeezy-Boost-350-V2-Onyx-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-nike-zoom-vomero-5-photon-dust-metallic-silver-w",
+      "kind": "sneaker",
+      "slug": "nike-zoom-vomero-5-photon-dust-metallic-silver-w",
+      "name": "Nike Zoom Vomero 5 Photon Dust Metallic Silver (Women's)",
+      "brand": "Nike",
+      "styleCode": "FD0884-025",
+      "image": "https://images.stockx.com/images/Nike-Zoom-Vomero-5-Photon-Dust-Metallic-Silver-W-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-nike-kobe-6-protro-reverse-grinch",
+      "kind": "sneaker",
+      "slug": "nike-kobe-6-protro-reverse-grinch",
+      "name": "Nike Kobe 6 Protro Reverse Grinch",
+      "brand": "Nike",
+      "styleCode": "FV4921-600",
+      "image": "https://images.stockx.com/images/Nike-Kobe-6-Protro-Reverse-Grinch-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784573272",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-air-jordan-1-retro-high-og-chicago-reimagined-lost-and-found",
+      "kind": "sneaker",
+      "slug": "air-jordan-1-retro-high-og-chicago-reimagined-lost-and-found",
+      "name": "Jordan 1 Retro High OG Chicago Lost and Found",
+      "brand": "Jordan",
+      "styleCode": "DZ5485-612",
+      "image": "https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Chicago-Reimagined-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-air-jordan-12-retro-flu-game-2025",
+      "kind": "sneaker",
+      "slug": "air-jordan-12-retro-flu-game-2025",
+      "name": "Jordan 12 Retro Flu Game (2025)",
+      "brand": "Jordan",
+      "styleCode": "CT8013-002",
+      "image": "https://images.stockx.com/images/Air-Jordan-12-Retro-Flu-Game-2025-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784229416",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-salomon-xt-6-white-lunar-rock",
+      "kind": "sneaker",
+      "slug": "salomon-xt-6-white-lunar-rock",
+      "name": "Salomon XT-6 White Lunar Rock",
+      "brand": "Salomon",
+      "styleCode": "L41252900",
+      "image": "https://images.stockx.com/images/Salomon-XT-6-ADV-White-Lunar-Rock-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-adidas-yeezy-slide-black-onyx",
+      "kind": "sneaker",
+      "slug": "adidas-yeezy-slide-black-onyx",
+      "name": "adidas Yeezy Slide Onyx",
+      "brand": "adidas",
+      "styleCode": "HQ6448",
+      "image": "https://images.stockx.com/images/adidas-Yeezy-Slide-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-nike-dunk-low-white-black-2021-w",
+      "kind": "sneaker",
+      "slug": "nike-dunk-low-white-black-2021-w",
+      "name": "Nike Dunk Low Retro White Black Panda (Women's)",
+      "brand": "Nike",
+      "styleCode": "DD1503-101",
+      "image": "https://images.stockx.com/images/Nike-Dunk-Low-White-Black-2021-W-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-adidas-samba-og-cream-white-sand-strata-womens",
+      "kind": "sneaker",
+      "slug": "adidas-samba-og-cream-white-sand-strata-womens",
+      "name": "adidas Samba OG Cream White Sand Strata (Women's)",
+      "brand": "adidas",
+      "styleCode": "ID0478",
+      "image": "https://images.stockx.com/images/adidas-Samba-OG-Cream-White-Sand-Strata-Womens-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784652740",
+      "source": "offline-catalog",
+      "notes": "Starter pick \u2014 from SPI board snapshot"
+    },
+    {
+      "id": "starter-tee-white",
+      "kind": "top",
+      "name": "Heavyweight blank tee",
+      "brand": "Basics",
+      "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=720&q=80",
+      "notes": "Placeholder \u2014 replace with your piece",
+      "slug": null,
+      "styleCode": "\u2014",
+      "source": "placeholder"
+    },
+    {
+      "id": "starter-hoodie-black",
+      "kind": "top",
+      "name": "Fleece hoodie",
+      "brand": "Basics",
+      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=720&q=80",
+      "notes": "Placeholder \u2014 replace with your piece",
+      "slug": null,
+      "styleCode": "\u2014",
+      "source": "placeholder"
+    },
+    {
+      "id": "starter-denim",
+      "kind": "bottom",
+      "name": "Relaxed denim",
+      "brand": "Basics",
+      "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=720&q=80",
+      "notes": "Placeholder \u2014 replace with your piece",
+      "slug": null,
+      "styleCode": "\u2014",
+      "source": "placeholder"
+    },
+    {
+      "id": "starter-cargo",
+      "kind": "bottom",
+      "name": "Cargo pant",
+      "brand": "Basics",
+      "image": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=720&q=80",
+      "notes": "Placeholder \u2014 replace with your piece",
+      "slug": null,
+      "styleCode": "\u2014",
+      "source": "placeholder"
+    },
+    {
+      "id": "starter-bomber",
+      "kind": "outerwear",
+      "name": "Bomber jacket",
+      "brand": "Basics",
+      "image": "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=720&q=80",
+      "notes": "Placeholder \u2014 replace with your piece",
+      "slug": null,
+      "styleCode": "\u2014",
+      "source": "placeholder"
+    },
+    {
+      "id": "starter-cap",
+      "kind": "accessory",
+      "name": "Dad hat",
+      "brand": "Basics",
+      "image": "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=720&q=80",
+      "notes": "Placeholder \u2014 replace with your piece",
+      "slug": null,
+      "styleCode": "\u2014",
+      "source": "placeholder"
+    }
+  ]
+}

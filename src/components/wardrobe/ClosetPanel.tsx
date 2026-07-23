@@ -6,6 +6,10 @@ import { ClosetImage } from "@/components/wardrobe/ClosetImage";
 import { useCatalogSearch } from "@/hooks/useCatalogSearch";
 import { fileToClosetDataUrl } from "@/lib/wardrobe/image";
 import {
+  getStarterClosetItems,
+  type StarterClosetRow,
+} from "@/lib/wardrobe/starterCloset";
+import {
   CLOSET_KIND_LABELS,
   CLOSET_KINDS,
   type ClosetItem,
@@ -23,6 +27,8 @@ type CatalogRow = {
   fallbackImage: string;
 };
 
+type AddTab = "picks" | "catalog" | "custom" | "portfolio";
+
 export function ClosetPanel({
   closet,
   holdings,
@@ -36,7 +42,7 @@ export function ClosetPanel({
   onChange: (next: ClosetItem[]) => void;
   onFlash: (message: string) => void;
 }) {
-  const [tab, setTab] = useState<"catalog" | "custom" | "portfolio">("catalog");
+  const [tab, setTab] = useState<AddTab>("picks");
   const [query, setQuery] = useState("");
   const [selectedSlug, setSelectedSlug] = useState("");
   const [size, setSize] = useState("10");
@@ -47,6 +53,9 @@ export function ClosetPanel({
   const [busy, setBusy] = useState(false);
   const [filterKind, setFilterKind] = useState<ClosetItemKind | "all">("all");
   const [closetQuery, setClosetQuery] = useState("");
+  const [picksFilter, setPicksFilter] = useState<ClosetItemKind | "all">("all");
+
+  const starterPicks = useMemo(() => getStarterClosetItems(), []);
 
   const { hits: liveHits, busy: searchBusy } = useCatalogSearch(
     query,
@@ -213,9 +222,77 @@ export function ClosetPanel({
     onFlash(`Imported ${additions.length} from Portfolio`);
   }
 
+  function alreadyInCloset(pick: StarterClosetRow) {
+    if (pick.slug) {
+      return closet.some((c) => c.slug === pick.slug && c.kind === pick.kind);
+    }
+    return closet.some(
+      (c) =>
+        c.kind === pick.kind &&
+        c.name.toLowerCase() === pick.name.toLowerCase() &&
+        c.brand.toLowerCase() === pick.brand.toLowerCase(),
+    );
+  }
+
+  function addStarterPick(pick: StarterClosetRow) {
+    if (alreadyInCloset(pick)) {
+      onFlash("Already in your closet");
+      return;
+    }
+    const item: ClosetItem = {
+      id: newClosetItemId(),
+      kind: pick.kind,
+      name: pick.name,
+      brand: pick.brand,
+      image: pick.image,
+      slug: pick.slug,
+      styleCode: pick.styleCode !== "—" ? pick.styleCode : undefined,
+      notes: pick.notes,
+      size: pick.kind === "sneaker" ? size.trim() || undefined : undefined,
+      addedAt: new Date().toISOString(),
+    };
+    onChange([item, ...closet]);
+    onFlash(`Added ${pick.name}`);
+  }
+
+  function addAllVisiblePicks() {
+    const pool =
+      picksFilter === "all"
+        ? starterPicks
+        : starterPicks.filter((p) => p.kind === picksFilter);
+    const additions: ClosetItem[] = [];
+    for (const pick of pool) {
+      if (alreadyInCloset(pick)) continue;
+      if (additions.some((a) => a.slug && a.slug === pick.slug)) continue;
+      additions.push({
+        id: newClosetItemId(),
+        kind: pick.kind,
+        name: pick.name,
+        brand: pick.brand,
+        image: pick.image,
+        slug: pick.slug,
+        styleCode: pick.styleCode !== "—" ? pick.styleCode : undefined,
+        notes: pick.notes,
+        size: pick.kind === "sneaker" ? size.trim() || undefined : undefined,
+        addedAt: new Date().toISOString(),
+      });
+    }
+    if (!additions.length) {
+      onFlash("Those picks are already in your closet");
+      return;
+    }
+    onChange([...additions, ...closet]);
+    onFlash(`Added ${additions.length} starter picks`);
+  }
+
   function removeItem(id: string) {
     onChange(closet.filter((item) => item.id !== id));
   }
+
+  const visiblePicks = useMemo(() => {
+    if (picksFilter === "all") return starterPicks;
+    return starterPicks.filter((p) => p.kind === picksFilter);
+  }, [starterPicks, picksFilter]);
 
   return (
     <div className="space-y-6">
@@ -223,6 +300,7 @@ export function ClosetPanel({
         <div className="flex flex-wrap gap-2 border-b border-dash-border px-4 py-3 sm:px-5">
           {(
             [
+              ["picks", "Starter picks"],
               ["catalog", "From board"],
               ["custom", "Upload piece"],
               ["portfolio", "From Portfolio"],
@@ -244,6 +322,96 @@ export function ClosetPanel({
         </div>
 
         <div className="space-y-4 p-4 sm:p-5">
+          {tab === "picks" ? (
+            <>
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <p className="max-w-xl text-sm text-dash-muted">
+                  Curated sneakers from the SPI board plus a few apparel
+                  placeholders so Fits has pieces to arrange. Send more names /
+                  style IDs anytime and we’ll add them here.
+                </p>
+                <button
+                  type="button"
+                  onClick={addAllVisiblePicks}
+                  className="rounded-xl border border-dash-border px-3 py-2 text-sm font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text"
+                >
+                  Add all shown
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPicksFilter("all")}
+                  className={`rounded-lg px-2.5 py-1 text-xs font-medium ${
+                    picksFilter === "all"
+                      ? "bg-dash-elevated text-dash-text"
+                      : "text-dash-faint hover:text-dash-muted"
+                  }`}
+                >
+                  All
+                </button>
+                {CLOSET_KINDS.map((kind) => (
+                  <button
+                    key={kind}
+                    type="button"
+                    onClick={() => setPicksFilter(kind)}
+                    className={`rounded-lg px-2.5 py-1 text-xs font-medium ${
+                      picksFilter === kind
+                        ? "bg-dash-elevated text-dash-text"
+                        : "text-dash-faint hover:text-dash-muted"
+                    }`}
+                  >
+                    {CLOSET_KIND_LABELS[kind]}
+                  </button>
+                ))}
+              </div>
+              {visiblePicks.some((p) => p.kind === "sneaker") ? (
+                <label className="block max-w-[8rem] text-xs text-dash-faint">
+                  Default size (sneakers)
+                  <input
+                    value={size}
+                    onChange={(e) => setSize(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2 text-sm outline-none focus:border-dash-accent"
+                  />
+                </label>
+              ) : null}
+              <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {visiblePicks.map((pick) => {
+                  const owned = alreadyInCloset(pick);
+                  return (
+                    <li
+                      key={pick.id}
+                      className="flex gap-3 rounded-xl border border-dash-border bg-dash-elevated/40 p-3"
+                    >
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-bg">
+                        <ClosetImage src={pick.image} alt={pick.name} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-dash-text">
+                          {pick.name}
+                        </p>
+                        <p className="truncate text-xs text-dash-faint">
+                          {CLOSET_KIND_LABELS[pick.kind]} · {pick.brand}
+                          {pick.styleCode && pick.styleCode !== "—"
+                            ? ` · ${pick.styleCode}`
+                            : ""}
+                        </p>
+                        <button
+                          type="button"
+                          disabled={owned}
+                          onClick={() => addStarterPick(pick)}
+                          className="mt-2 rounded-lg bg-dash-accent px-2.5 py-1 text-xs font-semibold text-dash-bg hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {owned ? "In closet" : "Add"}
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          ) : null}
+
           {tab === "catalog" ? (
             <>
               <p className="text-sm text-dash-muted">
