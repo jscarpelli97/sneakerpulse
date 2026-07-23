@@ -17,7 +17,14 @@ import {
   downloadBlob,
   exportFitJpeg,
 } from "@/lib/wardrobe/exportFit";
-import { autoOrganizePieces } from "@/lib/wardrobe/layout";
+import {
+  autoOrganizePieces,
+  alignPiecesCenter,
+  pullPiecesTogether,
+  FIT_BASE_SIZE,
+  FIT_CENTER_X,
+  snapCenterX,
+} from "@/lib/wardrobe/layout";
 import {
   CLOSET_KIND_LABELS,
   type ClosetItem,
@@ -224,7 +231,22 @@ function FitEditor({
       return;
     }
     onChange({ pieces: autoOrganizePieces(board.pieces, byId) });
-    onFlash("Auto-arranged — top → bottom → footwear");
+    onFlash("Stacked tight — top → bottom → footwear");
+  }
+
+  function alignCenter() {
+    if (board.pieces.length === 0) return;
+    onChange({ pieces: alignPiecesCenter(board.pieces) });
+    onFlash("Aligned to center");
+  }
+
+  function pullTogether() {
+    if (board.pieces.length < 2) {
+      onFlash("Need at least two pieces");
+      return;
+    }
+    onChange({ pieces: pullPiecesTogether(board.pieces, byId) });
+    onFlash("Pulled together");
   }
 
   async function exportWhiteJpeg() {
@@ -285,6 +307,22 @@ function FitEditor({
           </button>
           <button
             type="button"
+            onClick={alignCenter}
+            disabled={board.pieces.length === 0}
+            className="rounded-xl border border-dash-border px-3 py-2 text-sm font-semibold text-dash-text hover:border-dash-muted disabled:opacity-40"
+          >
+            Align center
+          </button>
+          <button
+            type="button"
+            onClick={pullTogether}
+            disabled={board.pieces.length < 2}
+            className="rounded-xl border border-dash-border px-3 py-2 text-sm font-semibold text-dash-text hover:border-dash-muted disabled:opacity-40"
+          >
+            Pull together
+          </button>
+          <button
+            type="button"
             onClick={() => setFreeTransform((v) => !v)}
             className={`rounded-xl border px-3 py-2 text-sm font-semibold ${
               freeTransform
@@ -304,8 +342,9 @@ function FitEditor({
           </button>
         </div>
         <p className="text-[11px] text-dash-faint">
-          Auto arrange stacks top → bottom → sneakers, centered. Export saves a
-          white 1080×1350 JPEG for Instagram.
+          Auto arrange stacks them close. Align center / Pull together straighten
+          a messy board. Drag near the middle line to snap. Export = white
+          Instagram JPEG.
         </p>
         {missing ? (
           <p className="text-xs text-dash-down">
@@ -407,6 +446,7 @@ function FitCanvas({
   const ref = useRef<HTMLDivElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [whitePreview, setWhitePreview] = useState(false);
+  const [showCenterGuide, setShowCenterGuide] = useState(false);
   const drag = useRef<{
     id: string;
     offsetX: number;
@@ -455,10 +495,17 @@ function FitCanvas({
       }
 
       if (!drag.current) return;
-      const x =
+      const rawX =
         ((event.clientX - rect.left) / rect.width) * 100 - drag.current.offsetX;
       const y =
         ((event.clientY - rect.top) / rect.height) * 100 - drag.current.offsetY;
+      const piece = pieces.find((p) => p.id === drag.current!.id);
+      const size = FIT_BASE_SIZE * (piece?.scale ?? 1);
+      const rawCx = rawX + size / 2;
+      const snappedCx = snapCenterX(rawCx);
+      const snapped = snappedCx === FIT_CENTER_X;
+      setShowCenterGuide(snapped);
+      const x = snapped ? snappedCx - size / 2 : rawX;
       onMove(
         drag.current.id,
         Math.min(85, Math.max(0, x)),
@@ -471,6 +518,7 @@ function FitCanvas({
   const onPointerUp = useCallback(() => {
     drag.current = null;
     transform.current = null;
+    setShowCenterGuide(false);
   }, []);
 
   useEffect(() => {
@@ -554,6 +602,12 @@ function FitCanvas({
               }
         }
       >
+        {showCenterGuide ? (
+          <div
+            className="pointer-events-none absolute inset-y-3 left-1/2 w-px -translate-x-1/2 bg-dash-accent/70"
+            aria-hidden
+          />
+        ) : null}
         {pieces.length === 0 ? (
           <p
             className={`absolute inset-0 flex items-center justify-center px-6 text-center text-sm ${
