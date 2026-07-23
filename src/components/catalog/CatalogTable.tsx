@@ -13,8 +13,6 @@ export function CatalogTable({
   title?: string;
   subtitle?: string;
   hrefAll?: { href: string; label: string };
-  /** @deprecated Dashboard is the site-wide standard; prop ignored. */
-  variant?: "light" | "dashboard";
 }) {
   return (
     <section className="dash-card animate-rise stagger-3 overflow-hidden">
@@ -120,7 +118,7 @@ export function CatalogTable({
                             : "bg-dash-faint"
                       }`}
                     />
-                    {row.live ? "Live" : row.price != null ? "Cached" : "Offline"}
+                    {row.live ? "Live" : row.price != null ? "Snapshot" : "Offline"}
                   </span>
                 </td>
               </tr>

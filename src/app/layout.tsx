@@ -1,6 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Instrument_Sans, Syne } from "next/font/google";
 import { PwaRegister } from "@/components/layout/PwaRegister";
+import { SiteJsonLd } from "@/components/seo/JsonLd";
+import {
+  BRAND_BLURB,
+  BRAND_NAME,
+  BRAND_TAGLINE,
+  siteUrl,
+} from "@/lib/brand";
 import "./globals.css";
 
 const instrument = Instrument_Sans({
@@ -21,15 +28,23 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
 });
 
+const base = siteUrl();
+
 export const metadata: Metadata = {
-  title: "SneakerPulse — StockX market views",
-  description:
-    "Live StockX-style market views for the top 500 selling sneakers: price, change, volume, chart, and size asks.",
-  applicationName: "SneakerPulse",
+  metadataBase: new URL(base),
+  title: {
+    default: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+    template: `%s | ${BRAND_NAME}`,
+  },
+  description: BRAND_BLURB,
+  applicationName: BRAND_NAME,
+  alternates: {
+    canonical: "/",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "SneakerPulse",
+    title: BRAND_NAME,
   },
   formatDetection: {
     telephone: false,
@@ -42,11 +57,21 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: "SneakerPulse — StockX market views",
-    description:
-      "TradingView and CoinMarketCap–inspired sneaker markets powered by live StockX data.",
-    siteName: "SneakerPulse",
+    title: `${BRAND_NAME} — sneaker asks`,
+    description: BRAND_TAGLINE,
+    siteName: BRAND_NAME,
     type: "website",
+    url: base,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+    description: BRAND_BLURB,
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -69,6 +94,7 @@ export default function RootLayout({
       className={`${instrument.variable} ${syne.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="dashboard flex min-h-full flex-col bg-dash-bg text-dash-text">
+        <SiteJsonLd />
         {children}
         <PwaRegister />
       </body>
