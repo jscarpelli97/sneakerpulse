@@ -8,6 +8,7 @@ const NAV_BASE = [
   { href: "/", label: "Home" },
   { href: "/markets", label: "All markets" },
   { href: "/portfolio", label: "Portfolio" },
+  { href: "/wardrobe", label: "Wardrobe" },
   { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
   { href: "/about", label: "About" },
@@ -16,9 +17,9 @@ const NAV_BASE = [
 function navItems() {
   if (!plusPublicEnabled()) return [...NAV_BASE];
   return [
-    ...NAV_BASE.slice(0, 5),
+    ...NAV_BASE.slice(0, 6),
     { href: "/plus", label: "Plus" },
-    ...NAV_BASE.slice(5),
+    ...NAV_BASE.slice(6),
   ];
 }
 
@@ -77,7 +78,7 @@ export function SiteFooter() {
               {BRAND_NAME}
             </span>
             <p className="text-xs leading-relaxed text-dash-faint">
-              {`Built by ${FOUNDER_NAME} for the love of the game — sneaker asks plus the SPI index. Not affiliated with StockX.`}
+              {`Built by ${FOUNDER_NAME}. Soft launch: price board, Sneaker Price Index (SPI), portfolio — with more in store. Not affiliated with StockX.`}
             </p>
             <p className="text-xs text-dash-faint">
               <Link href="/about#contact" className="text-dash-accent hover:underline">
@@ -96,6 +97,9 @@ export function SiteFooter() {
             </Link>
             <Link href="/portfolio" className="hover:text-dash-text">
               Portfolio
+            </Link>
+            <Link href="/wardrobe" className="hover:text-dash-text">
+              Wardrobe
             </Link>
             <Link href="/compare" className="hover:text-dash-text">
               Compare

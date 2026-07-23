@@ -2,15 +2,42 @@
 export const BRAND_NAME = "SPI Markets";
 export const BRAND_SHORT = "SPI";
 
-/** Premium-vs-retail index shown on the homepage. */
+/**
+ * SPI = Sneaker Price Index — original index for this product.
+ * INDEX_NAME is the ticker-style short form shown in UI chrome.
+ */
 export const INDEX_NAME = "SPI";
-export const INDEX_LONG_NAME = "SPI Index";
+export const INDEX_EXPANSION = "Sneaker Price Index";
+export const INDEX_LONG_NAME = "Sneaker Price Index";
 
-export const BRAND_TAGLINE =
-  "Ask board and premium index for sneakers";
+/** Short line for titles, OG, PWA — plain English. */
+export const BRAND_TAGLINE = "See what sneakers are selling for";
 
+/**
+ * Soft-launch pillars (rule of three) + room for more later.
+ * One-paragraph description for SEO, About, and LinkedIn.
+ */
 export const BRAND_BLURB =
-  "Independent markets terminal for sneaker asks — plus the SPI premium-vs-retail index. Built for the love of the game: clean tape, honest data, no hype machine.";
+  "SPI Markets: see what popular sneakers are selling for, check the Sneaker Price Index (SPI), and track what you own — with more on the way. Independent and honest about the data.";
+
+/** The three soft-launch pillars — keep marketing in threes. */
+export const SOFT_LAUNCH_PILLARS = [
+  {
+    title: "Price board",
+    body: "Current prices for popular sneakers in one place.",
+  },
+  {
+    title: "Sneaker Price Index",
+    body: "SPI — how expensive the market is vs retail (100 ≈ retail).",
+  },
+  {
+    title: "Portfolio",
+    body: "Track what you own and what you paid vs today’s prices.",
+  },
+] as const;
+
+export const SOFT_LAUNCH_MORE =
+  "Compare, alerts, wardrobe, and more are already in progress — this is just the start.";
 
 /** Public site origin — prefer custom domain in production. */
 export function siteUrl() {

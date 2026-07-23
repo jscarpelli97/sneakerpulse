@@ -8,12 +8,14 @@ import {
   FOUNDER_ROLE,
   INDEX_LONG_NAME,
   INDEX_NAME,
+  SOFT_LAUNCH_MORE,
+  SOFT_LAUNCH_PILLARS,
 } from "@/lib/brand";
 import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 
 export const metadata = {
   title: "About",
-  description: `${BRAND_NAME} is an independent sneaker markets terminal built by ${FOUNDER_NAME}. How we source asks and calculate ${INDEX_NAME}.`,
+  description: `${BRAND_NAME} — current sneaker prices, the ${INDEX_NAME} (Sneaker Price Index), and a portfolio built by ${FOUNDER_NAME}.`,
   alternates: { canonical: "/about" },
 };
 
@@ -47,12 +49,11 @@ export default function AboutPage() {
               <span className="text-dash-faint"> · {FOUNDER_ROLE}</span>
             </p>
             <p className="text-dash-muted leading-relaxed">
-              Built for the love of the game. I got tired of bouncing between
-              StockX tabs, screenshots, and half-finished spreadsheets just to
-              see asks, premiums, and what I actually own. {BRAND_NAME} is the
-              quiet terminal I wanted — watchlist, size ladder, portfolio, and
-              the {INDEX_NAME} premium-vs-retail read in one place. Clearer tape,
-              nothing more.
+              Built for people who wear and collect sneakers. I got tired of
+              bouncing between StockX tabs, screenshots, and spreadsheets just
+              to see prices and what I own. Soft launch is three things: a price
+              board, the {INDEX_LONG_NAME} ({INDEX_NAME}), and a portfolio —
+              clearer numbers, less noise.
             </p>
             <p className="text-sm text-dash-faint">
               Questions or ideas?{" "}
@@ -65,34 +66,33 @@ export default function AboutPage() {
 
           <section className="dash-card space-y-3 p-5 sm:p-6">
             <h2 className="font-[family-name:var(--font-syne)] text-xl font-bold">
-              What you get today
+              Soft launch — three things
             </h2>
-            <ul className="list-disc space-y-2 pl-5 text-dash-muted">
-              <li>Top-seller board with asks, weekly volume, and rank</li>
-              <li>Per-pair market pages — charts, size asks, snapshot metrics</li>
-              <li>Compare, browser alerts, and a device-local portfolio</li>
-              <li>
-                <strong className="text-dash-text">{INDEX_NAME}</strong> —{" "}
-                {INDEX_LONG_NAME}: volume-weighted ask ÷ retail × 100 (100 = at
-                retail)
-              </li>
-            </ul>
+            <ol className="list-decimal space-y-3 pl-5 text-dash-muted">
+              {SOFT_LAUNCH_PILLARS.map((pillar) => (
+                <li key={pillar.title}>
+                  <strong className="text-dash-text">{pillar.title}</strong>
+                  {" — "}
+                  {pillar.body}
+                </li>
+              ))}
+            </ol>
             <p className="text-sm text-dash-faint leading-relaxed">
-              The free terminal is the product — no paywall on the board, size
-              ladder, portfolio, or alerts you run in this browser.
+              {SOFT_LAUNCH_MORE} Pair pages, compare, and browser alerts are on
+              the site today too.
             </p>
           </section>
 
           <section className="dash-card space-y-3 p-5 sm:p-6">
             <h2 className="font-[family-name:var(--font-syne)] text-xl font-bold">
-              Data — honest about the tape
+              Data — we keep it honest
             </h2>
             <p className="text-dash-muted leading-relaxed">
-              When live upstream access is on, asks refresh from StockX market
-              data providers. Otherwise {BRAND_NAME} serves a{" "}
-              <strong className="text-dash-text">daily snapshot catalog</strong>
-              {asOf ? ` (last refreshed ${asOf})` : ""} so the board stays
-              usable without burning API quotas on every page view.
+              When live market access is on, prices refresh from StockX data
+              providers. Otherwise {BRAND_NAME} serves a{" "}
+              <strong className="text-dash-text">daily snapshot</strong>
+              {asOf ? ` (last refreshed ${asOf})` : ""} so the board stays usable
+              without hammering APIs on every click.
             </p>
             <p className="text-sm text-dash-faint leading-relaxed">
               Official StockX Developer API access is still pending. Until then

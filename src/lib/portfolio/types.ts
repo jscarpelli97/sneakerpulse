@@ -1,3 +1,5 @@
+import type { ClosetItem, FitBoard } from "@/lib/wardrobe/types";
+
 export type PortfolioHolding = {
   id: string;
   slug: string;
@@ -24,6 +26,10 @@ export type PortfolioAccount = {
   passwordHash: string;
   createdAt: string;
   holdings: PortfolioHolding[];
+  /** Wardrobe closet — device-local. */
+  closet: ClosetItem[];
+  /** Saved outfit boards. */
+  fits: FitBoard[];
 };
 
 export type PortfolioSession = {

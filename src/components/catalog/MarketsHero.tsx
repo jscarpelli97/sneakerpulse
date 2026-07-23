@@ -54,8 +54,8 @@ export function MarketsHero({
             {BRAND_NAME}
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
-            Ask board and premium index for sneakers. StockX tape across the top{" "}
-            {totalMarkets} sellers — homepage highlights the top 10.
+            Three things on day one: a price board, the Sneaker Price Index, and
+            a portfolio. More in store beyond that — this is the start.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">

@@ -7,7 +7,7 @@ import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { PlusInterest } from "@/components/plus/PlusInterest";
 import { PlusPopup } from "@/components/plus/PlusPopup";
 import { PlusTopCallout } from "@/components/plus/PlusTopCallout";
-import { BRAND_TAGLINE } from "@/lib/brand";
+import { BRAND_BLURB, BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 import { getDataModeLabel } from "@/lib/dataMode";
 import {
   FREE_CATALOG_LIMIT,
@@ -27,8 +27,10 @@ import { PlusCatalogGate } from "@/components/plus/PlusCatalogGate";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Sneaker ask board",
-  description: BRAND_TAGLINE,
+  title: {
+    absolute: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+  },
+  description: BRAND_BLURB,
   alternates: { canonical: "/" },
 };
 export default async function MarketsIndexPage() {

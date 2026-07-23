@@ -314,7 +314,7 @@ export async function getMarketIndex(
   const boomEnd = histSeg.at(-1)?.price ?? null;
 
   return {
-    name: "SPI Index",
+    name: "Sneaker Price Index",
     ticker: "SPI",
     level,
     liveLevel: level,

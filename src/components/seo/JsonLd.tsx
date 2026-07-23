@@ -21,6 +21,11 @@ export function SiteJsonLd() {
           "@type": "Person",
           name: FOUNDER_NAME,
         },
+        logo: {
+          "@type": "ImageObject",
+          url: `${base}/og.png?v=2`,
+        },
+        image: `${base}/og.png?v=2`,
       },
       {
         "@type": "WebSite",

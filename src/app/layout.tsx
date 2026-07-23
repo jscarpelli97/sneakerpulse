@@ -29,6 +29,14 @@ const plexMono = IBM_Plex_Mono({
 });
 
 const base = siteUrl();
+/** Absolute share card — cache-busted so LinkedIn picks up the logo art. */
+const shareImage = {
+  url: `${base}/og.png?v=2`,
+  width: 1200,
+  height: 630,
+  alt: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+  type: "image/png",
+} as const;
 
 export const metadata: Metadata = {
   metadataBase: new URL(base),
@@ -57,17 +65,19 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: `${BRAND_NAME} — sneaker asks`,
-    description: BRAND_TAGLINE,
+    title: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+    description: BRAND_BLURB,
     siteName: BRAND_NAME,
     type: "website",
     url: base,
     locale: "en_US",
+    images: [shareImage],
   },
   twitter: {
     card: "summary_large_image",
     title: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
     description: BRAND_BLURB,
+    images: [shareImage.url],
   },
   robots: {
     index: true,
