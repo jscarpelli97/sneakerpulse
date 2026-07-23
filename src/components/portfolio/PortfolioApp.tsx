@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { formatBtc, usdToBtc } from "@/lib/btc/format";
 import { plusPublicEnabled } from "@/lib/plus/config";
 import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
@@ -31,13 +30,10 @@ type CatalogRow = {
   retail: number;
 };
 
-type BtcQuote = { usd: number; asOf: string; source: string };
-
 export function PortfolioApp() {
   const [session, setSession] = useState<PortfolioSession | null>(null);
   const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [catalog, setCatalog] = useState<CatalogRow[]>([]);
-  const [btc, setBtc] = useState<BtcQuote | null>(null);
   const [mode, setMode] = useState<"login" | "register">("register");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -68,16 +64,9 @@ export function PortfolioApp() {
     let cancelled = false;
     (async () => {
       try {
-        const [catRes, btcRes] = await Promise.all([
-          fetch("/api/catalog"),
-          fetch("/api/btc/price"),
-        ]);
+        const catRes = await fetch("/api/catalog");
         const catJson = (await catRes.json()) as { data?: CatalogRow[] };
-        const btcJson = (await btcRes.json()) as { data?: BtcQuote };
-        if (!cancelled) {
-          setCatalog(catJson.data ?? []);
-          setBtc(btcJson.data ?? null);
-        }
+        if (!cancelled) setCatalog(catJson.data ?? []);
       } catch {
         /* ignore */
       }
@@ -114,9 +103,6 @@ export function PortfolioApp() {
       costBasis > 0 && pnl != null ? (pnl / costBasis) * 100 : null;
     return { market, costBasis, pairs, pnl, pnlPct };
   }, [holdings, priceBySlug]);
-
-  const btcUsd = btc?.usd ?? null;
-  const marketBtc = btcUsd != null ? usdToBtc(totals.market, btcUsd) : null;
 
   const searchHits = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -223,9 +209,8 @@ export function PortfolioApp() {
           </h1>
           <p className="text-sm leading-relaxed text-dash-muted sm:text-base">
             Create a simple account (email + password) to log pairs you own,
-            mark cost basis, and see live-ish market asks in USD (and an
-            optional BTC read of the same total). Accounts are stored on this
-            device for now.
+            mark cost basis in USD, and see market asks vs what you paid.
+            Accounts are stored on this device for now.
           </p>
         </header>
 
@@ -374,7 +359,7 @@ export function PortfolioApp() {
           {
             label: "Market (asks)",
             value: formatMoney(totals.market),
-            sub: formatBtc(marketBtc),
+            sub: "Lowest ask × qty",
           },
           {
             label: "Cost basis",
@@ -408,12 +393,6 @@ export function PortfolioApp() {
           </div>
         ))}
       </section>
-
-      <p className="font-[family-name:var(--font-plex-mono)] text-[11px] text-dash-faint">
-        BTC ≈ {btc ? formatMoney(btc.usd) : "…"}
-        {btc?.source === "fallback" ? " · cached fallback" : ""} · not
-        investment advice
-      </p>
 
       <section className="dash-card space-y-4 p-5 sm:p-6">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold">
@@ -574,11 +553,6 @@ export function PortfolioApp() {
                       {linePnl == null
                         ? "—"
                         : `${linePnl >= 0 ? "+" : ""}${formatMoney(linePnl)}`}
-                    </p>
-                    <p className="text-[11px] text-dash-faint">
-                      {lineMarket != null && btcUsd
-                        ? formatBtc(usdToBtc(lineMarket, btcUsd))
-                        : ""}
                     </p>
                   </div>
                   <button
