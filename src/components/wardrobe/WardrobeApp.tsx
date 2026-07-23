@@ -17,6 +17,7 @@ import {
   saveFits,
 } from "@/lib/portfolio/vault";
 import type { ClosetItem, FitBoard } from "@/lib/wardrobe/types";
+import { piecesFromClosetItems } from "@/lib/wardrobe/layout";
 
 type CatalogRow = {
   slug: string;
@@ -325,26 +326,7 @@ export function WardrobeApp() {
           onFlash={setFlash}
           onSaveOutfit={({ name, items }) => {
             const now = new Date().toISOString();
-            const layout = [
-              { x: 28, y: 8, scale: 1.05 }, // top
-              { x: 30, y: 42, scale: 1 }, // bottom
-              { x: 32, y: 68, scale: 0.95 }, // sneakers
-            ];
-            const pieces = items.map((item, index) => {
-              const spot = layout[index] ?? {
-                x: 20 + index * 8,
-                y: 20 + index * 18,
-                scale: 1,
-              };
-              return {
-                id: newFitPieceId(),
-                closetItemId: item.id,
-                x: spot.x,
-                y: spot.y,
-                scale: spot.scale,
-                zIndex: index + 1,
-              };
-            });
+            const pieces = piecesFromClosetItems(items, newFitPieceId);
             const board: FitBoard = {
               id: newFitId(),
               name,

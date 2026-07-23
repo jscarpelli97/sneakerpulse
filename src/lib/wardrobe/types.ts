@@ -44,6 +44,8 @@ export type FitPiece = {
   y: number;
   /** Visual scale; 1 = default. */
   scale: number;
+  /** Degrees clockwise. Optional for older saved fits. */
+  rotation?: number;
   zIndex: number;
 };
 
