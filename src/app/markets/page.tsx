@@ -11,9 +11,9 @@ import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "All markets",
+  title: "Markets",
   description:
-    "Browse the full SPI Markets top-seller board — StockX-style asks, rank, and weekly volume.",
+    "Browse the SPI Markets top-seller board — StockX-style asks, rank, and weekly volume.",
   alternates: { canonical: "/markets" },
 };
 
@@ -56,11 +56,12 @@ export default async function MarketsBrowsePage({
               Board
             </p>
             <h1 className="mt-2 font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight text-dash-text md:text-5xl">
-              All markets
+              Markets
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
-              Top {quotes.length} StockX sneakers by sales rank — search and
-              sort any column.
+              Top {quotes.length} sneakers by sales volume — board # is 1–
+              {quotes.length} in order; StockX’s own rank is noted under each
+              name (it can skip numbers for non-sneakers).
             </p>
           </header>
           {access.gated && publicPlus ? (

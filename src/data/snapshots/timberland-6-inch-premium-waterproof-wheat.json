@@ -3,12 +3,17 @@
   "slug": "timberland-6-inch-premium-waterproof-wheat",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:54.807Z",
+  "updatedAt": "2026-07-23T13:42:00.080Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 94,
       "orders": 740
+    },
+    {
+      "date": "2026-07-23",
+      "price": 94,
+      "orders": 752
     }
   ]
 }

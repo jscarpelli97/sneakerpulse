@@ -6,6 +6,12 @@ import { ClosetImage } from "@/components/wardrobe/ClosetImage";
 import { useCatalogSearch } from "@/hooks/useCatalogSearch";
 import { fileToClosetDataUrl } from "@/lib/wardrobe/image";
 import {
+  getOutfitIdeas,
+  outfitPiecesWithSneaker,
+  type OutfitIdea,
+  type OutfitIdeaPiece,
+} from "@/lib/wardrobe/outfitIdeas";
+import {
   CLOSET_KIND_LABELS,
   CLOSET_KINDS,
   type ClosetItem,
@@ -23,20 +29,25 @@ type CatalogRow = {
   fallbackImage: string;
 };
 
+type AddTab = "outfits" | "catalog" | "custom" | "portfolio";
+
 export function ClosetPanel({
   closet,
   holdings,
   catalog,
   onChange,
   onFlash,
+  onSaveOutfit,
 }: {
   closet: ClosetItem[];
   holdings: PortfolioHolding[];
   catalog: CatalogRow[];
   onChange: (next: ClosetItem[]) => void;
   onFlash: (message: string) => void;
+  /** Optional: also create a Fit board from the outfit pieces. */
+  onSaveOutfit?: (input: { name: string; items: ClosetItem[] }) => void;
 }) {
-  const [tab, setTab] = useState<"catalog" | "custom" | "portfolio">("catalog");
+  const [tab, setTab] = useState<AddTab>("outfits");
   const [query, setQuery] = useState("");
   const [selectedSlug, setSelectedSlug] = useState("");
   const [size, setSize] = useState("10");
@@ -47,6 +58,8 @@ export function ClosetPanel({
   const [busy, setBusy] = useState(false);
   const [filterKind, setFilterKind] = useState<ClosetItemKind | "all">("all");
   const [closetQuery, setClosetQuery] = useState("");
+
+  const outfitIdeas = useMemo(() => getOutfitIdeas(), []);
 
   const { hits: liveHits, busy: searchBusy } = useCatalogSearch(
     query,
@@ -213,6 +226,91 @@ export function ClosetPanel({
     onFlash(`Imported ${additions.length} from Portfolio`);
   }
 
+  function pieceNotes(piece: OutfitIdeaPiece) {
+    return [piece.colorway, piece.notes].filter(Boolean).join(" · ") || undefined;
+  }
+
+  /** Match by slug when present; otherwise name + size + colorway/notes. */
+  function matchesClosetPiece(c: ClosetItem, piece: OutfitIdeaPiece) {
+    if (piece.slug) return c.slug === piece.slug && c.kind === piece.kind;
+    const notes = pieceNotes(piece);
+    return (
+      c.kind === piece.kind &&
+      c.name.toLowerCase() === piece.name.toLowerCase() &&
+      (c.size ?? "") === (piece.size ?? "") &&
+      (c.notes ?? "") === (notes ?? "")
+    );
+  }
+
+  function alreadyInCloset(piece: OutfitIdeaPiece) {
+    return closet.some((c) => matchesClosetPiece(c, piece));
+  }
+
+  function pieceToClosetItem(piece: OutfitIdeaPiece): ClosetItem {
+    return {
+      id: newClosetItemId(),
+      kind: piece.kind,
+      name: piece.name,
+      brand: piece.brand,
+      image: piece.image,
+      slug: piece.slug,
+      styleCode: piece.styleCode,
+      size: piece.size,
+      notes: pieceNotes(piece),
+      addedAt: new Date().toISOString(),
+    };
+  }
+
+  function findOrCreatePiece(
+    piece: OutfitIdeaPiece,
+    working: ClosetItem[],
+  ): { item: ClosetItem; working: ClosetItem[]; created: boolean } {
+    const existing = working.find((c) => matchesClosetPiece(c, piece));
+    if (existing) return { item: existing, working, created: false };
+    const item = pieceToClosetItem(piece);
+    return { item, working: [item, ...working], created: true };
+  }
+
+  function addOutfitPiece(piece: OutfitIdeaPiece) {
+    if (alreadyInCloset(piece)) {
+      onFlash("Already in your closet");
+      return;
+    }
+    const item = pieceToClosetItem(piece);
+    onChange([item, ...closet]);
+    onFlash(`Added ${piece.name}`);
+  }
+
+  function addOutfitIdea(outfit: OutfitIdea, sneaker?: OutfitIdeaPiece) {
+    const primarySneaker =
+      sneaker ?? outfit.pieces.find((p) => p.kind === "sneaker");
+    const buildPieces =
+      primarySneaker != null
+        ? outfitPiecesWithSneaker(outfit, primarySneaker)
+        : outfit.pieces;
+
+    let working = [...closet];
+    const fitItems: ClosetItem[] = [];
+    let added = 0;
+    for (const piece of buildPieces) {
+      const result = findOrCreatePiece(piece, working);
+      working = result.working;
+      fitItems.push(result.item);
+      if (result.created) added += 1;
+    }
+    onChange(working);
+    const fitName =
+      sneaker && sneaker.id !== outfit.pieces.find((p) => p.kind === "sneaker")?.id
+        ? `${outfit.name.replace(/\s*×.*$/, "")} × ${sneaker.name.replace(/^Vans\s+/i, "")}`
+        : outfit.name;
+    onSaveOutfit?.({ name: fitName, items: fitItems });
+    onFlash(
+      added
+        ? `Added ${fitName} (${added} new · Fit ready)`
+        : `${fitName} pieces already in closet — Fit ready`,
+    );
+  }
+
   function removeItem(id: string) {
     onChange(closet.filter((item) => item.id !== id));
   }
@@ -223,6 +321,7 @@ export function ClosetPanel({
         <div className="flex flex-wrap gap-2 border-b border-dash-border px-4 py-3 sm:px-5">
           {(
             [
+              ["outfits", "Outfit ideas"],
               ["catalog", "From board"],
               ["custom", "Upload piece"],
               ["portfolio", "From Portfolio"],
@@ -244,6 +343,146 @@ export function ClosetPanel({
         </div>
 
         <div className="space-y-4 p-4 sm:p-5">
+          {tab === "outfits" ? (
+            <>
+              <p className="max-w-2xl text-sm text-dash-muted">
+                Real outfit ideas — tee, shorts, sneakers with sizes. Some fits
+                include <span className="text-dash-text">sneaker inspo</span>{" "}
+                so you can try alternate pairs. Tap{" "}
+                <span className="text-dash-text">Add outfit</span> to drop
+                pieces in your closet and open a Fit board.
+              </p>
+              <ul className="space-y-5">
+                {outfitIdeas.map((outfit) => (
+                  <li
+                    key={outfit.id}
+                    className="rounded-2xl border border-dash-border bg-dash-elevated/30 p-4 sm:p-5"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0 max-w-xl">
+                        <h3 className="font-[family-name:var(--font-syne)] text-lg font-bold text-dash-text">
+                          {outfit.name}
+                        </h3>
+                        {outfit.blurb ? (
+                          <p className="mt-1 text-sm text-dash-muted">
+                            {outfit.blurb}
+                          </p>
+                        ) : null}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => addOutfitIdea(outfit)}
+                        className="rounded-xl bg-dash-accent px-3 py-2 text-sm font-semibold text-dash-bg hover:brightness-110"
+                      >
+                        Add outfit
+                      </button>
+                    </div>
+                    <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+                      {outfit.pieces.map((piece) => {
+                        const owned = alreadyInCloset(piece);
+                        return (
+                          <li
+                            key={piece.id}
+                            className="flex gap-3 rounded-xl border border-dash-border bg-dash-bg/60 p-3"
+                          >
+                            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-elevated">
+                              <ClosetImage src={piece.image} alt={piece.name} />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[10px] uppercase tracking-[0.12em] text-dash-faint">
+                                {CLOSET_KIND_LABELS[piece.kind]}
+                                {piece.size ? ` · ${piece.size}` : ""}
+                                {piece.kind === "sneaker" ? " · pick" : ""}
+                              </p>
+                              <p className="mt-0.5 line-clamp-2 text-sm font-semibold leading-snug text-dash-text">
+                                {piece.name}
+                              </p>
+                              <p className="truncate text-xs text-dash-faint">
+                                {piece.brand}
+                                {piece.colorway ? ` · ${piece.colorway}` : ""}
+                                {piece.styleCode ? ` · ${piece.styleCode}` : ""}
+                              </p>
+                              {piece.why ? (
+                                <p className="mt-1 line-clamp-2 text-xs text-dash-muted">
+                                  {piece.why}
+                                </p>
+                              ) : null}
+                              <button
+                                type="button"
+                                disabled={owned}
+                                onClick={() => addOutfitPiece(piece)}
+                                className="mt-2 rounded-lg border border-dash-border px-2.5 py-1 text-xs font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text disabled:cursor-not-allowed disabled:opacity-50"
+                              >
+                                {owned ? "In closet" : "Add piece"}
+                              </button>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    {outfit.sneakerInspo?.length ? (
+                      <div className="mt-4 border-t border-dash-border pt-4">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-dash-faint">
+                          Sneaker inspo — swap the pair
+                        </p>
+                        <ul className="mt-3 grid gap-3 sm:grid-cols-3">
+                          {outfit.sneakerInspo.map((sneaker) => {
+                            const owned = alreadyInCloset(sneaker);
+                            return (
+                              <li
+                                key={sneaker.id}
+                                className="flex gap-3 rounded-xl border border-dashed border-dash-border bg-dash-bg/40 p-3"
+                              >
+                                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-elevated">
+                                  <ClosetImage
+                                    src={sneaker.image}
+                                    alt={sneaker.name}
+                                  />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-[10px] uppercase tracking-[0.12em] text-dash-faint">
+                                    Alt · {sneaker.size || "—"}
+                                  </p>
+                                  <p className="mt-0.5 line-clamp-2 text-sm font-semibold leading-snug text-dash-text">
+                                    {sneaker.name}
+                                  </p>
+                                  {sneaker.why ? (
+                                    <p className="mt-1 line-clamp-2 text-xs text-dash-muted">
+                                      {sneaker.why}
+                                    </p>
+                                  ) : null}
+                                  <div className="mt-2 flex flex-wrap gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        addOutfitIdea(outfit, sneaker)
+                                      }
+                                      className="rounded-lg bg-dash-accent/15 px-2.5 py-1 text-xs font-medium text-dash-accent hover:bg-dash-accent/25"
+                                    >
+                                      Build fit
+                                    </button>
+                                    <button
+                                      type="button"
+                                      disabled={owned}
+                                      onClick={() => addOutfitPiece(sneaker)}
+                                      className="rounded-lg border border-dash-border px-2.5 py-1 text-xs font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                      {owned ? "In closet" : "Add piece"}
+                                    </button>
+                                  </div>
+                                </div>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+
           {tab === "catalog" ? (
             <>
               <p className="text-sm text-dash-muted">
@@ -328,7 +567,7 @@ export function ClosetPanel({
             <form onSubmit={addCustom} className="space-y-3">
               <p className="text-sm text-dash-muted">
                 Tees, shorts, jackets — upload a PNG/JPG like you would in
-                Freeform. Stored on this device only.
+                Freeform. Saves with your account.
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="text-xs text-dash-faint">
@@ -459,7 +698,7 @@ export function ClosetPanel({
               Your closet
             </h2>
             <p className="text-sm text-dash-muted">
-              {closet.length} piece{closet.length === 1 ? "" : "s"} on this device
+              {closet.length} piece{closet.length === 1 ? "" : "s"} in your closet
             </p>
           </div>
           <label className="sr-only" htmlFor="closet-filter">
@@ -503,8 +742,8 @@ export function ClosetPanel({
 
         {visible.length === 0 ? (
           <div className="dash-card px-5 py-10 text-center text-sm text-dash-muted">
-            Empty closet — add sneakers from the board or upload a tee/shorts
-            PNG to start building fits.
+            Empty closet — open Outfit ideas for curated looks, pull from the
+            board, or upload a tee/shorts PNG to start building fits.
           </div>
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

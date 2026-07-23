@@ -3,12 +3,17 @@
   "slug": "nike-mind-001-slide-black-chrome",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:54.392Z",
+  "updatedAt": "2026-07-23T13:41:59.925Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 171,
       "orders": 803
+    },
+    {
+      "date": "2026-07-23",
+      "price": 168,
+      "orders": 809
     }
   ]
 }

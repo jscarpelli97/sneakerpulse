@@ -4,7 +4,7 @@ import { PortfolioApp } from "@/components/portfolio/PortfolioApp";
 export const metadata = {
   title: "Portfolio",
   description:
-    "Track your sneaker collection on this device. See market asks vs what you paid.",
+    "Track your sneaker collection across devices. See market asks vs what you paid.",
   alternates: { canonical: "/portfolio" },
 };
 

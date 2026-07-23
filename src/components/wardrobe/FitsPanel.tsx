@@ -77,8 +77,8 @@ export function FitsPanel({
             Fits
           </h2>
           <p className="text-sm text-dash-muted">
-            Arrange closet pieces on a board — Freeform energy, saved on this
-            device.
+            Arrange closet pieces on a board — Freeform energy, saved to your
+            account.
           </p>
         </div>
         <button

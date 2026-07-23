@@ -7,12 +7,11 @@ import { plusPublicEnabled } from "@/lib/plus/config";
 import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
 import {
-  getAccount,
-  getSession,
   loginAccount,
   logoutAccount,
   newHoldingId,
   registerAccount,
+  restoreSession,
   saveHoldings,
   updateUsername,
 } from "@/lib/portfolio/vault";
@@ -31,10 +30,21 @@ type CatalogRow = {
   retail: number;
 };
 
+type HoldingAskState = {
+  ask: number | null;
+  source: "size" | "fallback" | "none";
+  live: boolean;
+};
+
 export function PortfolioApp() {
   const [session, setSession] = useState<PortfolioSession | null>(null);
   const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [catalog, setCatalog] = useState<CatalogRow[]>([]);
+  const [askByHoldingId, setAskByHoldingId] = useState<
+    Record<string, HoldingAskState>
+  >({});
+  const [asksBusy, setAsksBusy] = useState(false);
+  const [asksLive, setAsksLive] = useState(false);
   const [mode, setMode] = useState<"login" | "register">("register");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,17 +58,30 @@ export function PortfolioApp() {
   const [selectedSlug, setSelectedSlug] = useState<string>("");
   const [rename, setRename] = useState("");
   const [flash, setFlash] = useState<string | null>(null);
+  const [booting, setBooting] = useState(true);
 
-  const hydrate = useCallback((next: PortfolioSession) => {
-    setSession(next);
-    const account = getAccount(next.email);
-    setHoldings(account?.holdings ?? []);
-    setRename(next.username);
-  }, []);
+  const hydrate = useCallback(
+    (next: PortfolioSession, nextHoldings?: PortfolioHolding[]) => {
+      setSession(next);
+      setHoldings(nextHoldings ?? []);
+      setRename(next.username);
+    },
+    [],
+  );
 
   useEffect(() => {
-    const existing = getSession();
-    if (existing) hydrate(existing);
+    let cancelled = false;
+    (async () => {
+      const restored = await restoreSession();
+      if (cancelled) return;
+      if (restored.session) {
+        hydrate(restored.session, restored.vault?.holdings ?? []);
+      }
+      setBooting(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [hydrate]);
 
   useEffect(() => {
@@ -82,28 +105,114 @@ export function PortfolioApp() {
     if (mode === "register") setUsername(usernameFromEmail(email));
   }, [email, mode, username]);
 
-  const priceBySlug = useMemo(() => {
+  useEffect(() => {
+    if (holdings.length === 0) {
+      setAskByHoldingId({});
+      setAsksLive(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      setAsksBusy(true);
+      try {
+        const res = await fetch("/api/portfolio/asks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            holdings: holdings.map((row) => ({
+              id: row.id,
+              slug: row.slug,
+              size: row.size,
+            })),
+          }),
+        });
+        const json = (await res.json()) as {
+          data?: Array<{
+            id: string;
+            ask: number | null;
+            source: "size" | "fallback" | "none";
+            live: boolean;
+          }>;
+          live?: boolean;
+        };
+        if (cancelled) return;
+        const next: Record<
+          string,
+          { ask: number | null; source: "size" | "fallback" | "none"; live: boolean }
+        > = {};
+        for (const row of json.data ?? []) {
+          next[row.id] = {
+            ask: row.ask,
+            source: row.source,
+            live: row.live,
+          };
+        }
+        setAskByHoldingId(next);
+        setAsksLive(Boolean(json.live));
+      } catch {
+        if (!cancelled) {
+          setAskByHoldingId({});
+          setAsksLive(false);
+        }
+      } finally {
+        if (!cancelled) setAsksBusy(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [holdings]);
+
+  const catalogPriceBySlug = useMemo(() => {
     const map = new Map<string, number | null>();
     for (const row of catalog) map.set(row.slug, row.price);
     return map;
   }, [catalog]);
 
+  const askForHolding = useCallback(
+    (row: PortfolioHolding) => {
+      const live = askByHoldingId[row.id];
+      if (live) {
+        return {
+          ask: live.ask,
+          source: live.source,
+          live: live.live,
+        };
+      }
+      // Before live response: fall back to catalog product price only.
+      const catalogPrice = catalogPriceBySlug.get(row.slug) ?? null;
+      return {
+        ask: catalogPrice,
+        source: (catalogPrice != null ? "fallback" : "none") as
+          | "size"
+          | "fallback"
+          | "none",
+        live: false,
+      };
+    },
+    [askByHoldingId, catalogPriceBySlug],
+  );
+
   const totals = useMemo(() => {
     let market = 0;
     let costBasis = 0;
     let pairs = 0;
+    let sizedLines = 0;
+    let liveLines = 0;
     for (const row of holdings) {
-      const ask = priceBySlug.get(row.slug) ?? null;
+      const { ask, source, live } = askForHolding(row);
       const q = row.quantity || 0;
       pairs += q;
       if (ask != null) market += ask * q;
+      if (source === "size") sizedLines += 1;
+      if (live) liveLines += 1;
       if (row.costBasisUsd != null) costBasis += row.costBasisUsd * q;
     }
     const pnl = costBasis > 0 ? market - costBasis : null;
     const pnlPct =
       costBasis > 0 && pnl != null ? (pnl / costBasis) * 100 : null;
-    return { market, costBasis, pairs, pnl, pnlPct };
-  }, [holdings, priceBySlug]);
+    return { market, costBasis, pairs, pnl, pnlPct, sizedLines, liveLines };
+  }, [holdings, askForHolding]);
 
   const { hits: liveHits, busy: searchBusy } = useCatalogSearch(query, true);
 
@@ -147,12 +256,14 @@ export function PortfolioApp() {
       setAuthError(result.error);
       return;
     }
-    hydrate(result.session);
+    hydrate(result.session, result.vault.holdings);
     setPassword("");
     setFlash(
-      mode === "register"
-        ? "Account created on this device. Add your first pair below."
-        : "Welcome back.",
+      result.imported
+        ? "Imported your previous collection. Add pairs anytime."
+        : mode === "register"
+          ? "Account ready. Add your first pair below."
+          : "Welcome back.",
     );
   }
 
@@ -198,9 +309,9 @@ export function PortfolioApp() {
     persist(holdings.filter((h) => h.id !== id));
   }
 
-  function onRename() {
+  async function onRename() {
     if (!session) return;
-    const result = updateUsername(session.email, rename);
+    const result = await updateUsername(session.email, rename);
     if (!result.ok) {
       setFlash(result.error);
       return;
@@ -209,10 +320,18 @@ export function PortfolioApp() {
     setFlash("Username updated");
   }
 
-  function onLogout() {
-    logoutAccount();
+  async function onLogout() {
+    await logoutAccount();
     setSession(null);
     setHoldings([]);
+  }
+
+  if (booting) {
+    return (
+      <div className="mx-auto max-w-lg py-16 text-center text-sm text-dash-muted">
+        Loading account…
+      </div>
+    );
   }
 
   if (!session) {
@@ -227,8 +346,10 @@ export function PortfolioApp() {
           </h1>
           <p className="text-sm leading-relaxed text-dash-muted sm:text-base">
             Create a simple account (email + password) to log pairs you own,
-            mark cost basis in USD, and see market asks vs what you paid.
-            Accounts are stored on this device for now.
+            mark cost basis in USD, and see{" "}
+            <span className="text-dash-text">your size’s ask</span> vs what you
+            paid — not StockX’s all-size low. Log in
+            on any device to pick up where you left off.
           </p>
         </header>
 
@@ -321,15 +442,15 @@ export function PortfolioApp() {
         </div>
 
         <p className="text-xs leading-relaxed text-dash-faint">
-          Not financial advice. Password stays on this browser — clearing site
-          data logs you out of the local vault.
+          Not financial advice. Your collection follows your login on phone and
+          desktop.
           {plusPublicEnabled() ? (
             <>
               {" "}
               <Link href="/plus" className="text-dash-accent hover:underline">
                 Plus
               </Link>{" "}
-              will add cloud backup.
+              adds more tools later.
             </>
           ) : null}
         </p>
@@ -348,8 +469,9 @@ export function PortfolioApp() {
             Your collection
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-dash-muted">
-            Mark what you own, what you paid, and see asks vs cost. Local vault
-            on this device.
+            Mark what you own, what you paid, and see each size’s ask vs cost —
+            available
+            wherever you sign in.
           </p>
         </div>
         <button
@@ -377,7 +499,13 @@ export function PortfolioApp() {
           {
             label: "Market (asks)",
             value: formatMoney(totals.market),
-            sub: "Lowest ask × qty",
+            sub: asksBusy
+              ? "Loading live size asks…"
+              : asksLive
+                ? `Live size asks · ${totals.liveLines}/${holdings.length}`
+                : totals.sizedLines > 0
+                  ? `Size asks · ${totals.sizedLines}/${holdings.length} lines`
+                  : "Size ask × qty when available",
           },
           {
             label: "Cost basis",
@@ -531,7 +659,7 @@ export function PortfolioApp() {
         ) : (
           <ul className="divide-y divide-dash-border">
             {holdings.map((row) => {
-              const ask = priceBySlug.get(row.slug) ?? null;
+              const { ask, source, live } = askForHolding(row);
               const lineMarket = ask != null ? ask * row.quantity : null;
               const lineCost =
                 row.costBasisUsd != null
@@ -575,6 +703,17 @@ export function PortfolioApp() {
                     <p className="font-[family-name:var(--font-plex-mono)] text-sm tabular-nums text-dash-text">
                       {formatMaybeMoney(lineMarket)}
                     </p>
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-dash-faint">
+                      {source === "size"
+                        ? live
+                          ? `Live size ${row.size}`
+                          : `Size ${row.size} ask`
+                        : source === "fallback"
+                          ? "All-size fallback"
+                          : asksBusy
+                            ? "Loading…"
+                            : "No ask"}
+                    </p>
                     <p
                       className={`text-xs tabular-nums ${changeClass(linePnl)}`}
                     >
@@ -617,19 +756,9 @@ export function PortfolioApp() {
             Save username
           </button>
         </div>
-        {plusPublicEnabled() ? (
-          <p className="text-xs text-dash-faint">
-            Want cloud sync across phones?{" "}
-            <Link href="/plus" className="text-dash-accent hover:underline">
-              Join the Plus list
-            </Link>
-            .
-          </p>
-        ) : (
-          <p className="text-xs text-dash-faint">
-            Holdings stay on this device for now.
-          </p>
-        )}
+        <p className="text-xs text-dash-faint">
+          Same login on any device shows the same holdings.
+        </p>
       </section>
     </div>
   );

@@ -4,14 +4,15 @@ import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ClosetPanel } from "@/components/wardrobe/ClosetPanel";
 import { FitsPanel } from "@/components/wardrobe/FitsPanel";
-import type { PortfolioSession } from "@/lib/portfolio/types";
+import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
 import {
-  getAccount,
-  getSession,
   loginAccount,
   logoutAccount,
+  newFitId,
+  newFitPieceId,
   registerAccount,
+  restoreSession,
   saveCloset,
   saveFits,
 } from "@/lib/portfolio/vault";
@@ -33,9 +34,7 @@ export function WardrobeApp() {
   const [closet, setCloset] = useState<ClosetItem[]>([]);
   const [fits, setFits] = useState<FitBoard[]>([]);
   const [holdingsCount, setHoldingsCount] = useState(0);
-  const [holdings, setHoldings] = useState(
-    [] as NonNullable<ReturnType<typeof getAccount>>["holdings"],
-  );
+  const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [catalog, setCatalog] = useState<CatalogRow[]>([]);
   const [tab, setTab] = useState<Tab>("closet");
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -45,19 +44,39 @@ export function WardrobeApp() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [authBusy, setAuthBusy] = useState(false);
   const [flash, setFlash] = useState<string | null>(null);
+  const [booting, setBooting] = useState(true);
 
-  const hydrate = useCallback((next: PortfolioSession) => {
-    setSession(next);
-    const account = getAccount(next.email);
-    setCloset(account?.closet ?? []);
-    setFits(account?.fits ?? []);
-    setHoldings(account?.holdings ?? []);
-    setHoldingsCount(account?.holdings?.length ?? 0);
-  }, []);
+  const hydrate = useCallback(
+    (
+      next: PortfolioSession,
+      vault?: {
+        closet?: ClosetItem[];
+        fits?: FitBoard[];
+        holdings?: PortfolioHolding[];
+      },
+    ) => {
+      setSession(next);
+      setCloset(vault?.closet ?? []);
+      setFits(vault?.fits ?? []);
+      setHoldings(vault?.holdings ?? []);
+      setHoldingsCount(vault?.holdings?.length ?? 0);
+    },
+    [],
+  );
 
   useEffect(() => {
-    const existing = getSession();
-    if (existing) hydrate(existing);
+    let cancelled = false;
+    (async () => {
+      const restored = await restoreSession();
+      if (cancelled) return;
+      if (restored.session) {
+        hydrate(restored.session, restored.vault ?? undefined);
+      }
+      setBooting(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [hydrate]);
 
   useEffect(() => {
@@ -100,12 +119,14 @@ export function WardrobeApp() {
       setAuthError(result.error);
       return;
     }
-    hydrate(result.session);
+    hydrate(result.session, result.vault);
     setPassword("");
     setFlash(
-      mode === "register"
-        ? "Account ready — start your closet."
-        : "Welcome back.",
+      result.imported
+        ? "Imported your previous wardrobe. Start building fits."
+        : mode === "register"
+          ? "Account ready — start your closet."
+          : "Welcome back.",
     );
   }
 
@@ -121,6 +142,14 @@ export function WardrobeApp() {
     saveFits(session.email, next);
   }
 
+  if (booting) {
+    return (
+      <div className="mx-auto max-w-lg py-16 text-center text-sm text-dash-muted">
+        Loading account…
+      </div>
+    );
+  }
+
   if (!session) {
     return (
       <div className="mx-auto max-w-lg space-y-6">
@@ -132,8 +161,9 @@ export function WardrobeApp() {
             Closet + Fits
           </h1>
           <p className="text-base leading-relaxed text-dash-muted">
-            Same device account as Portfolio. Build a closet from the board and
-            your own PNGs, then arrange fits like Freeform.
+            Same account as Portfolio. Start from outfit ideas, pull sneakers
+            from the board, or upload pieces — then arrange Fits. Available on
+            any device when you sign in.
           </p>
         </header>
 
@@ -205,16 +235,16 @@ export function WardrobeApp() {
               {authBusy
                 ? "Working…"
                 : mode === "register"
-                  ? "Create device account"
+                  ? "Create account"
                   : "Log in"}
             </button>
           </form>
           <p className="mt-4 text-xs leading-relaxed text-dash-faint">
-            Stays on this browser.{" "}
+            Same login on phone and desktop.{" "}
             <Link href="/portfolio" className="text-dash-accent hover:underline">
               Portfolio
             </Link>{" "}
-            shares the same login for cost basis and P&amp;L.
+            shares the account for cost basis and P&amp;L.
           </p>
         </section>
       </div>
@@ -236,16 +266,18 @@ export function WardrobeApp() {
             {holdingsCount
               ? ` · ${holdingsCount} in Portfolio`
               : ""}
-            . Visual boards first — suggestions later.
+            . Outfit ideas first — build from there.
           </p>
         </div>
         <button
           type="button"
-          onClick={() => {
-            logoutAccount();
+          onClick={async () => {
+            await logoutAccount();
             setSession(null);
             setCloset([]);
             setFits([]);
+            setHoldings([]);
+            setHoldingsCount(0);
           }}
           className="rounded-xl border border-dash-border px-3 py-2 text-sm font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text"
         >
@@ -291,6 +323,39 @@ export function WardrobeApp() {
           catalog={catalog}
           onChange={persistCloset}
           onFlash={setFlash}
+          onSaveOutfit={({ name, items }) => {
+            const now = new Date().toISOString();
+            const layout = [
+              { x: 28, y: 8, scale: 1.05 }, // top
+              { x: 30, y: 42, scale: 1 }, // bottom
+              { x: 32, y: 68, scale: 0.95 }, // sneakers
+            ];
+            const pieces = items.map((item, index) => {
+              const spot = layout[index] ?? {
+                x: 20 + index * 8,
+                y: 20 + index * 18,
+                scale: 1,
+              };
+              return {
+                id: newFitPieceId(),
+                closetItemId: item.id,
+                x: spot.x,
+                y: spot.y,
+                scale: spot.scale,
+                zIndex: index + 1,
+              };
+            });
+            const board: FitBoard = {
+              id: newFitId(),
+              name,
+              notes: "From outfit ideas",
+              pieces,
+              createdAt: now,
+              updatedAt: now,
+            };
+            persistFits([board, ...fits]);
+            setTab("fits");
+          }}
         />
       ) : (
         <FitsPanel

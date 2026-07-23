@@ -3,12 +3,17 @@
   "slug": "asics-gel-1130-white-pure-silver",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:54.496Z",
+  "updatedAt": "2026-07-23T13:41:59.874Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 85,
       "orders": 799
+    },
+    {
+      "date": "2026-07-23",
+      "price": 84,
+      "orders": 812
     }
   ]
 }

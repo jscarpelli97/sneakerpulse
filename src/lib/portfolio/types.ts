@@ -26,7 +26,7 @@ export type PortfolioAccount = {
   passwordHash: string;
   createdAt: string;
   holdings: PortfolioHolding[];
-  /** Wardrobe closet — device-local. */
+  /** Wardrobe closet — synced via cloud vault when DATABASE_URL is set. */
   closet: ClosetItem[];
   /** Saved outfit boards. */
   fits: FitBoard[];

@@ -1,4 +1,5 @@
 import { CatalogTable } from "@/components/catalog/CatalogTable";
+import { HomeWhatWeProvide } from "@/components/catalog/HomeWhatWeProvide";
 import { MarketsHero } from "@/components/catalog/MarketsHero";
 import { MarketsQuickLook } from "@/components/catalog/MarketsQuickLook";
 import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
@@ -68,6 +69,7 @@ export default async function MarketsIndexPage() {
       />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
+          {/* 1) What is SPI Markets? */}
           {featured ? (
             <MarketsHero
               featured={featured}
@@ -80,6 +82,13 @@ export default async function MarketsIndexPage() {
               totalMarkets={access.gated ? FREE_CATALOG_LIMIT : quotes.length}
             />
           ) : null}
+
+          {/* 2) Why here? — unique value vs a StockX tab */}
+          {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
+
+          {/* 3) What do we provide? */}
+          <HomeWhatWeProvide />
+
           {access.gated && publicPlus ? (
             <PlusCatalogGate
               visible={access.visible}
@@ -87,9 +96,11 @@ export default async function MarketsIndexPage() {
               freeLimit={access.freeLimit}
             />
           ) : null}
+
+          {/* 4) Show me — proof on the board */}
           <CatalogTable
             rows={watchlist}
-            title="Top 10 watchlist"
+            title="See it on the board"
             subtitle={
               access.gated
                 ? `Free top ${watchlist.length} · unlock all ${access.total} with Plus`
@@ -103,9 +114,9 @@ export default async function MarketsIndexPage() {
                   : `View all ${access.total}`,
             }}
           />
-          {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
           <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
           <MarketsQuickLook look={quickLook} />
+
           {publicPlus ? <PlusInterest variant="panel" source="home" /> : null}
         </div>
       </main>

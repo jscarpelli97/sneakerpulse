@@ -9,8 +9,31 @@
 - Custom domain `spimarkets.com` on Vercel
 - Env: `KICKSDB_API_KEY`, `STATUS_TOKEN`, `NEXT_PUBLIC_SITE_URL=https://spimarkets.com`
 - Contact form delivery: `CONTACT_INBOX_EMAIL` (or `PLUS_INTEREST_EMAIL`) — server-only, never shown on the site
+- Cloud accounts: `DATABASE_URL` (Neon) + `AUTH_JWT_SECRET`, then `node scripts/migrate-users.mjs`
 - GitHub Actions secret `KICKSDB_API_KEY` for `.github/workflows/daily-spi.yml`
 - Keep `NEXT_PUBLIC_PLUS_PUBLIC` unset so Plus marketing and paywalls stay off
+
+## Cloud accounts (Portfolio + Wardrobe)
+
+Accounts sync across devices when Postgres is wired:
+
+1. Accept Neon marketplace terms:  
+   https://vercel.com/jscarpelli97/~/integrations/accept-terms/neon?source=cli
+2. Provision and link to the project:
+   ```bash
+   npx vercel integration add neon -n spi-markets-db
+   npx vercel env pull .env.local
+   ```
+3. Set a session secret (production + preview):
+   ```bash
+   openssl rand -base64 48
+   # then: npx vercel env add AUTH_JWT_SECRET
+   ```
+4. Apply schema:
+   ```bash
+   node scripts/migrate-users.mjs
+   ```
+5. Redeploy. `/portfolio` and `/wardrobe` will show cloud login; device vaults import automatically when the cloud side is empty.
 
 ## Redeploy
 

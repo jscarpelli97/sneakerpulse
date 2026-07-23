@@ -3,6 +3,7 @@ import {
   getKicksApiKey,
   searchStockxProducts,
 } from "@/lib/kicksdb/client";
+import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
 import { getOfflineCatalogQuotes } from "@/services/catalog/offlineCatalog";
 
@@ -72,7 +73,8 @@ function filterOffline(query: string, limit: number): CatalogSearchHit[] {
 
 /**
  * Typeahead search for sneakers (Wardrobe / Portfolio add flows).
- * Live KicksDB `query` when keyed; falls back to offline top-seller snapshot.
+ * Offline snapshot by default (saves KicksDB quota). Live search only when
+ * KICKSDB_LIVE_READS=1 and monthly budget remains.
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -91,7 +93,7 @@ export async function GET(request: Request) {
   }
 
   const apiKey = getKicksApiKey();
-  if (apiKey) {
+  if (apiKey && kicksLiveReadsEnabled()) {
     const res = await searchStockxProducts(apiKey, q, limit);
     if (res.ok) {
       const data: CatalogSearchHit[] = [];
@@ -132,7 +134,10 @@ export async function GET(request: Request) {
     data: offline,
     meta: {
       query: q,
-      source: apiKey ? "snapshot-fallback" : "snapshot",
+      source:
+        apiKey && kicksLiveReadsEnabled()
+          ? "snapshot-fallback"
+          : "snapshot",
     },
   });
 }

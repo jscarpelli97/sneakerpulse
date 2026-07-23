@@ -56,7 +56,7 @@ export function useCatalogSearch(query: string, enabled = true) {
       } finally {
         if (!cancelled) setBusy(false);
       }
-    }, 280);
+    }, 450);
 
     return () => {
       cancelled = true;
