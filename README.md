@@ -103,6 +103,7 @@ Automated narrative card on each sneaker page (`MarketSummaryCard`).
 - `/markets` — full top-seller board with search and column sorting
 - `/sneakers/[slug]` — market page (asks, size ladder, chart, market read)
 - `/portfolio` — device-local collection tracker
+- `/wardrobe` — closet + Fits boards (catalog sneakers + custom uploads)
 - `/compare` — side-by-side quotes
 - `/alerts` — browser-stored price thresholds
 - `/about` — founder / data notes + contact form

@@ -1,5 +1,6 @@
 import type { PortfolioAccount, PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { isValidEmail, isValidUsername, usernameFromEmail } from "@/lib/portfolio/username";
+import type { ClosetItem, FitBoard } from "@/lib/wardrobe/types";
 
 const STORE_KEY = "sp-portfolio-vault-v1";
 const SESSION_KEY = "sp-portfolio-session-v1";
@@ -13,6 +14,15 @@ function emptyVault(): VaultFile {
   return { version: 1, accounts: {} };
 }
 
+function normalizeAccount(raw: PortfolioAccount): PortfolioAccount {
+  return {
+    ...raw,
+    holdings: Array.isArray(raw.holdings) ? raw.holdings : [],
+    closet: Array.isArray(raw.closet) ? raw.closet : [],
+    fits: Array.isArray(raw.fits) ? raw.fits : [],
+  };
+}
+
 function readVault(): VaultFile {
   if (typeof window === "undefined") return emptyVault();
   try {
@@ -22,7 +32,11 @@ function readVault(): VaultFile {
     if (parsed?.version !== 1 || typeof parsed.accounts !== "object") {
       return emptyVault();
     }
-    return parsed;
+    const accounts: Record<string, PortfolioAccount> = {};
+    for (const [key, account] of Object.entries(parsed.accounts)) {
+      accounts[key] = normalizeAccount(account);
+    }
+    return { version: 1, accounts };
   } catch {
     return emptyVault();
   }
@@ -137,6 +151,8 @@ export async function registerAccount(input: {
     passwordHash,
     createdAt: new Date().toISOString(),
     holdings: [],
+    closet: [],
+    fits: [],
   };
   vault.accounts[email] = account;
   writeVault(vault);
@@ -183,6 +199,26 @@ export function saveHoldings(email: string, holdings: PortfolioHolding[]) {
   return true;
 }
 
+export function saveCloset(email: string, closet: ClosetItem[]) {
+  const vault = readVault();
+  const key = email.trim().toLowerCase();
+  const account = vault.accounts[key];
+  if (!account) return false;
+  account.closet = closet;
+  writeVault(vault);
+  return true;
+}
+
+export function saveFits(email: string, fits: FitBoard[]) {
+  const vault = readVault();
+  const key = email.trim().toLowerCase();
+  const account = vault.accounts[key];
+  if (!account) return false;
+  account.fits = fits;
+  writeVault(vault);
+  return true;
+}
+
 export function updateUsername(email: string, username: string) {
   const cleaned = username.trim().toLowerCase();
   if (!isValidUsername(cleaned)) {
@@ -203,8 +239,24 @@ export function updateUsername(email: string, username: string) {
 }
 
 export function newHoldingId() {
+  return newId("h");
+}
+
+export function newClosetItemId() {
+  return newId("c");
+}
+
+export function newFitId() {
+  return newId("f");
+}
+
+export function newFitPieceId() {
+  return newId("p");
+}
+
+function newId(prefix: string) {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  return `h_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
