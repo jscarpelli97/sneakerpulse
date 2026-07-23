@@ -3,6 +3,7 @@ import { MarketHeader } from "@/components/market/MarketHeader";
 import { MarketSizeSection } from "@/components/market/MarketSizeSection";
 import { MarketSnapshot } from "@/components/market/MarketSnapshot";
 import { MarketSummaryCard } from "@/components/market/MarketSummaryCard";
+import { DealCheckPanel } from "@/components/market/DealCheckPanel";
 import { PriceChart } from "@/charts/PriceChart";
 import { PriceOverview } from "@/components/market/PriceOverview";
 import { EbayCompsPanel } from "@/components/market/EbayCompsPanel";
@@ -127,6 +128,8 @@ export default async function SneakerMarketPage({
           {result.ok && summary ? (
             <MarketSummaryCard market={market} summary={summary} />
           ) : null}
+
+          {result.ok ? <DealCheckPanel market={market} /> : null}
 
           {result.ok ? <MarketSnapshot market={market} /> : null}
 
