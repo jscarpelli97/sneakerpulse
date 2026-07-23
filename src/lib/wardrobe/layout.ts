@@ -1,6 +1,9 @@
 import type { ClosetItem, ClosetItemKind, FitPiece } from "@/lib/wardrobe/types";
 
-/** Default piece width as % of the fit board (matches FitCanvas). */
+/**
+ * Reference cell size as % of the board. Actual on-board size = FIT_BASE_SIZE * scale.
+ * Auto-arrange picks scale so locked slots never overlap.
+ */
 export const FIT_BASE_SIZE = 34;
 
 /** Stack order for a classic outfit read (top → bottom → footwear). */
@@ -17,27 +20,14 @@ export const FIT_KIND_STACK: ClosetItemKind[] = [
 export const FIT_CENTER_X = 50;
 export const FIT_CENTER_Y = 50;
 
+/** Equal inset from every edge when locking pieces into slots. */
+export const FIT_EDGE_MARGIN = 6;
+
+/** Gap between locked slots (prevents touching / overlap). */
+export const FIT_SLOT_GAP = 2.5;
+
 /** Snap distance (board %) when dragging near the center guide. */
 export const FIT_CENTER_SNAP = 3.5;
-
-type Slot = {
-  /** Relative center Y inside the stacked group (0 = top of group). */
-  relY: number;
-  scale: number;
-};
-
-/**
- * Relative stack — distances are small so cutouts sit as one outfit.
- * Group is then centered on the board (H + V).
- */
-const KIND_SLOTS: Record<ClosetItemKind, Slot> = {
-  outerwear: { relY: 0, scale: 1.05 },
-  top: { relY: 0, scale: 1.08 },
-  bottom: { relY: 26, scale: 1.05 },
-  sneaker: { relY: 50, scale: 0.98 },
-  accessory: { relY: 4, scale: 0.65 },
-  other: { relY: 4, scale: 0.7 },
-};
 
 /** Convert center % → top-left origin used by FitPiece (matches canvas). */
 export function centerToOrigin(
@@ -97,6 +87,27 @@ export function piecesBounds(pieces: FitPiece[]) {
   };
 }
 
+/** True if two axis-aligned piece boxes overlap (including touching counts as no). */
+export function piecesOverlap(a: FitPiece, b: FitPiece, pad = 0.25): boolean {
+  const as = pieceSize(a);
+  const bs = pieceSize(b);
+  return !(
+    a.x + as <= b.x + pad ||
+    b.x + bs <= a.x + pad ||
+    a.y + as <= b.y + pad ||
+    b.y + bs <= a.y + pad
+  );
+}
+
+export function anyPiecesOverlap(pieces: FitPiece[]): boolean {
+  for (let i = 0; i < pieces.length; i++) {
+    for (let j = i + 1; j < pieces.length; j++) {
+      if (piecesOverlap(pieces[i]!, pieces[j]!)) return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Translate the whole group so its bounding-box center sits at board center.
  */
@@ -115,10 +126,7 @@ export function centerGroupOnBoard(pieces: FitPiece[]): FitPiece[] {
   });
 }
 
-/**
- * Auto-organize into a tight stack, then center the group on the board.
- */
-export function autoOrganizePieces(
+function orderedPieces(
   pieces: FitPiece[],
   closetById: Map<string, ClosetItem>,
 ): FitPiece[] {
@@ -136,114 +144,76 @@ export function autoOrganizePieces(
     buckets.set(item.kind, list);
   }
 
-  // Build relative stack starting at y=0, then center as a group.
-  const stacked: FitPiece[] = [];
-  let z = 1;
-  const hasOuter = (buckets.get("outerwear")?.length ?? 0) > 0;
-
+  const ordered: FitPiece[] = [];
   for (const kind of FIT_KIND_STACK) {
-    const list = buckets.get(kind) ?? [];
-    // If we have both outerwear and top, nudge top slightly down so they layer.
-    const slot = KIND_SLOTS[kind];
-    let relY = slot.relY;
-    if (kind === "top" && hasOuter) relY = 8;
-    if (kind === "accessory") {
-      // Accessories sit to the side of the stack, still in the group.
-      list.forEach((piece, index) => {
-        const scale = slot.scale;
-        const { x, y } = centerToOrigin(68 + index * 4, relY + 10, scale);
-        stacked.push({
-          ...piece,
-          x,
-          y,
-          scale,
-          rotation: 0,
-          zIndex: z++,
-        });
-      });
-      continue;
-    }
-    if (kind === "other") {
-      list.forEach((piece, index) => {
-        const scale = slot.scale;
-        const { x, y } = centerToOrigin(32 - index * 4, relY + 10, scale);
-        stacked.push({
-          ...piece,
-          x,
-          y,
-          scale,
-          rotation: 0,
-          zIndex: z++,
-        });
-      });
-      continue;
-    }
-
-    list.forEach((piece, index) => {
-      const spread = list.length > 1 ? (index - (list.length - 1) / 2) * 8 : 0;
-      const scale = slot.scale;
-      const { x, y } = centerToOrigin(FIT_CENTER_X + spread, relY + 18, scale);
-      stacked.push({
-        ...piece,
-        x,
-        y,
-        scale,
-        rotation: 0,
-        zIndex: z++,
-      });
-    });
+    for (const piece of buckets.get(kind) ?? []) ordered.push(piece);
   }
-
-  for (const piece of orphans) {
-    const { x, y } = centerToOrigin(FIT_CENTER_X, 90, piece.scale || 1);
-    stacked.push({ ...piece, x, y, zIndex: z++ });
-  }
-
-  return centerGroupOnBoard(stacked);
+  for (const piece of orphans) ordered.push(piece);
+  return ordered;
 }
 
 /**
- * Line everything up on the vertical center — keeps current Y / scale / rotation.
+ * Lock pieces into equal vertical slots — no overlap, equal margins
+ * top/bottom/left/right, each piece centered in its slot.
  */
-export function alignPiecesCenter(pieces: FitPiece[]): FitPiece[] {
-  return centerGroupOnBoard(
-    pieces.map((piece) => {
-      const { x } = centerToOrigin(FIT_CENTER_X, pieceCenterY(piece), piece.scale);
-      return { ...piece, x };
-    }),
-  );
+export function autoOrganizePieces(
+  pieces: FitPiece[],
+  closetById: Map<string, ClosetItem>,
+): FitPiece[] {
+  const ordered = orderedPieces(pieces, closetById);
+  const n = ordered.length;
+  if (n === 0) return [];
+
+  const margin = FIT_EDGE_MARGIN;
+  const gap = n > 1 ? FIT_SLOT_GAP : 0;
+  const usable = 100 - margin * 2;
+  const slotH = (usable - gap * (n - 1)) / n;
+
+  // Fit inside the slot with a little breathing room; also cap width so
+  // left/right margins stay ≥ edge margin.
+  const maxByHeight = slotH * 0.9;
+  const maxByWidth = 100 - margin * 2;
+  const size = Math.min(maxByHeight, maxByWidth);
+  const scale = size / FIT_BASE_SIZE;
+
+  return ordered.map((piece, i) => {
+    const slotTop = margin + i * (slotH + gap);
+    const cy = slotTop + slotH / 2;
+    const { x, y } = centerToOrigin(FIT_CENTER_X, cy, scale);
+    return {
+      ...piece,
+      x,
+      y,
+      scale,
+      rotation: 0,
+      zIndex: i + 1,
+    };
+  });
 }
 
 /**
- * Pull the stack tighter vertically, re-center the group on the board.
+ * Re-lock on the vertical center line (same as auto-arrange — keeps no-overlap).
+ */
+export function alignPiecesCenter(
+  pieces: FitPiece[],
+  closetById?: Map<string, ClosetItem>,
+): FitPiece[] {
+  if (closetById) return autoOrganizePieces(pieces, closetById);
+  // Fallback: center X only when closet map isn't available.
+  return pieces.map((piece) => {
+    const { x } = centerToOrigin(FIT_CENTER_X, pieceCenterY(piece), piece.scale);
+    return { ...piece, x };
+  });
+}
+
+/**
+ * Re-lock into equal non-overlapping slots (same as auto-arrange).
  */
 export function pullPiecesTogether(
   pieces: FitPiece[],
   closetById: Map<string, ClosetItem>,
-  factor = 0.45,
 ): FitPiece[] {
-  if (pieces.length < 2) return alignPiecesCenter(pieces);
-
-  const ranked = [...pieces].sort((a, b) => {
-    const ka = closetById.get(a.closetItemId)?.kind;
-    const kb = closetById.get(b.closetItemId)?.kind;
-    const ra = ka ? FIT_KIND_STACK.indexOf(ka) : 99;
-    const rb = kb ? FIT_KIND_STACK.indexOf(kb) : 99;
-    if (ra !== rb) return ra - rb;
-    return pieceCenterY(a) - pieceCenterY(b);
-  });
-
-  const centers = ranked.map((p) => pieceCenterY(p));
-  const mid = (Math.min(...centers) + Math.max(...centers)) / 2;
-
-  const pulled = ranked.map((piece) => {
-    const cy = pieceCenterY(piece);
-    const nextCy = mid + (cy - mid) * factor;
-    const { x, y } = centerToOrigin(FIT_CENTER_X, nextCy, piece.scale);
-    return { ...piece, x, y, rotation: 0 };
-  });
-
-  return centerGroupOnBoard(pulled);
+  return autoOrganizePieces(pieces, closetById);
 }
 
 /** Build pieces for a new fit from closet items (outfit ideas → board). */

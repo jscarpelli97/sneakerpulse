@@ -287,15 +287,15 @@ function FitEditor({
     onChange({ pieces: autoOrganizePieces(board.pieces, byId) });
     onFlash(
       cut.updated
-        ? `Cut out ${cut.updated} · stacked & centered`
-        : "Stacked & centered on the board",
+        ? `Cut out ${cut.updated} · locked in equal slots`
+        : "Locked in equal slots — no overlap",
     );
   }
 
   function alignCenter() {
     if (board.pieces.length === 0) return;
-    onChange({ pieces: alignPiecesCenter(board.pieces) });
-    onFlash("Centered on the board");
+    onChange({ pieces: alignPiecesCenter(board.pieces, byId) });
+    onFlash("Locked to equal slots");
   }
 
   function pullTogether() {
@@ -304,7 +304,7 @@ function FitEditor({
       return;
     }
     onChange({ pieces: pullPiecesTogether(board.pieces, byId) });
-    onFlash("Pulled together & centered");
+    onFlash("Locked — equal spacing, no overlap");
   }
 
   async function makeCutouts() {
@@ -425,8 +425,8 @@ function FitEditor({
           </button>
         </div>
         <p className="text-[11px] text-dash-faint">
-          Remove backgrounds → transparent PNGs, then Auto arrange stacks them
-          centered on the square board. Export = white 1:1 Instagram JPEG.
+          Remove backgrounds → transparent PNGs. Auto arrange locks pieces into
+          equal slots (no overlap, even margins). Export = white 1:1 JPEG.
         </p>
         {missing ? (
           <p className="text-xs text-dash-down">
