@@ -21,29 +21,53 @@ export type CatalogSearchHit = {
 };
 
 function filterOffline(query: string, limit: number): CatalogSearchHit[] {
-  const q = query.trim().toLowerCase();
-  if (q.length < 2) return [];
-  return getOfflineCatalogQuotes()
-    .filter(
-      (row) =>
-        row.name.toLowerCase().includes(q) ||
-        row.brand.toLowerCase().includes(q) ||
-        row.styleCode.toLowerCase().includes(q) ||
-        row.ticker.toLowerCase().includes(q) ||
-        row.slug.toLowerCase().includes(q),
-    )
+  const tokens = query
+    .trim()
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((t) => t.length > 0);
+  if (tokens.length === 0) return [];
+
+  const scored: Array<{ row: CatalogSearchHit; score: number }> = [];
+  for (const row of getOfflineCatalogQuotes()) {
+    const hay = [
+      row.name,
+      row.brand,
+      row.styleCode,
+      row.ticker,
+      row.slug,
+      row.colorway,
+    ]
+      .join(" ")
+      .toLowerCase();
+    if (!tokens.every((token) => hay.includes(token))) continue;
+    // Prefer tighter matches (more tokens / name hits).
+    let score = tokens.length * 10;
+    if (row.name.toLowerCase().includes(tokens.join(" "))) score += 20;
+    for (const token of tokens) {
+      if (row.name.toLowerCase().includes(token)) score += 3;
+      if (row.slug.toLowerCase().includes(token)) score += 1;
+    }
+    scored.push({
+      row: {
+        slug: row.slug,
+        name: row.name,
+        brand: row.brand,
+        ticker: row.ticker,
+        styleCode: row.styleCode,
+        fallbackImage: row.fallbackImage,
+        price: row.price ?? null,
+        retail: row.retail,
+        source: "snapshot",
+      },
+      score,
+    });
+  }
+
+  return scored
+    .sort((a, b) => b.score - a.score)
     .slice(0, limit)
-    .map((row) => ({
-      slug: row.slug,
-      name: row.name,
-      brand: row.brand,
-      ticker: row.ticker,
-      styleCode: row.styleCode,
-      fallbackImage: row.fallbackImage,
-      price: row.price ?? null,
-      retail: row.retail,
-      source: "snapshot" as const,
-    }));
+    .map((entry) => entry.row);
 }
 
 /**
