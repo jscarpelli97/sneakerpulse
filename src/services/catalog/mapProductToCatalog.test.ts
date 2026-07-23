@@ -27,15 +27,31 @@ describe("stockxStyleId / makeTicker", () => {
       makeTicker(
         product({
           sku: "",
+          slug: "some-other-pair",
           traits: [{ trait: "Style", value: "DD0587-008" }],
         }),
       ),
     ).toBe("DD0587-008");
   });
 
-  it("does not invent tickers when StockX has no style ID", () => {
-    expect(makeTicker(product({ sku: "", title: "YZY YS-01 Black" }))).toBe(
-      "—",
+  it("fills YZY YS-01 style IDs from manufacturer overrides when StockX sku is blank", () => {
+    expect(makeTicker(product({ sku: "", slug: "yzy-ys-01-black" }))).toBe(
+      "09390-1002500YYB-BLAC",
     );
+    expect(
+      makeTicker(product({ sku: "", slug: "yzy-ys-01-silver-green" })),
+    ).toBe("09390-10000YC-CREA");
+    expect(makeTicker(product({ sku: "", slug: "yzy-ys-01-fudge" }))).toBe(
+      "09390-10000YF-FUDG",
+    );
+    expect(makeTicker(product({ sku: "", slug: "yzy-ys-01-blue" }))).toBe(
+      "09390-10000YB-BLUE",
+    );
+  });
+
+  it("does not invent tickers when StockX has no style ID and no override", () => {
+    expect(
+      makeTicker(product({ sku: "", slug: "unknown-blank-sku-pair", title: "Nope" })),
+    ).toBe("—");
   });
 });

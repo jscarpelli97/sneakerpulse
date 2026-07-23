@@ -1,5 +1,6 @@
 import type { KicksProduct, KicksTrait } from "@/types/kicksdb";
 import type { SneakerCatalogEntry } from "@/types/catalog";
+import styleIdOverrides from "@/data/catalog/style-id-overrides.json";
 
 /** Tracked StockX sneaker universe (sales rank). */
 export const TOP_SELLERS_LIMIT = 500;
@@ -7,6 +8,12 @@ export const TOP_SELLERS_LIMIT = 500;
 export const HOMEPAGE_WATCHLIST_LIMIT = 10;
 /** Pre-render this many market pages at build; rest use dynamicParams. */
 export const STATIC_PARAMS_LIMIT = 50;
+
+type StyleIdOverridesFile = {
+  bySlug?: Record<string, string>;
+};
+
+const overrides = (styleIdOverrides as StyleIdOverridesFile).bySlug ?? {};
 
 export function traitValue(
   traits: KicksTrait[] | null | undefined,
@@ -25,11 +32,17 @@ export function stockxStyleId(product: KicksProduct): string | null {
   if (sku) return sku;
   const styleTrait = traitValue(product.traits, "Style");
   if (styleTrait) return styleTrait;
+  const slug = product.slug?.trim();
+  if (slug) {
+    const override = overrides[slug]?.trim();
+    if (override) return override;
+  }
   return null;
 }
 
 /**
  * Board "ticker" = StockX Style ID / SKU when StockX has one.
+ * Falls back to curated manufacturer IDs for known blank-SKU drops (e.g. YZY).
  * No invented short codes — missing SKU stays blank ("—").
  */
 export function makeTicker(product: KicksProduct): string {

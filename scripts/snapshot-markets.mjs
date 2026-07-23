@@ -387,6 +387,19 @@ async function upsertSpiExtension(products) {
 }
 
 async function writeOfflineCatalog(products) {
+  let styleIdBySlug = {};
+  try {
+    const raw = JSON.parse(
+      await fs.readFile(
+        path.join(ROOT, "src/data/catalog/style-id-overrides.json"),
+        "utf8",
+      ),
+    );
+    styleIdBySlug = raw?.bySlug ?? {};
+  } catch {
+    // optional
+  }
+
   function traitValue(traits, name) {
     const hit = traits?.find(
       (t) => String(t.trait || "").toLowerCase() === name.toLowerCase(),
@@ -400,6 +413,8 @@ async function writeOfflineCatalog(products) {
     if (sku) return sku;
     const style = traitValue(product.traits, "Style");
     if (style) return style;
+    const slug = product.slug?.trim();
+    if (slug && styleIdBySlug[slug]) return styleIdBySlug[slug];
     return "—";
   }
 
