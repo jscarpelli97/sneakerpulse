@@ -41,23 +41,19 @@ function formatMoney(value: number): string {
 }
 
 function resolveAsk(
-  market: SneakerMarket,
   size: SizeAsk | null | undefined,
 ): { ask: number | null; sizeLabel: string | null } {
-  if (size?.lowestAsk != null && size.lowestAsk > 0) {
-    return { ask: size.lowestAsk, sizeLabel: size.size };
+  if (!size?.size?.trim()) {
+    return { ask: null, sizeLabel: null };
   }
-  const marketAsk =
-    market.price > 0
-      ? market.price
-      : market.stats.lowestAsk != null && market.stats.lowestAsk > 0
-        ? market.stats.lowestAsk
-        : null;
-  return { ask: marketAsk, sizeLabel: null };
+  const ask =
+    size.lowestAsk != null && size.lowestAsk > 0 ? size.lowestAsk : null;
+  return { ask, sizeLabel: size.size.trim() };
 }
 
 /**
- * Score a user offer against retail, ask, 30d tape, and liquidity.
+ * Score a user offer against retail, that size's ask, 30d tape, and liquidity.
+ * Never uses StockX product-level "all sizes" ask — size is required.
  * Terminal-style read — not financial advice.
  */
 export function evaluateDeal(
@@ -66,8 +62,10 @@ export function evaluateDeal(
   size?: SizeAsk | null,
 ): DealCheckResult | null {
   if (!Number.isFinite(offerRaw) || offerRaw <= 0) return null;
+  const { ask, sizeLabel } = resolveAsk(size);
+  if (!sizeLabel) return null;
+
   const offer = Math.round(offerRaw * 100) / 100;
-  const { ask, sizeLabel } = resolveAsk(market, size);
   const retail = market.retail > 0 ? market.retail : null;
   const low30 = market.stats.low30d;
   const high30 = market.stats.high30d;
@@ -111,17 +109,17 @@ export function evaluateDeal(
 
     comps.push({
       id: "ask",
-      label: sizeLabel ? `Vs size ${sizeLabel} ask` : "Vs lowest ask",
+      label: `Vs size ${sizeLabel} ask`,
       value: formatPct(pct),
-      detail: `Ask ${formatMoney(ask)}`,
+      detail: `Size ${sizeLabel} ask ${formatMoney(ask)}`,
       tone: pct <= 0 ? "up" : pct >= 10 ? "down" : "neutral",
     });
   } else {
     comps.push({
       id: "ask",
-      label: "Vs lowest ask",
+      label: `Vs size ${sizeLabel} ask`,
       value: "—",
-      detail: "No ask loaded",
+      detail: "No ask listed for this size yet",
       tone: "muted",
     });
   }
@@ -143,11 +141,7 @@ export function evaluateDeal(
       id: "range",
       label: "Vs 30d range",
       value:
-        pos <= 0.25
-          ? "Near low"
-          : pos >= 0.75
-            ? "Near high"
-            : "Mid-range",
+        pos <= 0.25 ? "Near low" : pos >= 0.75 ? "Near high" : "Mid-range",
       detail: `${formatMoney(low30)} – ${formatMoney(high30)}`,
       tone: pos <= 0.25 ? "up" : pos >= 0.75 ? "down" : "neutral",
     });
@@ -187,7 +181,7 @@ export function evaluateDeal(
     return {
       verdict: "unknown",
       headline: "Not enough tape",
-      body: "Need a StockX ask or retail before we can stack this offer.",
+      body: `Size ${sizeLabel} is set, but we need that size’s ask or retail before we can stack this offer.`,
       offer,
       ask,
       retail,
@@ -206,22 +200,22 @@ export function evaluateDeal(
     headline = "Looks like a buy";
     body =
       ask != null && offer <= ask
-        ? `$${Math.round(offer)} sits at or under the ${sizeLabel ? `size ${sizeLabel} ` : ""}ask — relative to this board, the tape supports it.`
-        : `$${Math.round(offer)} screens well vs retail and recent range for this pair.`;
+        ? `$${Math.round(offer)} sits at or under the size ${sizeLabel} ask — relative to this board, the tape supports it.`
+        : `$${Math.round(offer)} for size ${sizeLabel} screens well vs retail and recent range for this pair.`;
   } else if (score >= 0) {
     verdict = "stretch";
     headline = "Stretch / fair";
     body =
       ask != null
-        ? `$${Math.round(offer)} is in the zone of the ${sizeLabel ? `size ${sizeLabel} ` : ""}ask — fine if you want the pair, not a clear discount.`
-        : `$${Math.round(offer)} is roughly fair to the anchors we have — not a steal, not a trap.`;
+        ? `$${Math.round(offer)} is in the zone of the size ${sizeLabel} ask — fine if you want the pair, not a clear discount.`
+        : `$${Math.round(offer)} for size ${sizeLabel} is roughly fair to the anchors we have — not a steal, not a trap.`;
   } else {
     verdict = "pass";
     headline = "I'd pass at this price";
     body =
       ask != null && offer > ask
-        ? `$${Math.round(offer)} is above the ${sizeLabel ? `size ${sizeLabel} ` : ""}ask — you're paying up vs what's already listed.`
-        : `$${Math.round(offer)} looks rich vs retail / recent tape on this board.`;
+        ? `$${Math.round(offer)} is above the size ${sizeLabel} ask — you're paying up vs what's already listed in that size.`
+        : `$${Math.round(offer)} for size ${sizeLabel} looks rich vs retail / recent tape on this board.`;
   }
 
   return {

@@ -5,7 +5,7 @@ import {
   evaluateDeal,
   type DealVerdict,
 } from "@/lib/deal/evaluateDeal";
-import type { SneakerMarket } from "@/types/market";
+import type { SizeAsk, SneakerMarket } from "@/types/market";
 import { formatMaybeMoney } from "@/utils/format";
 
 const VERDICT_STYLES: Record<
@@ -41,33 +41,76 @@ const COMP_TONE: Record<string, string> = {
   muted: "text-dash-faint",
 };
 
-export function DealCheckPanel({ market }: { market: SneakerMarket }) {
-  const defaultAsk =
-    market.price > 0
-      ? String(Math.round(market.price))
-      : market.stats.lowestAsk != null && market.stats.lowestAsk > 0
-        ? String(Math.round(market.stats.lowestAsk))
-        : "";
-  const [priceInput, setPriceInput] = useState(defaultAsk);
-  const [size, setSize] = useState("all");
-  const [submitted, setSubmitted] = useState(defaultAsk);
+function syntheticSize(label: string): SizeAsk {
+  return {
+    size: label.trim(),
+    sizeType: "us m",
+    lowestAsk: null,
+    totalAsks: 0,
+    sales15d: 0,
+    sales30d: 0,
+    sales60d: 0,
+  };
+}
 
-  const sizeAsk = useMemo(
-    () => market.sizes.find((row) => row.size === size) ?? null,
-    [market.sizes, size],
-  );
+export function DealCheckPanel({ market }: { market: SneakerMarket }) {
+  const hasLadder = market.sizes.length > 0;
+  const [size, setSize] = useState("");
+  const [manualSize, setManualSize] = useState("");
+  const [priceInput, setPriceInput] = useState("");
+  const [checked, setChecked] = useState<{
+    size: string;
+    price: string;
+  } | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const selectedSize = useMemo(() => {
+    if (!hasLadder) {
+      const label = (checked?.size || manualSize).trim();
+      return label ? syntheticSize(label) : null;
+    }
+    const key = checked?.size || size;
+    return market.sizes.find((row) => row.size === key) ?? null;
+  }, [hasLadder, checked, manualSize, size, market.sizes]);
 
   const result = useMemo(() => {
-    const offer = Number(submitted.replace(/[^0-9.]/g, ""));
-    return evaluateDeal(market, offer, size === "all" ? null : sizeAsk);
-  }, [market, submitted, size, sizeAsk]);
+    if (!checked) return null;
+    const offer = Number(checked.price.replace(/[^0-9.]/g, ""));
+    return evaluateDeal(market, offer, selectedSize);
+  }, [market, checked, selectedSize]);
+
+  function onSizePick(next: string) {
+    setSize(next);
+    setFormError(null);
+    const row = market.sizes.find((s) => s.size === next);
+    if (row?.lowestAsk != null && row.lowestAsk > 0) {
+      setPriceInput(String(Math.round(row.lowestAsk)));
+    }
+  }
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    setSubmitted(priceInput.trim());
+    const sizeValue = hasLadder ? size.trim() : manualSize.trim();
+    const priceValue = priceInput.trim();
+    if (!sizeValue) {
+      setFormError("Pick your size — we don’t use StockX’s all-size ask.");
+      setChecked(null);
+      return;
+    }
+    if (!priceValue || !(Number(priceValue.replace(/[^0-9.]/g, "")) > 0)) {
+      setFormError("Enter the price you’re seeing for that size.");
+      setChecked(null);
+      return;
+    }
+    setFormError(null);
+    setChecked({ size: sizeValue, price: priceValue });
   }
 
   const tone = result ? VERDICT_STYLES[result.verdict] : VERDICT_STYLES.unknown;
+  const sizeAskHint =
+    selectedSize?.lowestAsk != null && !checked
+      ? `Size ask ${formatMaybeMoney(selectedSize.lowestAsk)}`
+      : null;
 
   return (
     <section
@@ -82,8 +125,9 @@ export function DealCheckPanel({ market }: { market: SneakerMarket }) {
             Does this price make sense?
           </h2>
           <p className="mt-1 max-w-xl text-sm text-dash-muted">
-            Plug in an ask you’re seeing — we stack it vs retail, the board ask
-            {market.sizes.length ? ", optional size," : ","} and the 30d tape.
+            Size is required. We compare your price to{" "}
+            <span className="text-dash-text">that size’s ask</span>, retail, and
+            the 30d tape — never StockX’s all-size low.
           </p>
         </div>
         {result ? (
@@ -100,37 +144,58 @@ export function DealCheckPanel({ market }: { market: SneakerMarket }) {
           onSubmit={onSubmit}
           className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end"
         >
-          {market.sizes.length > 0 ? (
+          {hasLadder ? (
             <label className="block text-xs text-dash-faint">
-              Size
+              Size <span className="text-dash-accent">*</span>
               <select
                 value={size}
-                onChange={(e) => setSize(e.target.value)}
-                className="mt-1.5 block w-full min-w-[7.5rem] rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none focus:border-dash-accent sm:w-auto"
+                required
+                onChange={(e) => onSizePick(e.target.value)}
+                className="mt-1.5 block w-full min-w-[10rem] rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none focus:border-dash-accent sm:w-auto"
               >
-                <option value="all">
-                  All · ask {formatMaybeMoney(market.stats.lowestAsk ?? market.price)}
+                <option value="" disabled>
+                  Select size…
                 </option>
                 {market.sizes.map((row) => (
-                  <option key={row.size} value={row.size}>
+                  <option key={`${row.sizeType}-${row.size}`} value={row.size}>
                     {row.size}
                     {row.lowestAsk != null
                       ? ` · ${formatMaybeMoney(row.lowestAsk)}`
-                      : ""}
+                      : " · no ask"}
                   </option>
                 ))}
               </select>
             </label>
-          ) : null}
+          ) : (
+            <label className="block min-w-[7rem] text-xs text-dash-faint">
+              Size <span className="text-dash-accent">*</span>
+              <input
+                type="text"
+                inputMode="decimal"
+                value={manualSize}
+                required
+                onChange={(e) => {
+                  setManualSize(e.target.value);
+                  setFormError(null);
+                }}
+                placeholder="e.g. 12"
+                className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 font-[family-name:var(--font-plex-mono)] text-sm text-dash-text outline-none placeholder:text-dash-faint focus:border-dash-accent sm:w-28"
+              />
+            </label>
+          )}
 
           <label className="block min-w-[10rem] flex-1 text-xs text-dash-faint sm:max-w-[12rem]">
-            Your price
+            Your price <span className="text-dash-accent">*</span>
             <input
               type="text"
               inputMode="decimal"
               value={priceInput}
-              onChange={(e) => setPriceInput(e.target.value)}
-              placeholder="e.g. 185"
+              required
+              onChange={(e) => {
+                setPriceInput(e.target.value);
+                setFormError(null);
+              }}
+              placeholder={sizeAskHint ? "Edit or keep size ask" : "e.g. 185"}
               className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 font-[family-name:var(--font-plex-mono)] text-sm text-dash-text outline-none placeholder:text-dash-faint focus:border-dash-accent"
             />
           </label>
@@ -142,6 +207,17 @@ export function DealCheckPanel({ market }: { market: SneakerMarket }) {
             Check deal
           </button>
         </form>
+
+        {formError ? (
+          <p className="text-sm text-dash-down">{formError}</p>
+        ) : null}
+
+        {!hasLadder ? (
+          <p className="text-xs text-dash-faint">
+            No size ladder on this market — enter your size anyway. Ask
+            comparison may be limited until size asks load.
+          </p>
+        ) : null}
 
         {result ? (
           <>
@@ -177,13 +253,13 @@ export function DealCheckPanel({ market }: { market: SneakerMarket }) {
           </>
         ) : (
           <p className="text-sm text-dash-muted">
-            Enter a dollar amount to stack it against this market.
+            Pick a size and price to stack the deal.
           </p>
         )}
 
         <p className="text-xs text-dash-faint">
-          Relative to this board only — not financial advice. Always check size,
-          fees, and condition before you buy.
+          Relative to this board only — not financial advice. Always check fees
+          and condition before you buy.
         </p>
       </div>
     </section>

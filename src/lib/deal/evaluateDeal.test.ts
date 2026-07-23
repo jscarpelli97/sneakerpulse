@@ -37,9 +37,18 @@ function market(partial: Partial<SneakerMarket> = {}): SneakerMarket {
         sales30d: 3,
         sales60d: 6,
       },
+      {
+        size: "9",
+        sizeType: "us m",
+        lowestAsk: 185,
+        totalAsks: 8,
+        sales15d: 4,
+        sales30d: 10,
+        sales60d: 18,
+      },
     ],
     stats: {
-      lowestAsk: 200,
+      lowestAsk: 185,
       highestAsk: 400,
       highestBid: null,
       averageAsk: 250,
@@ -72,32 +81,40 @@ function market(partial: Partial<SneakerMarket> = {}): SneakerMarket {
   };
 }
 
+const size12 = () => market().sizes[0];
+const size9 = () => market().sizes[1];
+
 describe("evaluateDeal", () => {
-  it("returns null for invalid offer", () => {
-    expect(evaluateDeal(market(), 0)).toBeNull();
-    expect(evaluateDeal(market(), -10)).toBeNull();
+  it("returns null for invalid offer or missing size", () => {
+    expect(evaluateDeal(market(), 0, size12())).toBeNull();
+    expect(evaluateDeal(market(), 200, null)).toBeNull();
+    expect(evaluateDeal(market(), 200)).toBeNull();
   });
 
-  it("flags under-ask under-retail as buy", () => {
-    const result = evaluateDeal(market(), 175);
+  it("flags under size-ask under-retail as buy", () => {
+    const result = evaluateDeal(market(), 175, size12());
     expect(result?.verdict).toBe("buy");
-    expect(result?.comps.some((c) => c.id === "ask")).toBe(true);
-  });
-
-  it("flags well above ask as pass", () => {
-    const result = evaluateDeal(market(), 280);
-    expect(result?.verdict).toBe("pass");
-  });
-
-  it("uses size ask when provided", () => {
-    const result = evaluateDeal(market(), 210, market().sizes[0]);
-    expect(result?.sizeLabel).toBe("12");
     expect(result?.ask).toBe(210);
     expect(result?.comps.find((c) => c.id === "ask")?.label).toContain("12");
   });
 
-  it("returns stretch slightly above the ask", () => {
-    const result = evaluateDeal(market(), 230);
+  it("flags well above size ask as pass", () => {
+    const result = evaluateDeal(market(), 280, size12());
+    expect(result?.verdict).toBe("pass");
+  });
+
+  it("uses that size's ask, not the product all-size low", () => {
+    const m = market();
+    // Product all-size low is 185 (size 9), size 12 ask is 210
+    const result = evaluateDeal(m, 200, size12());
+    expect(result?.ask).toBe(210);
+    expect(result?.ask).not.toBe(m.stats.lowestAsk);
+    expect(result?.comps.find((c) => c.id === "ask")?.detail).toContain("210");
+  });
+
+  it("returns stretch slightly above the size ask", () => {
+    const result = evaluateDeal(market(), 220, size9());
+    expect(result?.ask).toBe(185);
     expect(result?.verdict).toBe("stretch");
   });
 });
