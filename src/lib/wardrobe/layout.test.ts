@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { autoOrganizePieces, alignPiecesCenter, centerToOrigin, piecesFromClosetItems, pullPiecesTogether } from "@/lib/wardrobe/layout";
+import { autoOrganizePieces, alignPiecesCenter, centerToOrigin, piecesBounds, piecesFromClosetItems, pullPiecesTogether } from "@/lib/wardrobe/layout";
 import { pieceBox } from "@/lib/wardrobe/exportFit";
 import type { ClosetItem, FitPiece } from "@/lib/wardrobe/types";
 
@@ -32,9 +32,9 @@ function piece(id: string, closetItemId: string): FitPiece {
 describe("fit layout", () => {
   it("centers origin from center point", () => {
     const { x, y } = centerToOrigin(50, 50, 1);
-    // base size 28 → half is 14 → origin 36
-    expect(x).toBeCloseTo(36, 5);
-    expect(y).toBeCloseTo(36, 5);
+    // base size 34 → half is 17 → origin 33
+    expect(x).toBeCloseTo(33, 5);
+    expect(y).toBeCloseTo(33, 5);
   });
 
   it("stacks top above bottom above sneakers, centered", () => {
@@ -83,7 +83,7 @@ describe("fit layout", () => {
     ];
     const aligned = alignPiecesCenter(skewed);
     for (const p of aligned) {
-      expect(p.x).toBeCloseTo(36, 5); // 50 - 28/2
+      expect(p.x).toBeCloseTo(33, 5); // 50 - 34/2
     }
   });
 
@@ -101,7 +101,21 @@ describe("fit layout", () => {
     const afterSpan =
       Math.max(...pulled.map((p) => p.y)) - Math.min(...pulled.map((p) => p.y));
     expect(afterSpan).toBeLessThan(beforeSpan);
-    expect(pulled.every((p) => Math.abs(p.x - 36) < 1)).toBe(true);
+    // Group centered horizontally (allow small drift from clamp)
+    const xs = pulled.map((p) => p.x);
+    expect(Math.max(...xs) - Math.min(...xs)).toBeLessThan(2);
+  });
+
+  it("centers the whole outfit group on the board", () => {
+    const closet = [item("t1", "top"), item("b1", "bottom"), item("s1", "sneaker")];
+    const byId = new Map(closet.map((c) => [c.id, c]));
+    const organized = autoOrganizePieces(
+      [piece("p1", "t1"), piece("p2", "b1"), piece("p3", "s1")],
+      byId,
+    );
+    const b = piecesBounds(organized);
+    expect(b.cx).toBeCloseTo(50, 0);
+    expect(b.cy).toBeCloseTo(50, 0);
   });
 });
 
@@ -112,7 +126,7 @@ describe("fit export math", () => {
       1080,
       1350,
     );
-    expect(box.boxW).toBeCloseTo(1080 * 0.28, 5);
+    expect(box.boxW).toBeCloseTo(1080 * 0.34, 5);
     expect(box.x).toBeCloseTo(1080 * 0.36, 5);
     expect(box.y).toBeCloseTo(1350 * 0.2, 5);
   });

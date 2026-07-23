@@ -13,6 +13,7 @@ import {
   newFitId,
   newFitPieceId,
 } from "@/lib/portfolio/vault";
+import { imageToCutoutPng } from "@/lib/wardrobe/cutout";
 import {
   downloadBlob,
   exportFitJpeg,
@@ -36,11 +37,13 @@ export function FitsPanel({
   closet,
   fits,
   onChange,
+  onClosetChange,
   onFlash,
 }: {
   closet: ClosetItem[];
   fits: FitBoard[];
   onChange: (next: FitBoard[]) => void;
+  onClosetChange: (next: ClosetItem[]) => void;
   onFlash: (message: string) => void;
 }) {
   const [activeId, setActiveId] = useState<string | null>(fits[0]?.id ?? null);
@@ -146,6 +149,7 @@ export function FitsPanel({
               board={active}
               closet={closet}
               onChange={updateActive}
+              onClosetChange={onClosetChange}
               onDelete={() => removeFit(active.id)}
               onFlash={onFlash}
             />
@@ -160,16 +164,19 @@ function FitEditor({
   board,
   closet,
   onChange,
+  onClosetChange,
   onDelete,
   onFlash,
 }: {
   board: FitBoard;
   closet: ClosetItem[];
   onChange: (patch: Partial<FitBoard>) => void;
+  onClosetChange: (next: ClosetItem[]) => void;
   onDelete: () => void;
   onFlash: (message: string) => void;
 }) {
   const [closetQuery, setClosetQuery] = useState("");
+  const [cuttingOut, setCuttingOut] = useState(false);
   const byId = useMemo(() => {
     const map = new Map<string, ClosetItem>();
     for (const item of closet) map.set(item.id, item);
@@ -191,6 +198,52 @@ function FitEditor({
   const missing = board.pieces.filter((p) => !byId.has(p.closetItemId)).length;
   const [exporting, setExporting] = useState(false);
   const [freeTransform, setFreeTransform] = useState(true);
+
+  const boardItemIds = useMemo(
+    () => board.pieces.map((p) => p.closetItemId),
+    [board.pieces],
+  );
+
+  /** Ensure every piece on this fit has a transparent PNG cutout. */
+  const ensureCutouts = useCallback(async () => {
+    const needs = boardItemIds
+      .map((id) => byId.get(id))
+      .filter((item): item is ClosetItem => Boolean(item && !item.cutoutImage));
+    if (needs.length === 0) return { updated: 0, failed: 0 };
+
+    setCuttingOut(true);
+    let updated = 0;
+    let failed = 0;
+    let nextCloset = closet;
+    try {
+      for (const item of needs) {
+        const result = await imageToCutoutPng(item.image);
+        if (!result.ok) {
+          failed += 1;
+          continue;
+        }
+        updated += 1;
+        nextCloset = nextCloset.map((row) =>
+          row.id === item.id ? { ...row, cutoutImage: result.dataUrl } : row,
+        );
+      }
+      if (updated > 0) onClosetChange(nextCloset);
+      return { updated, failed };
+    } finally {
+      setCuttingOut(false);
+    }
+  }, [boardItemIds, byId, closet, onClosetChange]);
+
+  // Auto-cutout when pieces are added to the board.
+  useEffect(() => {
+    const needs = boardItemIds.some((id) => {
+      const item = byId.get(id);
+      return item && !item.cutoutImage;
+    });
+    if (!needs || cuttingOut) return;
+    void ensureCutouts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when board membership changes
+  }, [boardItemIds.join("|")]);
 
   function addPiece(closetItemId: string) {
     if (board.pieces.some((p) => p.closetItemId === closetItemId)) {
@@ -225,19 +278,24 @@ function FitEditor({
     patchPiece(id, { zIndex: maxZ + 1 });
   }
 
-  function autoArrange() {
+  async function autoArrange() {
     if (board.pieces.length === 0) {
       onFlash("Add pieces first");
       return;
     }
+    const cut = await ensureCutouts();
     onChange({ pieces: autoOrganizePieces(board.pieces, byId) });
-    onFlash("Stacked tight — top → bottom → footwear");
+    onFlash(
+      cut.updated
+        ? `Cut out ${cut.updated} · stacked & centered`
+        : "Stacked & centered on the board",
+    );
   }
 
   function alignCenter() {
     if (board.pieces.length === 0) return;
     onChange({ pieces: alignPiecesCenter(board.pieces) });
-    onFlash("Aligned to center");
+    onFlash("Centered on the board");
   }
 
   function pullTogether() {
@@ -246,13 +304,30 @@ function FitEditor({
       return;
     }
     onChange({ pieces: pullPiecesTogether(board.pieces, byId) });
-    onFlash("Pulled together");
+    onFlash("Pulled together & centered");
+  }
+
+  async function makeCutouts() {
+    const cut = await ensureCutouts();
+    if (cut.updated === 0 && cut.failed === 0) {
+      onFlash("Cutouts already ready");
+      return;
+    }
+    if (cut.updated) {
+      onFlash(
+        `Removed backgrounds on ${cut.updated} piece${cut.updated === 1 ? "" : "s"}`,
+      );
+    }
+    if (cut.failed) {
+      onFlash(`Couldn't cut ${cut.failed} — try again`);
+    }
   }
 
   async function exportWhiteJpeg() {
     if (exporting) return;
     setExporting(true);
     try {
+      await ensureCutouts();
       const result = await exportFitJpeg(board, byId, {
         background: "#ffffff",
         showName: true,
@@ -300,8 +375,16 @@ function FitEditor({
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={autoArrange}
-            className="rounded-xl border border-dash-border bg-dash-elevated px-3 py-2 text-sm font-semibold text-dash-text hover:border-dash-muted"
+            onClick={() => void makeCutouts()}
+            disabled={cuttingOut || board.pieces.length === 0}
+            className="rounded-xl border border-dash-border bg-dash-elevated px-3 py-2 text-sm font-semibold text-dash-text hover:border-dash-muted disabled:opacity-40"
+          >
+            {cuttingOut ? "Cutting…" : "Remove backgrounds"}
+          </button>
+          <button
+            type="button"
+            onClick={() => void autoArrange()}
+            className="rounded-xl border border-dash-border px-3 py-2 text-sm font-semibold text-dash-text hover:border-dash-muted"
           >
             Auto arrange
           </button>
@@ -342,9 +425,8 @@ function FitEditor({
           </button>
         </div>
         <p className="text-[11px] text-dash-faint">
-          Auto arrange stacks them close. Align center / Pull together straighten
-          a messy board. Drag near the middle line to snap. Export = white
-          Instagram JPEG.
+          Remove backgrounds → transparent PNGs, then Auto arrange stacks them
+          centered on the board. Export = white Instagram JPEG.
         </p>
         {missing ? (
           <p className="text-xs text-dash-down">
@@ -470,7 +552,7 @@ function FitCanvas({
         const t = transform.current;
         const piece = pieces.find((p) => p.id === t.id);
         if (!piece) return;
-        const size = 28 * piece.scale;
+        const size = FIT_BASE_SIZE * piece.scale;
         const cx = ((piece.x + size / 2) / 100) * rect.width;
         const cy = ((piece.y + size / 2) / 100) * rect.height;
         const px = event.clientX - rect.left;
@@ -620,9 +702,10 @@ function FitCanvas({
         {pieces.map((piece) => {
           const item = byId.get(piece.closetItemId);
           if (!item) return null;
-          const size = 28 * piece.scale;
+          const size = FIT_BASE_SIZE * piece.scale;
           const active = selectedId === piece.id;
           const rotation = piece.rotation ?? 0;
+          const src = item.cutoutImage || item.image;
           return (
             <div
               key={piece.id}
@@ -639,8 +722,8 @@ function FitCanvas({
               <button
                 type="button"
                 onPointerDown={(e) => startDrag(e, piece)}
-                className={`relative block w-full ${
-                  active ? "ring-2 ring-dash-accent" : ""
+                className={`relative block w-full bg-transparent ${
+                  active ? "ring-2 ring-dash-accent/80 ring-offset-0" : ""
                 }`}
                 style={{
                   transform: `rotate(${rotation}deg)`,
@@ -648,8 +731,8 @@ function FitCanvas({
                 }}
                 aria-label={item.name}
               >
-                <span className="relative block aspect-square w-full overflow-hidden rounded-xl bg-transparent">
-                  <ClosetImage src={item.image} alt={item.name} />
+                <span className="relative block aspect-square w-full overflow-visible bg-transparent">
+                  <ClosetImage src={src} alt={item.name} />
                 </span>
               </button>
               {active && freeTransform ? (

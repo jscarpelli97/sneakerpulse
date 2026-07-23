@@ -344,6 +344,7 @@ export function WardrobeApp() {
           closet={closet}
           fits={fits}
           onChange={persistFits}
+          onClosetChange={persistCloset}
           onFlash={setFlash}
         />
       )}

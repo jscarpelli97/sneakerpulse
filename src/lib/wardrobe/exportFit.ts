@@ -91,10 +91,10 @@ export async function exportFitJpeg(
 
   let drawn = 0;
   for (const piece of pieces) {
-    const item = closetById.get(piece.closetItemId);
-    if (!item?.image) continue;
+        const item = closetById.get(piece.closetItemId);
+    if (!item?.image && !item?.cutoutImage) continue;
     try {
-      const img = await loadImage(item.image);
+      const img = await loadImage(item.cutoutImage || item.image);
       const sizePct = FIT_BASE_SIZE * piece.scale;
       const boxW = (sizePct / 100) * width;
       const boxH = (sizePct / 100) * width; // square cell like the UI

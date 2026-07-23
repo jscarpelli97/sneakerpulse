@@ -25,6 +25,11 @@ export type ClosetItem = {
   brand: string;
   /** Remote StockX URL or compressed data URL for uploads. */
   image: string;
+  /**
+   * Transparent PNG cutout (background removed) for fit boards / IG export.
+   * Optional — generated in the browser when you arrange a fit.
+   */
+  cutoutImage?: string | null;
   slug?: string | null;
   styleCode?: string;
   size?: string;
