@@ -3,9 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { fetchMarket } from "@/api/market";
 import { plusPublicEnabled } from "@/lib/plus/config";
-import { resolveHoldingAsk } from "@/lib/portfolio/resolveHoldingAsk";
 import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
 import {
@@ -17,7 +15,6 @@ import {
   saveHoldings,
   updateUsername,
 } from "@/lib/portfolio/vault";
-import type { SizeAsk } from "@/types/market";
 import { changeClass, formatMaybeMoney, formatMoney } from "@/utils/format";
 import { useCatalogSearch } from "@/hooks/useCatalogSearch";
 import type { FormEvent } from "react";
@@ -33,20 +30,21 @@ type CatalogRow = {
   retail: number;
 };
 
-type MarketAskCache = {
-  sizes: SizeAsk[];
-  price: number | null;
-  statsLowestAsk: number | null;
+type HoldingAskState = {
+  ask: number | null;
+  source: "size" | "fallback" | "none";
+  live: boolean;
 };
 
 export function PortfolioApp() {
   const [session, setSession] = useState<PortfolioSession | null>(null);
   const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [catalog, setCatalog] = useState<CatalogRow[]>([]);
-  const [marketBySlug, setMarketBySlug] = useState<
-    Record<string, MarketAskCache>
+  const [askByHoldingId, setAskByHoldingId] = useState<
+    Record<string, HoldingAskState>
   >({});
   const [asksBusy, setAsksBusy] = useState(false);
+  const [asksLive, setAsksLive] = useState(false);
   const [mode, setMode] = useState<"login" | "register">("register");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -107,47 +105,63 @@ export function PortfolioApp() {
     if (mode === "register") setUsername(usernameFromEmail(email));
   }, [email, mode, username]);
 
-  const holdingSlugs = useMemo(() => {
-    return [...new Set(holdings.map((row) => row.slug).filter(Boolean))];
-  }, [holdings]);
-
   useEffect(() => {
-    if (holdingSlugs.length === 0) {
-      setMarketBySlug({});
+    if (holdings.length === 0) {
+      setAskByHoldingId({});
+      setAsksLive(false);
       return;
     }
     let cancelled = false;
     (async () => {
       setAsksBusy(true);
-      const next: Record<string, MarketAskCache> = {};
-      await Promise.all(
-        holdingSlugs.map(async (slug) => {
-          try {
-            const result = await fetchMarket(slug);
-            if (!result.ok) return;
-            next[slug] = {
-              sizes: result.data.sizes ?? [],
-              price: result.data.price > 0 ? result.data.price : null,
-              statsLowestAsk:
-                result.data.stats.lowestAsk != null &&
-                result.data.stats.lowestAsk > 0
-                  ? result.data.stats.lowestAsk
-                  : null,
-            };
-          } catch {
-            /* ignore per-slug failures */
-          }
-        }),
-      );
-      if (!cancelled) {
-        setMarketBySlug(next);
-        setAsksBusy(false);
+      try {
+        const res = await fetch("/api/portfolio/asks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            holdings: holdings.map((row) => ({
+              id: row.id,
+              slug: row.slug,
+              size: row.size,
+            })),
+          }),
+        });
+        const json = (await res.json()) as {
+          data?: Array<{
+            id: string;
+            ask: number | null;
+            source: "size" | "fallback" | "none";
+            live: boolean;
+          }>;
+          live?: boolean;
+        };
+        if (cancelled) return;
+        const next: Record<
+          string,
+          { ask: number | null; source: "size" | "fallback" | "none"; live: boolean }
+        > = {};
+        for (const row of json.data ?? []) {
+          next[row.id] = {
+            ask: row.ask,
+            source: row.source,
+            live: row.live,
+          };
+        }
+        setAskByHoldingId(next);
+        setAsksLive(Boolean(json.live));
+      } catch {
+        if (!cancelled) {
+          setAskByHoldingId({});
+          setAsksLive(false);
+        }
+      } finally {
+        if (!cancelled) setAsksBusy(false);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [holdingSlugs]);
+  }, [holdings]);
 
   const catalogPriceBySlug = useMemo(() => {
     const map = new Map<string, number | null>();
@@ -157,16 +171,26 @@ export function PortfolioApp() {
 
   const askForHolding = useCallback(
     (row: PortfolioHolding) => {
-      const market = marketBySlug[row.slug];
-      return resolveHoldingAsk({
-        holdingSize: row.size,
-        sizes: market?.sizes,
-        catalogPrice: catalogPriceBySlug.get(row.slug) ?? null,
-        marketPrice: market?.price ?? null,
-        statsLowestAsk: market?.statsLowestAsk ?? null,
-      });
+      const live = askByHoldingId[row.id];
+      if (live) {
+        return {
+          ask: live.ask,
+          source: live.source,
+          live: live.live,
+        };
+      }
+      // Before live response: fall back to catalog product price only.
+      const catalogPrice = catalogPriceBySlug.get(row.slug) ?? null;
+      return {
+        ask: catalogPrice,
+        source: (catalogPrice != null ? "fallback" : "none") as
+          | "size"
+          | "fallback"
+          | "none",
+        live: false,
+      };
     },
-    [marketBySlug, catalogPriceBySlug],
+    [askByHoldingId, catalogPriceBySlug],
   );
 
   const totals = useMemo(() => {
@@ -174,18 +198,20 @@ export function PortfolioApp() {
     let costBasis = 0;
     let pairs = 0;
     let sizedLines = 0;
+    let liveLines = 0;
     for (const row of holdings) {
-      const { ask, source } = askForHolding(row);
+      const { ask, source, live } = askForHolding(row);
       const q = row.quantity || 0;
       pairs += q;
       if (ask != null) market += ask * q;
       if (source === "size") sizedLines += 1;
+      if (live) liveLines += 1;
       if (row.costBasisUsd != null) costBasis += row.costBasisUsd * q;
     }
     const pnl = costBasis > 0 ? market - costBasis : null;
     const pnlPct =
       costBasis > 0 && pnl != null ? (pnl / costBasis) * 100 : null;
-    return { market, costBasis, pairs, pnl, pnlPct, sizedLines };
+    return { market, costBasis, pairs, pnl, pnlPct, sizedLines, liveLines };
   }, [holdings, askForHolding]);
 
   const { hits: liveHits, busy: searchBusy } = useCatalogSearch(query, true);
@@ -443,7 +469,8 @@ export function PortfolioApp() {
             Your collection
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-dash-muted">
-            Mark what you own, what you paid, and see asks vs cost — available
+            Mark what you own, what you paid, and see each size’s ask vs cost —
+            available
             wherever you sign in.
           </p>
         </div>
@@ -473,10 +500,12 @@ export function PortfolioApp() {
             label: "Market (asks)",
             value: formatMoney(totals.market),
             sub: asksBusy
-              ? "Loading size asks…"
-              : totals.sizedLines > 0
-                ? `Size asks · ${totals.sizedLines}/${holdings.length} lines`
-                : "Size ask × qty when available",
+              ? "Loading live size asks…"
+              : asksLive
+                ? `Live size asks · ${totals.liveLines}/${holdings.length}`
+                : totals.sizedLines > 0
+                  ? `Size asks · ${totals.sizedLines}/${holdings.length} lines`
+                  : "Size ask × qty when available",
           },
           {
             label: "Cost basis",
@@ -630,7 +659,7 @@ export function PortfolioApp() {
         ) : (
           <ul className="divide-y divide-dash-border">
             {holdings.map((row) => {
-              const { ask, source } = askForHolding(row);
+              const { ask, source, live } = askForHolding(row);
               const lineMarket = ask != null ? ask * row.quantity : null;
               const lineCost =
                 row.costBasisUsd != null
@@ -676,7 +705,9 @@ export function PortfolioApp() {
                     </p>
                     <p className="text-[10px] uppercase tracking-[0.1em] text-dash-faint">
                       {source === "size"
-                        ? `Size ${row.size} ask`
+                        ? live
+                          ? `Live size ${row.size}`
+                          : `Size ${row.size} ask`
                         : source === "fallback"
                           ? "All-size fallback"
                           : asksBusy
