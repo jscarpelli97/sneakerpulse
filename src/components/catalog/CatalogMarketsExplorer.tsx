@@ -201,7 +201,7 @@ export function CatalogMarketsExplorer({
                       {row.live
                         ? "Live"
                         : row.price != null
-                          ? "Cached"
+                          ? "Snapshot"
                           : "Offline"}
                     </span>
                   </td>

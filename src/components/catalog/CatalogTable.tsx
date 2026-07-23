@@ -120,7 +120,7 @@ export function CatalogTable({
                             : "bg-dash-faint"
                       }`}
                     />
-                    {row.live ? "Live" : row.price != null ? "Cached" : "Offline"}
+                    {row.live ? "Live" : row.price != null ? "Snapshot" : "Offline"}
                   </span>
                 </td>
               </tr>

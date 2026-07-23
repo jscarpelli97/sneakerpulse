@@ -33,7 +33,8 @@ describe("dataMode", () => {
       }),
     ).toMatchObject({
       mode: "cached",
-      badge: "Cached",
+      badge: "Snapshot",
+      subtitle: "Daily snapshot · updated 2026-07-20",
     });
 
     expect(

@@ -20,16 +20,21 @@ export function getDataModeLabel(input: {
       badge: "Live",
       subtitle: `${liveCount}/${total} top sellers live`,
       detail: "Asks refreshed from upstream market data.",
+      heroSource: "StockX via KicksDB",
     };
   }
   if (cachedCount > 0) {
     return {
       mode: "cached" as const,
-      badge: "Cached",
-      subtitle: `${cachedCount}/${total} cached · free mode`,
+      /** Softer than "Cached" for day-1 visitors. */
+      badge: "Snapshot",
+      subtitle: asOf
+        ? `Daily snapshot · updated ${asOf}`
+        : `${cachedCount}/${total} in daily catalog`,
       detail: asOf
-        ? `Last catalog snapshot ${asOf}. Not affiliated with StockX.`
-        : "Serving the committed offline catalog. Not affiliated with StockX.",
+        ? `Catalog last refreshed ${asOf}. Independent project — not affiliated with StockX.`
+        : "Serving the committed daily catalog. Independent project — not affiliated with StockX.",
+      heroSource: "Daily catalog",
     };
   }
   return {
@@ -37,5 +42,6 @@ export function getDataModeLabel(input: {
     badge: "Offline",
     subtitle: `${total} markets offline`,
     detail: "No priced catalog available yet.",
+    heroSource: "Offline",
   };
 }

@@ -6,6 +6,12 @@ import { getTrackedCatalog } from "@/services/catalog/sneakers";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Compare",
+  description: "Head-to-head sneaker ask, premium vs retail, volume, and rank.",
+  alternates: { canonical: "/compare" },
+};
+
 export default async function ComparePage({
   searchParams,
 }: {

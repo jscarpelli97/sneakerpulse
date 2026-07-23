@@ -8,6 +8,7 @@ import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { PlusInterest } from "@/components/plus/PlusInterest";
 import { PlusPopup } from "@/components/plus/PlusPopup";
 import { PlusTopCallout } from "@/components/plus/PlusTopCallout";
+import { BRAND_TAGLINE } from "@/lib/brand";
 import { getDataModeLabel } from "@/lib/dataMode";
 import {
   FREE_CATALOG_LIMIT,
@@ -26,6 +27,11 @@ import { PlusCatalogGate } from "@/components/plus/PlusCatalogGate";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Sneaker ask board",
+  description: BRAND_TAGLINE,
+  alternates: { canonical: "/" },
+};
 export default async function MarketsIndexPage() {
   const [{ isPlus, publicPlus }, allQuotes, marketIndex] = await Promise.all([
     getPlusAccess(),

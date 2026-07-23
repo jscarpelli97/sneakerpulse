@@ -9,7 +9,9 @@ import { SetupBanner } from "@/components/market/SetupBanner";
 import { StatsPanel } from "@/components/market/StatsPanel";
 import { UpstreamStatusBadge } from "@/components/market/UpstreamStatusBadge";
 import { SiteFooter } from "@/components/layout/SiteChrome";
+import { ProductJsonLd } from "@/components/seo/JsonLd";
 import { PlusMarketLock } from "@/components/plus/PlusCatalogGate";
+import { BRAND_NAME } from "@/lib/brand";
 import { buildMarketSummary } from "@/lib/summary/buildMarketSummary";
 import {
   FREE_CATALOG_LIMIT,
@@ -42,11 +44,17 @@ export async function generateMetadata({
   const { slug } = await params;
   const sneaker = await getSneakerBySlug(slug);
   if (!sneaker) {
-    return { title: "Sneaker not found — SPI Markets" };
+    return { title: "Sneaker not found" };
   }
   return {
-    title: `${sneaker.name} — SPI Markets`,
-    description: `Live StockX market view for ${sneaker.name} (${sneaker.year}).`,
+    title: sneaker.name,
+    description: `${sneaker.name} (${sneaker.year}) — StockX-style asks, size ladder, and chart on ${BRAND_NAME}.`,
+    alternates: { canonical: `/sneakers/${sneaker.slug}` },
+    openGraph: {
+      title: sneaker.name,
+      description: `Market view for ${sneaker.name} on ${BRAND_NAME}.`,
+      type: "website",
+    },
   };
 }
 
@@ -83,6 +91,15 @@ export default async function SneakerMarketPage({
 
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
+      <ProductJsonLd
+        name={market.name}
+        slug={market.slug}
+        brand={market.brand}
+        image={market.image}
+        sku={market.styleCode}
+        price={market.price > 0 ? market.price : null}
+        stockxUrl={market.stockxUrl}
+      />
       <MarketHeader
         market={market}
         live={live}
@@ -126,8 +143,8 @@ export default async function SneakerMarketPage({
 
           <p className="pb-4 text-center text-xs text-dash-faint md:text-left">
             {result.ok
-              ? `Live StockX market data for ${market.name}, refreshed about every 5 minutes. Source: StockX via KicksDB · chart=${market.historySource} · status=${market.upstreamStatus} · fetched ${new Date(market.fetchedAt).toLocaleString()}.`
-              : `Connect KicksDB to stream live StockX pricing for ${catalog.name}.`}
+              ? `${BRAND_NAME} market view for ${market.name}. Source: StockX via KicksDB · chart=${market.historySource} · status=${market.upstreamStatus} · fetched ${new Date(market.fetchedAt).toLocaleString()}. Independent — not affiliated with StockX.`
+              : `Connect a market data key to stream live StockX pricing for ${catalog.name}.`}
           </p>
         </div>
       </main>

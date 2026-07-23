@@ -37,7 +37,7 @@ export function MarketsHero({
                 className={`h-1.5 w-1.5 rounded-full ${
                   modeBadge === "Live"
                     ? "animate-blink bg-dash-up"
-                    : modeBadge === "Cached"
+                    : modeBadge === "Snapshot" || modeBadge === "Cached"
                       ? "bg-dash-accent"
                       : "bg-dash-faint"
                 }`}
@@ -45,7 +45,7 @@ export function MarketsHero({
               {modeSubtitle}
             </span>
             <span className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-faint">
-              {modeBadge === "Live" ? "StockX via KicksDB" : "Free mode catalog"}
+              {modeBadge === "Live" ? "StockX via KicksDB" : "Daily catalog"}
             </span>
           </div>
 

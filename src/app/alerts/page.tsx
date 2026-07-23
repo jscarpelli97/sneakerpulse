@@ -6,6 +6,13 @@ import { getTrackedCatalog } from "@/services/catalog/sneakers";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Alerts",
+  description:
+    "Browser price alerts for sneaker asks. Email alerts come later with Plus.",
+  alternates: { canonical: "/alerts" },
+};
+
 export default async function AlertsPage() {
   const [{ isPlus, publicPlus }, all] = await Promise.all([
     getPlusAccess(),

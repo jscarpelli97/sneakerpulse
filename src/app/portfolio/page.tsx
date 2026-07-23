@@ -2,9 +2,10 @@ import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { PortfolioApp } from "@/components/portfolio/PortfolioApp";
 
 export const metadata = {
-  title: "Portfolio — SPI Markets",
+  title: "Portfolio",
   description:
-    "Track your sneaker collection with a simple account. See market asks vs what you paid.",
+    "Track your sneaker collection on this device. See market asks vs what you paid.",
+  alternates: { canonical: "/portfolio" },
 };
 
 export default function PortfolioPage() {

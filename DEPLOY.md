@@ -1,14 +1,26 @@
 # Deploy SPI Markets
 
-**Live production:** https://spi-markets.vercel.app  
+**Live production:** https://spimarkets.com  
+**Also:** https://spi-markets.vercel.app  
 **GitHub:** https://github.com/jscarpelli97/spi-markets  
 **Vercel project:** https://vercel.com/jscarpelli97/spi-markets
 
 ## What’s already set up
 
 - Public GitHub repo (`main` + feature branch)
+- Custom domain `spimarkets.com` on Vercel
 - Vercel production deploy with `KICKSDB_API_KEY` + `STATUS_TOKEN`
 - GitHub Actions secret `KICKSDB_API_KEY` for `.github/workflows/daily-spi.yml`
+
+## Day-1 free launch
+
+Ship the free terminal first (board, market pages, portfolio, compare, alerts, About, SPI methodology). Keep `NEXT_PUBLIC_PLUS_PUBLIC` unset so Plus marketing and paywalls stay off.
+
+Set in Vercel:
+
+- `NEXT_PUBLIC_SITE_URL=https://spimarkets.com`
+
+Optional: `NEXT_PUBLIC_CONTACT_EMAIL` if you want a different public inbox than the About default.
 
 ## Redeploy from CLI
 
@@ -24,9 +36,9 @@ CLI deploy works today. For push-to-deploy, link GitHub in the Vercel dashboard:
 2. Connect the GitHub account / install the Vercel GitHub app if prompted  
 3. Link repo `jscarpelli97/spi-markets`, production branch `main`
 
-## Plus (Bitcoin / Lightning)
+## Plus (later — Bitcoin / Lightning)
 
-Checkout uses [OpenNode](https://opennode.com) (Lightning + on-chain in one invoice).
+Checkout scaffolding uses [OpenNode](https://opennode.com) (or BTCPay when public). Keep Plus off for day one.
 
 1. Create an OpenNode account and API key (start with **dev** keys).
 2. In Vercel → Environment Variables set:
@@ -35,11 +47,11 @@ Checkout uses [OpenNode](https://opennode.com) (Lightning + on-chain in one invo
    - `PLUS_JWT_SECRET` (long random string)
    - `PLUS_PRICE_USD=10`
    - `PLUS_TERM_DAYS=30`
-   - `NEXT_PUBLIC_SITE_URL=https://spi-markets.vercel.app`
-   - `NEXT_PUBLIC_PLUS_PUBLIC=1` **only after** StockX API access is approved/denied and you want Plus marketing live (off by default)
+   - `NEXT_PUBLIC_SITE_URL=https://spimarkets.com`
+   - `NEXT_PUBLIC_PLUS_PUBLIC=1` **only when** My Size / alerts / checkout are ready
 3. Redeploy. Without `OPENNODE_API_KEY`, `/plus` still works in **mock** mode (simulate payment) when public.
 
-Webhook URL to allow in OpenNode: `https://spi-markets.vercel.app/api/plus/webhook`
+Webhook URL to allow in OpenNode: `https://spimarkets.com/api/plus/webhook`
 
 
 ## Daily SPI snapshots

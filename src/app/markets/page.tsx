@@ -10,6 +10,13 @@ import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "All markets",
+  description:
+    "Browse the full SPI Markets top-seller board — StockX-style asks, rank, and weekly volume.",
+  alternates: { canonical: "/markets" },
+};
+
 export default async function MarketsBrowsePage({
   searchParams,
 }: {

@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Instrument_Sans, Syne } from "next/font/google";
 import { PwaRegister } from "@/components/layout/PwaRegister";
-import { BRAND_NAME, BRAND_NAME_WITH_FORMER, BRAND_TAGLINE } from "@/lib/brand";
+import { SiteJsonLd } from "@/components/seo/JsonLd";
+import {
+  BRAND_BLURB,
+  BRAND_NAME,
+  BRAND_NAME_WITH_FORMER,
+  BRAND_TAGLINE,
+  siteUrl,
+} from "@/lib/brand";
 import "./globals.css";
 
 const instrument = Instrument_Sans({
@@ -22,10 +29,19 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
 });
 
+const base = siteUrl();
+
 export const metadata: Metadata = {
-  title: `${BRAND_NAME_WITH_FORMER} — sneakers & streetwear asks`,
-  description: BRAND_TAGLINE,
+  metadataBase: new URL(base),
+  title: {
+    default: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+    template: `%s | ${BRAND_NAME}`,
+  },
+  description: `${BRAND_BLURB} Formerly SneakerPulse.`,
   applicationName: BRAND_NAME,
+  alternates: {
+    canonical: "/",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -43,9 +59,20 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: `${BRAND_NAME_WITH_FORMER} — sneakers & streetwear asks`,
-    description: `${BRAND_TAGLINE}. Formerly SneakerPulse.`,
-    siteName: BRAND_NAME_WITH_FORMER,
+    description: BRAND_TAGLINE,
+    siteName: BRAND_NAME,
     type: "website",
+    url: base,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${BRAND_NAME} — ${BRAND_TAGLINE}`,
+    description: BRAND_BLURB,
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -68,6 +95,7 @@ export default function RootLayout({
       className={`${instrument.variable} ${syne.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="dashboard flex min-h-full flex-col bg-dash-bg text-dash-text">
+        <SiteJsonLd />
         {children}
         <PwaRegister />
       </body>

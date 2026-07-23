@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { SiteSearch } from "@/components/layout/SiteSearch";
 import { PlusInterest } from "@/components/plus/PlusInterest";
+import {
+  BRAND_NAME,
+  CONTACT_EMAIL,
+  FOUNDER_NAME,
+} from "@/lib/brand";
 import { plusPublicEnabled } from "@/lib/plus/config";
 
 /** Site chrome uses the markets-terminal (homepage) look by default. */
@@ -41,7 +46,7 @@ export function SiteHeader({
             href="/"
             className="font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-ink transition-opacity hover:opacity-80"
           >
-            SPI Markets
+            {BRAND_NAME}
           </Link>
           <div className="flex items-center gap-3 sm:gap-5">
             {subtitle ? (
@@ -72,7 +77,7 @@ export function SiteHeader({
             href="/"
             className="shrink-0 font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text transition-opacity hover:opacity-90 sm:text-xl"
           >
-            SPI Markets
+            {BRAND_NAME}
           </Link>
           {subtitle ? (
             <span className="hidden truncate font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-muted lg:inline">
@@ -109,16 +114,17 @@ export function SiteFooter({
   variant?: ChromeVariant;
 }) {
   const publicPlus = plusPublicEnabled();
+  const year = new Date().getFullYear();
 
   if (variant === "light") {
     return (
       <footer className="mt-auto border-t border-ink/8 bg-white px-4 py-6 md:px-6">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 text-sm text-ink-soft">
           <span className="font-[family-name:var(--font-syne)] font-extrabold text-ink">
-            SPI Markets
+            {BRAND_NAME}
           </span>
           <span className="text-xs sm:text-sm">
-            StockX market view · TradingView / CoinMarketCap layout
+            Built by {FOUNDER_NAME} · Independent markets terminal
           </span>
         </div>
       </footer>
@@ -131,12 +137,20 @@ export function SiteFooter({
         <div className="flex flex-wrap items-start justify-between gap-4 text-sm text-dash-muted">
           <div className="max-w-md space-y-1.5">
             <span className="font-[family-name:var(--font-syne)] font-extrabold text-dash-text">
-              SPI Markets
+              {BRAND_NAME}
             </span>
             <p className="text-xs leading-relaxed text-dash-faint">
-              Formerly SneakerPulse. Independent markets terminal for sneakers
-              &amp; streetwear asks — plus the SPI index. Not affiliated with
-              StockX.
+              Formerly SneakerPulse. Built by {FOUNDER_NAME} for reselling
+              desks — sneakers &amp; streetwear asks plus the SPI index. Not
+              affiliated with StockX.
+            </p>
+            <p className="text-xs text-dash-faint">
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="text-dash-accent hover:underline"
+              >
+                {CONTACT_EMAIL}
+              </a>
             </p>
             {publicPlus ? (
               <PlusInterest variant="footer" source="footer" />
@@ -155,6 +169,9 @@ export function SiteFooter({
             <Link href="/alerts" className="hover:text-dash-text">
               Alerts
             </Link>
+            <Link href="/spi" className="hover:text-dash-text">
+              SPI index
+            </Link>
             <Link href="/about" className="hover:text-dash-text">
               About
             </Link>
@@ -166,8 +183,9 @@ export function SiteFooter({
           </nav>
         </div>
         <p className="border-t border-dash-border pt-3 text-xs leading-relaxed text-dash-faint">
-          Not financial advice. Resale markets are volatile — do your own
-          research. Data may be delayed or cached depending on feed mode.
+          © {year} {FOUNDER_NAME} / {BRAND_NAME}. Not financial advice. Resale
+          markets are volatile — do your own research. Data may be a daily
+          snapshot depending on feed mode.
         </p>
       </div>
     </footer>

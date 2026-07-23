@@ -39,7 +39,7 @@ export function siteOrigin() {
   if (explicit) return explicit.replace(/\/$/, "");
   const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
   if (vercel) return `https://${vercel.replace(/^https?:\/\//, "")}`;
-  return "https://spi-markets.vercel.app";
+  return "https://spimarkets.com";
 }
 
 /** OpenNode keys unlock live BTC/Lightning checkout. */
