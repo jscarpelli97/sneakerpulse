@@ -1,5 +1,6 @@
 import { cacheGet, cacheSet } from "@/lib/kicksdb/cache";
 import { logFetch } from "@/lib/kicksdb/logger";
+import { consumeKicksQuota, type KicksQuotaPurpose } from "@/lib/kicksdb/quota";
 import { TOP_SELLERS_LIMIT } from "@/services/catalog/mapProductToCatalog";
 import type {
   KicksDailySale,
@@ -18,8 +19,10 @@ export type {
 } from "@/types/kicksdb";
 
 const KICKS_BASE = "https://api.kicks.dev/v3";
-const DEFAULT_TTL_MS = 5 * 60 * 1000;
-const TOP_SELLERS_TTL_MS = 15 * 60 * 1000;
+/** Long TTLs — free tier is ~1k calls / month. */
+const DEFAULT_TTL_MS = 6 * 60 * 60 * 1000;
+const TOP_SELLERS_TTL_MS = 12 * 60 * 60 * 1000;
+const SEARCH_TTL_MS = 60 * 60 * 1000;
 
 export function getKicksApiKey() {
   return process.env.KICKSDB_API_KEY?.trim() || "";
@@ -28,10 +31,15 @@ export function getKicksApiKey() {
 export async function kicksFetch<T>(
   path: string,
   apiKey: string,
-  options?: { ttlMs?: number; bypassCache?: boolean },
+  options?: {
+    ttlMs?: number;
+    bypassCache?: boolean;
+    purpose?: KicksQuotaPurpose;
+  },
 ): Promise<KicksFetchResult<T>> {
   const ttlMs = options?.ttlMs ?? DEFAULT_TTL_MS;
   const cacheKey = `kicks:${path}`;
+  const purpose = options?.purpose ?? "live";
 
   if (!options?.bypassCache) {
     const cached = cacheGet<T>(cacheKey);
@@ -39,6 +47,23 @@ export async function kicksFetch<T>(
       logFetch({ path, status: 200, cacheHit: true, ms: 0 });
       return { ok: true, data: cached, cacheHit: true, status: 200 };
     }
+  }
+
+  const quota = await consumeKicksQuota(1, purpose);
+  if (!quota.allowed) {
+    logFetch({
+      path,
+      status: 429,
+      cacheHit: false,
+      ms: 0,
+      detail: `monthly quota exhausted (${quota.used}/${quota.limit})`,
+    });
+    return {
+      ok: false,
+      status: 429,
+      body: `KicksDB monthly budget exhausted (${quota.used}/${quota.limit}). Serving offline catalog.`,
+      cacheHit: false,
+    };
   }
 
   const started = Date.now();
@@ -108,12 +133,14 @@ export async function fetchStockxProduct(slug: string, apiKey: string) {
 export async function fetchTopStockxSneakers(
   apiKey: string,
   limit = TOP_SELLERS_LIMIT,
+  options?: { purpose?: KicksQuotaPurpose },
 ) {
   const pageSize = Math.min(100, Math.max(1, limit));
   const products: KicksProduct[] = [];
   let lastMeta: KicksProductListResponse["meta"];
   let lastCacheHit = false;
   let lastStatus = 200;
+  const purpose = options?.purpose ?? "live";
 
   for (let page = 1; products.length < limit && page <= 20; page += 1) {
     const query = new URLSearchParams({
@@ -129,7 +156,7 @@ export async function fetchTopStockxSneakers(
     const res = await kicksFetch<KicksProductListResponse>(
       `/stockx/products?${query.toString()}`,
       apiKey,
-      { ttlMs: TOP_SELLERS_TTL_MS },
+      { ttlMs: TOP_SELLERS_TTL_MS, purpose },
     );
 
     if (!res.ok) {
@@ -190,7 +217,7 @@ export async function searchStockxProducts(
   return kicksFetch<KicksProductListResponse>(
     `/stockx/products?${params.toString()}`,
     apiKey,
-    { ttlMs: 2 * 60 * 1000 },
+    { ttlMs: SEARCH_TTL_MS },
   );
 }
 
@@ -198,6 +225,6 @@ export async function fetchStockxDailySales(productId: string, apiKey: string) {
   return kicksFetch<{ data: KicksDailySale[] | null }>(
     `/stockx/products/${productId}/sales/daily?market=US`,
     apiKey,
-    { ttlMs: 15 * 60 * 1000 },
+    { ttlMs: TOP_SELLERS_TTL_MS },
   );
 }

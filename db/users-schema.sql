@@ -47,4 +47,11 @@ CREATE TABLE IF NOT EXISTS portfolio_holdings (
 CREATE INDEX IF NOT EXISTS portfolio_holdings_user_idx
   ON portfolio_holdings (user_id, created_at DESC);
 
+-- Monthly KicksDB request counter (free tier ≈ 1k / month).
+CREATE TABLE IF NOT EXISTS kicks_quota (
+  month_key   char(7) PRIMARY KEY,
+  used        integer NOT NULL DEFAULT 0 CHECK (used >= 0),
+  updated_at  timestamptz NOT NULL DEFAULT now()
+);
+
 COMMIT;

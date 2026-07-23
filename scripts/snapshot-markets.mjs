@@ -38,9 +38,44 @@ await loadEnvLocal();
 
 const API_KEY = process.env.KICKSDB_API_KEY?.trim();
 const BASE = "https://api.kicks.dev/v3";
+const MONTHLY_LIMIT = Number(process.env.KICKSDB_MONTHLY_LIMIT ?? "1000") || 1000;
+
+async function recordSnapshotQuota(pages) {
+  const url = process.env.DATABASE_URL?.trim();
+  if (!url || pages <= 0) return;
+  try {
+    const pg = await import("pg");
+    const local =
+      url.includes("localhost") ||
+      url.includes("127.0.0.1") ||
+      url.includes("@postgres:");
+    const client = new pg.default.Client({
+      connectionString: url,
+      ssl: local ? false : { rejectUnauthorized: false },
+    });
+    await client.connect();
+    const month = new Date().toISOString().slice(0, 7);
+    const { rows } = await client.query(
+      `INSERT INTO kicks_quota (month_key, used, updated_at)
+       VALUES ($1, $2, now())
+       ON CONFLICT (month_key) DO UPDATE SET
+         used = kicks_quota.used + EXCLUDED.used,
+         updated_at = now()
+       RETURNING used`,
+      [month, pages],
+    );
+    console.log(
+      `KicksDB quota ${month}: ${rows[0]?.used ?? "?"}/${MONTHLY_LIMIT} (snapshot +${pages})`,
+    );
+    await client.end();
+  } catch (err) {
+    console.warn("Could not record KicksDB quota:", err?.message ?? err);
+  }
+}
 
 async function fetchTopSellers() {
   const products = [];
+  let pagesFetched = 0;
   for (let page = 1; products.length < TOP_SELLERS_LIMIT && page <= 20; page += 1) {
     const query = new URLSearchParams({
       market: "US",
@@ -58,6 +93,7 @@ async function fetchTopSellers() {
       },
     });
     const body = await res.text();
+    pagesFetched += 1;
     if (!res.ok) {
       throw new Error(`top sellers page ${page} -> ${res.status} ${body.slice(0, 200)}`);
     }
@@ -67,6 +103,7 @@ async function fetchTopSellers() {
     products.push(...batch);
     if (batch.length < PAGE_SIZE) break;
   }
+  await recordSnapshotQuota(pagesFetched);
   return products.slice(0, TOP_SELLERS_LIMIT);
 }
 

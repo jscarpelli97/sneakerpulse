@@ -25,6 +25,8 @@ jobs:
       - name: Capture daily SPI + member rows
         env:
           KICKSDB_API_KEY: ${{ secrets.KICKSDB_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          KICKSDB_MONTHLY_LIMIT: "1000"
         run: npm run snapshot
 
       - name: Commit open data + app snapshots
