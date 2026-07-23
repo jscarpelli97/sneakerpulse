@@ -3,12 +3,17 @@
   "slug": "adidas-ballerina-bad-bunny-flamboyan",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:56.311Z",
+  "updatedAt": "2026-07-23T13:42:01.685Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 97,
       "orders": 381
+    },
+    {
+      "date": "2026-07-23",
+      "price": 97,
+      "orders": 390
     }
   ]
 }

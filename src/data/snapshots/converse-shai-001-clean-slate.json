@@ -1,0 +1,14 @@
+{
+  "productId": "019b7110-a0ea-7ed0-865d-2c84df111337",
+  "slug": "converse-shai-001-clean-slate",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:18.425Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 104,
+      "orders": 75
+    }
+  ]
+}

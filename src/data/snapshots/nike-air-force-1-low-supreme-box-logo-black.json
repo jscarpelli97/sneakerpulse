@@ -3,12 +3,17 @@
   "slug": "nike-air-force-1-low-supreme-box-logo-black",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.224Z",
+  "updatedAt": "2026-07-23T13:42:00.492Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 133,
       "orders": 635
+    },
+    {
+      "date": "2026-07-23",
+      "price": 137,
+      "orders": 645
     }
   ]
 }

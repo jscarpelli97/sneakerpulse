@@ -1,0 +1,14 @@
+{
+  "productId": "019c9c04-9360-78e5-9325-b8f6654a7011",
+  "slug": "converse-shai-001-pink",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:09.522Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 120,
+      "orders": 127
+    }
+  ]
+}

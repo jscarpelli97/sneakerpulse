@@ -3,12 +3,17 @@
   "slug": "new-balance-9060-black-castlerock-grey",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:58.164Z",
+  "updatedAt": "2026-07-23T13:42:03.552Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 75,
       "orders": 258
+    },
+    {
+      "date": "2026-07-23",
+      "price": 75,
+      "orders": 256
     }
   ]
 }

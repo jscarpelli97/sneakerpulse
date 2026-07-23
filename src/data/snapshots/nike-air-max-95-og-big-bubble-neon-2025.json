@@ -3,12 +3,17 @@
   "slug": "nike-air-max-95-og-big-bubble-neon-2025",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.585Z",
+  "updatedAt": "2026-07-23T13:42:00.908Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 150,
       "orders": 592
+    },
+    {
+      "date": "2026-07-23",
+      "price": 150,
+      "orders": 589
     }
   ]
 }

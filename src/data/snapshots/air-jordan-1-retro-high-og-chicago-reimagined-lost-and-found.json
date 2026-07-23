@@ -3,12 +3,17 @@
   "slug": "air-jordan-1-retro-high-og-chicago-reimagined-lost-and-found",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T14:17:27.823145Z",
+  "updatedAt": "2026-07-23T13:42:06.742Z",
   "points": [
     {
       "date": "2026-07-22",
-      "price": 155.0,
+      "price": 155,
       "orders": 172
+    },
+    {
+      "date": "2026-07-23",
+      "price": 155,
+      "orders": 173
     }
   ]
 }

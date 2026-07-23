@@ -3,10 +3,15 @@
   "slug": "nike-dunk-low-retro-white-black-2021",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:56.565Z",
+  "updatedAt": "2026-07-23T13:42:01.943Z",
   "points": [
     {
       "date": "2026-07-22",
+      "price": 55,
+      "orders": 347
+    },
+    {
+      "date": "2026-07-23",
       "price": 55,
       "orders": 347
     }

@@ -3,11 +3,16 @@
   "slug": "birkenstock-boston-soft-footbed-suede-taupe",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.276Z",
+  "updatedAt": "2026-07-23T13:42:00.544Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 84,
+      "orders": 635
+    },
+    {
+      "date": "2026-07-23",
+      "price": 82,
       "orders": 635
     }
   ]

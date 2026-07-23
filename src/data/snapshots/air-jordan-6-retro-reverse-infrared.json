@@ -3,12 +3,17 @@
   "slug": "air-jordan-6-retro-reverse-infrared",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:54.859Z",
+  "updatedAt": "2026-07-23T13:42:00.285Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 131,
       "orders": 738
+    },
+    {
+      "date": "2026-07-23",
+      "price": 131,
+      "orders": 722
     }
   ]
 }

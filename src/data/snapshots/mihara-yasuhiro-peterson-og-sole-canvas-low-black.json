@@ -3,12 +3,17 @@
   "slug": "mihara-yasuhiro-peterson-og-sole-canvas-low-black",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:54.599Z",
+  "updatedAt": "2026-07-23T13:41:59.823Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 127,
       "orders": 792
+    },
+    {
+      "date": "2026-07-23",
+      "price": 118,
+      "orders": 812
     }
   ]
 }
