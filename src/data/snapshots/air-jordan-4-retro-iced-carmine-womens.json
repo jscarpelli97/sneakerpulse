@@ -3,12 +3,17 @@
   "slug": "air-jordan-4-retro-iced-carmine-womens",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.172Z",
+  "updatedAt": "2026-07-23T13:42:01.064Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 104,
       "orders": 637
+    },
+    {
+      "date": "2026-07-23",
+      "price": 104,
+      "orders": 532
     }
   ]
 }

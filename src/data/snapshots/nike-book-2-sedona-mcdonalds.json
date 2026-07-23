@@ -1,0 +1,14 @@
+{
+  "productId": "019e2d62-abc4-7318-9cc2-31aa55becdaa",
+  "slug": "nike-book-2-sedona-mcdonalds",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:07.874Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 101,
+      "orders": 153
+    }
+  ]
+}

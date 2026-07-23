@@ -3,12 +3,17 @@
   "slug": "air-jordan-11-retro-gamma-blue-2025",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:54.132Z",
+  "updatedAt": "2026-07-23T13:41:59.512Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 202,
       "orders": 1192
+    },
+    {
+      "date": "2026-07-23",
+      "price": 202,
+      "orders": 1190
     }
   ]
 }

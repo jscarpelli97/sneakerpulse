@@ -3,11 +3,16 @@
   "slug": "air-jordan-12-retro-taxi-2025",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:57.084Z",
+  "updatedAt": "2026-07-23T13:42:02.464Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 187,
+      "orders": 304
+    },
+    {
+      "date": "2026-07-23",
+      "price": 186,
       "orders": 304
     }
   ]

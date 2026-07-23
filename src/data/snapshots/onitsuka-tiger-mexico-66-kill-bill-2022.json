@@ -3,11 +3,16 @@
   "slug": "onitsuka-tiger-mexico-66-kill-bill-2022",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.688Z",
+  "updatedAt": "2026-07-23T13:42:01.012Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 123,
+      "orders": 535
+    },
+    {
+      "date": "2026-07-23",
+      "price": 121,
       "orders": 535
     }
   ]

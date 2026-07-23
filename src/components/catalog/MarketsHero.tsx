@@ -1,17 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
+import {
+  BRAND_HERO_LINE,
+  BRAND_NAME,
+  BRAND_VALUE_LINE,
+} from "@/lib/brand";
 import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
 export function MarketsHero({
   featured,
-  liveCount,
+  modeBadge,
+  modeSubtitle,
   totalMarkets,
 }: {
   featured: CatalogQuote;
-  liveCount: number;
+  modeBadge: string;
+  modeSubtitle: string;
   totalMarkets: number;
 }) {
+  const hasPrice = featured.price != null;
+  const hasOrders = featured.weeklyOrders != null;
+  const hasRank = featured.rank != null;
+
   return (
     <section className="dash-card animate-rise relative overflow-hidden">
       <div
@@ -27,37 +38,55 @@ export function MarketsHero({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-dash-border bg-dash-elevated/90 px-3 py-1 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-muted">
-              <span className="h-1.5 w-1.5 animate-blink rounded-full bg-dash-up" />
-              {liveCount}/{totalMarkets} markets live
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  modeBadge === "Live"
+                    ? "animate-blink bg-dash-up"
+                    : modeBadge === "Snapshot" || modeBadge === "Cached"
+                      ? "bg-dash-accent"
+                      : "bg-dash-faint"
+                }`}
+              />
+              {modeSubtitle}
             </span>
             <span className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-faint">
-              StockX via KicksDB
+              {modeBadge === "Live" ? "StockX via KicksDB" : "Daily catalog"}
             </span>
           </div>
 
           <h1 className="mt-5 font-[family-name:var(--font-syne)] text-4xl font-extrabold leading-[1.02] tracking-tight text-dash-text sm:text-5xl lg:text-[3.5rem]">
-            SneakerPulse
+            {BRAND_NAME}
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
-            Terminal-grade StockX market views. Live asks, volume, and size
-            ladders across the current top {totalMarkets} sellers — homepage
-            highlights the top 10.
+            {BRAND_HERO_LINE}
+          </p>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-dash-faint sm:text-base">
+            {BRAND_VALUE_LINE}
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
-              href={`/sneakers/${featured.slug}`}
+              href="/markets"
               className="inline-flex items-center rounded-xl bg-dash-accent px-5 py-3 text-sm font-semibold text-dash-bg shadow-[0_8px_24px_rgba(212,160,23,0.22)] hover:brightness-110 active:translate-y-px"
             >
-              Open {featured.ticker}
+              Browse markets
             </Link>
             <Link
-              href="/markets"
+              href="#spi"
               className="inline-flex items-center rounded-xl border border-dash-border bg-dash-elevated px-5 py-3 text-sm font-semibold text-dash-text hover:border-dash-muted hover:bg-dash-panel"
             >
-              Browse all {totalMarkets}
+              See the index
+            </Link>
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center rounded-xl border border-dash-border px-5 py-3 text-sm font-semibold text-dash-muted hover:border-dash-muted hover:bg-dash-elevated hover:text-dash-text"
+            >
+              Open portfolio
             </Link>
           </div>
+          <p className="mt-3 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
+            {totalMarkets} pairs on the board · deal check on every market page
+          </p>
         </div>
 
         <aside className="rounded-2xl border border-dash-border bg-dash-elevated/85 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-5">
@@ -91,7 +120,7 @@ export function MarketsHero({
                 Lowest ask
               </dt>
               <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-2xl font-semibold tabular-nums text-dash-text">
-                {featured.live ? formatMaybeMoney(featured.price) : "—"}
+                {hasPrice ? formatMaybeMoney(featured.price) : "—"}
               </dd>
             </div>
             <div>
@@ -99,9 +128,7 @@ export function MarketsHero({
                 Weekly orders
               </dt>
               <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-2xl font-semibold tabular-nums text-dash-text">
-                {featured.live && featured.weeklyOrders != null
-                  ? formatNumber(featured.weeklyOrders)
-                  : "—"}
+                {hasOrders ? formatNumber(featured.weeklyOrders!) : "—"}
               </dd>
             </div>
             <div>
@@ -109,9 +136,7 @@ export function MarketsHero({
                 StockX rank
               </dt>
               <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-lg font-medium tabular-nums text-dash-muted">
-                {featured.live && featured.rank != null
-                  ? `#${formatNumber(featured.rank)}`
-                  : "—"}
+                {hasRank ? `#${formatNumber(featured.rank!)}` : "—"}
               </dd>
             </div>
             <div>

@@ -3,12 +3,17 @@
   "slug": "air-jordan-13-retro-og-chicago-2026",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.792Z",
+  "updatedAt": "2026-07-23T13:42:01.168Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 129,
       "orders": 507
+    },
+    {
+      "date": "2026-07-23",
+      "price": 128,
+      "orders": 497
     }
   ]
 }

@@ -8,7 +8,10 @@ psql "$DATABASE_URL" -f db/schema.sql
 ```
 
 This is a **design + migration artifact**. The live app still uses JSON snapshots
-in `src/data/snapshots/` until a database is wired in.
+in `src/data/` until a database is wired in. Portfolio / Wardrobe accounts use
+**cloud sync** when `DATABASE_URL` is set (`db/users-schema.sql` +
+`scripts/migrate-users.mjs`); otherwise they fall back to a device-local vault
+(`src/lib/portfolio/localVault.ts`).
 
 ## Tables
 

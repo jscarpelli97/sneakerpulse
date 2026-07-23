@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import { getCacheStats } from "@/lib/kicksdb/cache";
 import { getKicksApiKey } from "@/lib/kicksdb/client";
 import { getRecentFetchLogs } from "@/lib/kicksdb/logger";
+import { getKicksQuota } from "@/lib/kicksdb/quota";
 
 /**
  * Public health: coarse status only.
@@ -28,11 +30,19 @@ export async function GET(request: Request) {
     });
   }
 
+  const quota = await getKicksQuota();
+
   return NextResponse.json({
     ok: true,
     status,
     hasKey,
-    mode: hasKey ? "live_api" : "free_offline_catalog",
+    liveReads: kicksLiveReadsEnabled(),
+    mode: hasKey
+      ? kicksLiveReadsEnabled()
+        ? "live_api"
+        : "snapshot_plus_key"
+      : "free_offline_catalog",
+    quota,
     cache: getCacheStats(),
     recentFetches: logs,
   });

@@ -4,7 +4,7 @@
   "source": "premium_vs_retail",
   "note": "Append-only daily SPI (volume-weighted ask÷retail×100). Same points as open-data/spi/daily.json. Historical Flurin premium tape ends 2021-12; this file / open-data hold live captures from 2026-07-22 forward. Gap left empty on purpose. Run: npm run snapshot",
   "baseLevel": 100,
-  "asOf": "2026-07-22",
+  "asOf": "2026-07-23",
   "constituents": 51,
   "gapBefore": "2022-01-01",
   "points": [
@@ -12,9 +12,14 @@
       "date": "2026-07-22",
       "price": 93.92,
       "orders": 51
+    },
+    {
+      "date": "2026-07-23",
+      "price": 95.75,
+      "orders": 51
     }
   ],
-  "updatedAt": "2026-07-22T16:08:58.737Z",
+  "updatedAt": "2026-07-23T13:42:24.638Z",
   "brandCount": 12,
   "atOrBelowRetail": 37
 }
