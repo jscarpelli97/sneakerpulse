@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type MutableRefObject,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { ClosetImage } from "@/components/wardrobe/ClosetImage";
@@ -13,11 +14,11 @@ import {
   newFitId,
   newFitPieceId,
 } from "@/lib/portfolio/vault";
-import { imageToCutoutPng } from "@/lib/wardrobe/cutout";
 import {
-  downloadBlob,
-  exportFitJpeg,
+  exportFitBoardJpeg,
+  saveOrShareJpeg,
 } from "@/lib/wardrobe/exportFit";
+import { imageToCutoutPng } from "@/lib/wardrobe/cutout";
 import {
   autoOrganizePieces,
   alignPiecesCenter,
@@ -198,25 +199,39 @@ function FitEditor({
   const missing = board.pieces.filter((p) => !byId.has(p.closetItemId)).length;
   const [exporting, setExporting] = useState(false);
   const [freeTransform, setFreeTransform] = useState(true);
+  /** In-memory cutouts — not written to vault (keeps cloud vault under size cap). */
+  const [cutouts, setCutouts] = useState<Record<string, string>>({});
+  const boardRef = useRef<HTMLDivElement | null>(null);
 
   const boardItemIds = useMemo(
     () => board.pieces.map((p) => p.closetItemId),
     [board.pieces],
   );
 
-  /** Ensure every piece on this fit has a transparent PNG cutout. */
+  const displayById = useMemo(() => {
+    const map = new Map<string, ClosetItem>();
+    for (const item of closet) {
+      const cut = cutouts[item.id] || item.cutoutImage || null;
+      map.set(item.id, cut ? { ...item, cutoutImage: cut } : item);
+    }
+    return map;
+  }, [closet, cutouts]);
+
+  /** Ensure every piece on this fit has a transparent PNG cutout (memory only). */
   const ensureCutouts = useCallback(async () => {
     const needs = boardItemIds
       .map((id) => byId.get(id))
-      .filter((item): item is ClosetItem => Boolean(item && !item.cutoutImage));
+      .filter((item): item is ClosetItem =>
+        Boolean(item && !cutouts[item.id] && !item.cutoutImage),
+      );
     if (needs.length === 0) {
-      return { updated: 0, failed: 0, closet };
+      return { updated: 0, failed: 0 };
     }
 
     setCuttingOut(true);
     let updated = 0;
     let failed = 0;
-    let nextCloset = closet;
+    const next: Record<string, string> = { ...cutouts };
     try {
       for (const item of needs) {
         const result = await imageToCutoutPng(item.image);
@@ -224,33 +239,25 @@ function FitEditor({
           failed += 1;
           continue;
         }
+        next[item.id] = result.dataUrl;
         updated += 1;
-        nextCloset = nextCloset.map((row) =>
-          row.id === item.id ? { ...row, cutoutImage: result.dataUrl } : row,
-        );
       }
-      if (updated > 0) onClosetChange(nextCloset);
-      return { updated, failed, closet: nextCloset };
+      if (updated > 0) setCutouts(next);
+      return { updated, failed };
     } finally {
       setCuttingOut(false);
     }
-  }, [boardItemIds, byId, closet, onClosetChange]);
-
-  function mapFromCloset(list: ClosetItem[]) {
-    const map = new Map<string, ClosetItem>();
-    for (const item of list) map.set(item.id, item);
-    return map;
-  }
+  }, [boardItemIds, byId, cutouts]);
 
   // Auto-cutout when pieces are added to the board.
   useEffect(() => {
     const needs = boardItemIds.some((id) => {
       const item = byId.get(id);
-      return item && !item.cutoutImage;
+      return item && !cutouts[id] && !item.cutoutImage;
     });
     if (!needs || cuttingOut) return;
     void ensureCutouts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when board membership changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardItemIds.join("|")]);
 
   function addPiece(closetItemId: string) {
@@ -292,9 +299,8 @@ function FitEditor({
       onFlash("Add pieces first");
       return;
     }
-    const cut = await ensureCutouts();
-    const map = mapFromCloset(cut.closet);
-    onChange({ pieces: autoOrganizePieces(board.pieces, map) });
+    await ensureCutouts();
+    onChange({ pieces: autoOrganizePieces(board.pieces, displayById) });
     onFlash("Reset to factory layout");
   }
 
@@ -304,7 +310,7 @@ function FitEditor({
 
   function alignCenter() {
     if (board.pieces.length === 0) return;
-    onChange({ pieces: alignPiecesCenter(board.pieces, byId) });
+    onChange({ pieces: alignPiecesCenter(board.pieces, displayById) });
     onFlash("Locked to equal slots");
   }
 
@@ -313,7 +319,7 @@ function FitEditor({
       onFlash("Need at least two pieces");
       return;
     }
-    onChange({ pieces: pullPiecesTogether(board.pieces, byId) });
+    onChange({ pieces: pullPiecesTogether(board.pieces, displayById) });
     onFlash("Locked — equal spacing, no overlap");
   }
 
@@ -335,20 +341,32 @@ function FitEditor({
 
   async function exportWhiteJpeg() {
     if (exporting) return;
+    const el = boardRef.current;
+    if (!el) {
+      onFlash("Board isn't ready — try again");
+      return;
+    }
     setExporting(true);
     try {
-      const cut = await ensureCutouts();
-      const map = mapFromCloset(cut.closet);
-      const result = await exportFitJpeg(board, map, {
-        background: "#ffffff",
+      // Let forceWhite paint before capture.
+      await new Promise<void>((r) => requestAnimationFrame(() => r()));
+      await new Promise<void>((r) => requestAnimationFrame(() => r()));
+      await new Promise((r) => window.setTimeout(r, 50));
+
+      const result = await exportFitBoardJpeg(el, {
+        name: board.name,
         showName: true,
       });
       if (!result.ok) {
         onFlash(result.error);
         return;
       }
-      downloadBlob(result.blob, result.filename);
-      onFlash("Downloaded — check your downloads folder");
+      const saved = await saveOrShareJpeg(result.blob, result.filename);
+      if (saved.mode === "share") {
+        onFlash("Shared — pick Save Image or Instagram");
+      } else if (saved.mode === "download") {
+        onFlash("Downloaded — check your downloads folder");
+      }
     } catch (err) {
       onFlash(err instanceof Error ? err.message : "Export failed");
     } finally {
@@ -446,8 +464,8 @@ function FitEditor({
           </button>
         </div>
         <p className="text-[11px] text-dash-faint">
-          Reset to factory restores the locked equal-slot layout. Export uses
-          cutouts on a white 1:1 JPEG.
+          Reset to factory restores the locked equal-slot layout. Export captures
+          the board as a white 1:1 JPEG (share sheet on phones).
         </p>
         {missing ? (
           <p className="text-xs text-dash-down">
@@ -459,9 +477,11 @@ function FitEditor({
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_240px]">
         <FitCanvas
+          boardRef={boardRef}
           pieces={board.pieces}
-          byId={byId}
+          byId={displayById}
           freeTransform={freeTransform}
+          forceWhite={exporting}
           onMove={(id, x, y) => patchPiece(id, { x, y })}
           onSelect={bringFront}
           onScale={(id, scale) => patchPiece(id, { scale })}
@@ -528,18 +548,22 @@ function FitEditor({
 }
 
 function FitCanvas({
+  boardRef,
   pieces,
   byId,
   freeTransform,
+  forceWhite = false,
   onMove,
   onSelect,
   onScale,
   onRotate,
   onRemove,
 }: {
+  boardRef: MutableRefObject<HTMLDivElement | null>;
   pieces: FitPiece[];
   byId: Map<string, ClosetItem>;
   freeTransform: boolean;
+  forceWhite?: boolean;
   onMove: (id: string, x: number, y: number) => void;
   onSelect: (id: string) => void;
   onScale: (id: string, scale: number) => void;
@@ -550,6 +574,14 @@ function FitCanvas({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [whitePreview, setWhitePreview] = useState(false);
   const [showCenterGuide, setShowCenterGuide] = useState(false);
+  const white = forceWhite || whitePreview;
+
+  useEffect(() => {
+    boardRef.current = ref.current;
+    return () => {
+      if (boardRef.current === ref.current) boardRef.current = null;
+    };
+  }, [boardRef]);
   const drag = useRef<{
     id: string;
     offsetX: number;
@@ -693,10 +725,10 @@ function FitCanvas({
       <div
         ref={ref}
         className={`relative aspect-square w-full overflow-hidden rounded-2xl border border-dash-border ${
-          whitePreview ? "bg-white" : "bg-[#0d1018]"
+          white ? "bg-white" : "bg-[#0d1018]"
         }`}
         style={
-          whitePreview
+          white
             ? undefined
             : {
                 backgroundImage:
@@ -714,7 +746,7 @@ function FitCanvas({
         {pieces.length === 0 ? (
           <p
             className={`absolute inset-0 flex items-center justify-center px-6 text-center text-sm ${
-              whitePreview ? "text-neutral-400" : "text-dash-faint"
+              white ? "text-neutral-400" : "text-dash-faint"
             }`}
           >
             Tap closet pieces to drop them here, then Auto arrange or drag free.
@@ -730,6 +762,8 @@ function FitCanvas({
           return (
             <div
               key={piece.id}
+              data-fit-piece="1"
+              data-rotation={String(rotation)}
               className={`absolute touch-none select-none ${
                 active ? "z-50" : ""
               }`}
@@ -753,7 +787,7 @@ function FitCanvas({
                 aria-label={item.name}
               >
                 <span className="relative block aspect-square w-full overflow-visible bg-transparent">
-                  <ClosetImage src={src} alt={item.name} />
+                  <ClosetImage src={src} alt={item.name} exportable />
                 </span>
               </button>
               {active && freeTransform ? (
