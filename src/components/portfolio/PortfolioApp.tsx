@@ -47,19 +47,13 @@ export function PortfolioApp() {
   const [selectedSlug, setSelectedSlug] = useState<string>("");
   const [rename, setRename] = useState("");
   const [flash, setFlash] = useState<string | null>(null);
-  const [cloud, setCloud] = useState(false);
   const [booting, setBooting] = useState(true);
 
   const hydrate = useCallback(
-    (
-      next: PortfolioSession,
-      nextHoldings?: PortfolioHolding[],
-      nextCloud?: boolean,
-    ) => {
+    (next: PortfolioSession, nextHoldings?: PortfolioHolding[]) => {
       setSession(next);
       setHoldings(nextHoldings ?? []);
       setRename(next.username);
-      if (nextCloud != null) setCloud(nextCloud);
     },
     [],
   );
@@ -69,13 +63,8 @@ export function PortfolioApp() {
     (async () => {
       const restored = await restoreSession();
       if (cancelled) return;
-      setCloud(restored.cloud);
       if (restored.session) {
-        hydrate(
-          restored.session,
-          restored.vault?.holdings ?? [],
-          restored.cloud,
-        );
+        hydrate(restored.session, restored.vault?.holdings ?? []);
       }
       setBooting(false);
     })();
@@ -170,16 +159,14 @@ export function PortfolioApp() {
       setAuthError(result.error);
       return;
     }
-    setCloud(result.cloud);
-    hydrate(result.session, result.vault.holdings, result.cloud);
-    if (result.imported) {
-      setFlash("Imported this device’s collection into your cloud account.");
-    }
+    hydrate(result.session, result.vault.holdings);
     setPassword("");
     setFlash(
-      mode === "register"
-        ? "Account created on this device. Add your first pair below."
-        : "Welcome back.",
+      result.imported
+        ? "Imported your previous collection. Add pairs anytime."
+        : mode === "register"
+          ? "Account ready. Add your first pair below."
+          : "Welcome back.",
     );
   }
 
@@ -262,10 +249,8 @@ export function PortfolioApp() {
           </h1>
           <p className="text-sm leading-relaxed text-dash-muted sm:text-base">
             Create a simple account (email + password) to log pairs you own,
-            mark cost basis in USD, and see market asks vs what you paid.
-            {cloud
-              ? " Syncs to the cloud so you can open it on any device."
-              : " Stored on this device until cloud sync is enabled."}
+            mark cost basis in USD, and see market asks vs what you paid. Log in
+            on any device to pick up where you left off.
           </p>
         </header>
 
@@ -358,10 +343,8 @@ export function PortfolioApp() {
         </div>
 
         <p className="text-xs leading-relaxed text-dash-faint">
-          Not financial advice.
-          {cloud
-            ? " Your account syncs across phones and computers when you log in."
-            : " Password stays on this browser — clearing site data logs you out of the local vault."}
+          Not financial advice. Your collection follows your login on phone and
+          desktop.
           {plusPublicEnabled() ? (
             <>
               {" "}
@@ -387,8 +370,8 @@ export function PortfolioApp() {
             Your collection
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-dash-muted">
-            Mark what you own, what you paid, and see asks vs cost. Local vault
-            on this device.
+            Mark what you own, what you paid, and see asks vs cost — available
+            wherever you sign in.
           </p>
         </div>
         <button
@@ -657,9 +640,7 @@ export function PortfolioApp() {
           </button>
         </div>
         <p className="text-xs text-dash-faint">
-          {cloud
-            ? "Cloud account — log in on any device to see the same holdings."
-            : "Device vault — enable DATABASE_URL for cloud sync across phones."}
+          Same login on any device shows the same holdings.
         </p>
       </section>
     </div>

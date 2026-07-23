@@ -328,7 +328,7 @@ export function ClosetPanel({
             <form onSubmit={addCustom} className="space-y-3">
               <p className="text-sm text-dash-muted">
                 Tees, shorts, jackets — upload a PNG/JPG like you would in
-                Freeform. Stored on this device only.
+                Freeform. Saves with your account.
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="text-xs text-dash-faint">
@@ -459,7 +459,7 @@ export function ClosetPanel({
               Your closet
             </h2>
             <p className="text-sm text-dash-muted">
-              {closet.length} piece{closet.length === 1 ? "" : "s"} on this device
+              {closet.length} piece{closet.length === 1 ? "" : "s"} in your closet
             </p>
           </div>
           <label className="sr-only" htmlFor="closet-filter">

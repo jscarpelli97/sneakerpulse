@@ -4,7 +4,7 @@ import { WardrobeApp } from "@/components/wardrobe/WardrobeApp";
 export const metadata = {
   title: "Wardrobe",
   description:
-    "Closet and Fits — build outfits from your sneakers and custom pieces on this device.",
+    "Closet and Fits — build outfits from your sneakers and custom pieces, synced to your account.",
   alternates: { canonical: "/wardrobe" },
 };
 

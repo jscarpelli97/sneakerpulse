@@ -140,7 +140,7 @@ export async function registerAccount(input: {
     return { ok: false, error: "An account with that email already exists" };
   }
   const taken = Object.values(vault.accounts).some((a) => a.username === username);
-  if (taken) return { ok: false, error: "That username is already taken on this device" };
+  if (taken) return { ok: false, error: "That username is already taken" };
 
   const salt = randomSalt();
   const passwordHash = await deriveHash(input.password, salt);
@@ -257,7 +257,7 @@ export function updateUsername(email: string, username: string) {
   const taken = Object.values(vault.accounts).some(
     (a) => a.email !== key && a.username === cleaned,
   );
-  if (taken) return { ok: false as const, error: "Username taken on this device" };
+  if (taken) return { ok: false as const, error: "Username taken" };
   account.username = cleaned;
   writeVault(vault);
   setSession({ email: key, username: cleaned });

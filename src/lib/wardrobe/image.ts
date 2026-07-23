@@ -1,4 +1,4 @@
-/** Compress an image File to a JPEG data URL suitable for localStorage. */
+/** Compress an image File to a JPEG data URL for closet uploads. */
 export async function fileToClosetDataUrl(
   file: File,
   opts?: { maxEdge?: number; quality?: number },

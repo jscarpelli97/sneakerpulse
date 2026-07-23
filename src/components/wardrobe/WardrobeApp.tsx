@@ -42,7 +42,6 @@ export function WardrobeApp() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [authBusy, setAuthBusy] = useState(false);
   const [flash, setFlash] = useState<string | null>(null);
-  const [cloud, setCloud] = useState(false);
   const [booting, setBooting] = useState(true);
 
   const hydrate = useCallback(
@@ -53,14 +52,12 @@ export function WardrobeApp() {
         fits?: FitBoard[];
         holdings?: PortfolioHolding[];
       },
-      nextCloud?: boolean,
     ) => {
       setSession(next);
       setCloset(vault?.closet ?? []);
       setFits(vault?.fits ?? []);
       setHoldings(vault?.holdings ?? []);
       setHoldingsCount(vault?.holdings?.length ?? 0);
-      if (nextCloud != null) setCloud(nextCloud);
     },
     [],
   );
@@ -70,9 +67,8 @@ export function WardrobeApp() {
     (async () => {
       const restored = await restoreSession();
       if (cancelled) return;
-      setCloud(restored.cloud);
       if (restored.session) {
-        hydrate(restored.session, restored.vault ?? undefined, restored.cloud);
+        hydrate(restored.session, restored.vault ?? undefined);
       }
       setBooting(false);
     })();
@@ -121,12 +117,11 @@ export function WardrobeApp() {
       setAuthError(result.error);
       return;
     }
-    setCloud(result.cloud);
-    hydrate(result.session, result.vault, result.cloud);
+    hydrate(result.session, result.vault);
     setPassword("");
     setFlash(
       result.imported
-        ? "Imported this device’s wardrobe into your cloud account."
+        ? "Imported your previous wardrobe. Start building fits."
         : mode === "register"
           ? "Account ready — start your closet."
           : "Welcome back.",
@@ -165,10 +160,8 @@ export function WardrobeApp() {
           </h1>
           <p className="text-base leading-relaxed text-dash-muted">
             Same account as Portfolio. Build a closet from the board and your
-            own PNGs, then arrange fits like Freeform.
-            {cloud
-              ? " Synced to the cloud across devices."
-              : " Stored on this device until cloud sync is enabled."}
+            own PNGs, then arrange fits like Freeform — available on any device
+            when you sign in.
           </p>
         </header>
 
@@ -240,20 +233,16 @@ export function WardrobeApp() {
               {authBusy
                 ? "Working…"
                 : mode === "register"
-                  ? cloud
-                    ? "Create cloud account"
-                    : "Create device account"
+                  ? "Create account"
                   : "Log in"}
             </button>
           </form>
           <p className="mt-4 text-xs leading-relaxed text-dash-faint">
-            {cloud
-              ? "Cloud login — same account on phone and desktop."
-              : "Stays on this browser until cloud sync is enabled."}{" "}
+            Same login on phone and desktop.{" "}
             <Link href="/portfolio" className="text-dash-accent hover:underline">
               Portfolio
             </Link>{" "}
-            shares the same login for cost basis and P&amp;L.
+            shares the account for cost basis and P&amp;L.
           </p>
         </section>
       </div>

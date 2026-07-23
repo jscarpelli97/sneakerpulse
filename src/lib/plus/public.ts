@@ -7,7 +7,6 @@ export const PLUS_BENEFITS = [
   "Email price alerts when asks cross your thresholds",
   "Restock Monitor — size restocks & soft price drops (coming soon)",
   "Live ask refresh (when feeds are connected)",
-  "Portfolio cloud sync (rolling out)",
   "Early access to GOAT / Stadium Goods tape as APIs land",
 ] as const;
 
@@ -15,7 +14,7 @@ export const PLUS_BENEFITS = [
 export const FREE_BENEFITS = [
   `Top ${FREE_TOP} sellers on Markets, Compare, and detail pages`,
   "SPI Index and the free markets terminal",
-  "Device-local portfolio with USD cost basis",
+  "Portfolio + Wardrobe with USD cost basis (sign in on any device)",
   "No account required to browse the free board",
 ] as const;
 
@@ -66,10 +65,10 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
   },
   {
     id: "portfolio",
-    feature: "Portfolio tracker",
-    detail: "Log pairs, sizes, and USD cost basis on this device.",
-    free: { label: "Device-local", state: "yes" },
-    plus: { label: "Cloud sync soon", state: "soon" },
+    feature: "Portfolio + Wardrobe",
+    detail: "Log pairs, sizes, and USD cost basis — same account on any device.",
+    free: { label: "Included", state: "yes" },
+    plus: { label: "Included", state: "yes" },
   },
   {
     id: "email-alerts",
