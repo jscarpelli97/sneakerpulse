@@ -1,3 +1,4 @@
+import { toJpeg } from "html-to-image";
 import { FIT_BASE_SIZE } from "@/lib/wardrobe/layout";
 import type { FitPiece } from "@/lib/wardrobe/types";
 
@@ -14,36 +15,9 @@ export type FitExportOptions = {
   showName?: boolean;
 };
 
-function encodeCanvasJpeg(
-  canvas: HTMLCanvasElement,
-  quality: number,
-): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          resolve(blob);
-          return;
-        }
-        try {
-          const dataUrl = canvas.toDataURL("image/jpeg", quality);
-          const bin = atob(dataUrl.split(",")[1] ?? "");
-          const bytes = new Uint8Array(bin.length);
-          for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-          resolve(new Blob([bytes], { type: "image/jpeg" }));
-        } catch (err) {
-          reject(err instanceof Error ? err : new Error("JPEG encode failed"));
-        }
-      },
-      "image/jpeg",
-      quality,
-    );
-  });
-}
-
 /**
- * Export the live fit board DOM to a white square JPEG.
- * Draws already-loaded <img> nodes so StockX / Next image / cutouts all work.
+ * Export the live fit board DOM to a white square JPEG via html-to-image.
+ * Captures whatever is painted (Next/Image + cutout PNGs), so export matches the board.
  */
 export async function exportFitBoardJpeg(
   boardEl: HTMLElement,
@@ -60,81 +34,77 @@ export async function exportFitBoardJpeg(
     return { ok: false, error: "Board isn't ready to export yet" };
   }
 
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return { ok: false, error: "Could not create canvas" };
-
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, size, size);
-
-  const sx = size / rootRect.width;
-  const sy = size / rootRect.height;
-
-  const nodes = boardEl.querySelectorAll<HTMLElement>("[data-fit-piece]");
-  if (nodes.length === 0) {
+  const pieces = boardEl.querySelectorAll("[data-fit-piece]");
+  if (pieces.length === 0) {
     return { ok: false, error: "Add pieces to the fit before exporting" };
   }
 
-  let drawn = 0;
-  for (const node of nodes) {
-    const img = node.querySelector("img");
-    if (!img) continue;
-    if (!img.complete || img.naturalWidth === 0) {
+  const imgs = Array.from(boardEl.querySelectorAll("img"));
+  await Promise.all(
+    imgs.map(async (img) => {
+      if (img.complete && img.naturalWidth > 0) return;
       try {
         await img.decode();
       } catch {
-        continue;
+        // Ignore — html-to-image may still pick it up after a short wait.
       }
-    }
-    if (!img.naturalWidth) continue;
+    }),
+  );
+  await new Promise<void>((r) => requestAnimationFrame(() => r()));
 
-    const r = node.getBoundingClientRect();
-    const x = (r.left - rootRect.left) * sx;
-    const y = (r.top - rootRect.top) * sy;
-    const w = Math.max(1, r.width * sx);
-    const h = Math.max(1, r.height * sy);
-    const rotation = Number(node.dataset.rotation || "0") || 0;
+  const pixelRatio = Math.max(2, size / Math.max(rootRect.width, 1));
 
-    ctx.save();
-    ctx.translate(x + w / 2, y + h / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    const fit = Math.min(w / img.naturalWidth, h / img.naturalHeight);
-    const dw = img.naturalWidth * fit;
-    const dh = img.naturalHeight * fit;
-    try {
-      ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
-      drawn += 1;
-    } catch {
-      // Tainted or broken source — skip this piece.
-    }
-    ctx.restore();
-  }
-
-  if (drawn === 0) {
+  let dataUrl: string;
+  try {
+    dataUrl = await toJpeg(boardEl, {
+      quality,
+      backgroundColor: "#ffffff",
+      pixelRatio,
+      cacheBust: true,
+      width: rootRect.width,
+      height: rootRect.height,
+      style: {
+        backgroundColor: "#ffffff",
+        backgroundImage: "none",
+        borderRadius: "0",
+        border: "none",
+      },
+      filter: (node) => {
+        if (!(node instanceof HTMLElement)) return true;
+        if (node.hasAttribute("data-fit-guide")) return false;
+        if (node.hasAttribute("data-fit-chrome")) return false;
+        return true;
+      },
+    });
+  } catch (err) {
     return {
       ok: false,
       error:
-        "Couldn't read board images — wait a second for them to load, then try again",
+        err instanceof Error
+          ? err.message
+          : "Couldn't capture the board — try again after images load",
     };
-  }
-
-  const label = opts?.name?.trim();
-  if (opts?.showName !== false && label) {
-    ctx.fillStyle = "#9aa3b2";
-    ctx.font = "500 22px system-ui, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(label.slice(0, 48), size / 2, size - 36);
   }
 
   let blob: Blob;
   try {
-    blob = await encodeCanvasJpeg(canvas, quality);
+    const res = await fetch(dataUrl);
+    blob = await res.blob();
   } catch {
     return { ok: false, error: "Could not encode JPEG" };
   }
+  if (!blob.size) {
+    return { ok: false, error: "Export produced an empty image" };
+  }
 
+  // Optional fit name footer — stamp onto a final 1080 canvas so IG size is exact.
+  try {
+    blob = await stampToSquare(blob, size, opts);
+  } catch {
+    // Keep the raw capture if stamping fails.
+  }
+
+  const label = opts?.name ?? "";
   const safe = (opts?.filename || label || "fit")
     .trim()
     .toLowerCase()
@@ -142,6 +112,41 @@ export async function exportFitBoardJpeg(
     .replace(/^-|-$/g, "")
     .slice(0, 40);
   return { ok: true, blob, filename: `${safe || "fit"}-spi.jpg` };
+}
+
+async function stampToSquare(
+  source: Blob,
+  size: number,
+  opts?: FitExportOptions,
+): Promise<Blob> {
+  const bitmap = await createImageBitmap(source);
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return source;
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, size, size);
+  ctx.drawImage(bitmap, 0, 0, size, size);
+  bitmap.close();
+
+  if (opts?.showName && opts.name?.trim()) {
+    const label = opts.name.trim();
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.font = `600 ${Math.round(size * 0.028)}px system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(label, size / 2, size - Math.round(size * 0.035));
+  }
+
+  return await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (b) => (b ? resolve(b) : reject(new Error("JPEG encode failed"))),
+      "image/jpeg",
+      opts?.quality ?? 0.92,
+    );
+  });
 }
 
 /** Download or open the system share sheet (mobile-friendly). */

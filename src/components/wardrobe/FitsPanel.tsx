@@ -739,6 +739,7 @@ function FitCanvas({
       >
         {showCenterGuide ? (
           <div
+            data-fit-guide="1"
             className="pointer-events-none absolute inset-y-3 left-1/2 w-px -translate-x-1/2 bg-dash-accent/70"
             aria-hidden
           />
@@ -756,7 +757,7 @@ function FitCanvas({
           const item = byId.get(piece.closetItemId);
           if (!item) return null;
           const size = FIT_BASE_SIZE * piece.scale;
-          const active = selectedId === piece.id;
+          const active = !forceWhite && selectedId === piece.id;
           const rotation = piece.rotation ?? 0;
           const src = item.cutoutImage || item.image;
           return (
@@ -787,13 +788,14 @@ function FitCanvas({
                 aria-label={item.name}
               >
                 <span className="relative block aspect-square w-full overflow-visible bg-transparent">
-                  <ClosetImage src={src} alt={item.name} exportable />
+                  <ClosetImage src={src} alt={item.name} />
                 </span>
               </button>
               {active && freeTransform ? (
                 <>
                   <button
                     type="button"
+                    data-fit-chrome="1"
                     aria-label="Scale"
                     onPointerDown={(e) => startTransform(e, piece, "scale")}
                     className="absolute -bottom-2 -right-2 h-5 w-5 rounded-full border-2 border-dash-bg bg-dash-accent shadow"
@@ -801,6 +803,7 @@ function FitCanvas({
                   />
                   <button
                     type="button"
+                    data-fit-chrome="1"
                     aria-label="Rotate"
                     onPointerDown={(e) => startTransform(e, piece, "rotate")}
                     className="absolute -top-3 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full border-2 border-dash-bg bg-dash-text shadow"

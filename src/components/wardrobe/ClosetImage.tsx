@@ -7,27 +7,20 @@ import { isDataImageUrl } from "@/lib/wardrobe/image";
 export function ClosetImage({
   src,
   alt,
-  /** Prefer a plain <img> so canvas export can read the pixels. */
-  exportable = false,
 }: {
   src: string;
   alt: string;
   className?: string;
-  exportable?: boolean;
 }) {
   if (!src) {
     return <div className="absolute inset-0 bg-dash-elevated" aria-hidden />;
   }
 
-  // Data URLs, or exportable remote images via the Next optimizer (same-origin).
-  if (isDataImageUrl(src) || exportable) {
-    const imgSrc = isDataImageUrl(src)
-      ? src
-      : `/_next/image?url=${encodeURIComponent(src)}&w=640&q=90`;
+  if (isDataImageUrl(src)) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={imgSrc}
+        src={src}
         alt={alt}
         className="absolute inset-0 h-full w-full object-contain p-1"
         draggable={false}
@@ -42,6 +35,7 @@ export function ClosetImage({
       fill
       className="object-contain p-1"
       sizes="200px"
+      priority
     />
   );
 }
