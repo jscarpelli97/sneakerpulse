@@ -21,9 +21,17 @@ export const BRAND_TAGLINE =
 export const BRAND_BLURB =
   "SPI Markets tracks what sneakers are selling for, how expensive the market is vs retail (SPI), and what you own or wear — with deal checks, compares, and alerts on top. Independent and honest about the data.";
 
-/** Hero supporting line under the brand name. */
+/**
+ * Hero answer to “what is this?” — identity in one breath.
+ */
 export const BRAND_HERO_LINE =
-  "Start with the index. Dig into the board. Track what you own and wear.";
+  "A sneaker price terminal: one index for the whole market vs retail, a live-style board of asks, and tools for what you own and wear — independent of StockX.";
+
+/**
+ * Hero answer to “why not just use StockX?”
+ */
+export const BRAND_VALUE_LINE =
+  "StockX shows a listing. We show whether the market is cheap, whether your size is a deal, and what your collection is actually worth.";
 
 /**
  * Core product doors — thesis, workbench, yours.
@@ -33,22 +41,22 @@ export const PRODUCT_PILLARS = [
   {
     title: "Sneaker Price Index",
     href: "/spi",
-    body: "Is the market cheap or rich vs retail? 100 ≈ retail.",
+    body: "One number for how expensive the market is vs retail. 100 ≈ retail — something a single StockX page can’t tell you.",
   },
   {
     title: "Price board",
     href: "/markets",
-    body: "Top sellers, size asks, charts, and buy/stretch/pass on every pair.",
+    body: "Top sellers with size asks, charts, market reads, and buy/stretch/pass on every pair.",
   },
   {
     title: "Portfolio",
     href: "/portfolio",
-    body: "What you own — marked to your size’s ask, not the all-size low.",
+    body: "Mark what you own to your size’s ask — not the all-size low — vs what you paid.",
   },
   {
     title: "Wardrobe",
     href: "/wardrobe",
-    body: "Closet + fits from real outfit ideas.",
+    body: "Closet + fits from real outfit ideas, synced with your account.",
   },
 ] as const;
 

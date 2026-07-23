@@ -1,7 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
-import { BRAND_HERO_LINE, BRAND_NAME } from "@/lib/brand";
+import {
+  BRAND_HERO_LINE,
+  BRAND_NAME,
+  BRAND_VALUE_LINE,
+} from "@/lib/brand";
 import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
 export function MarketsHero({
@@ -56,6 +60,9 @@ export function MarketsHero({
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
             {BRAND_HERO_LINE}
           </p>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-dash-faint sm:text-base">
+            {BRAND_VALUE_LINE}
+          </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
@@ -65,16 +72,16 @@ export function MarketsHero({
               Browse markets
             </Link>
             <Link
-              href="/portfolio"
+              href="#spi"
               className="inline-flex items-center rounded-xl border border-dash-border bg-dash-elevated px-5 py-3 text-sm font-semibold text-dash-text hover:border-dash-muted hover:bg-dash-panel"
             >
-              Open portfolio
+              See the index
             </Link>
             <Link
-              href="/wardrobe"
+              href="/portfolio"
               className="inline-flex items-center rounded-xl border border-dash-border px-5 py-3 text-sm font-semibold text-dash-muted hover:border-dash-muted hover:bg-dash-elevated hover:text-dash-text"
             >
-              Wardrobe
+              Open portfolio
             </Link>
           </div>
           <p className="mt-3 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">

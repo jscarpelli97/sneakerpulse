@@ -51,14 +51,14 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
       : `${offPeak > 0 ? "+" : ""}${offPeak.toFixed(0)}% from boom peak`;
 
   return (
-    <section className="dash-card animate-rise overflow-hidden">
+    <section id="spi" className="dash-card animate-rise scroll-mt-24 overflow-hidden">
       <div className="px-4 py-5 sm:px-6 sm:py-6">
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.16em] text-dash-faint">
-            {INDEX_LONG_NAME}
+            Why not just StockX?
           </p>
           <span className="rounded-full border border-dash-border bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
-            {index.ticker}
+            {INDEX_NAME} · {index.ticker}
           </span>
           <span className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-faint">
             100 = retail
@@ -66,11 +66,11 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
         </div>
 
         <h2 className="mt-3 max-w-2xl font-[family-name:var(--font-syne)] text-2xl font-extrabold tracking-tight text-dash-text sm:text-3xl">
-          From peak hype to below retail
+          One number for the whole market vs retail
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted sm:text-base">
-          2020–21 pushed StockX asks to roughly double retail. Today’s basket
-          sits under retail — the quiet after the boom.
+          A listing page can’t tell you if sneakers are cheap or rich.{" "}
+          {INDEX_LONG_NAME} does — boom peak vs today on the same basket.
         </p>
 
         <div className="mt-6 grid gap-0 sm:grid-cols-[1fr_auto_1fr] sm:items-stretch">
