@@ -6,11 +6,15 @@ export const BRAND_SHORT = "SPI";
 export const INDEX_NAME = "SPI";
 export const INDEX_LONG_NAME = "SPI Index";
 
-export const BRAND_TAGLINE =
-  "Ask board and premium index for sneakers";
+/** Short line for titles, OG, PWA — plain English. */
+export const BRAND_TAGLINE = "See what sneakers are selling for";
 
+/**
+ * One-paragraph description for SEO, About, and LinkedIn.
+ * Avoids trader jargon (tape / asks / terminal).
+ */
 export const BRAND_BLURB =
-  "Independent markets terminal for sneaker asks — plus the SPI premium-vs-retail index. Built for the love of the game: clean tape, honest data, no hype machine.";
+  "SPI Markets shows current prices for popular sneakers, how expensive the market is compared to retail, and tools to track what you own — including outfit boards. Independent, honest about the data, built for people who actually wear and collect shoes.";
 
 /** Public site origin — prefer custom domain in production. */
 export function siteUrl() {

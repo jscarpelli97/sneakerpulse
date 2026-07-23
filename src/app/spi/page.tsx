@@ -8,7 +8,7 @@ import {
 
 export const metadata = {
   title: `${INDEX_NAME} Index`,
-  description: `How the ${INDEX_LONG_NAME} measures sneaker market premium vs retail — basket selection, weights, and history.`,
+  description: `How the ${INDEX_LONG_NAME} scores sneaker prices vs retail — what goes in the basket and how we weight it.`,
   alternates: { canonical: "/spi" },
 };
 
@@ -26,13 +26,12 @@ export default function SpiMethodologyPage() {
               {INDEX_LONG_NAME}
             </h1>
             <p className="text-lg leading-relaxed text-dash-muted">
-              {INDEX_NAME} is {BRAND_NAME}&apos;s volume-weighted read of
-              secondary-market asks versus retail.{" "}
+              {INDEX_NAME} is a simple score for how expensive popular sneakers
+              are on the resale market compared with retail.{" "}
               <span className="font-[family-name:var(--font-plex-mono)] text-dash-text">
-                100 = at retail
+                100 ≈ selling near retail
               </span>
-              . Above 100 means the basket asks above retail; below 100 means
-              under retail.
+              . Above 100 means premiums; below 100 means sitting under retail.
             </p>
           </header>
 
@@ -41,11 +40,11 @@ export default function SpiMethodologyPage() {
               Formula
             </h2>
             <p className="font-[family-name:var(--font-plex-mono)] text-dash-text">
-              ask ÷ retail × 100
+              price ÷ retail × 100
             </p>
             <p className="text-dash-muted leading-relaxed">
-              Each model&apos;s premium is weighted by weekly order flow, then
-              rolled into one index level for the basket.
+              Each shoe&apos;s price-vs-retail is weighted by how much it&apos;s
+              trading, then averaged into one number for the market.
             </p>
           </section>
 
