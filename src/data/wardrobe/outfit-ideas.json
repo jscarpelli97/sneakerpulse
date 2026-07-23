@@ -1,5 +1,5 @@
 {
-  "note": "Curated outfit ideas from John. Send more fits anytime \u2014 tee/shorts/sneakers + sizes \u2014 and we add them here.",
+  "note": "Curated outfit ideas from John. Send more fits anytime \u2014 tee/shorts/sneakers + sizes \u2014 and we add them here. Use sneakerInspo when the fit needs pair options.",
   "updatedAt": "2026-07-23",
   "outfits": [
     {
@@ -83,6 +83,89 @@
           "styleCode": "CZ0790-102",
           "image": "https://images.stockx.com/images/Air-Jordan-1-Retro-Low-OG-Mocha-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
           "source": "offline-catalog"
+        }
+      ]
+    },
+    {
+      "id": "outfit-palace-stone-vans",
+      "name": "Palace Stone Wash \u00d7 Vans",
+      "blurb": "Gargoyle L/S + stone wash denim shorts. Classic black Vans keep it skate/street without fighting the wash.",
+      "pieces": [
+        {
+          "id": "piece-palace-gargoyle-black",
+          "kind": "top",
+          "name": "Palace Gargoyle L/S T-shirt Black",
+          "brand": "Palace",
+          "colorway": "Black",
+          "size": "L",
+          "slug": "palace-gargoyle-l-s-t-shirt-black",
+          "image": "https://images.stockx.com/images/Palace-Gargoyle-L-S-T-shirt-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1778519611",
+          "source": "stockx"
+        },
+        {
+          "id": "piece-palace-denim-stone",
+          "kind": "bottom",
+          "name": "Palace Denim Short Stone Wash",
+          "brand": "Palace",
+          "colorway": "Stone Wash",
+          "size": "34",
+          "slug": "palace-denim-short-stone-wash",
+          "image": "https://images.stockx.com/images/Palace-Denim-Short-Stone-Wash.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1746803457",
+          "source": "stockx"
+        },
+        {
+          "id": "piece-vans-old-skool-bw",
+          "kind": "sneaker",
+          "name": "Vans Old Skool Black White",
+          "brand": "Vans",
+          "colorway": "Black/White",
+          "size": "12",
+          "slug": "vans-old-skool-black-white",
+          "styleCode": "VN000D3HY28",
+          "image": "https://images.stockx.com/images/Vans-Old-Skool-Black-White-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+          "why": "Default pick \u2014 side stripe + gum-free black canvas under stone wash denim.",
+          "source": "stockx"
+        }
+      ],
+      "sneakerInspo": [
+        {
+          "id": "inspo-vans-knu-skool-bw",
+          "kind": "sneaker",
+          "name": "Vans Knu Skool Black White",
+          "brand": "Vans",
+          "colorway": "Black/White",
+          "size": "12",
+          "slug": "vans-knu-skool-black-white",
+          "styleCode": "VN0009QC6BT",
+          "image": "https://images.stockx.com/images/Vans-Knu-Skool-Black-White-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+          "why": "Chunkier silhouette if you want more presence under the baggy short.",
+          "source": "offline-catalog"
+        },
+        {
+          "id": "inspo-vans-authentic-bw",
+          "kind": "sneaker",
+          "name": "Vans Authentic Black White",
+          "brand": "Vans",
+          "colorway": "Black/White",
+          "size": "12",
+          "slug": "vans-authentic-black-white",
+          "styleCode": "VN000EE3BLK",
+          "image": "https://images.stockx.com/images/Vans-Authentic-Black-White-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+          "why": "Low-profile lace-up \u2014 cleaner / more minimal than Old Skool.",
+          "source": "stockx"
+        },
+        {
+          "id": "inspo-vans-authentic-black",
+          "kind": "sneaker",
+          "name": "Vans Authentic Black Canvas",
+          "brand": "Vans",
+          "colorway": "Black",
+          "size": "12",
+          "slug": "vans-authentic-black-canvas",
+          "styleCode": "VN000EE3BKA",
+          "image": "https://images.stockx.com/images/Vans-Authentic-Black-Canvas-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+          "why": "All-black for a quieter read against the Gargoyle graphic.",
+          "source": "stockx"
         }
       ]
     }

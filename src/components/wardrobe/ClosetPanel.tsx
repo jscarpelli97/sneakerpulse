@@ -7,6 +7,7 @@ import { useCatalogSearch } from "@/hooks/useCatalogSearch";
 import { fileToClosetDataUrl } from "@/lib/wardrobe/image";
 import {
   getOutfitIdeas,
+  outfitPiecesWithSneaker,
   type OutfitIdea,
   type OutfitIdeaPiece,
 } from "@/lib/wardrobe/outfitIdeas";
@@ -280,22 +281,33 @@ export function ClosetPanel({
     onFlash(`Added ${piece.name}`);
   }
 
-  function addOutfitIdea(outfit: OutfitIdea) {
+  function addOutfitIdea(outfit: OutfitIdea, sneaker?: OutfitIdeaPiece) {
+    const primarySneaker =
+      sneaker ?? outfit.pieces.find((p) => p.kind === "sneaker");
+    const buildPieces =
+      primarySneaker != null
+        ? outfitPiecesWithSneaker(outfit, primarySneaker)
+        : outfit.pieces;
+
     let working = [...closet];
     const fitItems: ClosetItem[] = [];
     let added = 0;
-    for (const piece of outfit.pieces) {
+    for (const piece of buildPieces) {
       const result = findOrCreatePiece(piece, working);
       working = result.working;
       fitItems.push(result.item);
       if (result.created) added += 1;
     }
     onChange(working);
-    onSaveOutfit?.({ name: outfit.name, items: fitItems });
+    const fitName =
+      sneaker && sneaker.id !== outfit.pieces.find((p) => p.kind === "sneaker")?.id
+        ? `${outfit.name.replace(/\s*×.*$/, "")} × ${sneaker.name.replace(/^Vans\s+/i, "")}`
+        : outfit.name;
+    onSaveOutfit?.({ name: fitName, items: fitItems });
     onFlash(
       added
-        ? `Added ${outfit.name} (${added} new · Fit ready)`
-        : `${outfit.name} pieces already in closet — Fit ready`,
+        ? `Added ${fitName} (${added} new · Fit ready)`
+        : `${fitName} pieces already in closet — Fit ready`,
     );
   }
 
@@ -334,10 +346,11 @@ export function ClosetPanel({
           {tab === "outfits" ? (
             <>
               <p className="max-w-2xl text-sm text-dash-muted">
-                Real outfit ideas — tee, shorts, sneakers with sizes. Tap{" "}
-                <span className="text-dash-text">Add outfit</span> to drop the
-                pieces in your closet and open a Fit board. Send another fit
-                anytime and we’ll add it here.
+                Real outfit ideas — tee, shorts, sneakers with sizes. Some fits
+                include <span className="text-dash-text">sneaker inspo</span>{" "}
+                so you can try alternate pairs. Tap{" "}
+                <span className="text-dash-text">Add outfit</span> to drop
+                pieces in your closet and open a Fit board.
               </p>
               <ul className="space-y-5">
                 {outfitIdeas.map((outfit) => (
@@ -379,6 +392,7 @@ export function ClosetPanel({
                               <p className="text-[10px] uppercase tracking-[0.12em] text-dash-faint">
                                 {CLOSET_KIND_LABELS[piece.kind]}
                                 {piece.size ? ` · ${piece.size}` : ""}
+                                {piece.kind === "sneaker" ? " · pick" : ""}
                               </p>
                               <p className="mt-0.5 line-clamp-2 text-sm font-semibold leading-snug text-dash-text">
                                 {piece.name}
@@ -388,6 +402,11 @@ export function ClosetPanel({
                                 {piece.colorway ? ` · ${piece.colorway}` : ""}
                                 {piece.styleCode ? ` · ${piece.styleCode}` : ""}
                               </p>
+                              {piece.why ? (
+                                <p className="mt-1 line-clamp-2 text-xs text-dash-muted">
+                                  {piece.why}
+                                </p>
+                              ) : null}
                               <button
                                 type="button"
                                 disabled={owned}
@@ -401,6 +420,63 @@ export function ClosetPanel({
                         );
                       })}
                     </ul>
+                    {outfit.sneakerInspo?.length ? (
+                      <div className="mt-4 border-t border-dash-border pt-4">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-dash-faint">
+                          Sneaker inspo — swap the pair
+                        </p>
+                        <ul className="mt-3 grid gap-3 sm:grid-cols-3">
+                          {outfit.sneakerInspo.map((sneaker) => {
+                            const owned = alreadyInCloset(sneaker);
+                            return (
+                              <li
+                                key={sneaker.id}
+                                className="flex gap-3 rounded-xl border border-dashed border-dash-border bg-dash-bg/40 p-3"
+                              >
+                                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-elevated">
+                                  <ClosetImage
+                                    src={sneaker.image}
+                                    alt={sneaker.name}
+                                  />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-[10px] uppercase tracking-[0.12em] text-dash-faint">
+                                    Alt · {sneaker.size || "—"}
+                                  </p>
+                                  <p className="mt-0.5 line-clamp-2 text-sm font-semibold leading-snug text-dash-text">
+                                    {sneaker.name}
+                                  </p>
+                                  {sneaker.why ? (
+                                    <p className="mt-1 line-clamp-2 text-xs text-dash-muted">
+                                      {sneaker.why}
+                                    </p>
+                                  ) : null}
+                                  <div className="mt-2 flex flex-wrap gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        addOutfitIdea(outfit, sneaker)
+                                      }
+                                      className="rounded-lg bg-dash-accent/15 px-2.5 py-1 text-xs font-medium text-dash-accent hover:bg-dash-accent/25"
+                                    >
+                                      Build fit
+                                    </button>
+                                    <button
+                                      type="button"
+                                      disabled={owned}
+                                      onClick={() => addOutfitPiece(sneaker)}
+                                      className="rounded-lg border border-dash-border px-2.5 py-1 text-xs font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                      {owned ? "In closet" : "Add piece"}
+                                    </button>
+                                  </div>
+                                </div>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    ) : null}
                   </li>
                 ))}
               </ul>
