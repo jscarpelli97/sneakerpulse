@@ -225,16 +225,24 @@ export function ClosetPanel({
     onFlash(`Imported ${additions.length} from Portfolio`);
   }
 
-  function alreadyInCloset(piece: OutfitIdeaPiece) {
-    if (piece.slug) {
-      return closet.some((c) => c.slug === piece.slug && c.kind === piece.kind);
-    }
-    return closet.some(
-      (c) =>
-        c.kind === piece.kind &&
-        c.name.toLowerCase() === piece.name.toLowerCase() &&
-        (c.size ?? "") === (piece.size ?? ""),
+  function pieceNotes(piece: OutfitIdeaPiece) {
+    return [piece.colorway, piece.notes].filter(Boolean).join(" · ") || undefined;
+  }
+
+  /** Match by slug when present; otherwise name + size + colorway/notes. */
+  function matchesClosetPiece(c: ClosetItem, piece: OutfitIdeaPiece) {
+    if (piece.slug) return c.slug === piece.slug && c.kind === piece.kind;
+    const notes = pieceNotes(piece);
+    return (
+      c.kind === piece.kind &&
+      c.name.toLowerCase() === piece.name.toLowerCase() &&
+      (c.size ?? "") === (piece.size ?? "") &&
+      (c.notes ?? "") === (notes ?? "")
     );
+  }
+
+  function alreadyInCloset(piece: OutfitIdeaPiece) {
+    return closet.some((c) => matchesClosetPiece(c, piece));
   }
 
   function pieceToClosetItem(piece: OutfitIdeaPiece): ClosetItem {
@@ -247,7 +255,7 @@ export function ClosetPanel({
       slug: piece.slug,
       styleCode: piece.styleCode,
       size: piece.size,
-      notes: [piece.colorway, piece.notes].filter(Boolean).join(" · ") || undefined,
+      notes: pieceNotes(piece),
       addedAt: new Date().toISOString(),
     };
   }
@@ -256,14 +264,7 @@ export function ClosetPanel({
     piece: OutfitIdeaPiece,
     working: ClosetItem[],
   ): { item: ClosetItem; working: ClosetItem[]; created: boolean } {
-    const existing = working.find((c) => {
-      if (piece.slug) return c.slug === piece.slug && c.kind === piece.kind;
-      return (
-        c.kind === piece.kind &&
-        c.name.toLowerCase() === piece.name.toLowerCase() &&
-        (c.size ?? "") === (piece.size ?? "")
-      );
-    });
+    const existing = working.find((c) => matchesClosetPiece(c, piece));
     if (existing) return { item: existing, working, created: false };
     const item = pieceToClosetItem(piece);
     return { item, working: [item, ...working], created: true };
