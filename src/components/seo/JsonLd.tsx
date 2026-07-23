@@ -1,7 +1,6 @@
 import {
   BRAND_BLURB,
   BRAND_NAME,
-  CONTACT_EMAIL,
   FOUNDER_NAME,
   siteUrl,
 } from "@/lib/brand";
@@ -17,7 +16,6 @@ export function SiteJsonLd() {
         "@id": `${base}/#organization`,
         name: BRAND_NAME,
         url: base,
-        email: CONTACT_EMAIL,
         description: BRAND_BLURB,
         founder: {
           "@type": "Person",

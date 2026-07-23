@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { SiteSearch } from "@/components/layout/SiteSearch";
 import { PlusInterest } from "@/components/plus/PlusInterest";
-import {
-  BRAND_NAME,
-  CONTACT_EMAIL,
-  FOUNDER_NAME,
-} from "@/lib/brand";
+import { BRAND_NAME, FOUNDER_NAME } from "@/lib/brand";
 import { plusPublicEnabled } from "@/lib/plus/config";
 
 /** Site chrome uses the markets-terminal (homepage) look by default. */
@@ -123,9 +119,21 @@ export function SiteFooter({
           <span className="font-[family-name:var(--font-syne)] font-extrabold text-ink">
             {BRAND_NAME}
           </span>
-          <span className="text-xs sm:text-sm">
-            {`Built by ${FOUNDER_NAME} · Independent sneaker markets terminal`}
-          </span>
+          <div className="space-y-1 text-right text-xs sm:text-sm">
+            <p>
+              {`Built by ${FOUNDER_NAME} · Independent sneaker markets terminal`}
+            </p>
+            <p>
+              <Link
+                href="/about#contact"
+                className="font-medium text-ink underline-offset-2 hover:underline"
+              >
+                Contact me
+              </Link>
+              {" · "}
+              feedback, shoes to add, thoughts
+            </p>
+          </div>
         </div>
       </footer>
     );
@@ -143,12 +151,11 @@ export function SiteFooter({
               {`Built by ${FOUNDER_NAME} for the love of the game — sneaker asks plus the SPI index. Not affiliated with StockX.`}
             </p>
             <p className="text-xs text-dash-faint">
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="text-dash-accent hover:underline"
-              >
-                {CONTACT_EMAIL}
-              </a>
+              <Link href="/about#contact" className="text-dash-accent hover:underline">
+                Contact me
+              </Link>
+              {" · "}
+              feedback, shoes to add, thoughts
             </p>
             {publicPlus ? (
               <PlusInterest variant="footer" source="footer" />

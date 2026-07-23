@@ -1,9 +1,9 @@
 import Link from "next/link";
+import { ContactForm } from "@/components/contact/ContactForm";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import {
   BRAND_BLURB,
   BRAND_NAME,
-  CONTACT_EMAIL,
   FOUNDER_NAME,
   FOUNDER_ROLE,
   INDEX_LONG_NAME,
@@ -55,13 +55,11 @@ export default function AboutPage() {
               nothing more.
             </p>
             <p className="text-sm text-dash-faint">
-              Questions or feedback:{" "}
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="text-dash-accent hover:underline"
-              >
-                {CONTACT_EMAIL}
-              </a>
+              Questions or ideas?{" "}
+              <a href="#contact" className="text-dash-accent hover:underline">
+                Contact me
+              </a>{" "}
+              below.
             </p>
           </section>
 
@@ -108,6 +106,21 @@ export default function AboutPage() {
             >
               How the {INDEX_NAME} index is calculated →
             </Link>
+          </section>
+
+          <section
+            id="contact"
+            className="dash-card scroll-mt-24 space-y-4 p-5 sm:p-6"
+          >
+            <h2 className="font-[family-name:var(--font-syne)] text-xl font-bold">
+              Contact me
+            </h2>
+            <p className="text-sm leading-relaxed text-dash-muted">
+              Feedback, shoes to add, thoughts on SPI or the board — I read
+              every message. Leave your email so I can reply; it is never shown
+              publicly.
+            </p>
+            <ContactForm />
           </section>
 
           <section className="dash-card space-y-3 border-dash-accent/25 p-5 sm:p-6">

@@ -24,6 +24,3 @@ export function siteUrl() {
 /** Human behind the project — day-1 trust signal. */
 export const FOUNDER_NAME = "John Scarpelli";
 export const FOUNDER_ROLE = "Founder";
-/** Public inbox — update when hello@spimarkets.com is live. */
-export const CONTACT_EMAIL =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "jscarpelli97@gmail.com";

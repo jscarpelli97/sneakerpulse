@@ -20,7 +20,7 @@ Set in Vercel:
 
 - `NEXT_PUBLIC_SITE_URL=https://spimarkets.com`
 
-Optional: `NEXT_PUBLIC_CONTACT_EMAIL` if you want a different public inbox than the About default.
+Optional: `CONTACT_INBOX_EMAIL` (server-only) for the About contact form delivery address.
 
 ## Redeploy from CLI
 

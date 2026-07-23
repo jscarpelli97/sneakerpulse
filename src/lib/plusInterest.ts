@@ -1,4 +1,4 @@
-/** Public contact for Plus interest (override with PLUS_INTEREST_EMAIL). */
+/** Server-only delivery inbox for Plus interest (override with PLUS_INTEREST_EMAIL). Never render in UI. */
 export const DEFAULT_PLUS_INTEREST_EMAIL = "jscarpelli97@gmail.com";
 
 export function plusInterestEmail() {
