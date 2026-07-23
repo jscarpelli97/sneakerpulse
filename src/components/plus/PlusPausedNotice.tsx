@@ -14,14 +14,14 @@ export function PlusPausedNotice() {
         <p className="text-lg leading-relaxed text-dash-muted">
           We&apos;re waiting on StockX API access before selling or marketing a
           paid tier that leans on their market data. Until that&apos;s clear,
-          SPI Markets stays a free fan project — no Plus checkout, no upsells.
+          SPI Markets stays free for now — no Plus checkout, no upsells.
         </p>
       </header>
 
       <section className="rounded-2xl border border-dash-border bg-dash-elevated/30 px-5 py-5">
         <p className="text-sm leading-relaxed text-dash-muted">
-          Official StockX Developer API access is pending. Cached / free-mode
-          data keeps the terminal usable in the meantime. Not affiliated with
+          Official StockX Developer API access is pending. Daily snapshot data
+          keeps the terminal usable in the meantime. Not affiliated with
           StockX.
         </p>
       </section>

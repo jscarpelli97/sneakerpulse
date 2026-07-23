@@ -53,9 +53,8 @@ export function MarketsHero({
             SPI Markets
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
-            Ask board and premium index for sneakers &amp; streetwear. StockX
-            tape first across the top {totalMarkets} sellers — homepage
-            highlights the top 10. Apparel can land on the same board later.
+            Ask board and premium index for sneakers. StockX tape across the top{" "}
+            {totalMarkets} sellers — homepage highlights the top 10.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">

@@ -51,8 +51,8 @@ export default function AboutPage() {
               StockX tabs, screenshots, and half-finished spreadsheets just to
               see asks, premiums, and what I actually own. {BRAND_NAME} is the
               quiet terminal I wanted — watchlist, size ladder, portfolio, and
-              the {INDEX_NAME} premium-vs-retail read in one place. No flipper
-              pitch. Just clearer tape.
+              the {INDEX_NAME} premium-vs-retail read in one place. Clearer tape,
+              nothing more.
             </p>
             <p className="text-sm text-dash-faint">
               Questions or feedback:{" "}
@@ -120,7 +120,8 @@ export default function AboutPage() {
                 not affiliated with, endorsed by, or partnered with StockX
               </strong>
               . Market data can be delayed, incomplete, or snapshot-based. Not
-              financial advice — do your own research before buying or selling.
+              financial advice — do your own research before buying or selling
+              sneakers.
             </p>
             <p className="text-xs text-dash-faint">
               © {year} {FOUNDER_NAME} / {BRAND_NAME}

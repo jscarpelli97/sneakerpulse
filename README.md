@@ -1,6 +1,6 @@
 # SPI Markets
 
-Next.js markets terminal for **sneakers & streetwear** asks — starting with StockX’s **current top 500 selling sneakers**, built so apparel can join the same board later.
+Next.js markets terminal for **sneaker** asks — StockX’s current top sellers, size ladders, portfolio, and the SPI premium-vs-retail index.
 
 ## Design standard
 
@@ -16,7 +16,7 @@ Do not reintroduce the old light ink/paper theme unless asked.
 
 ## SPI Index
 
-Premium-vs-retail market health index (ChronoPulse-inspired basket; equation works for sneakers now and streetwear later):
+Premium-vs-retail market health index (ChronoPulse-inspired sneaker basket):
 
 1. **Selection:** Up to **14 bestselling StockX brands** × **10 models** each (`spi-chrono-basket.json`).
 2. **Calculation:** Volume-weighted **ask ÷ retail × 100**. **100 = at retail**, above 100 = premiums, below 100 = sitting under retail. Absolute-dollar Laspeyres stays “high” when retail prices rise and after the 2021 boom; premium vs retail matches how the market feels when everything is available near retail.

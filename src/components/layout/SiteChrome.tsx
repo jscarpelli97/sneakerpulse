@@ -124,7 +124,7 @@ export function SiteFooter({
             {BRAND_NAME}
           </span>
           <span className="text-xs sm:text-sm">
-            Built by {FOUNDER_NAME} · Independent markets terminal
+            {`Built by ${FOUNDER_NAME} · Independent sneaker markets terminal`}
           </span>
         </div>
       </footer>
@@ -140,8 +140,7 @@ export function SiteFooter({
               {BRAND_NAME}
             </span>
             <p className="text-xs leading-relaxed text-dash-faint">
-              Built by {FOUNDER_NAME} for the love of the game — sneakers &amp;
-              streetwear asks plus the SPI index. Not affiliated with StockX.
+              {`Built by ${FOUNDER_NAME} for the love of the game — sneaker asks plus the SPI index. Not affiliated with StockX.`}
             </p>
             <p className="text-xs text-dash-faint">
               <a
@@ -182,9 +181,7 @@ export function SiteFooter({
           </nav>
         </div>
         <p className="border-t border-dash-border pt-3 text-xs leading-relaxed text-dash-faint">
-          © {year} {FOUNDER_NAME} / {BRAND_NAME}. Not financial advice. Resale
-          markets are volatile — do your own research. Data may be a daily
-          snapshot depending on feed mode.
+          {`© ${year} ${FOUNDER_NAME} / ${BRAND_NAME}. Not financial advice. Secondary markets are volatile — do your own research. Data may be a daily snapshot depending on feed mode.`}
         </p>
       </div>
     </footer>

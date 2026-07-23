@@ -7,10 +7,10 @@ export const INDEX_NAME = "SPI";
 export const INDEX_LONG_NAME = "SPI Index";
 
 export const BRAND_TAGLINE =
-  "Ask board and premium index for sneakers & streetwear";
+  "Ask board and premium index for sneakers";
 
 export const BRAND_BLURB =
-  "Independent markets terminal for sneaker and streetwear asks — plus the SPI premium-vs-retail index. Built for the love of the game: clean tape, honest data, no hype machine.";
+  "Independent markets terminal for sneaker asks — plus the SPI premium-vs-retail index. Built for the love of the game: clean tape, honest data, no hype machine.";
 
 /** Public site origin — prefer custom domain in production. */
 export function siteUrl() {
