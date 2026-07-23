@@ -13,7 +13,7 @@ import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 
 export const metadata = {
   title: "About",
-  description: `${BRAND_NAME} shows current sneaker prices and how ${FOUNDER_NAME} built the ${INDEX_NAME} index — plus portfolio and wardrobe tools.`,
+  description: `${BRAND_NAME} — current sneaker prices, the ${INDEX_NAME} (Sneaker Price Index), and a portfolio built by ${FOUNDER_NAME}.`,
   alternates: { canonical: "/about" },
 };
 
@@ -48,10 +48,10 @@ export default function AboutPage() {
             </p>
             <p className="text-dash-muted leading-relaxed">
               Built for people who wear and collect sneakers. I got tired of
-              bouncing between StockX tabs, screenshots, and half-finished
-              spreadsheets just to see prices and what I own. {BRAND_NAME} puts
-              current prices, the {INDEX_LONG_NAME} ({INDEX_NAME}), portfolio,
-              and outfit boards in one place — clearer numbers, less noise.
+              bouncing between StockX tabs, screenshots, and spreadsheets just
+              to see prices and what I own. {BRAND_NAME} is the simple version:
+              a price board, the {INDEX_LONG_NAME} ({INDEX_NAME}), and a
+              portfolio — clearer numbers, less noise.
             </p>
             <p className="text-sm text-dash-faint">
               Questions or ideas?{" "}
@@ -67,21 +67,28 @@ export default function AboutPage() {
               What you get today
             </h2>
             <ul className="list-disc space-y-2 pl-5 text-dash-muted">
-              <li>A board of popular sneakers with current prices and sales activity</li>
-              <li>A page per pair — chart, sizes when available, recent stats</li>
-              <li>Compare pairs, browser price alerts, and a device-local portfolio</li>
               <li>
-                Wardrobe — closet + Fits (outfit boards from what you own)
+                <strong className="text-dash-text">Price board</strong> — popular
+                sneakers with current prices and sales activity
+              </li>
+              <li>
+                <strong className="text-dash-text">Pair pages</strong> — chart and
+                stats for each shoe
               </li>
               <li>
                 <strong className="text-dash-text">{INDEX_NAME}</strong> — the{" "}
                 {INDEX_LONG_NAME}, an original score for “how expensive is the
                 market vs retail?” (100 ≈ retail)
               </li>
+              <li>
+                <strong className="text-dash-text">Portfolio</strong> — track what
+                you own and what you paid vs today’s prices
+              </li>
+              <li>Compare pairs and browser price alerts</li>
             </ul>
             <p className="text-sm text-dash-faint leading-relaxed">
-              Everything above is free on day one — no paywall on the board,
-              portfolio, wardrobe, or browser alerts.
+              Free on day one. Wardrobe / Fits is an early extra if you want
+              outfit boards — not required to use the core product.
             </p>
           </section>
 

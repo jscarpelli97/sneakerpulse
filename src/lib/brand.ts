@@ -15,10 +15,10 @@ export const BRAND_TAGLINE = "See what sneakers are selling for";
 
 /**
  * One-paragraph description for SEO, About, and LinkedIn.
- * Avoids trader jargon (tape / asks / terminal).
+ * Soft-launch focus: board + SPI + portfolio (original plan).
  */
 export const BRAND_BLURB =
-  "SPI Markets shows current prices for popular sneakers, the Sneaker Price Index (SPI) — how expensive the market is vs retail — and tools to track what you own, including outfit boards. Independent, honest about the data, built for people who wear and collect shoes.";
+  "SPI Markets shows current prices for popular sneakers and the Sneaker Price Index (SPI) — an original score for how expensive the market is vs retail — plus a simple portfolio to track what you own. Independent and honest about the data.";
 
 /** Public site origin — prefer custom domain in production. */
 export function siteUrl() {

@@ -78,7 +78,7 @@ export function SiteFooter() {
               {BRAND_NAME}
             </span>
             <p className="text-xs leading-relaxed text-dash-faint">
-              {`Built by ${FOUNDER_NAME} for people who wear and collect sneakers. Current prices, the Sneaker Price Index (SPI), portfolio & fits. Not affiliated with StockX.`}
+              {`Built by ${FOUNDER_NAME} for people who wear and collect sneakers. Price board, Sneaker Price Index (SPI), and portfolio. Not affiliated with StockX.`}
             </p>
             <p className="text-xs text-dash-faint">
               <Link href="/about#contact" className="text-dash-accent hover:underline">
