@@ -2,32 +2,36 @@ import Link from "next/link";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import {
   BRAND_NAME,
+  INDEX_EXPANSION,
   INDEX_LONG_NAME,
   INDEX_NAME,
 } from "@/lib/brand";
 
 export const metadata = {
-  title: `${INDEX_NAME} Index`,
-  description: `How the ${INDEX_LONG_NAME} scores sneaker prices vs retail — what goes in the basket and how we weight it.`,
+  title: `${INDEX_NAME} · ${INDEX_EXPANSION}`,
+  description: `How the ${INDEX_LONG_NAME} (SPI) scores sneaker prices vs retail — what goes in the basket and how we weight it.`,
   alternates: { canonical: "/spi" },
 };
 
 export default function SpiMethodologyPage() {
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
-      <SiteHeader subtitle={`${INDEX_NAME} · methodology`} />
+      <SiteHeader subtitle={`${INDEX_NAME} · ${INDEX_EXPANSION}`} />
       <main className="flex-1">
         <div className="mx-auto max-w-3xl space-y-10 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <header className="space-y-4">
             <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-faint">
-              Methodology
+              {INDEX_NAME} · methodology
             </p>
             <h1 className="font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight sm:text-5xl">
               {INDEX_LONG_NAME}
             </h1>
             <p className="text-lg leading-relaxed text-dash-muted">
-              {INDEX_NAME} is a simple score for how expensive popular sneakers
-              are on the resale market compared with retail.{" "}
+              <strong className="text-dash-text">{INDEX_NAME}</strong> stands for{" "}
+              <strong className="text-dash-text">{INDEX_EXPANSION}</strong> — an
+              original index from {BRAND_NAME}. It&apos;s a simple score for how
+              expensive popular sneakers are on the resale market compared with
+              retail.{" "}
               <span className="font-[family-name:var(--font-plex-mono)] text-dash-text">
                 100 ≈ selling near retail
               </span>

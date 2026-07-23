@@ -2,9 +2,13 @@
 export const BRAND_NAME = "SPI Markets";
 export const BRAND_SHORT = "SPI";
 
-/** Premium-vs-retail index shown on the homepage. */
+/**
+ * SPI = Sneaker Price Index — original index for this product.
+ * INDEX_NAME is the ticker-style short form shown in UI chrome.
+ */
 export const INDEX_NAME = "SPI";
-export const INDEX_LONG_NAME = "SPI Index";
+export const INDEX_EXPANSION = "Sneaker Price Index";
+export const INDEX_LONG_NAME = "Sneaker Price Index";
 
 /** Short line for titles, OG, PWA — plain English. */
 export const BRAND_TAGLINE = "See what sneakers are selling for";
@@ -14,7 +18,7 @@ export const BRAND_TAGLINE = "See what sneakers are selling for";
  * Avoids trader jargon (tape / asks / terminal).
  */
 export const BRAND_BLURB =
-  "SPI Markets shows current prices for popular sneakers, how expensive the market is compared to retail, and tools to track what you own — including outfit boards. Independent, honest about the data, built for people who actually wear and collect shoes.";
+  "SPI Markets shows current prices for popular sneakers, the Sneaker Price Index (SPI) — how expensive the market is vs retail — and tools to track what you own, including outfit boards. Independent, honest about the data, built for people who wear and collect shoes.";
 
 /** Public site origin — prefer custom domain in production. */
 export function siteUrl() {

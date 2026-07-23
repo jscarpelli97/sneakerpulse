@@ -50,9 +50,8 @@ export default function AboutPage() {
               Built for people who wear and collect sneakers. I got tired of
               bouncing between StockX tabs, screenshots, and half-finished
               spreadsheets just to see prices and what I own. {BRAND_NAME} puts
-              current prices, a simple “how expensive is the market vs retail”
-              index ({INDEX_NAME}), portfolio, and outfit boards in one place —
-              clearer numbers, less noise.
+              current prices, the {INDEX_LONG_NAME} ({INDEX_NAME}), portfolio,
+              and outfit boards in one place — clearer numbers, less noise.
             </p>
             <p className="text-sm text-dash-faint">
               Questions or ideas?{" "}
@@ -75,9 +74,9 @@ export default function AboutPage() {
                 Wardrobe — closet + Fits (outfit boards from what you own)
               </li>
               <li>
-                <strong className="text-dash-text">{INDEX_NAME}</strong> — a simple
-                score for “how expensive is the market vs retail?” (100 = about
-                retail)
+                <strong className="text-dash-text">{INDEX_NAME}</strong> — the{" "}
+                {INDEX_LONG_NAME}, an original score for “how expensive is the
+                market vs retail?” (100 ≈ retail)
               </li>
             </ul>
             <p className="text-sm text-dash-faint leading-relaxed">
