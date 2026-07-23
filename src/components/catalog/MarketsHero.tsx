@@ -54,9 +54,8 @@ export function MarketsHero({
             {BRAND_NAME}
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
-            Current prices for popular sneakers, the Sneaker Price Index, and a
-            portfolio to track what you own. Browse {totalMarkets} on the full
-            board — homepage shows the hottest 10.
+            Three things on day one: a price board, the Sneaker Price Index, and
+            a portfolio. More in store beyond that — this is the start.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">

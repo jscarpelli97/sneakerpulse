@@ -14,11 +14,30 @@ export const INDEX_LONG_NAME = "Sneaker Price Index";
 export const BRAND_TAGLINE = "See what sneakers are selling for";
 
 /**
+ * Soft-launch pillars (rule of three) + room for more later.
  * One-paragraph description for SEO, About, and LinkedIn.
- * Soft-launch focus: board + SPI + portfolio (original plan).
  */
 export const BRAND_BLURB =
-  "SPI Markets shows current prices for popular sneakers and the Sneaker Price Index (SPI) — an original score for how expensive the market is vs retail — plus a simple portfolio to track what you own. Independent and honest about the data.";
+  "SPI Markets: see what popular sneakers are selling for, check the Sneaker Price Index (SPI), and track what you own — with more on the way. Independent and honest about the data.";
+
+/** The three soft-launch pillars — keep marketing in threes. */
+export const SOFT_LAUNCH_PILLARS = [
+  {
+    title: "Price board",
+    body: "Current prices for popular sneakers in one place.",
+  },
+  {
+    title: "Sneaker Price Index",
+    body: "SPI — how expensive the market is vs retail (100 ≈ retail).",
+  },
+  {
+    title: "Portfolio",
+    body: "Track what you own and what you paid vs today’s prices.",
+  },
+] as const;
+
+export const SOFT_LAUNCH_MORE =
+  "Compare, alerts, wardrobe, and more are already in progress — this is just the start.";
 
 /** Public site origin — prefer custom domain in production. */
 export function siteUrl() {

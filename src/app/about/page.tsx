@@ -8,6 +8,8 @@ import {
   FOUNDER_ROLE,
   INDEX_LONG_NAME,
   INDEX_NAME,
+  SOFT_LAUNCH_MORE,
+  SOFT_LAUNCH_PILLARS,
 } from "@/lib/brand";
 import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 
@@ -49,9 +51,9 @@ export default function AboutPage() {
             <p className="text-dash-muted leading-relaxed">
               Built for people who wear and collect sneakers. I got tired of
               bouncing between StockX tabs, screenshots, and spreadsheets just
-              to see prices and what I own. {BRAND_NAME} is the simple version:
-              a price board, the {INDEX_LONG_NAME} ({INDEX_NAME}), and a
-              portfolio — clearer numbers, less noise.
+              to see prices and what I own. Soft launch is three things: a price
+              board, the {INDEX_LONG_NAME} ({INDEX_NAME}), and a portfolio —
+              clearer numbers, less noise.
             </p>
             <p className="text-sm text-dash-faint">
               Questions or ideas?{" "}
@@ -64,31 +66,20 @@ export default function AboutPage() {
 
           <section className="dash-card space-y-3 p-5 sm:p-6">
             <h2 className="font-[family-name:var(--font-syne)] text-xl font-bold">
-              What you get today
+              Soft launch — three things
             </h2>
-            <ul className="list-disc space-y-2 pl-5 text-dash-muted">
-              <li>
-                <strong className="text-dash-text">Price board</strong> — popular
-                sneakers with current prices and sales activity
-              </li>
-              <li>
-                <strong className="text-dash-text">Pair pages</strong> — chart and
-                stats for each shoe
-              </li>
-              <li>
-                <strong className="text-dash-text">{INDEX_NAME}</strong> — the{" "}
-                {INDEX_LONG_NAME}, an original score for “how expensive is the
-                market vs retail?” (100 ≈ retail)
-              </li>
-              <li>
-                <strong className="text-dash-text">Portfolio</strong> — track what
-                you own and what you paid vs today’s prices
-              </li>
-              <li>Compare pairs and browser price alerts</li>
-            </ul>
+            <ol className="list-decimal space-y-3 pl-5 text-dash-muted">
+              {SOFT_LAUNCH_PILLARS.map((pillar) => (
+                <li key={pillar.title}>
+                  <strong className="text-dash-text">{pillar.title}</strong>
+                  {" — "}
+                  {pillar.body}
+                </li>
+              ))}
+            </ol>
             <p className="text-sm text-dash-faint leading-relaxed">
-              Free on day one. Wardrobe / Fits is an early extra if you want
-              outfit boards — not required to use the core product.
+              {SOFT_LAUNCH_MORE} Pair pages, compare, and browser alerts are on
+              the site today too.
             </p>
           </section>
 
