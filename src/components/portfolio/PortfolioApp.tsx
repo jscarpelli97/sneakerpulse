@@ -17,6 +17,7 @@ import {
   updateUsername,
 } from "@/lib/portfolio/vault";
 import { changeClass, formatMaybeMoney, formatMoney } from "@/utils/format";
+import { useCatalogSearch } from "@/hooks/useCatalogSearch";
 import type { FormEvent } from "react";
 
 type CatalogRow = {
@@ -104,8 +105,22 @@ export function PortfolioApp() {
     return { market, costBasis, pairs, pnl, pnlPct };
   }, [holdings, priceBySlug]);
 
+  const { hits: liveHits, busy: searchBusy } = useCatalogSearch(query, true);
+
   const searchHits = useMemo(() => {
     const q = query.trim().toLowerCase();
+    if (q.length >= 2) {
+      return liveHits.map((row) => ({
+        slug: row.slug,
+        name: row.name,
+        brand: row.brand,
+        ticker: row.ticker,
+        styleCode: row.styleCode,
+        fallbackImage: row.fallbackImage,
+        price: row.price ?? null,
+        retail: row.retail ?? 0,
+      }));
+    }
     if (!q) return catalog.slice(0, 8);
     return catalog
       .filter(
@@ -117,7 +132,7 @@ export function PortfolioApp() {
           row.ticker.toLowerCase().includes(q),
       )
       .slice(0, 12);
-  }, [catalog, query]);
+  }, [catalog, query, liveHits]);
 
   async function onAuth(event: FormEvent) {
     event.preventDefault();
@@ -149,7 +164,10 @@ export function PortfolioApp() {
 
   function addHolding() {
     if (!session || !selectedSlug) return;
-    const row = catalog.find((c) => c.slug === selectedSlug);
+    const row =
+      searchHits.find((c) => c.slug === selectedSlug) ||
+      catalog.find((c) => c.slug === selectedSlug) ||
+      liveHits.find((c) => c.slug === selectedSlug);
     if (!row) return;
     const quantity = Math.max(1, Math.min(99, Number(qty) || 1));
     const costBasisUsd =
@@ -413,6 +431,16 @@ export function PortfolioApp() {
               placeholder="Jordan 4, Yeezy, style code…"
               className="mt-1 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm outline-none focus:border-dash-accent"
             />
+            {searchBusy && query.trim().length >= 2 ? (
+              <p className="mt-2 text-xs text-dash-faint">Searching StockX…</p>
+            ) : null}
+            {!searchBusy &&
+            query.trim().length >= 2 &&
+            searchHits.length === 0 ? (
+              <p className="mt-2 text-xs text-dash-faint">
+                No matches — try another name or SKU.
+              </p>
+            ) : null}
             {searchHits.length > 0 ? (
               <ul className="mt-2 max-h-48 overflow-auto rounded-xl border border-dash-border bg-dash-bg">
                 {searchHits.map((row) => (

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 import { ClosetImage } from "@/components/wardrobe/ClosetImage";
+import { useCatalogSearch } from "@/hooks/useCatalogSearch";
 import { fileToClosetDataUrl } from "@/lib/wardrobe/image";
 import {
   CLOSET_KIND_LABELS,
@@ -45,9 +46,25 @@ export function ClosetPanel({
   const [customSize, setCustomSize] = useState("");
   const [busy, setBusy] = useState(false);
   const [filterKind, setFilterKind] = useState<ClosetItemKind | "all">("all");
+  const [closetQuery, setClosetQuery] = useState("");
+
+  const { hits: liveHits, busy: searchBusy } = useCatalogSearch(
+    query,
+    tab === "catalog",
+  );
 
   const searchHits = useMemo(() => {
     const q = query.trim().toLowerCase();
+    if (q.length >= 2) {
+      return liveHits.map((row) => ({
+        slug: row.slug,
+        name: row.name,
+        brand: row.brand,
+        ticker: row.ticker,
+        styleCode: row.styleCode,
+        fallbackImage: row.fallbackImage,
+      }));
+    }
     if (!q) return catalog.slice(0, 8);
     return catalog
       .filter(
@@ -59,15 +76,33 @@ export function ClosetPanel({
           row.slug.toLowerCase().includes(q),
       )
       .slice(0, 12);
-  }, [catalog, query]);
+  }, [catalog, query, liveHits]);
 
   const visible = useMemo(() => {
-    if (filterKind === "all") return closet;
-    return closet.filter((item) => item.kind === filterKind);
-  }, [closet, filterKind]);
+    const q = closetQuery.trim().toLowerCase();
+    return closet.filter((item) => {
+      if (filterKind !== "all" && item.kind !== filterKind) return false;
+      if (!q) return true;
+      return (
+        item.name.toLowerCase().includes(q) ||
+        item.brand.toLowerCase().includes(q) ||
+        (item.styleCode?.toLowerCase().includes(q) ?? false) ||
+        (item.slug?.toLowerCase().includes(q) ?? false) ||
+        CLOSET_KIND_LABELS[item.kind].toLowerCase().includes(q)
+      );
+    });
+  }, [closet, filterKind, closetQuery]);
+
+  function resolveCatalogRow(slug: string): CatalogRow | undefined {
+    return (
+      searchHits.find((c) => c.slug === slug) ||
+      catalog.find((c) => c.slug === slug) ||
+      liveHits.find((c) => c.slug === slug)
+    );
+  }
 
   function addFromCatalog() {
-    const row = catalog.find((c) => c.slug === selectedSlug);
+    const row = resolveCatalogRow(selectedSlug);
     if (!row) return;
     if (closet.some((c) => c.slug === row.slug && c.kind === "sneaker")) {
       onFlash("Already in your closet");
@@ -212,18 +247,34 @@ export function ClosetPanel({
           {tab === "catalog" ? (
             <>
               <p className="text-sm text-dash-muted">
-                Pull StockX product shots from the SPI board into your closet.
+                Type a name, SKU, or brand — we search StockX beyond the top
+                board.
               </p>
               <label className="block text-xs text-dash-faint">
                 Search sneakers
                 <input
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Jordan, Dunk, Yeezy…"
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setSelectedSlug("");
+                  }}
+                  placeholder="Jordan 1 Mocha, Dunk Low…"
                   className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none focus:border-dash-accent"
                 />
               </label>
               <div className="grid max-h-56 gap-2 overflow-y-auto sm:grid-cols-2">
+                {searchBusy && query.trim().length >= 2 ? (
+                  <p className="col-span-full px-1 py-3 text-sm text-dash-faint">
+                    Searching…
+                  </p>
+                ) : null}
+                {!searchBusy &&
+                query.trim().length >= 2 &&
+                searchHits.length === 0 ? (
+                  <p className="col-span-full px-1 py-3 text-sm text-dash-faint">
+                    No matches for “{query.trim()}”. Try another name or SKU.
+                  </p>
+                ) : null}
                 {searchHits.map((row) => {
                   const active = selectedSlug === row.slug;
                   return (
@@ -411,7 +462,18 @@ export function ClosetPanel({
               {closet.length} piece{closet.length === 1 ? "" : "s"} on this device
             </p>
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <label className="sr-only" htmlFor="closet-filter">
+            Filter closet
+          </label>
+          <input
+            id="closet-filter"
+            value={closetQuery}
+            onChange={(e) => setClosetQuery(e.target.value)}
+            placeholder="Find in closet…"
+            className="w-full max-w-xs rounded-xl border border-dash-border bg-dash-elevated px-3 py-2 text-sm text-dash-text outline-none focus:border-dash-accent sm:w-56"
+          />
+        </div>
+        <div className="flex flex-wrap gap-1.5">
             <button
               type="button"
               onClick={() => setFilterKind("all")}
@@ -437,7 +499,6 @@ export function ClosetPanel({
                 {CLOSET_KIND_LABELS[kind]}
               </button>
             ))}
-          </div>
         </div>
 
         {visible.length === 0 ? (

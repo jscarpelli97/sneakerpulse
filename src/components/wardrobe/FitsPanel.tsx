@@ -157,11 +157,24 @@ function FitEditor({
   onDelete: () => void;
   onFlash: (message: string) => void;
 }) {
+  const [closetQuery, setClosetQuery] = useState("");
   const byId = useMemo(() => {
     const map = new Map<string, ClosetItem>();
     for (const item of closet) map.set(item.id, item);
     return map;
   }, [closet]);
+
+  const closetHits = useMemo(() => {
+    const q = closetQuery.trim().toLowerCase();
+    if (!q) return closet;
+    return closet.filter(
+      (item) =>
+        item.name.toLowerCase().includes(q) ||
+        item.brand.toLowerCase().includes(q) ||
+        CLOSET_KIND_LABELS[item.kind].toLowerCase().includes(q) ||
+        (item.styleCode?.toLowerCase().includes(q) ?? false),
+    );
+  }, [closet, closetQuery]);
 
   const missing = board.pieces.filter((p) => !byId.has(p.closetItemId)).length;
 
@@ -245,19 +258,28 @@ function FitEditor({
         />
 
         <aside className="dash-card max-h-[560px] overflow-y-auto self-start">
-          <div className="border-b border-dash-border px-3 py-3">
+          <div className="space-y-2 border-b border-dash-border px-3 py-3">
             <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
               Closet
             </p>
-            <p className="mt-1 text-xs text-dash-muted">Tap to place on board</p>
+            <input
+              value={closetQuery}
+              onChange={(e) => setClosetQuery(e.target.value)}
+              placeholder="Find piece…"
+              className="w-full rounded-lg border border-dash-border bg-dash-elevated px-2.5 py-1.5 text-xs text-dash-text outline-none focus:border-dash-accent"
+            />
           </div>
           {closet.length === 0 ? (
             <p className="px-3 py-6 text-sm text-dash-faint">
               Closet is empty — add pieces first.
             </p>
+          ) : closetHits.length === 0 ? (
+            <p className="px-3 py-6 text-sm text-dash-faint">
+              No closet matches for “{closetQuery.trim()}”.
+            </p>
           ) : (
             <ul className="divide-y divide-dash-border">
-              {closet.map((item) => {
+              {closetHits.map((item) => {
                 const onBoard = board.pieces.some(
                   (p) => p.closetItemId === item.id,
                 );

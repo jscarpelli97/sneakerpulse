@@ -162,6 +162,38 @@ export async function fetchTopStockxSneakers(
   };
 }
 
+/** Search StockX sneakers by name / SKU / brand (KicksDB `query` param). */
+export async function searchStockxProducts(
+  apiKey: string,
+  query: string,
+  limit = 16,
+) {
+  const q = query.trim();
+  if (q.length < 2) {
+    return {
+      ok: true as const,
+      data: { data: [] as KicksProduct[], meta: { total: 0 } },
+      cacheHit: true,
+      status: 200,
+    };
+  }
+
+  const params = new URLSearchParams({
+    market: "US",
+    query: q,
+    limit: String(Math.min(40, Math.max(1, limit))),
+    filters: 'product_type="sneakers"',
+    "display[traits]": "true",
+    "display[statistics]": "true",
+  });
+
+  return kicksFetch<KicksProductListResponse>(
+    `/stockx/products?${params.toString()}`,
+    apiKey,
+    { ttlMs: 2 * 60 * 1000 },
+  );
+}
+
 export async function fetchStockxDailySales(productId: string, apiKey: string) {
   return kicksFetch<{ data: KicksDailySale[] | null }>(
     `/stockx/products/${productId}/sales/daily?market=US`,
