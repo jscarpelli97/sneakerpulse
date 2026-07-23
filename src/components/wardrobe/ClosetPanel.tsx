@@ -6,9 +6,10 @@ import { ClosetImage } from "@/components/wardrobe/ClosetImage";
 import { useCatalogSearch } from "@/hooks/useCatalogSearch";
 import { fileToClosetDataUrl } from "@/lib/wardrobe/image";
 import {
-  getStarterClosetItems,
-  type StarterClosetRow,
-} from "@/lib/wardrobe/starterCloset";
+  getOutfitIdeas,
+  type OutfitIdea,
+  type OutfitIdeaPiece,
+} from "@/lib/wardrobe/outfitIdeas";
 import {
   CLOSET_KIND_LABELS,
   CLOSET_KINDS,
@@ -27,7 +28,7 @@ type CatalogRow = {
   fallbackImage: string;
 };
 
-type AddTab = "picks" | "catalog" | "custom" | "portfolio";
+type AddTab = "outfits" | "catalog" | "custom" | "portfolio";
 
 export function ClosetPanel({
   closet,
@@ -35,14 +36,17 @@ export function ClosetPanel({
   catalog,
   onChange,
   onFlash,
+  onSaveOutfit,
 }: {
   closet: ClosetItem[];
   holdings: PortfolioHolding[];
   catalog: CatalogRow[];
   onChange: (next: ClosetItem[]) => void;
   onFlash: (message: string) => void;
+  /** Optional: also create a Fit board from the outfit pieces. */
+  onSaveOutfit?: (input: { name: string; items: ClosetItem[] }) => void;
 }) {
-  const [tab, setTab] = useState<AddTab>("picks");
+  const [tab, setTab] = useState<AddTab>("outfits");
   const [query, setQuery] = useState("");
   const [selectedSlug, setSelectedSlug] = useState("");
   const [size, setSize] = useState("10");
@@ -53,9 +57,8 @@ export function ClosetPanel({
   const [busy, setBusy] = useState(false);
   const [filterKind, setFilterKind] = useState<ClosetItemKind | "all">("all");
   const [closetQuery, setClosetQuery] = useState("");
-  const [picksFilter, setPicksFilter] = useState<ClosetItemKind | "all">("all");
 
-  const starterPicks = useMemo(() => getStarterClosetItems(), []);
+  const outfitIdeas = useMemo(() => getOutfitIdeas(), []);
 
   const { hits: liveHits, busy: searchBusy } = useCatalogSearch(
     query,
@@ -222,77 +225,82 @@ export function ClosetPanel({
     onFlash(`Imported ${additions.length} from Portfolio`);
   }
 
-  function alreadyInCloset(pick: StarterClosetRow) {
-    if (pick.slug) {
-      return closet.some((c) => c.slug === pick.slug && c.kind === pick.kind);
+  function alreadyInCloset(piece: OutfitIdeaPiece) {
+    if (piece.slug) {
+      return closet.some((c) => c.slug === piece.slug && c.kind === piece.kind);
     }
     return closet.some(
       (c) =>
-        c.kind === pick.kind &&
-        c.name.toLowerCase() === pick.name.toLowerCase() &&
-        c.brand.toLowerCase() === pick.brand.toLowerCase(),
+        c.kind === piece.kind &&
+        c.name.toLowerCase() === piece.name.toLowerCase() &&
+        (c.size ?? "") === (piece.size ?? ""),
     );
   }
 
-  function addStarterPick(pick: StarterClosetRow) {
-    if (alreadyInCloset(pick)) {
+  function pieceToClosetItem(piece: OutfitIdeaPiece): ClosetItem {
+    return {
+      id: newClosetItemId(),
+      kind: piece.kind,
+      name: piece.name,
+      brand: piece.brand,
+      image: piece.image,
+      slug: piece.slug,
+      styleCode: piece.styleCode,
+      size: piece.size,
+      notes: [piece.colorway, piece.notes].filter(Boolean).join(" · ") || undefined,
+      addedAt: new Date().toISOString(),
+    };
+  }
+
+  function findOrCreatePiece(
+    piece: OutfitIdeaPiece,
+    working: ClosetItem[],
+  ): { item: ClosetItem; working: ClosetItem[]; created: boolean } {
+    const existing = working.find((c) => {
+      if (piece.slug) return c.slug === piece.slug && c.kind === piece.kind;
+      return (
+        c.kind === piece.kind &&
+        c.name.toLowerCase() === piece.name.toLowerCase() &&
+        (c.size ?? "") === (piece.size ?? "")
+      );
+    });
+    if (existing) return { item: existing, working, created: false };
+    const item = pieceToClosetItem(piece);
+    return { item, working: [item, ...working], created: true };
+  }
+
+  function addOutfitPiece(piece: OutfitIdeaPiece) {
+    if (alreadyInCloset(piece)) {
       onFlash("Already in your closet");
       return;
     }
-    const item: ClosetItem = {
-      id: newClosetItemId(),
-      kind: pick.kind,
-      name: pick.name,
-      brand: pick.brand,
-      image: pick.image,
-      slug: pick.slug,
-      styleCode: pick.styleCode !== "—" ? pick.styleCode : undefined,
-      notes: pick.notes,
-      size: pick.kind === "sneaker" ? size.trim() || undefined : undefined,
-      addedAt: new Date().toISOString(),
-    };
+    const item = pieceToClosetItem(piece);
     onChange([item, ...closet]);
-    onFlash(`Added ${pick.name}`);
+    onFlash(`Added ${piece.name}`);
   }
 
-  function addAllVisiblePicks() {
-    const pool =
-      picksFilter === "all"
-        ? starterPicks
-        : starterPicks.filter((p) => p.kind === picksFilter);
-    const additions: ClosetItem[] = [];
-    for (const pick of pool) {
-      if (alreadyInCloset(pick)) continue;
-      if (additions.some((a) => a.slug && a.slug === pick.slug)) continue;
-      additions.push({
-        id: newClosetItemId(),
-        kind: pick.kind,
-        name: pick.name,
-        brand: pick.brand,
-        image: pick.image,
-        slug: pick.slug,
-        styleCode: pick.styleCode !== "—" ? pick.styleCode : undefined,
-        notes: pick.notes,
-        size: pick.kind === "sneaker" ? size.trim() || undefined : undefined,
-        addedAt: new Date().toISOString(),
-      });
+  function addOutfitIdea(outfit: OutfitIdea) {
+    let working = [...closet];
+    const fitItems: ClosetItem[] = [];
+    let added = 0;
+    for (const piece of outfit.pieces) {
+      const result = findOrCreatePiece(piece, working);
+      working = result.working;
+      fitItems.push(result.item);
+      if (result.created) added += 1;
     }
-    if (!additions.length) {
-      onFlash("Those picks are already in your closet");
-      return;
-    }
-    onChange([...additions, ...closet]);
-    onFlash(`Added ${additions.length} starter picks`);
+    onChange(working);
+    onSaveOutfit?.({ name: outfit.name, items: fitItems });
+    onFlash(
+      added
+        ? `Added ${outfit.name} (${added} new · Fit ready)`
+        : `${outfit.name} pieces already in closet — Fit ready`,
+    );
   }
 
   function removeItem(id: string) {
     onChange(closet.filter((item) => item.id !== id));
   }
-
-  const visiblePicks = useMemo(() => {
-    if (picksFilter === "all") return starterPicks;
-    return starterPicks.filter((p) => p.kind === picksFilter);
-  }, [starterPicks, picksFilter]);
 
   return (
     <div className="space-y-6">
@@ -300,7 +308,7 @@ export function ClosetPanel({
         <div className="flex flex-wrap gap-2 border-b border-dash-border px-4 py-3 sm:px-5">
           {(
             [
-              ["picks", "Starter picks"],
+              ["outfits", "Outfit ideas"],
               ["catalog", "From board"],
               ["custom", "Upload piece"],
               ["portfolio", "From Portfolio"],
@@ -322,92 +330,78 @@ export function ClosetPanel({
         </div>
 
         <div className="space-y-4 p-4 sm:p-5">
-          {tab === "picks" ? (
+          {tab === "outfits" ? (
             <>
-              <div className="flex flex-wrap items-end justify-between gap-3">
-                <p className="max-w-xl text-sm text-dash-muted">
-                  Curated sneakers from the SPI board plus a few apparel
-                  placeholders so Fits has pieces to arrange. Send more names /
-                  style IDs anytime and we’ll add them here.
-                </p>
-                <button
-                  type="button"
-                  onClick={addAllVisiblePicks}
-                  className="rounded-xl border border-dash-border px-3 py-2 text-sm font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text"
-                >
-                  Add all shown
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => setPicksFilter("all")}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-medium ${
-                    picksFilter === "all"
-                      ? "bg-dash-elevated text-dash-text"
-                      : "text-dash-faint hover:text-dash-muted"
-                  }`}
-                >
-                  All
-                </button>
-                {CLOSET_KINDS.map((kind) => (
-                  <button
-                    key={kind}
-                    type="button"
-                    onClick={() => setPicksFilter(kind)}
-                    className={`rounded-lg px-2.5 py-1 text-xs font-medium ${
-                      picksFilter === kind
-                        ? "bg-dash-elevated text-dash-text"
-                        : "text-dash-faint hover:text-dash-muted"
-                    }`}
+              <p className="max-w-2xl text-sm text-dash-muted">
+                Real outfit ideas — tee, shorts, sneakers with sizes. Tap{" "}
+                <span className="text-dash-text">Add outfit</span> to drop the
+                pieces in your closet and open a Fit board. Send another fit
+                anytime and we’ll add it here.
+              </p>
+              <ul className="space-y-5">
+                {outfitIdeas.map((outfit) => (
+                  <li
+                    key={outfit.id}
+                    className="rounded-2xl border border-dash-border bg-dash-elevated/30 p-4 sm:p-5"
                   >
-                    {CLOSET_KIND_LABELS[kind]}
-                  </button>
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0 max-w-xl">
+                        <h3 className="font-[family-name:var(--font-syne)] text-lg font-bold text-dash-text">
+                          {outfit.name}
+                        </h3>
+                        {outfit.blurb ? (
+                          <p className="mt-1 text-sm text-dash-muted">
+                            {outfit.blurb}
+                          </p>
+                        ) : null}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => addOutfitIdea(outfit)}
+                        className="rounded-xl bg-dash-accent px-3 py-2 text-sm font-semibold text-dash-bg hover:brightness-110"
+                      >
+                        Add outfit
+                      </button>
+                    </div>
+                    <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+                      {outfit.pieces.map((piece) => {
+                        const owned = alreadyInCloset(piece);
+                        return (
+                          <li
+                            key={piece.id}
+                            className="flex gap-3 rounded-xl border border-dash-border bg-dash-bg/60 p-3"
+                          >
+                            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-elevated">
+                              <ClosetImage src={piece.image} alt={piece.name} />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[10px] uppercase tracking-[0.12em] text-dash-faint">
+                                {CLOSET_KIND_LABELS[piece.kind]}
+                                {piece.size ? ` · ${piece.size}` : ""}
+                              </p>
+                              <p className="mt-0.5 line-clamp-2 text-sm font-semibold leading-snug text-dash-text">
+                                {piece.name}
+                              </p>
+                              <p className="truncate text-xs text-dash-faint">
+                                {piece.brand}
+                                {piece.colorway ? ` · ${piece.colorway}` : ""}
+                                {piece.styleCode ? ` · ${piece.styleCode}` : ""}
+                              </p>
+                              <button
+                                type="button"
+                                disabled={owned}
+                                onClick={() => addOutfitPiece(piece)}
+                                className="mt-2 rounded-lg border border-dash-border px-2.5 py-1 text-xs font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text disabled:cursor-not-allowed disabled:opacity-50"
+                              >
+                                {owned ? "In closet" : "Add piece"}
+                              </button>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </li>
                 ))}
-              </div>
-              {visiblePicks.some((p) => p.kind === "sneaker") ? (
-                <label className="block max-w-[8rem] text-xs text-dash-faint">
-                  Default size (sneakers)
-                  <input
-                    value={size}
-                    onChange={(e) => setSize(e.target.value)}
-                    className="mt-1 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2 text-sm outline-none focus:border-dash-accent"
-                  />
-                </label>
-              ) : null}
-              <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {visiblePicks.map((pick) => {
-                  const owned = alreadyInCloset(pick);
-                  return (
-                    <li
-                      key={pick.id}
-                      className="flex gap-3 rounded-xl border border-dash-border bg-dash-elevated/40 p-3"
-                    >
-                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-bg">
-                        <ClosetImage src={pick.image} alt={pick.name} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-dash-text">
-                          {pick.name}
-                        </p>
-                        <p className="truncate text-xs text-dash-faint">
-                          {CLOSET_KIND_LABELS[pick.kind]} · {pick.brand}
-                          {pick.styleCode && pick.styleCode !== "—"
-                            ? ` · ${pick.styleCode}`
-                            : ""}
-                        </p>
-                        <button
-                          type="button"
-                          disabled={owned}
-                          onClick={() => addStarterPick(pick)}
-                          className="mt-2 rounded-lg bg-dash-accent px-2.5 py-1 text-xs font-semibold text-dash-bg hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          {owned ? "In closet" : "Add"}
-                        </button>
-                      </div>
-                    </li>
-                  );
-                })}
               </ul>
             </>
           ) : null}
@@ -671,9 +665,8 @@ export function ClosetPanel({
 
         {visible.length === 0 ? (
           <div className="dash-card px-5 py-10 text-center text-sm text-dash-muted">
-            Empty closet — start with Starter picks, pull from the board, or
-            upload a tee/shorts PNG.
-            PNG to start building fits.
+            Empty closet — open Outfit ideas for curated looks, pull from the
+            board, or upload a tee/shorts PNG to start building fits.
           </div>
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

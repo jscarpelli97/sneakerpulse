@@ -9,6 +9,8 @@ import { usernameFromEmail } from "@/lib/portfolio/username";
 import {
   loginAccount,
   logoutAccount,
+  newFitId,
+  newFitPieceId,
   registerAccount,
   restoreSession,
   saveCloset,
@@ -159,9 +161,9 @@ export function WardrobeApp() {
             Closet + Fits
           </h1>
           <p className="text-base leading-relaxed text-dash-muted">
-            Same account as Portfolio. Build a closet from the board and your
-            own PNGs, then arrange fits like Freeform — available on any device
-            when you sign in.
+            Same account as Portfolio. Start from outfit ideas, pull sneakers
+            from the board, or upload pieces — then arrange Fits. Available on
+            any device when you sign in.
           </p>
         </header>
 
@@ -264,7 +266,7 @@ export function WardrobeApp() {
             {holdingsCount
               ? ` · ${holdingsCount} in Portfolio`
               : ""}
-            . Visual boards first — suggestions later.
+            . Outfit ideas first — build from there.
           </p>
         </div>
         <button
@@ -321,6 +323,39 @@ export function WardrobeApp() {
           catalog={catalog}
           onChange={persistCloset}
           onFlash={setFlash}
+          onSaveOutfit={({ name, items }) => {
+            const now = new Date().toISOString();
+            const layout = [
+              { x: 28, y: 8, scale: 1.05 }, // top
+              { x: 30, y: 42, scale: 1 }, // bottom
+              { x: 32, y: 68, scale: 0.95 }, // sneakers
+            ];
+            const pieces = items.map((item, index) => {
+              const spot = layout[index] ?? {
+                x: 20 + index * 8,
+                y: 20 + index * 18,
+                scale: 1,
+              };
+              return {
+                id: newFitPieceId(),
+                closetItemId: item.id,
+                x: spot.x,
+                y: spot.y,
+                scale: spot.scale,
+                zIndex: index + 1,
+              };
+            });
+            const board: FitBoard = {
+              id: newFitId(),
+              name,
+              notes: "From outfit ideas",
+              pieces,
+              createdAt: now,
+              updatedAt: now,
+            };
+            persistFits([board, ...fits]);
+            setTab("fits");
+          }}
         />
       ) : (
         <FitsPanel

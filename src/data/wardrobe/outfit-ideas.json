@@ -1,0 +1,90 @@
+{
+  "note": "Curated outfit ideas from John. Send more fits anytime \u2014 tee/shorts/sneakers + sizes \u2014 and we add them here.",
+  "updatedAt": "2026-07-23",
+  "outfits": [
+    {
+      "id": "outfit-penn-state-j11",
+      "name": "Penn State \u00d7 University Blue",
+      "blurb": "Travis Scott Penn State tee, EE Blue Yonder shorts, Jordan 11 Low University Blue.",
+      "pieces": [
+        {
+          "id": "piece-penn-state-tee",
+          "kind": "top",
+          "name": "Travis Scott x Mitchell & Ness Penn State Nittany Lions Hand-Drawn T-Shirt",
+          "brand": "Travis Scott x Mitchell & Ness",
+          "colorway": "White",
+          "size": "L",
+          "slug": "travis-scott-x-mitchell-ness-penn-state-nittany-lions-hand-drawn-t-shirt-white",
+          "image": "https://images.stockx.com/images/Travis-Scott-x-Mitchell-Ness-Penn-State-Nittany-Lions-Hand-Drawn-T-Shirt-White.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1712333709",
+          "source": "stockx"
+        },
+        {
+          "id": "piece-ee-blue-yonder",
+          "kind": "bottom",
+          "name": "Eric Emanuel EE Basic/Core Short",
+          "brand": "Eric Emanuel",
+          "colorway": "Blue Yonder/White",
+          "size": "XL",
+          "slug": "eric-emanuel-ee-basic-short-blue-yonder-white",
+          "image": "https://images.stockx.com/images/Eric-Emanuel-EE-Basic-Short-Blue-Yonder-White.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1659547786",
+          "source": "stockx"
+        },
+        {
+          "id": "piece-j11-uni-blue",
+          "kind": "sneaker",
+          "name": "Jordan 11 Retro Low University Blue (2026)",
+          "brand": "Jordan",
+          "colorway": "University Blue",
+          "size": "12",
+          "slug": "air-jordan-11-retro-low-university-blue-2026",
+          "styleCode": "FV5104-100",
+          "image": "https://images.stockx.com/images/Air-Jordan-11-Retro-Low-University-Blue-2026-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784332827",
+          "source": "offline-catalog"
+        }
+      ]
+    },
+    {
+      "id": "outfit-knicks-mocha",
+      "name": "Knicks Champs \u00d7 Mocha",
+      "blurb": "Knicks locker room champs tee, EE Shopping Bag shorts, Jordan 1 Low OG Mocha.",
+      "pieces": [
+        {
+          "id": "piece-knicks-champs-tee",
+          "kind": "top",
+          "name": "Nike Adult 2026 NBA Champions New York Knicks Authentic Locker Room T-Shirt",
+          "brand": "Nike",
+          "colorway": "Black",
+          "size": "L",
+          "slug": "nike-new-york-knicks-2025-26-champions-mens-basketball-t-shirt-black",
+          "image": "https://images.stockx.com/images/Nike-New-York-Knicks-2025-26-Champions-Mens-Basketball-T-shirt-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1782744558",
+          "notes": "Closest StockX listing to the Authentic Locker Room champs tee.",
+          "source": "stockx"
+        },
+        {
+          "id": "piece-ee-shopping-bag",
+          "kind": "bottom",
+          "name": "Eric Emanuel EE Basic/Core Short",
+          "brand": "Eric Emanuel",
+          "colorway": "Shopping Bag Blue/Off-White",
+          "size": "XL",
+          "slug": null,
+          "image": "https://images.stockx.com/images/Eric-Emanuel-EE-Basic-Core-Short-Shopping-Bag-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1776881261",
+          "notes": "Exact Blue/Off-White colorway image pending \u2014 name/size preserved from your fit.",
+          "source": "stockx-nearby"
+        },
+        {
+          "id": "piece-j1-mocha",
+          "kind": "sneaker",
+          "name": "Jordan 1 Retro Low OG Mocha",
+          "brand": "Jordan",
+          "colorway": "Mocha",
+          "size": "12",
+          "slug": "air-jordan-1-retro-low-og-mocha",
+          "styleCode": "CZ0790-102",
+          "image": "https://images.stockx.com/images/Air-Jordan-1-Retro-Low-OG-Mocha-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
+          "source": "offline-catalog"
+        }
+      ]
+    }
+  ]
+}
