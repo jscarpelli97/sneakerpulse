@@ -140,8 +140,8 @@ export function SiteFooter({
               {BRAND_NAME}
             </span>
             <p className="text-xs leading-relaxed text-dash-faint">
-              Formerly SneakerPulse. Built by {FOUNDER_NAME} for reselling
-              desks — sneakers &amp; streetwear asks plus the SPI index. Not
+              Formerly SneakerPulse. Built by {FOUNDER_NAME} for the love of
+              the game — sneakers &amp; streetwear asks plus the SPI index. Not
               affiliated with StockX.
             </p>
             <p className="text-xs text-dash-faint">

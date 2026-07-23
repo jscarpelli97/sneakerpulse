@@ -15,7 +15,7 @@ import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 
 export const metadata = {
   title: "About",
-  description: `${BRAND_NAME_WITH_FORMER} is an independent sneaker markets terminal built by ${FOUNDER_NAME}, a reseller. How we source asks and calculate ${INDEX_NAME}.`,
+  description: `${BRAND_NAME_WITH_FORMER} is an independent sneaker markets terminal built by ${FOUNDER_NAME}. How we source asks and calculate ${INDEX_NAME}.`,
   alternates: { canonical: "/about" },
 };
 
@@ -52,12 +52,12 @@ export default function AboutPage() {
               <span className="text-dash-faint"> · {FOUNDER_ROLE}</span>
             </p>
             <p className="text-dash-muted leading-relaxed">
-              I run a reselling business and got tired of bouncing between
-              StockX tabs, screenshots, and spreadsheets to see asks, premiums,
-              and what I actually own. {BRAND_NAME} is the terminal I wanted for
-              that workflow — watchlist, size ladder, portfolio, and the{" "}
-              {INDEX_NAME} premium-vs-retail read in one place. It&apos;s a real
-              tool for a real desk, not a demo.
+              Built for the love of the game. I got tired of bouncing between
+              StockX tabs, screenshots, and half-finished spreadsheets just to
+              see asks, premiums, and what I actually own. {BRAND_NAME} is the
+              quiet terminal I wanted — watchlist, size ladder, portfolio, and
+              the {INDEX_NAME} premium-vs-retail read in one place. No flipper
+              pitch. Just clearer tape.
             </p>
             <p className="text-sm text-dash-faint">
               Questions or feedback:{" "}

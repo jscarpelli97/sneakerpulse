@@ -16,7 +16,7 @@ export const BRAND_TAGLINE =
   "Ask board and premium index for sneakers & streetwear";
 
 export const BRAND_BLURB =
-  "Independent markets terminal for sneaker and streetwear asks — plus the SPI premium-vs-retail index. Built by a reseller, for resellers — starting with sneakers, growing into streetwear.";
+  "Independent markets terminal for sneaker and streetwear asks — plus the SPI premium-vs-retail index. Built for the love of the game: clean tape, honest data, no hype machine.";
 
 /** Public site origin — prefer custom domain in production. */
 export function siteUrl() {
@@ -29,7 +29,7 @@ export function siteUrl() {
 
 /** Human behind the project — day-1 trust signal. */
 export const FOUNDER_NAME = "John Scarpelli";
-export const FOUNDER_ROLE = "Founder · reseller";
+export const FOUNDER_ROLE = "Founder";
 /** Public inbox — update when hello@spimarkets.com is live. */
 export const CONTACT_EMAIL =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "jscarpelli97@gmail.com";
