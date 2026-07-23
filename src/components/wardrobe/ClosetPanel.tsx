@@ -671,7 +671,8 @@ export function ClosetPanel({
 
         {visible.length === 0 ? (
           <div className="dash-card px-5 py-10 text-center text-sm text-dash-muted">
-            Empty closet — add sneakers from the board or upload a tee/shorts
+            Empty closet — start with Starter picks, pull from the board, or
+            upload a tee/shorts PNG.
             PNG to start building fits.
           </div>
         ) : (
