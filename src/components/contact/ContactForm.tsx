@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, type FormEvent } from "react";
-import { CONTACT_TOPICS } from "@/lib/contact";
+import { CONTACT_TOPICS } from "@/lib/contactTopics";
 
 export function ContactForm() {
   const [name, setName] = useState("");
