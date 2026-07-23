@@ -397,12 +397,10 @@ async function writeOfflineCatalog(products) {
 
   function tickerFor(product) {
     const sku = product.sku?.trim();
-    if (sku) {
-      return sku.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10) || sku;
-    }
-    if (product.rank != null) return `TOP${product.rank}`;
-    const slug = product.slug ?? product.id;
-    return String(slug).replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10);
+    if (sku) return sku;
+    const style = traitValue(product.traits, "Style");
+    if (style) return style;
+    return "—";
   }
 
   const now = new Date().toISOString();
@@ -418,10 +416,11 @@ async function writeOfflineCatalog(products) {
     const retail = retailRaw
       ? Number(String(retailRaw).replace(/[^0-9.]/g, ""))
       : product.avg_price ?? product.min_price ?? 0;
+    const styleId = tickerFor(product);
     mapped.push({
       slug,
-      ticker: tickerFor(product),
-      styleCode: product.sku || slug,
+      ticker: styleId,
+      styleCode: styleId,
       name: product.title || slug,
       brand: product.brand || "Unknown",
       year: yearMatch ? Number(yearMatch[1]) : new Date().getUTCFullYear(),

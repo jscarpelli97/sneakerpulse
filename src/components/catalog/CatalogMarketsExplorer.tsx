@@ -22,7 +22,7 @@ type SortableColumn = {
 const COLUMNS: SortableColumn[] = [
   { key: "rank", label: "#" },
   { key: "name", label: "Name" },
-  { key: "ticker", label: "Ticker" },
+  { key: "ticker", label: "Style ID" },
   { key: "price", label: "Lowest ask" },
   { key: "weeklyOrders", label: "Weekly orders" },
   { key: "status", label: "Status" },
@@ -88,7 +88,7 @@ export function CatalogMarketsExplorer({
             type="search"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
-            placeholder="Name, ticker, brand, SKU…"
+            placeholder="Name, style ID, brand…"
             className="w-full min-w-[220px] rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent sm:w-72"
           />
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
@@ -160,7 +160,10 @@ export function CatalogMarketsExplorer({
                           {row.name}
                         </span>
                         <span className="block text-xs text-dash-faint">
-                          {row.brand} · {row.styleCode}
+                          {row.brand}
+                          {row.colorway && row.colorway !== "—"
+                            ? ` · ${row.colorway}`
+                            : ""}
                           {row.rank != null ? ` · StockX #${row.rank}` : ""}
                         </span>
                       </span>

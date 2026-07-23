@@ -19,48 +19,21 @@ export function traitValue(
   return value ? value : null;
 }
 
-/** Build a short display ticker from the shoe name when no SKU exists. */
-export function tickerFromName(title: string, slug = ""): string {
-  let words: string[] = title.toUpperCase().match(/[A-Z0-9]+/g) ?? [];
-
-  // Drop leading brand tokens so the ticker reads like the model + colorway.
-  if (words[0] === "BRAVEST" && words[1] === "STUDIOS") {
-    words = words.slice(2);
-  } else if (words[0] === "YZY" || words[0] === "YEEZY") {
-    words = words.slice(1);
-  } else if (words.length >= 3) {
-    words = words.slice(1);
-  }
-
-  const fromName = words.join("").slice(0, 10);
-  if (fromName.length >= 3) return fromName;
-
-  const parts = slug.toLowerCase().split("-").filter(Boolean);
-  let start = 0;
-  if (parts[0] === "yzy") start = 1;
-  if (parts[0] === "bravest" && parts[1] === "studios") start = 2;
-  const fromSlug = parts
-    .slice(start)
-    .join("")
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, "")
-    .slice(0, 10);
-  if (fromSlug.length >= 3) return fromSlug;
-
-  return (slug || title || "SHOE")
-    .replace(/[^A-Za-z0-9]/g, "")
-    .toUpperCase()
-    .slice(0, 10);
+/** StockX style ID / SKU exactly as upstream sends it (keep hyphens). */
+export function stockxStyleId(product: KicksProduct): string | null {
+  const sku = product.sku?.trim();
+  if (sku) return sku;
+  const styleTrait = traitValue(product.traits, "Style");
+  if (styleTrait) return styleTrait;
+  return null;
 }
 
+/**
+ * Board "ticker" = StockX Style ID / SKU when StockX has one.
+ * No invented short codes — missing SKU stays blank ("—").
+ */
 export function makeTicker(product: KicksProduct): string {
-  const sku = product.sku?.trim();
-  if (sku) {
-    return sku.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10) || sku;
-  }
-
-  // No SKU (common for YZY drops) — derive from the shoe name, not sales rank.
-  return tickerFromName(product.title || "", product.slug ?? product.id ?? "");
+  return stockxStyleId(product) ?? "—";
 }
 
 export function mapListedProductToCatalog(
@@ -76,11 +49,12 @@ export function mapListedProductToCatalog(
   const yearMatch = releaseDate.match(/^(\d{4})/);
   const retailRaw = traitValue(product.traits, "Retail Price");
   const retail = retailRaw != null ? Number(retailRaw) : 0;
+  const styleId = stockxStyleId(product);
 
   return {
     slug,
-    ticker: makeTicker(product),
-    styleCode: product.sku?.trim() || slug,
+    ticker: styleId ?? "—",
+    styleCode: styleId ?? "—",
     name: product.title || slug,
     brand: product.brand || "Unknown",
     year: yearMatch ? Number(yearMatch[1]) : new Date().getUTCFullYear(),

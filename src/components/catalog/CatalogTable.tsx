@@ -45,7 +45,7 @@ export function CatalogTable({
             <tr>
               <th className="px-4 py-3.5 font-medium sm:px-5">#</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Name</th>
-              <th className="px-4 py-3.5 font-medium sm:px-5">Ticker</th>
+              <th className="px-4 py-3.5 font-medium sm:px-5">Style ID</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Lowest ask</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Weekly orders</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Status</th>
@@ -79,7 +79,10 @@ export function CatalogTable({
                         {row.name}
                       </span>
                       <span className="block text-xs text-dash-faint">
-                        {row.brand} · {row.styleCode}
+                        {row.brand}
+                        {row.colorway && row.colorway !== "—"
+                          ? ` · ${row.colorway}`
+                          : ""}
                         {row.rank != null ? ` · StockX #${row.rank}` : ""}
                       </span>
                     </span>

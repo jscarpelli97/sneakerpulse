@@ -7,8 +7,8 @@
   "products": [
     {
       "slug": "yzy-ys-01-black",
-      "ticker": "TOP1",
-      "styleCode": "yzy-ys-01-black",
+      "ticker": "\u2014",
+      "styleCode": "\u2014",
       "name": "YZY YS-01 Black",
       "brand": "Yeezy",
       "year": 2025,
@@ -26,7 +26,7 @@
     },
     {
       "slug": "air-jordan-4-retro-toro-bravo-2026",
-      "ticker": "FQ8138600",
+      "ticker": "FQ8138-600",
       "styleCode": "FQ8138-600",
       "name": "Jordan 4 Retro Toro Bravo (2026)",
       "brand": "Jordan",
@@ -45,7 +45,7 @@
     },
     {
       "slug": "air-jordan-4-retro-og-nigel-sylvester-brick-after-brick",
-      "ticker": "IQ8055100",
+      "ticker": "IQ8055-100",
       "styleCode": "IQ8055-100",
       "name": "Jordan 4 Retro OG Nigel Sylvester Brick After Brick",
       "brand": "Jordan",
@@ -64,7 +64,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-sp-travis-scott-sail-tropical-pink",
-      "ticker": "IQ7604101",
+      "ticker": "IQ7604-101",
       "styleCode": "IQ7604-101",
       "name": "Jordan 1 Retro Low OG SP Travis Scott Sail Tropical Pink",
       "brand": "Jordan",
@@ -83,7 +83,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-sp-travis-scott-shy-pink",
-      "ticker": "IQ7604100",
+      "ticker": "IQ7604-100",
       "styleCode": "IQ7604-100",
       "name": "Jordan 1 Retro Low OG SP Travis Scott Shy Pink",
       "brand": "Jordan",
@@ -121,8 +121,8 @@
     },
     {
       "slug": "yzy-ys-01-silver-green",
-      "ticker": "TOP7",
-      "styleCode": "yzy-ys-01-silver-green",
+      "ticker": "\u2014",
+      "styleCode": "\u2014",
       "name": "YZY YS-01 Cream",
       "brand": "Yeezy",
       "year": 2025,
@@ -140,7 +140,7 @@
     },
     {
       "slug": "air-jordan-5-retro-black-university-blue-2026",
-      "ticker": "DD0587008",
+      "ticker": "DD0587-008",
       "styleCode": "DD0587-008",
       "name": "Jordan 5 Retro Black University Blue (2026)",
       "brand": "Jordan",
@@ -159,7 +159,7 @@
     },
     {
       "slug": "nike-air-force-1-low-white-07",
-      "ticker": "315122111C",
+      "ticker": "315122-111/CW2288-111",
       "styleCode": "315122-111/CW2288-111",
       "name": "Nike Air Force 1 Low '07 White",
       "brand": "Nike",
@@ -178,7 +178,7 @@
     },
     {
       "slug": "air-jordan-5-retro-white-metallic-2026",
-      "ticker": "HQ7978103",
+      "ticker": "HQ7978-103",
       "styleCode": "HQ7978-103",
       "name": "Jordan 5 Retro White Metallic (2026)",
       "brand": "Jordan",
@@ -197,7 +197,7 @@
     },
     {
       "slug": "air-jordan-12-retro-bloodline",
-      "ticker": "CT8013003",
+      "ticker": "CT8013-003",
       "styleCode": "CT8013-003",
       "name": "Jordan 12 Retro Bloodline",
       "brand": "Jordan",
@@ -216,7 +216,7 @@
     },
     {
       "slug": "asics-gel-1130-black-pure-silver",
-      "ticker": "1201A90600",
+      "ticker": "1201A906-001",
       "styleCode": "1201A906-001",
       "name": "ASICS Gel-1130 Black Pure Silver",
       "brand": "ASICS",
@@ -235,7 +235,7 @@
     },
     {
       "slug": "air-jordan-11-retro-gamma-blue-2025",
-      "ticker": "CT8012047",
+      "ticker": "CT8012-047",
       "styleCode": "CT8012-047",
       "name": "Jordan 11 Retro Gamma Blue (2025)",
       "brand": "Jordan",
@@ -254,7 +254,7 @@
     },
     {
       "slug": "air-jordan-5-retro-wolf-grey-2026",
-      "ticker": "DD0587002",
+      "ticker": "DD0587-002",
       "styleCode": "DD0587-002",
       "name": "Jordan 5 Retro Wolf Grey (2026)",
       "brand": "Jordan",
@@ -273,7 +273,7 @@
     },
     {
       "slug": "air-jordan-3-retro-true-blue-2026",
-      "ticker": "IF4396104",
+      "ticker": "IF4396-104",
       "styleCode": "IF4396-104",
       "name": "Jordan 3 Retro True Blue (2026)",
       "brand": "Jordan",
@@ -292,7 +292,7 @@
     },
     {
       "slug": "air-jordan-3-retro-worlds-best-dad",
-      "ticker": "IF4396103",
+      "ticker": "IF4396-103",
       "styleCode": "IF4396-103",
       "name": "Jordan 3 Retro World's Best Dad",
       "brand": "Jordan",
@@ -311,7 +311,7 @@
     },
     {
       "slug": "air-jordan-4-retro-black-cat-2025",
-      "ticker": "FV5029010",
+      "ticker": "FV5029-010",
       "styleCode": "FV5029-010",
       "name": "Jordan 4 Retro Black Cat (2025)",
       "brand": "Jordan",
@@ -330,7 +330,7 @@
     },
     {
       "slug": "air-jordan-5-retro-black-university-blue-2026-gs",
-      "ticker": "440888008",
+      "ticker": "440888-008",
       "styleCode": "440888-008",
       "name": "Jordan 5 Retro Black University Blue (2026) (GS)",
       "brand": "Jordan",
@@ -349,7 +349,7 @@
     },
     {
       "slug": "mihara-yasuhiro-peterson-og-sole-canvas-low-black",
-      "ticker": "A01FW702BL",
+      "ticker": "A01FW702-BLK",
       "styleCode": "A01FW702-BLK",
       "name": "Maison Mihara Yasuhiro Peterson OG Sole Canvas Low Black",
       "brand": "Maison Mihara Yasuhiro",
@@ -368,7 +368,7 @@
     },
     {
       "slug": "asics-gel-1130-white-pure-silver",
-      "ticker": "1201B02010",
+      "ticker": "1201B020-100",
       "styleCode": "1201B020-100",
       "name": "ASICS Gel-1130 White Pure Silver",
       "brand": "ASICS",
@@ -387,7 +387,7 @@
     },
     {
       "slug": "nike-mind-001-slide-black-chrome",
-      "ticker": "HQ4307001",
+      "ticker": "HQ4307-001",
       "styleCode": "HQ4307-001",
       "name": "Nike Mind 001 Slide Black Chrome",
       "brand": "Nike",
@@ -406,7 +406,7 @@
     },
     {
       "slug": "air-jordan-4-retro-lakers",
-      "ticker": "FV5029500",
+      "ticker": "FV5029-500",
       "styleCode": "FV5029-500",
       "name": "Jordan 4 Retro Lakers",
       "brand": "Jordan",
@@ -444,7 +444,7 @@
     },
     {
       "slug": "timberland-6-inch-premium-waterproof-wheat",
-      "ticker": "TB01006171",
+      "ticker": "TB010061-713/TB110061-713/TB1100617131-TB713",
       "styleCode": "TB010061-713/TB110061-713/TB1100617131-TB713",
       "name": "Timberland 6\" Premium Waterproof Boot Wheat",
       "brand": "Timberland",
@@ -463,8 +463,8 @@
     },
     {
       "slug": "bravest-studios-bear-claw-mule-black",
-      "ticker": "TOP26",
-      "styleCode": "bravest-studios-bear-claw-mule-black",
+      "ticker": "\u2014",
+      "styleCode": "\u2014",
       "name": "Bravest Studios Bear Claw Mule Black",
       "brand": "Bravest Studios",
       "year": 2024,
@@ -482,7 +482,7 @@
     },
     {
       "slug": "air-jordan-4-retro-og-flight-club",
-      "ticker": "IM4002100",
+      "ticker": "IM4002-100",
       "styleCode": "IM4002-100",
       "name": "Jordan 4 Retro OG Flight Club",
       "brand": "Jordan",
@@ -501,7 +501,7 @@
     },
     {
       "slug": "air-jordan-11-retro-low-university-blue-2026",
-      "ticker": "FV5104100",
+      "ticker": "FV5104-100",
       "styleCode": "FV5104-100",
       "name": "Jordan 11 Retro Low University Blue (2026)",
       "brand": "Jordan",
@@ -520,7 +520,7 @@
     },
     {
       "slug": "air-jordan-6-retro-reverse-infrared",
-      "ticker": "CT8529001",
+      "ticker": "CT8529-001",
       "styleCode": "CT8529-001",
       "name": "Jordan 6 Retro Infrared Salesman",
       "brand": "Jordan",
@@ -539,7 +539,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-sp-fragment-x-travis-scott-sail-military-blue",
-      "ticker": "DM7866104",
+      "ticker": "DM7866-104",
       "styleCode": "DM7866-104",
       "name": "Jordan 1 Retro Low OG SP Fragment x Travis Scott Sail Military Blue",
       "brand": "Jordan",
@@ -577,7 +577,7 @@
     },
     {
       "slug": "air-jordan-14-retro-black-university-blue-2026",
-      "ticker": "487471007",
+      "ticker": "487471-007",
       "styleCode": "487471-007",
       "name": "Jordan 14 Retro Black University Blue (2026)",
       "brand": "Jordan",
@@ -596,7 +596,7 @@
     },
     {
       "slug": "nike-air-force-1-low-supreme-box-logo-black",
-      "ticker": "CU9225001",
+      "ticker": "CU9225-001",
       "styleCode": "CU9225-001",
       "name": "Nike Air Force 1 Low Supreme Black",
       "brand": "Nike",
@@ -615,7 +615,7 @@
     },
     {
       "slug": "birkenstock-boston-soft-footbed-suede-taupe",
-      "ticker": "0560771056",
+      "ticker": "0560771/0560773",
       "styleCode": "0560771/0560773",
       "name": "Birkenstock Boston Soft Footbed Suede Taupe",
       "brand": "Birkenstock",
@@ -634,7 +634,7 @@
     },
     {
       "slug": "nike-air-max-95-og-big-bubble-pink-foam-womens",
-      "ticker": "HJ5996001",
+      "ticker": "HJ5996-001",
       "styleCode": "HJ5996-001",
       "name": "Nike Air Max 95 OG Big Bubble Pink Foam (Women's)",
       "brand": "Nike",
@@ -653,7 +653,7 @@
     },
     {
       "slug": "crocs-classic-clog-lightning-mcqueen",
-      "ticker": "205759610",
+      "ticker": "205759-610",
       "styleCode": "205759-610",
       "name": "Crocs Classic Clog Lightning McQueen",
       "brand": "Crocs",
@@ -672,7 +672,7 @@
     },
     {
       "slug": "air-jordan-4-retro-cave-stone",
-      "ticker": "FV5029200",
+      "ticker": "FV5029-200",
       "styleCode": "FV5029-200",
       "name": "Jordan 4 Retro Cave Stone",
       "brand": "Jordan",
@@ -691,7 +691,7 @@
     },
     {
       "slug": "nike-air-force-1-low-supreme-box-logo-white",
-      "ticker": "CU9225100",
+      "ticker": "CU9225-100",
       "styleCode": "CU9225-100",
       "name": "Nike Air Force 1 Low Supreme White",
       "brand": "Nike",
@@ -710,7 +710,7 @@
     },
     {
       "slug": "air-jordan-4-retro-white-cement-2025",
-      "ticker": "FV5029100",
+      "ticker": "FV5029-100",
       "styleCode": "FV5029-100",
       "name": "Jordan 4 Retro White Cement (2025)",
       "brand": "Jordan",
@@ -729,7 +729,7 @@
     },
     {
       "slug": "nike-air-max-95-og-big-bubble-neon-2025",
-      "ticker": "HM4740001",
+      "ticker": "HM4740-001",
       "styleCode": "HM4740-001",
       "name": "Nike Air Max 95 OG Big Bubble Neon (2025/2026)",
       "brand": "Nike",
@@ -748,7 +748,7 @@
     },
     {
       "slug": "vans-lx-old-skool-36-pearlized-pack-vintage-cocoa-brown",
-      "ticker": "VN000E8VFS",
+      "ticker": "VN000E8VFST",
       "styleCode": "VN000E8VFST",
       "name": "Vans LX Old Skool 36 Pearlized Pack Vintage Cocoa Brown",
       "brand": "Vans",
@@ -767,7 +767,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-virgil-abloh-archive-alaska",
-      "ticker": "AA3834100",
+      "ticker": "AA3834-100",
       "styleCode": "AA3834-100",
       "name": "Jordan 1 Retro High Virgil Abloh Archive Alaska",
       "brand": "Jordan",
@@ -786,7 +786,7 @@
     },
     {
       "slug": "onitsuka-tiger-mexico-66-kill-bill-2022",
-      "ticker": "DL40804901",
+      "ticker": "DL408-0490/1183C102-751",
       "styleCode": "DL408-0490/1183C102-751",
       "name": "Onitsuka Tiger Mexico 66 Kill Bill",
       "brand": "ASICS",
@@ -805,7 +805,7 @@
     },
     {
       "slug": "air-jordan-4-retro-iced-carmine-womens",
-      "ticker": "IB6716600",
+      "ticker": "IB6716-600",
       "styleCode": "IB6716-600",
       "name": "Jordan 4 Retro Iced Carmine (Women's)",
       "brand": "Jordan",
@@ -824,7 +824,7 @@
     },
     {
       "slug": "asics-gel-kayano-14-white-graphite-grey",
-      "ticker": "1203A53711",
+      "ticker": "1203A537-110",
       "styleCode": "1203A537-110",
       "name": "ASICS Gel-Kayano 14 White Graphite Grey",
       "brand": "ASICS",
@@ -843,7 +843,7 @@
     },
     {
       "slug": "air-jordan-13-retro-og-chicago-2026",
-      "ticker": "414571102",
+      "ticker": "414571-102",
       "styleCode": "414571-102",
       "name": "Jordan 13 Retro OG Chicago (2026)",
       "brand": "Jordan",
@@ -862,7 +862,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-banned",
-      "ticker": "IW6276001",
+      "ticker": "IW6276-001",
       "styleCode": "IW6276-001",
       "name": "Jordan 1 Retro Low OG Banned",
       "brand": "Jordan",
@@ -881,7 +881,7 @@
     },
     {
       "slug": "nike-mind-001-slide-light-smoke-grey",
-      "ticker": "HQ4307003",
+      "ticker": "HQ4307-003",
       "styleCode": "HQ4307-003",
       "name": "Nike Mind 001 Slide Light Smoke Grey",
       "brand": "Nike",
@@ -900,7 +900,7 @@
     },
     {
       "slug": "air-jordan-4-retro-sb-navy",
-      "ticker": "DR5415100",
+      "ticker": "DR5415-100",
       "styleCode": "DR5415-100",
       "name": "Jordan 4 Retro SB Navy",
       "brand": "Jordan",
@@ -919,7 +919,7 @@
     },
     {
       "slug": "air-jordan-6-retro-cap-and-gown",
-      "ticker": "IR2266010",
+      "ticker": "IR2266-010",
       "styleCode": "IR2266-010",
       "name": "Jordan 6 Retro Cap and Gown",
       "brand": "Jordan",
@@ -938,7 +938,7 @@
     },
     {
       "slug": "adidas-samba-og-cloud-white-core-black",
-      "ticker": "BZ0057B758",
+      "ticker": "BZ0057/B75806",
       "styleCode": "BZ0057/B75806",
       "name": "adidas Samba OG Cloud White Core Black",
       "brand": "adidas",
@@ -957,7 +957,7 @@
     },
     {
       "slug": "nike-mind-001-slide-team-red-university-red",
-      "ticker": "HQ4307601",
+      "ticker": "HQ4307-601",
       "styleCode": "HQ4307-601",
       "name": "Nike Mind 001 Slide Team Red University Red",
       "brand": "Nike",
@@ -976,7 +976,7 @@
     },
     {
       "slug": "air-jordan-4-retro-rare-air-white-lettering",
-      "ticker": "WHITEFV502",
+      "ticker": "(White) FV5029-003",
       "styleCode": "(White) FV5029-003",
       "name": "Jordan 4 Retro Rare Air (White Lettering)",
       "brand": "Jordan",
@@ -995,7 +995,7 @@
     },
     {
       "slug": "nike-p-6000-metallic-silver",
-      "ticker": "CN0149001",
+      "ticker": "CN0149-001",
       "styleCode": "CN0149-001",
       "name": "Nike P-6000 Metallic Silver",
       "brand": "Nike",
@@ -1014,7 +1014,7 @@
     },
     {
       "slug": "air-jordan-7-retro-miro-2026",
-      "ticker": "IQ6573100",
+      "ticker": "IQ6573-100",
       "styleCode": "IQ6573-100",
       "name": "Jordan 7 Retro Miro (2026)",
       "brand": "Jordan",
@@ -1071,7 +1071,7 @@
     },
     {
       "slug": "nike-air-vapormax-plus-triple-black",
-      "ticker": "924453004",
+      "ticker": "924453-004",
       "styleCode": "924453-004",
       "name": "Nike Air VaporMax Plus Triple Black",
       "brand": "Nike",
@@ -1090,8 +1090,8 @@
     },
     {
       "slug": "yzy-ys-01-fudge",
-      "ticker": "TOP64",
-      "styleCode": "yzy-ys-01-fudge",
+      "ticker": "\u2014",
+      "styleCode": "\u2014",
       "name": "YZY YS-01 Fudge",
       "brand": "Yeezy",
       "year": 2025,
@@ -1109,7 +1109,7 @@
     },
     {
       "slug": "asics-gel-nyc-graphite-grey-black",
-      "ticker": "1201A78902",
+      "ticker": "1201A789-020",
       "styleCode": "1201A789-020",
       "name": "ASICS Gel-NYC Graphite Grey Black",
       "brand": "ASICS",
@@ -1128,7 +1128,7 @@
     },
     {
       "slug": "nike-dunk-low-retro-white-black-2021",
-      "ticker": "DD1391100",
+      "ticker": "DD1391-100",
       "styleCode": "DD1391-100",
       "name": "Nike Dunk Low Retro White Black Panda",
       "brand": "Nike",
@@ -1147,7 +1147,7 @@
     },
     {
       "slug": "nike-mind-002-black-hyper-crimson",
-      "ticker": "HQ4308001",
+      "ticker": "HQ4308-001",
       "styleCode": "HQ4308-001",
       "name": "Nike Mind 002 Black Hyper Crimson",
       "brand": "Nike",
@@ -1166,7 +1166,7 @@
     },
     {
       "slug": "nike-kobe-5-protro-caitlin-clark-coconut-milk-spruce",
-      "ticker": "IZ1852100",
+      "ticker": "IZ1852-100",
       "styleCode": "IZ1852-100",
       "name": "Nike Kobe 5 Protro Caitlin Clark Coconut Milk Spruce",
       "brand": "Nike",
@@ -1185,7 +1185,7 @@
     },
     {
       "slug": "air-jordan-3-retro-pure-money-2025",
-      "ticker": "CT8532111",
+      "ticker": "CT8532-111",
       "styleCode": "CT8532-111",
       "name": "Jordan 3 Retro Pure Money (2025)",
       "brand": "Jordan",
@@ -1204,7 +1204,7 @@
     },
     {
       "slug": "nike-st-charge-cade-cunningham-detroit-tough",
-      "ticker": "IZ6735100I",
+      "ticker": "IZ6735-100 / IZ6736-100",
       "styleCode": "IZ6735-100 / IZ6736-100",
       "name": "Nike ST Charge Cade Cunningham Detroit Tough",
       "brand": "Nike",
@@ -1223,7 +1223,7 @@
     },
     {
       "slug": "air-jordan-4-retro-black-cat-2025-gs",
-      "ticker": "IB4171010",
+      "ticker": "IB4171-010",
       "styleCode": "IB4171-010",
       "name": "Jordan 4 Retro Black Cat (2025) (GS)",
       "brand": "Jordan",
@@ -1242,7 +1242,7 @@
     },
     {
       "slug": "nike-ja-3-valentines-day",
-      "ticker": "HF2793601H",
+      "ticker": "HF2793-601 / HF2794-601",
       "styleCode": "HF2793-601 / HF2794-601",
       "name": "Nike Ja 3 Pink Foam",
       "brand": "Nike",
@@ -1261,7 +1261,7 @@
     },
     {
       "slug": "nike-sb-dunk-low-pro-bluetile-skateboards",
-      "ticker": "IQ1323001",
+      "ticker": "IQ1323-001",
       "styleCode": "IQ1323-001",
       "name": "Nike SB Dunk Low Pro Bluetile Skateboards",
       "brand": "Nike",
@@ -1280,7 +1280,7 @@
     },
     {
       "slug": "nike-air-force-1-low-patent-leather-mystic-navy-grape-ice",
-      "ticker": "IO4489400",
+      "ticker": "IO4489-400",
       "styleCode": "IO4489-400",
       "name": "Nike Air Force 1 Low Patent Leather Mystic Navy Grape Ice",
       "brand": "Nike",
@@ -1299,7 +1299,7 @@
     },
     {
       "slug": "air-jordan-4-retro-toro-bravo-2026-gs",
-      "ticker": "FQ8213600",
+      "ticker": "FQ8213-600",
       "styleCode": "FQ8213-600",
       "name": "Jordan 4 Retro Toro Bravo (2026) (GS)",
       "brand": "Jordan",
@@ -1318,7 +1318,7 @@
     },
     {
       "slug": "air-jordan-12-retro-taxi-2025",
-      "ticker": "CT8013117",
+      "ticker": "CT8013-117",
       "styleCode": "CT8013-117",
       "name": "Jordan 12 Retro Taxi (2025)",
       "brand": "Jordan",
@@ -1337,7 +1337,7 @@
     },
     {
       "slug": "air-jordan-5-retro-wolf-grey-2026-gs",
-      "ticker": "440888002",
+      "ticker": "440888-002",
       "styleCode": "440888-002",
       "name": "Jordan 5 Retro Wolf Grey (2026) (GS)",
       "brand": "Jordan",
@@ -1356,7 +1356,7 @@
     },
     {
       "slug": "air-jordan-11-retro-low-mothers-day-womens",
-      "ticker": "AH7860102",
+      "ticker": "AH7860-102",
       "styleCode": "AH7860-102",
       "name": "Jordan 11 Retro Low Mother's Day (Women's)",
       "brand": "Jordan",
@@ -1394,7 +1394,7 @@
     },
     {
       "slug": "nike-mind-001-slide-pearl-pink-womens",
-      "ticker": "HQ4309610",
+      "ticker": "HQ4309-610",
       "styleCode": "HQ4309-610",
       "name": "Nike Mind 001 Slide Pearl Pink (Women's)",
       "brand": "Nike",
@@ -1413,7 +1413,7 @@
     },
     {
       "slug": "nike-mind-001-slide-sail",
-      "ticker": "HQ4307100",
+      "ticker": "HQ4307-100",
       "styleCode": "HQ4307-100",
       "name": "Nike Mind 001 Slide Sail",
       "brand": "Nike",
@@ -1432,7 +1432,7 @@
     },
     {
       "slug": "nike-kobe-4-protro-draft-day-pack-mystery-sealed-box",
-      "ticker": "MYSTERYSEA",
+      "ticker": "(Mystery Sealed Box) IV6585-900",
       "styleCode": "(Mystery Sealed Box) IV6585-900",
       "name": "Nike Kobe 4 Protro Draft Day Pack Mystery Sealed Box",
       "brand": "Nike",
@@ -1451,7 +1451,7 @@
     },
     {
       "slug": "vans-lx-old-skool-36-pearlized-pack-black-navy",
-      "ticker": "VN000E8VYA",
+      "ticker": "VN000E8VYA6",
       "styleCode": "VN000E8VYA6",
       "name": "Vans LX Old Skool 36 Pearlized Pack Black Navy",
       "brand": "Vans",
@@ -1470,7 +1470,7 @@
     },
     {
       "slug": "air-jordan-9-retro-french-blue-2026",
-      "ticker": "HV4794100",
+      "ticker": "HV4794-100",
       "styleCode": "HV4794-100",
       "name": "Jordan 9 Retro Flint Grey French Blue (2026)",
       "brand": "Jordan",
@@ -1489,7 +1489,7 @@
     },
     {
       "slug": "air-jordan-cj1-t-rexx-travis-scott-green-spark",
-      "ticker": "IM9113300",
+      "ticker": "IM9113-300",
       "styleCode": "IM9113-300",
       "name": "Jordan CJ1 T-Rexx Travis Scott Green Spark",
       "brand": "Jordan",
@@ -1508,7 +1508,7 @@
     },
     {
       "slug": "air-jordan-3-retro-orange-citrus-womens",
-      "ticker": "CK9246101",
+      "ticker": "CK9246-101",
       "styleCode": "CK9246-101",
       "name": "Jordan 3 Retro Orange Citrus (Women's)",
       "brand": "Jordan",
@@ -1546,7 +1546,7 @@
     },
     {
       "slug": "nike-air-force-1-07-black-black",
-      "ticker": "315122001C",
+      "ticker": "315122-001/CW2288-001",
       "styleCode": "315122-001/CW2288-001",
       "name": "Nike Air Force 1 Low '07 Black",
       "brand": "Nike",
@@ -1565,7 +1565,7 @@
     },
     {
       "slug": "nike-mind-001-slide-mineral-slate",
-      "ticker": "HQ4307300",
+      "ticker": "HQ4307-300",
       "styleCode": "HQ4307-300",
       "name": "Nike Mind 001 Mineral Slate Light Pumice Hyper Crimson Metallic Platinum",
       "brand": "Nike",
@@ -1603,7 +1603,7 @@
     },
     {
       "slug": "asics-gel-1130-white-clay-canyon",
-      "ticker": "1201A25611",
+      "ticker": "1201A256-113",
       "styleCode": "1201A256-113",
       "name": "ASICS Gel-1130 White Clay Canyon",
       "brand": "ASICS",
@@ -1622,7 +1622,7 @@
     },
     {
       "slug": "nike-air-foamposite-one-tianjin-20",
-      "ticker": "IR2078100",
+      "ticker": "IR2078-100",
       "styleCode": "IR2078-100",
       "name": "Nike Air Foamposite One Tianjin 2.0",
       "brand": "Nike",
@@ -1641,7 +1641,7 @@
     },
     {
       "slug": "air-jordan-3-retro-black-cement-2024",
-      "ticker": "DN3707010",
+      "ticker": "DN3707-010",
       "styleCode": "DN3707-010",
       "name": "Jordan 3 Retro OG Black Cement (2024)",
       "brand": "Jordan",
@@ -1660,7 +1660,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-chicago-2025",
-      "ticker": "HQ6998600",
+      "ticker": "HQ6998-600",
       "styleCode": "HQ6998-600",
       "name": "Jordan 1 Retro Low OG Chicago (2025)",
       "brand": "Jordan",
@@ -1679,7 +1679,7 @@
     },
     {
       "slug": "air-jordan-5-retro-fire-red-black-tongue-2025",
-      "ticker": "HQ7978101",
+      "ticker": "HQ7978-101",
       "styleCode": "HQ7978-101",
       "name": "Jordan 5 Retro Fire Red Black Tongue (2025)",
       "brand": "Jordan",
@@ -1736,7 +1736,7 @@
     },
     {
       "slug": "air-jordan-11-retro-legend-blue-2024",
-      "ticker": "CT8012104",
+      "ticker": "CT8012-104",
       "styleCode": "CT8012-104",
       "name": "Jordan 11 Retro Legend Blue (2024)",
       "brand": "Jordan",
@@ -1755,7 +1755,7 @@
     },
     {
       "slug": "nike-mind-001-slide-geode-teal-light-menta",
-      "ticker": "HQ4307301",
+      "ticker": "HQ4307-301",
       "styleCode": "HQ4307-301",
       "name": "Nike Mind 001 Slide Geode Teal Light Menta",
       "brand": "Nike",
@@ -1774,7 +1774,7 @@
     },
     {
       "slug": "asics-gel-kayano-14-black-pure-silver",
-      "ticker": "1201A01900",
+      "ticker": "1201A019-006",
       "styleCode": "1201A019-006",
       "name": "ASICS Gel-Kayano 14 Black Pure Silver",
       "brand": "ASICS",
@@ -1793,7 +1793,7 @@
     },
     {
       "slug": "air-jordan-4-retro-bred-reimagined",
-      "ticker": "FV5029006",
+      "ticker": "FV5029-006",
       "styleCode": "FV5029-006",
       "name": "Jordan 4 Retro Bred Reimagined",
       "brand": "Jordan",
@@ -1812,7 +1812,7 @@
     },
     {
       "slug": "asics-gel-1130-white-cloud-grey",
-      "ticker": "1201A25611",
+      "ticker": "1201A256-118",
       "styleCode": "1201A256-118",
       "name": "ASICS Gel-1130 White Cloud Grey",
       "brand": "ASICS",
@@ -1831,7 +1831,7 @@
     },
     {
       "slug": "air-jordan-4-retro-military-blue-2024",
-      "ticker": "FV5029141",
+      "ticker": "FV5029-141",
       "styleCode": "FV5029-141",
       "name": "Jordan 4 Retro Military Blue (2024)",
       "brand": "Jordan",
@@ -1888,7 +1888,7 @@
     },
     {
       "slug": "onitsuka-tiger-mexico-66-birch-peacoat",
-      "ticker": "1183C10220",
+      "ticker": "1183C102-200/DL408-1659",
       "styleCode": "1183C102-200/DL408-1659",
       "name": "Onitsuka Tiger Mexico 66 Birch Peacoat",
       "brand": "ASICS",
@@ -1907,7 +1907,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-sp-fragment-x-union-la-varsity-red-sport-royal",
-      "ticker": "IO7847002",
+      "ticker": "IO7847-002",
       "styleCode": "IO7847-002",
       "name": "Jordan 1 Retro High OG SP Fragment x Union LA Varsity Red Sport Royal",
       "brand": "Jordan",
@@ -1926,7 +1926,7 @@
     },
     {
       "slug": "air-jordan-12-retro-bloodline-gs",
-      "ticker": "153265003",
+      "ticker": "153265-003",
       "styleCode": "153265-003",
       "name": "Jordan 12 Retro Bloodline (GS)",
       "brand": "Jordan",
@@ -1945,7 +1945,7 @@
     },
     {
       "slug": "asics-gel-kayano-14-cream-sweet-pink",
-      "ticker": "1203A53710",
+      "ticker": "1203A537-103",
       "styleCode": "1203A537-103",
       "name": "ASICS GEL-Kayano 14 Cream Sweet Pink",
       "brand": "ASICS",
@@ -1964,7 +1964,7 @@
     },
     {
       "slug": "nike-mind-001-slide-blackened-blue-game-royal",
-      "ticker": "HQ4307400",
+      "ticker": "HQ4307-400",
       "styleCode": "HQ4307-400",
       "name": "Nike Mind 001 Slide Blackened Blue Game Royal",
       "brand": "Nike",
@@ -1983,7 +1983,7 @@
     },
     {
       "slug": "nike-zoom-vomero-5-photon-dust-metallic-silver-w",
-      "ticker": "FD0884025",
+      "ticker": "FD0884-025",
       "styleCode": "FD0884-025",
       "name": "Nike Zoom Vomero 5 Photon Dust Metallic Silver (Women's)",
       "brand": "Nike",
@@ -2002,7 +2002,7 @@
     },
     {
       "slug": "nike-air-max-1-atlanta-braves-city-connect-2026",
-      "ticker": "IQ2932100",
+      "ticker": "IQ2932-100",
       "styleCode": "IQ2932-100",
       "name": "Nike Air Max 1 Atlanta Braves City Connect (2026)",
       "brand": "Nike",
@@ -2021,7 +2021,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-medium-olive",
-      "ticker": "HQ6998200",
+      "ticker": "HQ6998-200",
       "styleCode": "HQ6998-200",
       "name": "Jordan 1 Retro Low OG Medium Olive",
       "brand": "Jordan",
@@ -2040,7 +2040,7 @@
     },
     {
       "slug": "nike-kobe-5-protro-caitlin-clark-rookie-of-the-year",
-      "ticker": "IV2712001",
+      "ticker": "IV2712-001",
       "styleCode": "IV2712-001",
       "name": "Nike Kobe 5 Protro Caitlin Clark Rookie of the Year",
       "brand": "Nike",
@@ -2078,7 +2078,7 @@
     },
     {
       "slug": "nike-kobe-6-protro-asg-hollywood-3d-2026",
-      "ticker": "IQ3902002",
+      "ticker": "IQ3902-002",
       "styleCode": "IQ3902-002",
       "name": "Nike Kobe 6 Protro ASG Hollywood 3D (2026)",
       "brand": "Nike",
@@ -2097,7 +2097,7 @@
     },
     {
       "slug": "nike-blazer-mid-77-vintage-white-black",
-      "ticker": "BQ6806100",
+      "ticker": "BQ6806-100",
       "styleCode": "BQ6806-100",
       "name": "Nike Blazer Mid 77 Vintage White Black",
       "brand": "Nike",
@@ -2116,7 +2116,7 @@
     },
     {
       "slug": "air-jordan-4-retro-fear-2024",
-      "ticker": "FQ8138002",
+      "ticker": "FQ8138-002",
       "styleCode": "FQ8138-002",
       "name": "Jordan 4 Retro Fear (2024)",
       "brand": "Jordan",
@@ -2135,7 +2135,7 @@
     },
     {
       "slug": "nike-air-force-1-low-patent-leather-dark-team-red-safety-orange",
-      "ticker": "IO4489601",
+      "ticker": "IO4489-601",
       "styleCode": "IO4489-601",
       "name": "Nike Air Force 1 Low Patent Leather Dark Team Red Safety Orange",
       "brand": "Nike",
@@ -2154,7 +2154,7 @@
     },
     {
       "slug": "air-jordan-8-retro-white-true-red-2025",
-      "ticker": "305381100",
+      "ticker": "305381-100",
       "styleCode": "305381-100",
       "name": "Jordan 8 Retro White True Red (2025)",
       "brand": "Jordan",
@@ -2173,7 +2173,7 @@
     },
     {
       "slug": "air-jordan-11-retro-low-bred-2025",
-      "ticker": "FV5104006",
+      "ticker": "FV5104-006",
       "styleCode": "FV5104-006",
       "name": "Jordan 11 Retro Low Bred (2025)",
       "brand": "Jordan",
@@ -2230,7 +2230,7 @@
     },
     {
       "slug": "air-jordan-3-retro-brazil",
-      "ticker": "IV4871400",
+      "ticker": "IV4871-400",
       "styleCode": "IV4871-400",
       "name": "Jordan 3 Retro Brazil",
       "brand": "Jordan",
@@ -2249,7 +2249,7 @@
     },
     {
       "slug": "nike-air-griffey-max-1-white-freshwater-2021",
-      "ticker": "DD8558100",
+      "ticker": "DD8558-100",
       "styleCode": "DD8558-100",
       "name": "Nike Air Griffey Max 1 White Fresh Water Black",
       "brand": "Nike",
@@ -2268,7 +2268,7 @@
     },
     {
       "slug": "nike-vomero-5-triple-black",
-      "ticker": "BV1358003",
+      "ticker": "BV1358-003",
       "styleCode": "BV1358-003",
       "name": "Nike Zoom Vomero 5 Triple Black",
       "brand": "Nike",
@@ -2287,7 +2287,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-sp-travis-scott-medium-olive",
-      "ticker": "DM7866200",
+      "ticker": "DM7866-200",
       "styleCode": "DM7866-200",
       "name": "Jordan 1 Retro Low OG SP Travis Scott Medium Olive",
       "brand": "Jordan",
@@ -2306,7 +2306,7 @@
     },
     {
       "slug": "air-jordan-4-retro-pale-ivory-sierra-red-womens",
-      "ticker": "HV0823108",
+      "ticker": "HV0823-108",
       "styleCode": "HV0823-108",
       "name": "Jordan 4 Retro Valentine's Day Sierra Red (Women's)",
       "brand": "Jordan",
@@ -2325,7 +2325,7 @@
     },
     {
       "slug": "air-jordan-3-retro-spring-is-in-the-air",
-      "ticker": "IF4396100",
+      "ticker": "IF4396-100",
       "styleCode": "IF4396-100",
       "name": "Jordan 3 Retro Spring Is In The Air",
       "brand": "Jordan",
@@ -2344,7 +2344,7 @@
     },
     {
       "slug": "air-jordan-11-retro-gamma-blue-2025-gs",
-      "ticker": "378038047",
+      "ticker": "378038-047",
       "styleCode": "378038-047",
       "name": "Jordan 11 Retro Gamma Blue (2025) (GS)",
       "brand": "Jordan",
@@ -2363,7 +2363,7 @@
     },
     {
       "slug": "timberland-6-black-nubuck",
-      "ticker": "TB01007300",
+      "ticker": "TB010073-009/TB010073-001/TB0100730011-001/TB110073-001",
       "styleCode": "TB010073-009/TB010073-001/TB0100730011-001/TB110073-001",
       "name": "Timberland 6\" Boot Black Nubuck Premium",
       "brand": "Timberland",
@@ -2382,7 +2382,7 @@
     },
     {
       "slug": "asics-gel-1130-black-graphite-grey",
-      "ticker": "1201A25600",
+      "ticker": "1201A256-002",
       "styleCode": "1201A256-002",
       "name": "ASICS Gel-1130 Black Graphite Grey",
       "brand": "ASICS",
@@ -2401,7 +2401,7 @@
     },
     {
       "slug": "air-jordan-5-retro-medium-soft-pink",
-      "ticker": "HQ7978102",
+      "ticker": "HQ7978-102",
       "styleCode": "HQ7978-102",
       "name": "Jordan 5 Retro Medium Soft Pink",
       "brand": "Jordan",
@@ -2420,7 +2420,7 @@
     },
     {
       "slug": "air-jordan-1-low-midnight-navy-neutral-grey",
-      "ticker": "553558146",
+      "ticker": "553558-146",
       "styleCode": "553558-146",
       "name": "Jordan 1 Low Midnight Navy Neutral Grey",
       "brand": "Jordan",
@@ -2439,7 +2439,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-sp-travis-scott-velvet-brown",
-      "ticker": "DM7866202",
+      "ticker": "DM7866-202",
       "styleCode": "DM7866-202",
       "name": "Jordan 1 Retro Low OG SP Travis Scott Velvet Brown",
       "brand": "Jordan",
@@ -2458,7 +2458,7 @@
     },
     {
       "slug": "asics-gel-nyc-cream-cloud-grey",
-      "ticker": "1203A66310",
+      "ticker": "1203A663-101",
       "styleCode": "1203A663-101",
       "name": "ASICS Gel-NYC Cream Cloud Grey",
       "brand": "ASICS",
@@ -2496,7 +2496,7 @@
     },
     {
       "slug": "nike-dunk-low-white-black-2021-w",
-      "ticker": "DD1503101",
+      "ticker": "DD1503-101",
       "styleCode": "DD1503-101",
       "name": "Nike Dunk Low Retro White Black Panda (Women's)",
       "brand": "Nike",
@@ -2515,7 +2515,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-shattered-backboard-2025",
-      "ticker": "DZ5485008",
+      "ticker": "DZ5485-008",
       "styleCode": "DZ5485-008",
       "name": "Jordan 1 Retro High OG Shattered Backboard (2025)",
       "brand": "Jordan",
@@ -2534,7 +2534,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-sp-travis-scott-canary-womens",
-      "ticker": "DZ4137700",
+      "ticker": "DZ4137-700",
       "styleCode": "DZ4137-700",
       "name": "Jordan 1 Retro Low OG SP Travis Scott Canary (Women's)",
       "brand": "Jordan",
@@ -2553,7 +2553,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-flight-club",
-      "ticker": "II9811001",
+      "ticker": "II9811-001",
       "styleCode": "II9811-001",
       "name": "Jordan 1 Retro High OG Flight Club",
       "brand": "Jordan",
@@ -2572,7 +2572,7 @@
     },
     {
       "slug": "nike-air-force-1-low-patent-leather-topaz-gold-pine-green",
-      "ticker": "IO4489700",
+      "ticker": "IO4489-700",
       "styleCode": "IO4489-700",
       "name": "Nike Air Force 1 Low Patent Leather Topaz Gold Pine Green",
       "brand": "Nike",
@@ -2610,7 +2610,7 @@
     },
     {
       "slug": "birkenstock-boston-soft-footbed-suede-black",
-      "ticker": "0660471066",
+      "ticker": "0660471/0660473",
       "styleCode": "0660471/0660473",
       "name": "Birkenstock Boston Soft Footbed Suede Black",
       "brand": "Birkenstock",
@@ -2648,7 +2648,7 @@
     },
     {
       "slug": "nike-kobe-11-elite-low-protro-fade-to-black",
-      "ticker": "IM4260001",
+      "ticker": "IM4260-001",
       "styleCode": "IM4260-001",
       "name": "Nike Kobe 11 Elite Low Protro Fade to Black (2026)",
       "brand": "Nike",
@@ -2686,7 +2686,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-zion-williamson-voodoo-alternate",
-      "ticker": "IH2309500",
+      "ticker": "IH2309-500",
       "styleCode": "IH2309-500",
       "name": "Jordan 1 Retro Low OG Zion Williamson Voodoo Alternate",
       "brand": "Jordan",
@@ -2705,7 +2705,7 @@
     },
     {
       "slug": "nike-mind-001-slide-black-chrome-womens",
-      "ticker": "HQ4309001",
+      "ticker": "HQ4309-001",
       "styleCode": "HQ4309-001",
       "name": "Nike Mind 001 Slide Black Chrome (Women's)",
       "brand": "Nike",
@@ -2724,7 +2724,7 @@
     },
     {
       "slug": "nike-mind-001-slide-sail-womens",
-      "ticker": "HQ4309100",
+      "ticker": "HQ4309-100",
       "styleCode": "HQ4309-100",
       "name": "Nike Mind 001 Slide Sail (Women's)",
       "brand": "Nike",
@@ -2743,7 +2743,7 @@
     },
     {
       "slug": "air-jordan-3-retro-family-affair",
-      "ticker": "DN3707202",
+      "ticker": "DN3707-202",
       "styleCode": "DN3707-202",
       "name": "Jordan 3 Retro Family Affair",
       "brand": "Jordan",
@@ -2762,7 +2762,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-sail",
-      "ticker": "HQ6998100",
+      "ticker": "HQ6998-100",
       "styleCode": "HQ6998-100",
       "name": "Jordan 1 Retro Low OG Sail",
       "brand": "Jordan",
@@ -2800,7 +2800,7 @@
     },
     {
       "slug": "asics-gel-1130-white-black",
-      "ticker": "1201B01910",
+      "ticker": "1201B019-100",
       "styleCode": "1201B019-100",
       "name": "ASICS Gel-1130 White Black",
       "brand": "ASICS",
@@ -2838,7 +2838,7 @@
     },
     {
       "slug": "nike-kobe-11-protro-mamba-day",
-      "ticker": "IU4902900",
+      "ticker": "IU4902-900",
       "styleCode": "IU4902-900",
       "name": "Nike Kobe 11 Protro Mamba Day",
       "brand": "Nike",
@@ -2876,7 +2876,7 @@
     },
     {
       "slug": "nike-air-foamposite-pro-red-october-2026",
-      "ticker": "HF0794600",
+      "ticker": "HF0794-600",
       "styleCode": "HF0794-600",
       "name": "Nike Air Foamposite Pro Red October (2026)",
       "brand": "Nike",
@@ -2895,7 +2895,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-chicago-reimagined-lost-and-found",
-      "ticker": "DZ5485612",
+      "ticker": "DZ5485-612",
       "styleCode": "DZ5485-612",
       "name": "Jordan 1 Retro High OG Chicago Lost and Found",
       "brand": "Jordan",
@@ -2914,7 +2914,7 @@
     },
     {
       "slug": "nike-mind-002-light-smoke-grey",
-      "ticker": "HQ4308003",
+      "ticker": "HQ4308-003",
       "styleCode": "HQ4308-003",
       "name": "Nike Mind 002 Light Smoke Grey",
       "brand": "Nike",
@@ -2952,7 +2952,7 @@
     },
     {
       "slug": "air-jordan-11-retro-rare-air",
-      "ticker": "IH0296400",
+      "ticker": "IH0296-400",
       "styleCode": "IH0296-400",
       "name": "Jordan 11 Retro Rare Air",
       "brand": "Jordan",
@@ -2971,9 +2971,9 @@
     },
     {
       "slug": "air-jordan-3-retro-levis-black",
-      "ticker": "IR0914400",
+      "ticker": "IR0914-400",
       "styleCode": "IR0914-400",
-      "name": "Jordan 3 Retro Levi’s Black",
+      "name": "Jordan 3 Retro Levi\u2019s Black",
       "brand": "Jordan",
       "year": 2026,
       "releaseDate": "2026-02-21",
@@ -3028,7 +3028,7 @@
     },
     {
       "slug": "air-jordan-12-retro-french-blue-2025",
-      "ticker": "CT8013114",
+      "ticker": "CT8013-114",
       "styleCode": "CT8013-114",
       "name": "Jordan 12 Retro French Blue (2025)",
       "brand": "Jordan",
@@ -3047,7 +3047,7 @@
     },
     {
       "slug": "air-jordan-4-retro-og-sp-undefeated-2025",
-      "ticker": "IB1519200",
+      "ticker": "IB1519-200",
       "styleCode": "IB1519-200",
       "name": "Jordan 4 Retro OG SP Undefeated (2025)",
       "brand": "Jordan",
@@ -3066,7 +3066,7 @@
     },
     {
       "slug": "air-jordan-11-low-td-cleat-patent-black",
-      "ticker": "IQ8113001",
+      "ticker": "IQ8113-001",
       "styleCode": "IQ8113-001",
       "name": "Jordan 11 Low TD Black Anthracite Metallic Silver",
       "brand": "Jordan",
@@ -3085,7 +3085,7 @@
     },
     {
       "slug": "nike-kobe-6-protro-wnba",
-      "ticker": "IH1871800",
+      "ticker": "IH1871-800",
       "styleCode": "IH1871-800",
       "name": "Nike Kobe 6 Protro Total Orange",
       "brand": "Nike",
@@ -3104,7 +3104,7 @@
     },
     {
       "slug": "air-jordan-4-retro-white-cement-2025-gs",
-      "ticker": "IB4171100",
+      "ticker": "IB4171-100",
       "styleCode": "IB4171-100",
       "name": "Jordan 4 Retro White Cement (2025) (GS)",
       "brand": "Jordan",
@@ -3123,7 +3123,7 @@
     },
     {
       "slug": "air-jordan-5-retro-white-metallic-2026-gs",
-      "ticker": "HQ7980103",
+      "ticker": "HQ7980-103",
       "styleCode": "HQ7980-103",
       "name": "Jordan 5 Retro White Metallic (2026) (GS)",
       "brand": "Jordan",
@@ -3142,7 +3142,7 @@
     },
     {
       "slug": "asics-gel-nyc-oyster-grey",
-      "ticker": "1201A78910",
+      "ticker": "1201A789-103",
       "styleCode": "1201A789-103",
       "name": "ASICS Gel-NYC Oyster Grey",
       "brand": "ASICS",
@@ -3161,7 +3161,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-black-toe-reimagined",
-      "ticker": "DZ5485106",
+      "ticker": "DZ5485-106",
       "styleCode": "DZ5485-106",
       "name": "Jordan 1 Retro High OG Black Toe Reimagined",
       "brand": "Jordan",
@@ -3199,7 +3199,7 @@
     },
     {
       "slug": "nike-mind-001-slide-white-speed-red",
-      "ticker": "HQ4307101",
+      "ticker": "HQ4307-101",
       "styleCode": "HQ4307-101",
       "name": "Nike Mind 001 Slide White Speed Red",
       "brand": "Nike",
@@ -3218,7 +3218,7 @@
     },
     {
       "slug": "nike-zoom-vomero-5-metallic-gold-womens",
-      "ticker": "HF7723001",
+      "ticker": "HF7723-001",
       "styleCode": "HF7723-001",
       "name": "Nike Zoom Vomero 5 Metallic Gold (Women's)",
       "brand": "Nike",
@@ -3256,7 +3256,7 @@
     },
     {
       "slug": "nike-kobe-5-protro-caitlin-clark-indiana-fever",
-      "ticker": "IM3207400",
+      "ticker": "IM3207-400",
       "styleCode": "IM3207-400",
       "name": "Nike Kobe 5 Protro Caitlin Clark Indiana Fever",
       "brand": "Nike",
@@ -3294,7 +3294,7 @@
     },
     {
       "slug": "asics-gel-1130-black-cream",
-      "ticker": "1203A60900",
+      "ticker": "1203A609-001",
       "styleCode": "1203A609-001",
       "name": "ASICS Gel-1130 Black Cream",
       "brand": "ASICS",
@@ -3313,7 +3313,7 @@
     },
     {
       "slug": "nike-book-2-sedona-mcdonalds",
-      "ticker": "IR6443100I",
+      "ticker": "IR6443-100 / IR6445-100",
       "styleCode": "IR6443-100 / IR6445-100",
       "name": "Nike Book 2 Sedona McDonald's",
       "brand": "Nike",
@@ -3332,7 +3332,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-sp-travis-scott-sail-tropical-pink-ps",
-      "ticker": "IQ7605101",
+      "ticker": "IQ7605-101",
       "styleCode": "IQ7605-101",
       "name": "Jordan 1 Retro Low OG SP Travis Scott Sail Tropical Pink (PS)",
       "brand": "Jordan",
@@ -3351,7 +3351,7 @@
     },
     {
       "slug": "air-jordan-3-retro-white-cement-reimagined",
-      "ticker": "DN3707100",
+      "ticker": "DN3707-100",
       "styleCode": "DN3707-100",
       "name": "Jordan 3 Retro White Cement Reimagined",
       "brand": "Jordan",
@@ -3370,7 +3370,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-unc-reimagined",
-      "ticker": "DZ5485402",
+      "ticker": "DZ5485-402",
       "styleCode": "DZ5485-402",
       "name": "Jordan 1 Retro High OG UNC Reimagined",
       "brand": "Jordan",
@@ -3389,7 +3389,7 @@
     },
     {
       "slug": "adidas-samba-black-white-gum",
-      "ticker": "B75807BZ00",
+      "ticker": "B75807/BZ0058",
       "styleCode": "B75807/BZ0058",
       "name": "adidas Samba OG Black White Gum",
       "brand": "adidas",
@@ -3408,7 +3408,7 @@
     },
     {
       "slug": "air-jordan-5-retro-grape-2025",
-      "ticker": "HQ7978100",
+      "ticker": "HQ7978-100",
       "styleCode": "HQ7978-100",
       "name": "Jordan 5 Retro Grape (2025)",
       "brand": "Jordan",
@@ -3427,7 +3427,7 @@
     },
     {
       "slug": "nike-air-max-95-og-big-bubble-granite",
-      "ticker": "HM4740007",
+      "ticker": "HM4740-007",
       "styleCode": "HM4740-007",
       "name": "Nike Air Max 95 OG Big Bubble Granite",
       "brand": "Nike",
@@ -3446,7 +3446,7 @@
     },
     {
       "slug": "nike-air-max-1-padres-city-connect-2026",
-      "ticker": "IQ2847400",
+      "ticker": "IQ2847-400",
       "styleCode": "IQ2847-400",
       "name": "Nike Air Max 1 Padres City Connect (2026)",
       "brand": "Nike",
@@ -3465,7 +3465,7 @@
     },
     {
       "slug": "nike-air-max-plus-triple-black",
-      "ticker": "604133050",
+      "ticker": "604133-050",
       "styleCode": "604133-050",
       "name": "Nike Air Max Plus Triple Black",
       "brand": "Nike",
@@ -3503,7 +3503,7 @@
     },
     {
       "slug": "air-jordan-11-retro-low-university-blue-2026-gs",
-      "ticker": "FV5121100",
+      "ticker": "FV5121-100",
       "styleCode": "FV5121-100",
       "name": "Jordan 11 Retro Low University Blue (2026) (GS)",
       "brand": "Jordan",
@@ -3541,7 +3541,7 @@
     },
     {
       "slug": "nike-ja-3-jurassic-park-green-spark",
-      "ticker": "IU7240300I",
+      "ticker": "IU7240-300 / IU7239-300",
       "styleCode": "IU7240-300 / IU7239-300",
       "name": "Nike Ja 3 Jurassic Park Explorer",
       "brand": "Nike",
@@ -3560,7 +3560,7 @@
     },
     {
       "slug": "air-jordan-11-retro-dmp-defining-moments-2023",
-      "ticker": "CT8012170",
+      "ticker": "CT8012-170",
       "styleCode": "CT8012-170",
       "name": "Jordan 11 Retro DMP Gratitude (2023)",
       "brand": "Jordan",
@@ -3579,7 +3579,7 @@
     },
     {
       "slug": "nike-air-force-1-low-sb-light-orewood-brown-pink",
-      "ticker": "HM8517100",
+      "ticker": "HM8517-100",
       "styleCode": "HM8517-100",
       "name": "Nike Air Force 1 Low SB Light Orewood Brown Pink",
       "brand": "Nike",
@@ -3598,7 +3598,7 @@
     },
     {
       "slug": "onitsuka-tiger-mexico-66-black-white",
-      "ticker": "1183C10200",
+      "ticker": "1183C102-001/DL408-9001",
       "styleCode": "1183C102-001/DL408-9001",
       "name": "Onitsuka Tiger Mexico 66 Black White",
       "brand": "ASICS",
@@ -3636,7 +3636,7 @@
     },
     {
       "slug": "nike-ja-3-jurassic-park-anthracite",
-      "ticker": "IU7240001I",
+      "ticker": "IU7240-001 / IU7239-001",
       "styleCode": "IU7240-001 / IU7239-001",
       "name": "Nike Ja 3 Jurassic Park Raptor",
       "brand": "Nike",
@@ -3655,7 +3655,7 @@
     },
     {
       "slug": "nikecraft-general-purpose-shoe-tom-sachs-summit-white",
-      "ticker": "DA6672100",
+      "ticker": "DA6672-100",
       "styleCode": "DA6672-100",
       "name": "NikeCraft General Purpose Shoe Tom Sachs Bricolage (Women's)",
       "brand": "Nike",
@@ -3674,7 +3674,7 @@
     },
     {
       "slug": "air-jordan-8-retro-aqua-2025",
-      "ticker": "305381006",
+      "ticker": "305381-006",
       "styleCode": "305381-006",
       "name": "Jordan 8 Retro Aqua (2025)",
       "brand": "Jordan",
@@ -3731,7 +3731,7 @@
     },
     {
       "slug": "nike-ja-3-daybreak",
-      "ticker": "HF2793201H",
+      "ticker": "HF2793-201/HF2794-201",
       "styleCode": "HF2793-201/HF2794-201",
       "name": "Nike Ja 3 Daybreak",
       "brand": "Nike",
@@ -3750,7 +3750,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-sp-travis-scott-shy-pink-ps",
-      "ticker": "IQ7605100",
+      "ticker": "IQ7605-100",
       "styleCode": "IQ7605-100",
       "name": "Jordan 1 Retro Low OG SP Travis Scott Shy Pink (PS)",
       "brand": "Jordan",
@@ -3769,7 +3769,7 @@
     },
     {
       "slug": "nike-ja-3-coconut-milk",
-      "ticker": "HF2793101H",
+      "ticker": "HF2793-101/HF2794-101",
       "styleCode": "HF2793-101/HF2794-101",
       "name": "Nike Ja 3 Sound Check",
       "brand": "Nike",
@@ -3788,7 +3788,7 @@
     },
     {
       "slug": "nike-air-dt-max-96-low-black-metallic-gold",
-      "ticker": "IF5478001",
+      "ticker": "IF5478-001",
       "styleCode": "IF5478-001",
       "name": "Nike Air DT Max '96 Low Black Metallic Gold",
       "brand": "Nike",
@@ -3807,7 +3807,7 @@
     },
     {
       "slug": "air-jordan-3-retro-black-cat-2025",
-      "ticker": "CT8532001",
+      "ticker": "CT8532-001",
       "styleCode": "CT8532-001",
       "name": "Jordan 3 Retro Black Cat (2025)",
       "brand": "Jordan",
@@ -3826,7 +3826,7 @@
     },
     {
       "slug": "nike-air-max-270-triple-black",
-      "ticker": "AH8050005",
+      "ticker": "AH8050-005",
       "styleCode": "AH8050-005",
       "name": "Nike Air Max 270 Triple Black",
       "brand": "Nike",
@@ -3845,7 +3845,7 @@
     },
     {
       "slug": "nike-air-zoom-gt-cut-dylan-harper-tri-state",
-      "ticker": "CZ0175800C",
+      "ticker": "CZ0175-800 / CZ0176-800",
       "styleCode": "CZ0175-800 / CZ0176-800",
       "name": "Nike Air Zoom GT Cut Dylan Harper Tri-State",
       "brand": "Nike",
@@ -3864,7 +3864,7 @@
     },
     {
       "slug": "nike-mind-002-thunder-blue-chrome",
-      "ticker": "HQ4308400",
+      "ticker": "HQ4308-400",
       "styleCode": "HQ4308-400",
       "name": "Nike Mind 002 Thunder Blue Chrome",
       "brand": "Nike",
@@ -3902,7 +3902,7 @@
     },
     {
       "slug": "nike-air-zoom-gt-cut-unseen-hours-virginia",
-      "ticker": "CZ0175600C",
+      "ticker": "CZ0175-600 / CZ0176-600",
       "styleCode": "CZ0175-600 / CZ0176-600",
       "name": "Nike Air Zoom GT Cut Unseen Hours Virginia",
       "brand": "Nike",
@@ -3921,7 +3921,7 @@
     },
     {
       "slug": "nike-vomero-plus-orange-pulse",
-      "ticker": "HV8150801",
+      "ticker": "HV8150-801",
       "styleCode": "HV8150-801",
       "name": "Nike Vomero Plus Orange Pulse",
       "brand": "Nike",
@@ -3940,7 +3940,7 @@
     },
     {
       "slug": "nike-mercurial-superfly-1-rgn-fg-se-cr7-metallic-gold-star",
-      "ticker": "IQ2995900",
+      "ticker": "IQ2995-900",
       "styleCode": "IQ2995-900",
       "name": "Nike Mercurial Superfly 1 RGN FG SE CR7 Metallic Gold Star",
       "brand": "Nike",
@@ -3959,7 +3959,7 @@
     },
     {
       "slug": "nike-zoom-vomero-5-photon-dust-pink-foam-womens",
-      "ticker": "HF1877001",
+      "ticker": "HF1877-001",
       "styleCode": "HF1877-001",
       "name": "Nike Zoom Vomero 5 Photon Dust Pink Foam (Women's)",
       "brand": "Nike",
@@ -3997,7 +3997,7 @@
     },
     {
       "slug": "nike-kobe-5-protro-lower-merion-aces-away-2026",
-      "ticker": "IM0557001",
+      "ticker": "IM0557-001",
       "styleCode": "IM0557-001",
       "name": "Nike Kobe 5 Protro Lower Merion Aces Away (2026)",
       "brand": "Nike",
@@ -4016,7 +4016,7 @@
     },
     {
       "slug": "air-jordan-3-retro-og-rare-air",
-      "ticker": "IB8967004",
+      "ticker": "IB8967-004",
       "styleCode": "IB8967-004",
       "name": "Jordan 3 Retro OG Rare Air",
       "brand": "Jordan",
@@ -4035,7 +4035,7 @@
     },
     {
       "slug": "nike-ja-3-turbo-green",
-      "ticker": "HF2793300H",
+      "ticker": "HF2793-300 / HF2794-300",
       "styleCode": "HF2793-300 / HF2794-300",
       "name": "Nike Ja 3 Scratch 3.0",
       "brand": "Nike",
@@ -4054,7 +4054,7 @@
     },
     {
       "slug": "nike-ja-3-mink-brown",
-      "ticker": "HF2793200H",
+      "ticker": "HF2793-200/HF2794-200",
       "styleCode": "HF2793-200/HF2794-200",
       "name": "Nike Ja 3 Showstopper",
       "brand": "Nike",
@@ -4073,7 +4073,7 @@
     },
     {
       "slug": "nike-air-zoom-gt-cut-titan-x-dylan-harper-bleached-aqua",
-      "ticker": "IU0779400",
+      "ticker": "IU0779-400",
       "styleCode": "IU0779-400",
       "name": "Nike Air Zoom GT Cut Titan x Dylan Harper Bleached Aqua",
       "brand": "Nike",
@@ -4092,7 +4092,7 @@
     },
     {
       "slug": "nike-ja-3-twelve-time",
-      "ticker": "IQ6755300I",
+      "ticker": "IQ6755-300 / IQ6754-300",
       "styleCode": "IQ6755-300 / IQ6754-300",
       "name": "Nike Ja 3 Twelve Time",
       "brand": "Nike",
@@ -4149,7 +4149,7 @@
     },
     {
       "slug": "air-jordan-4-retro-red-cement",
-      "ticker": "DH6927161",
+      "ticker": "DH6927-161",
       "styleCode": "DH6927-161",
       "name": "Jordan 4 Retro Red Cement",
       "brand": "Jordan",
@@ -4168,7 +4168,7 @@
     },
     {
       "slug": "nike-dunk-low-retro-white-black-gs",
-      "ticker": "CW1590100",
+      "ticker": "CW1590-100",
       "styleCode": "CW1590-100",
       "name": "Nike Dunk Low Retro White Black Panda (GS)",
       "brand": "Nike",
@@ -4206,7 +4206,7 @@
     },
     {
       "slug": "crocs-classic-clog-marvel-spider-man-neo",
-      "ticker": "21148990H",
+      "ticker": "211489-90H",
       "styleCode": "211489-90H",
       "name": "Crocs Classic Clog Marvel Spider-Man Neo",
       "brand": "Crocs",
@@ -4225,7 +4225,7 @@
     },
     {
       "slug": "nike-kobe-9-elite-low-protro-michael-jackson-moonwalker-2025",
-      "ticker": "IM0465500",
+      "ticker": "IM0465-500",
       "styleCode": "IM0465-500",
       "name": "Nike Kobe 9 Elite Low Protro Michael Jackson Moonwalker (2025)",
       "brand": "Nike",
@@ -4244,7 +4244,7 @@
     },
     {
       "slug": "asics-gel-kayano-14-white-ivory",
-      "ticker": "1203A53711",
+      "ticker": "1203A537-111",
       "styleCode": "1203A537-111",
       "name": "ASICS Gel-Kayano 14 White Ivory",
       "brand": "ASICS",
@@ -4263,7 +4263,7 @@
     },
     {
       "slug": "nike-air-foamposite-pro-voltage-2026",
-      "ticker": "HF0794002",
+      "ticker": "HF0794-002",
       "styleCode": "HF0794-002",
       "name": "Nike Air Foamposite Pro Black Voltage Yellow",
       "brand": "Nike",
@@ -4282,7 +4282,7 @@
     },
     {
       "slug": "nike-mind-001-flyknit-slide-hyper-royal-black",
-      "ticker": "IR2175400",
+      "ticker": "IR2175-400",
       "styleCode": "IR2175-400",
       "name": "Nike Mind 001 Flyknit Slide Hyper Royal Black",
       "brand": "Nike",
@@ -4301,7 +4301,7 @@
     },
     {
       "slug": "air-jordan-4-retro-white-thunder",
-      "ticker": "FQ8138001",
+      "ticker": "FQ8138-001",
       "styleCode": "FQ8138-001",
       "name": "Jordan 4 Retro White Thunder",
       "brand": "Jordan",
@@ -4320,7 +4320,7 @@
     },
     {
       "slug": "nike-ja-3-light-show",
-      "ticker": "HF2794100H",
+      "ticker": "HF2794-100/HF2793-100",
       "styleCode": "HF2794-100/HF2793-100",
       "name": "Nike Ja 3 Light Show",
       "brand": "Nike",
@@ -4339,7 +4339,7 @@
     },
     {
       "slug": "nike-air-force-1-low-pegasus-pack-phantom",
-      "ticker": "IQ1119011",
+      "ticker": "IQ1119-011",
       "styleCode": "IQ1119-011",
       "name": "Nike Air Force 1 Low Pegasus Pack Phantom",
       "brand": "Nike",
@@ -4358,7 +4358,7 @@
     },
     {
       "slug": "air-jordan-14-retro-black-university-blue-2026-gs",
-      "ticker": "487524007",
+      "ticker": "487524-007",
       "styleCode": "487524-007",
       "name": "Jordan 14 Retro Black University Blue (2026) (GS)",
       "brand": "Jordan",
@@ -4377,7 +4377,7 @@
     },
     {
       "slug": "vans-otw-era-95-satoshi-nakamoto-round-lucky-charm",
-      "ticker": "VN000EFEBL",
+      "ticker": "VN000EFEBLK",
       "styleCode": "VN000EFEBLK",
       "name": "Vans OTW Era 95 Satoshi Nakamoto Round Lucky Charm",
       "brand": "Vans",
@@ -4396,7 +4396,7 @@
     },
     {
       "slug": "air-jordan-12-retro-flu-game-2025",
-      "ticker": "CT8013002",
+      "ticker": "CT8013-002",
       "styleCode": "CT8013-002",
       "name": "Jordan 12 Retro Flu Game (2025)",
       "brand": "Jordan",
@@ -4415,7 +4415,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-phantom-pine-green",
-      "ticker": "IR2283030",
+      "ticker": "IR2283-030",
       "styleCode": "IR2283-030",
       "name": "Jordan 1 Retro Low OG Phantom Pine Green",
       "brand": "Jordan",
@@ -4434,7 +4434,7 @@
     },
     {
       "slug": "air-jordan-5-retro-og-black-metallic-reimagined",
-      "ticker": "HF3975001",
+      "ticker": "HF3975-001",
       "styleCode": "HF3975-001",
       "name": "Jordan 5 Retro OG Black Metallic Reimagined",
       "brand": "Jordan",
@@ -4491,7 +4491,7 @@
     },
     {
       "slug": "air-jordan-4-retro-bred-reimagined-gs",
-      "ticker": "FQ8213006",
+      "ticker": "FQ8213-006",
       "styleCode": "FQ8213-006",
       "name": "Jordan 4 Retro Bred Reimagined (GS)",
       "brand": "Jordan",
@@ -4529,7 +4529,7 @@
     },
     {
       "slug": "nike-sb-dunk-low-dashawn-jordan-copperhead",
-      "ticker": "IB6208200",
+      "ticker": "IB6208-200",
       "styleCode": "IB6208-200",
       "name": "Nike SB Dunk Low Dashawn Jordan Copperhead",
       "brand": "Nike",
@@ -4548,7 +4548,7 @@
     },
     {
       "slug": "nike-kobe-8-protro-what-the-2025",
-      "ticker": "HM9621900",
+      "ticker": "HM9621-900",
       "styleCode": "HM9621-900",
       "name": "Nike Kobe 8 Protro What The (2025)",
       "brand": "Nike",
@@ -4586,7 +4586,7 @@
     },
     {
       "slug": "air-jordan-4-retro-rare-air-gs",
-      "ticker": "IB4171003",
+      "ticker": "IB4171-003",
       "styleCode": "IB4171-003",
       "name": "Jordan 4 Retro Rare Air (GS)",
       "brand": "Jordan",
@@ -4605,7 +4605,7 @@
     },
     {
       "slug": "nike-zoom-vomero-5-triple-white-womens",
-      "ticker": "IB4397100",
+      "ticker": "IB4397-100",
       "styleCode": "IB4397-100",
       "name": "Nike Zoom Vomero 5 Triple White (Women's)",
       "brand": "Nike",
@@ -4624,7 +4624,7 @@
     },
     {
       "slug": "air-jordan-4-retro-lakers-gs",
-      "ticker": "IB4171500",
+      "ticker": "IB4171-500",
       "styleCode": "IB4171-500",
       "name": "Jordan 4 Retro Lakers (GS)",
       "brand": "Jordan",
@@ -4643,7 +4643,7 @@
     },
     {
       "slug": "air-jordan-4-retro-thunder-2023",
-      "ticker": "DH6927017",
+      "ticker": "DH6927-017",
       "styleCode": "DH6927-017",
       "name": "Jordan 4 Retro Thunder (2023)",
       "brand": "Jordan",
@@ -4662,7 +4662,7 @@
     },
     {
       "slug": "nike-ja-3-cobalt-bliss-metallic-silver",
-      "ticker": "HF2793400H",
+      "ticker": "HF2793-400 / HF2794-400",
       "styleCode": "HF2793-400 / HF2794-400",
       "name": "Nike Ja 3 All-Star",
       "brand": "Nike",
@@ -4700,7 +4700,7 @@
     },
     {
       "slug": "nike-zoom-vomero-5-chrome-toe-womens",
-      "ticker": "HF7723100",
+      "ticker": "HF7723-100",
       "styleCode": "HF7723-100",
       "name": "Nike Zoom Vomero 5 Chrome Toe (Women's)",
       "brand": "Nike",
@@ -4719,7 +4719,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-sp-union-la-chicago-shadow",
-      "ticker": "HV8563600",
+      "ticker": "HV8563-600",
       "styleCode": "HV8563-600",
       "name": "Jordan 1 Retro High OG SP Union LA Chicago Shadow",
       "brand": "Jordan",
@@ -4757,7 +4757,7 @@
     },
     {
       "slug": "air-jordan-4-retro-cozy-girl-womens",
-      "ticker": "HV0823200",
+      "ticker": "HV0823-200",
       "styleCode": "HV0823-200",
       "name": "Jordan 4 Retro Cozy Girl (Women's)",
       "brand": "Jordan",
@@ -4776,7 +4776,7 @@
     },
     {
       "slug": "nike-gt-cut-academy-black-alabaster",
-      "ticker": "FB2599011",
+      "ticker": "FB2599-011",
       "styleCode": "FB2599-011",
       "name": "Nike GT Cut Academy Black Alabaster",
       "brand": "Nike",
@@ -4795,7 +4795,7 @@
     },
     {
       "slug": "air-jordan-4-retro-flight-club-gs",
-      "ticker": "IM4026100",
+      "ticker": "IM4026-100",
       "styleCode": "IM4026-100",
       "name": "Jordan 4 Retro Flight Club (GS)",
       "brand": "Jordan",
@@ -4814,7 +4814,7 @@
     },
     {
       "slug": "air-jordan-11-retro-legend-blue-2024-gs",
-      "ticker": "378038104",
+      "ticker": "378038-104",
       "styleCode": "378038-104",
       "name": "Jordan 11 Retro Legend Blue (2024) (GS)",
       "brand": "Jordan",
@@ -4833,7 +4833,7 @@
     },
     {
       "slug": "nike-air-force-1-low-un-tiffany",
-      "ticker": "HQ2037002",
+      "ticker": "HQ2037-002",
       "styleCode": "HQ2037-002",
       "name": "Nike Air Force 1 Low Un-Tiffany",
       "brand": "Nike",
@@ -4852,7 +4852,7 @@
     },
     {
       "slug": "nike-air-max-2-cb-94-triple-black-2020",
-      "ticker": "DC1411001",
+      "ticker": "DC1411-001",
       "styleCode": "DC1411-001",
       "name": "Nike Air Max 2 CB '94 Triple Black",
       "brand": "Nike",
@@ -4909,7 +4909,7 @@
     },
     {
       "slug": "asics-gel-1130-black-glacier-grey",
-      "ticker": "1201A91000",
+      "ticker": "1201A910-001",
       "styleCode": "1201A910-001",
       "name": "ASICS Gel-1130 Black Glacier Grey",
       "brand": "ASICS",
@@ -4928,7 +4928,7 @@
     },
     {
       "slug": "nike-ja-3-jurassic-park-metallic-silver",
-      "ticker": "IU7240002I",
+      "ticker": "IU7240-002 / IU7239-002",
       "styleCode": "IU7240-002 / IU7239-002",
       "name": "Nike Ja 3 Jurassic Park Cloud Island",
       "brand": "Nike",
@@ -4947,7 +4947,7 @@
     },
     {
       "slug": "nike-kobe-6-protro-dodgers-pe",
-      "ticker": "CW2190400",
+      "ticker": "CW2190-400",
       "styleCode": "CW2190-400",
       "name": "Nike Kobe 6 Protro Dodgers",
       "brand": "Nike",
@@ -4966,7 +4966,7 @@
     },
     {
       "slug": "under-armour-ua-sola-white-metallic-silver",
-      "ticker": "6005284100",
+      "ticker": "6005284-100",
       "styleCode": "6005284-100",
       "name": "Under Armour UA Sola White Metallic Silver",
       "brand": "Under Armour",
@@ -4985,7 +4985,7 @@
     },
     {
       "slug": "nike-blazer-mid-77-white-black-w",
-      "ticker": "CZ1055100",
+      "ticker": "CZ1055-100",
       "styleCode": "CZ1055-100",
       "name": "Nike Blazer Mid 77 White Black (Women's)",
       "brand": "Nike",
@@ -5023,7 +5023,7 @@
     },
     {
       "slug": "onitsuka-tiger-mexico-66-vintage-birch-black",
-      "ticker": "1183B39120",
+      "ticker": "1183B391-200",
       "styleCode": "1183B391-200",
       "name": "Onitsuka Tiger Mexico 66 Vintage Birch Black",
       "brand": "Onitsuka Tiger",
@@ -5042,7 +5042,7 @@
     },
     {
       "slug": "nike-air-max-95-og-big-bubble-neon-2026-womens",
-      "ticker": "IO9926001",
+      "ticker": "IO9926-001",
       "styleCode": "IO9926-001",
       "name": "Nike Air Max 95 OG Big Bubble Neon (2026) (Women's)",
       "brand": "Nike",
@@ -5061,7 +5061,7 @@
     },
     {
       "slug": "nike-dunk-low-retro-khaki-team-red-pearl-white-womens",
-      "ticker": "IM6687262",
+      "ticker": "IM6687-262",
       "styleCode": "IM6687-262",
       "name": "Nike Dunk Low Retro Khaki Team Red Pearl White (Women's)",
       "brand": "Nike",
@@ -5080,7 +5080,7 @@
     },
     {
       "slug": "vans-old-skool-36-lx-souvenir-asphalt",
-      "ticker": "VN000E8VE4",
+      "ticker": "VN000E8VE4A",
       "styleCode": "VN000E8VE4A",
       "name": "Vans Old Skool 36 LX Souvenir Asphalt",
       "brand": "Vans",
@@ -5118,7 +5118,7 @@
     },
     {
       "slug": "nike-air-max-plus-white",
-      "ticker": "604133139",
+      "ticker": "604133-139",
       "styleCode": "604133-139",
       "name": "Nike Air Max Plus White",
       "brand": "Nike",
@@ -5137,7 +5137,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-nigel-sylvester-better-with-time",
-      "ticker": "IB8958001",
+      "ticker": "IB8958-001",
       "styleCode": "IB8958-001",
       "name": "Jordan 1 Retro Low OG Nigel Sylvester Better With Time",
       "brand": "Jordan",
@@ -5175,8 +5175,8 @@
     },
     {
       "slug": "yzy-ys-01-blue",
-      "ticker": "TOP302",
-      "styleCode": "yzy-ys-01-blue",
+      "ticker": "\u2014",
+      "styleCode": "\u2014",
       "name": "YZY YS-01 Blue",
       "brand": "Yeezy",
       "year": 2025,
@@ -5194,7 +5194,7 @@
     },
     {
       "slug": "nike-moon-shoe-sp-jacquemus-soft-pearl-womens",
-      "ticker": "HV8547002",
+      "ticker": "HV8547-002",
       "styleCode": "HV8547-002",
       "name": "Nike Moon Shoe SP Jacquemus Soft Pearl (Women's)",
       "brand": "Nike",
@@ -5213,7 +5213,7 @@
     },
     {
       "slug": "air-jordan-11-retro-grand-finale-womens",
-      "ticker": "AR0715110",
+      "ticker": "AR0715-110",
       "styleCode": "AR0715-110",
       "name": "Jordan 11 Retro Pearl (Women's)",
       "brand": "Jordan",
@@ -5232,7 +5232,7 @@
     },
     {
       "slug": "air-jordan-11-retro-cool-grey-2021",
-      "ticker": "CT8012005",
+      "ticker": "CT8012-005",
       "styleCode": "CT8012-005",
       "name": "Jordan 11 Retro Cool Grey (2021)",
       "brand": "Jordan",
@@ -5251,7 +5251,7 @@
     },
     {
       "slug": "nike-air-max-95-big-bubble-slate",
-      "ticker": "IH7855100",
+      "ticker": "IH7855-100",
       "styleCode": "IH7855-100",
       "name": "Nike Air Max 95 Big Bubble Slate",
       "brand": "Nike",
@@ -5289,7 +5289,7 @@
     },
     {
       "slug": "air-jordan-1-low-se-concord",
-      "ticker": "DV1309100",
+      "ticker": "DV1309-100",
       "styleCode": "DV1309-100",
       "name": "Jordan 1 Low SE Concord",
       "brand": "Jordan",
@@ -5327,7 +5327,7 @@
     },
     {
       "slug": "nike-shox-r4-puerto-rico",
-      "ticker": "IQ1867474",
+      "ticker": "IQ1867-474",
       "styleCode": "IQ1867-474",
       "name": "Nike Shox R4 Puerto Rico",
       "brand": "Nike",
@@ -5346,7 +5346,7 @@
     },
     {
       "slug": "air-jordan-10-retro-shadow-2025",
-      "ticker": "HJ6779001",
+      "ticker": "HJ6779-001",
       "styleCode": "HJ6779-001",
       "name": "Jordan 10 Retro Shadow (2025)",
       "brand": "Jordan",
@@ -5365,7 +5365,7 @@
     },
     {
       "slug": "nike-mind-001-slide-barely-green-womens",
-      "ticker": "HQ4309300",
+      "ticker": "HQ4309-300",
       "styleCode": "HQ4309-300",
       "name": "Nike Mind 001 Barely Green Hyper Crimson Black Chrome (Women's)",
       "brand": "Nike",
@@ -5384,7 +5384,7 @@
     },
     {
       "slug": "nike-air-force-1-low-07-premium-black-patent",
-      "ticker": "IV2857010",
+      "ticker": "IV2857-010",
       "styleCode": "IV2857-010",
       "name": "Nike Air Force 1 Low '07 Premium Black Patent",
       "brand": "Nike",
@@ -5422,7 +5422,7 @@
     },
     {
       "slug": "nike-air-foamposite-one-stranger-things",
-      "ticker": "IR7336001",
+      "ticker": "IR7336-001",
       "styleCode": "IR7336-001",
       "name": "Nike Air Foamposite One Stranger Things",
       "brand": "Nike",
@@ -5460,7 +5460,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-midnight-navy",
-      "ticker": "DZ5485401",
+      "ticker": "DZ5485-401",
       "styleCode": "DZ5485-401",
       "name": "Jordan 1 Retro High OG Midnight Navy",
       "brand": "Jordan",
@@ -5479,9 +5479,9 @@
     },
     {
       "slug": "air-jordan-3-retro-levis-indigo",
-      "ticker": "IH7959400",
+      "ticker": "IH7959-400",
       "styleCode": "IH7959-400",
-      "name": "Jordan 3 Retro Levi’s Indigo",
+      "name": "Jordan 3 Retro Levi\u2019s Indigo",
       "brand": "Jordan",
       "year": 2026,
       "releaseDate": "2026-02-25",
@@ -5498,7 +5498,7 @@
     },
     {
       "slug": "nike-acg-ldv-dark-sulfur-photo-blue",
-      "ticker": "IF2857700",
+      "ticker": "IF2857-700",
       "styleCode": "IF2857-700",
       "name": "Nike ACG LDV Dark Sulfur Photo Blue",
       "brand": "Nike",
@@ -5536,7 +5536,7 @@
     },
     {
       "slug": "air-jordan-3-retro-teyana-taylor-a-rose-from-harlem-womens",
-      "ticker": "IF3097300",
+      "ticker": "IF3097-300",
       "styleCode": "IF3097-300",
       "name": "Jordan 3 Retro Teyana Taylor Concrete Rose (Women's)",
       "brand": "Jordan",
@@ -5555,7 +5555,7 @@
     },
     {
       "slug": "nike-air-max-90-ultramarine-2026",
-      "ticker": "IU0767001",
+      "ticker": "IU0767-001",
       "styleCode": "IU0767-001",
       "name": "Nike Air Max 90 Ultramarine (2026)",
       "brand": "Nike",
@@ -5574,7 +5574,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-patent-bred",
-      "ticker": "555088063",
+      "ticker": "555088-063",
       "styleCode": "555088-063",
       "name": "Jordan 1 Retro High OG Patent Bred",
       "brand": "Jordan",
@@ -5593,7 +5593,7 @@
     },
     {
       "slug": "air-jordan-4-retro-sb-pine-green",
-      "ticker": "DR5415103",
+      "ticker": "DR5415-103",
       "styleCode": "DR5415-103",
       "name": "Jordan 4 Retro SB Pine Green",
       "brand": "Jordan",
@@ -5612,7 +5612,7 @@
     },
     {
       "slug": "puma-speedcat-og-red-white",
-      "ticker": "39884602",
+      "ticker": "398846-02",
       "styleCode": "398846-02",
       "name": "Puma Speedcat OG Red White",
       "brand": "Puma",
@@ -5631,7 +5631,7 @@
     },
     {
       "slug": "air-jordan-1-low-light-smoke-grey-off-noir",
-      "ticker": "HQ2010012",
+      "ticker": "HQ2010-012",
       "styleCode": "HQ2010-012",
       "name": "Jordan 1 Low Light Smoke Grey Off Noir",
       "brand": "Jordan",
@@ -5650,7 +5650,7 @@
     },
     {
       "slug": "vans-knu-skool-black-white",
-      "ticker": "VN0009QC6B",
+      "ticker": "VN0009QC6BT/VN0009QC6BT1",
       "styleCode": "VN0009QC6BT/VN0009QC6BT1",
       "name": "Vans Knu Skool Black White",
       "brand": "Vans",
@@ -5669,7 +5669,7 @@
     },
     {
       "slug": "crocs-classic-clog-batmobile",
-      "ticker": "210219001",
+      "ticker": "210219-001",
       "styleCode": "210219-001",
       "name": "Crocs Classic Clog Batmobile",
       "brand": "Crocs",
@@ -5688,7 +5688,7 @@
     },
     {
       "slug": "asics-gel-kayano-14-white-light-navy",
-      "ticker": "1203A53711",
+      "ticker": "1203A537-115",
       "styleCode": "1203A537-115",
       "name": "ASICS Gel-Kayano 14 White Light Navy",
       "brand": "ASICS",
@@ -5707,7 +5707,7 @@
     },
     {
       "slug": "air-jordan-11-retro-cherry-2022",
-      "ticker": "CT8012116",
+      "ticker": "CT8012-116",
       "styleCode": "CT8012-116",
       "name": "Jordan 11 Retro Cherry (2022)",
       "brand": "Jordan",
@@ -5783,7 +5783,7 @@
     },
     {
       "slug": "nike-mind-001-slide-light-smoke-grey-womens",
-      "ticker": "HQ4309003",
+      "ticker": "HQ4309-003",
       "styleCode": "HQ4309-003",
       "name": "Nike Mind 001 Slide Light Smoke Grey (Women's)",
       "brand": "Nike",
@@ -5802,7 +5802,7 @@
     },
     {
       "slug": "nike-kd-6-peanut-butter-and-jelly-pbj-2026",
-      "ticker": "IB6903800",
+      "ticker": "IB6903-800",
       "styleCode": "IB6903-800",
       "name": "Nike KD 6 Peanut Butter & Jelly (PBJ) (2026)",
       "brand": "Nike",
@@ -5821,7 +5821,7 @@
     },
     {
       "slug": "nike-sb-dunk-low-nardwuar",
-      "ticker": "II1493600",
+      "ticker": "II1493-600",
       "styleCode": "II1493-600",
       "name": "Nike SB Dunk Low Nardwuar",
       "brand": "Nike",
@@ -5840,7 +5840,7 @@
     },
     {
       "slug": "nike-vomero-plus-white-black-cool-grey",
-      "ticker": "II7181102",
+      "ticker": "II7181-102",
       "styleCode": "II7181-102",
       "name": "Nike Vomero Plus White Black Cool Grey",
       "brand": "Nike",
@@ -5859,7 +5859,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-yellow-toe",
-      "ticker": "555088711",
+      "ticker": "555088-711",
       "styleCode": "555088-711",
       "name": "Jordan 1 Retro High OG Taxi",
       "brand": "Jordan",
@@ -5878,7 +5878,7 @@
     },
     {
       "slug": "nike-kobe-6-protro-sail",
-      "ticker": "FQ3546100",
+      "ticker": "FQ3546-100",
       "styleCode": "FQ3546-100",
       "name": "Nike Kobe 6 Protro Sail All-Star",
       "brand": "Nike",
@@ -5897,7 +5897,7 @@
     },
     {
       "slug": "air-jordan-11-retro-playoffs-2019",
-      "ticker": "378037061",
+      "ticker": "378037-061",
       "styleCode": "378037-061",
       "name": "Jordan 11 Retro Playoffs Bred (2019)",
       "brand": "Jordan",
@@ -5916,7 +5916,7 @@
     },
     {
       "slug": "saucony-progrid-omni-9-silver-mutant",
-      "ticker": "S7073927",
+      "ticker": "S70739-27",
       "styleCode": "S70739-27",
       "name": "Saucony ProGrid Omni 9 Silver Mutant",
       "brand": "Saucony",
@@ -5935,7 +5935,7 @@
     },
     {
       "slug": "nike-air-max-95-big-bubble-palace",
-      "ticker": "IQ7708095",
+      "ticker": "IQ7708-095",
       "styleCode": "IQ7708-095",
       "name": "Nike Air Max 95 Big Bubble Palace",
       "brand": "Nike",
@@ -5954,7 +5954,7 @@
     },
     {
       "slug": "nike-kd-18-aunt-pearl",
-      "ticker": "HV1997600H",
+      "ticker": "HV1997-600 / HV1999-600",
       "styleCode": "HV1997-600 / HV1999-600",
       "name": "Nike KD 18 Aunt Pearl",
       "brand": "Nike",
@@ -5973,7 +5973,7 @@
     },
     {
       "slug": "on-running-cloudtilt-black-ivory",
-      "ticker": "3ME1010143",
+      "ticker": "3ME10101430",
       "styleCode": "3ME10101430",
       "name": "On Running Cloudtilt Black Ivory",
       "brand": "On",
@@ -5992,7 +5992,7 @@
     },
     {
       "slug": "air-jordan-15-23re-black-muslin",
-      "ticker": "IV7637100",
+      "ticker": "IV7637-100",
       "styleCode": "IV7637-100",
       "name": "Jordan 15-23RE Black Muslin",
       "brand": "Jordan",
@@ -6011,7 +6011,7 @@
     },
     {
       "slug": "onitsuka-tiger-mexico-66-silver-off-white",
-      "ticker": "THL7C29399",
+      "ticker": "THL7C2-9399/1183B566-021",
       "styleCode": "THL7C2-9399/1183B566-021",
       "name": "Onitsuka Tiger Mexico 66 Silver Off White",
       "brand": "ASICS",
@@ -6030,7 +6030,7 @@
     },
     {
       "slug": "asics-gel-1130-larimar-blue-silver",
-      "ticker": "1203A60940",
+      "ticker": "1203A609-400",
       "styleCode": "1203A609-400",
       "name": "ASICS Gel-1130 Larimar Blue Silver",
       "brand": "ASICS",
@@ -6049,7 +6049,7 @@
     },
     {
       "slug": "nike-air-max-270-white-black",
-      "ticker": "AH8050100",
+      "ticker": "AH8050-100",
       "styleCode": "AH8050-100",
       "name": "Nike Air Max 270 White Black",
       "brand": "Nike",
@@ -6068,7 +6068,7 @@
     },
     {
       "slug": "nike-ja-3-max-volume",
-      "ticker": "HF2793600H",
+      "ticker": "HF2793-600 / HF2794-600",
       "styleCode": "HF2793-600 / HF2794-600",
       "name": "Nike Ja 3 Max Volume",
       "brand": "Nike",
@@ -6106,7 +6106,7 @@
     },
     {
       "slug": "air-jordan-5-retro-fire-red-black-tongue-2025-gs",
-      "ticker": "HQ7980101",
+      "ticker": "HQ7980-101",
       "styleCode": "HQ7980-101",
       "name": "Jordan 5 Retro Fire Red Black Tongue (2025) (GS)",
       "brand": "Jordan",
@@ -6125,7 +6125,7 @@
     },
     {
       "slug": "nike-air-max-90-bright-citrus-hypervenom",
-      "ticker": "IR1978844",
+      "ticker": "IR1978-844",
       "styleCode": "IR1978-844",
       "name": "Nike Air Max 90 Bright Citrus Hypervenom",
       "brand": "Nike",
@@ -6144,7 +6144,7 @@
     },
     {
       "slug": "nike-p-6000-black",
-      "ticker": "CD6404002",
+      "ticker": "CD6404-002",
       "styleCode": "CD6404-002",
       "name": "Nike P-6000 Black",
       "brand": "Nike",
@@ -6182,7 +6182,7 @@
     },
     {
       "slug": "nike-kobe-8-ext-protro-year-of-the-horse-horseshoe",
-      "ticker": "IM1820100",
+      "ticker": "IM1820-100",
       "styleCode": "IM1820-100",
       "name": "Nike Kobe 8 EXT Protro Siempre Hermanos",
       "brand": "Nike",
@@ -6220,7 +6220,7 @@
     },
     {
       "slug": "nike-zoom-vomero-5-dark-grey-black-white",
-      "ticker": "CI1694001",
+      "ticker": "CI1694-001",
       "styleCode": "CI1694-001",
       "name": "Nike Zoom Vomero 5 SE SP Dark Grey Black White",
       "brand": "Nike",
@@ -6239,7 +6239,7 @@
     },
     {
       "slug": "asics-gel-nyc-cream-grey",
-      "ticker": "1203A73910",
+      "ticker": "1203A739-100",
       "styleCode": "1203A739-100",
       "name": "ASICS Gel-NYC Cream Grey",
       "brand": "ASICS",
@@ -6258,7 +6258,7 @@
     },
     {
       "slug": "nike-kobe-6-protro-reverse-grinch",
-      "ticker": "FV4921600",
+      "ticker": "FV4921-600",
       "styleCode": "FV4921-600",
       "name": "Nike Kobe 6 Protro Reverse Grinch",
       "brand": "Nike",
@@ -6277,7 +6277,7 @@
     },
     {
       "slug": "air-jordan-1-high-og-unc-toe",
-      "ticker": "DZ5485400",
+      "ticker": "DZ5485-400",
       "styleCode": "DZ5485-400",
       "name": "Jordan 1 Retro High OG UNC Toe",
       "brand": "Jordan",
@@ -6296,7 +6296,7 @@
     },
     {
       "slug": "nike-mind-001-flyknit-slide-bronze-eclipse-total-orange",
-      "ticker": "IR2175200",
+      "ticker": "IR2175-200",
       "styleCode": "IR2175-200",
       "name": "Nike Mind 001 Flyknit Slide Bronze Eclipse Total Orange",
       "brand": "Nike",
@@ -6315,7 +6315,7 @@
     },
     {
       "slug": "air-jordan-5-retro-wolf-grey-2026-ps",
-      "ticker": "440889002",
+      "ticker": "440889-002",
       "styleCode": "440889-002",
       "name": "Jordan 5 Retro Wolf Grey (2026) (PS)",
       "brand": "Jordan",
@@ -6334,7 +6334,7 @@
     },
     {
       "slug": "salomon-xt-6-vanilla-ice-almond-milk",
-      "ticker": "L47445300L",
+      "ticker": "L47445300 / L45442700",
       "styleCode": "L47445300 / L45442700",
       "name": "Salomon XT-6 Vanilla Ice Almond Milk",
       "brand": "Salomon",
@@ -6353,7 +6353,7 @@
     },
     {
       "slug": "air-jordan-1-low-triple-white-2022",
-      "ticker": "553558136",
+      "ticker": "553558-136",
       "styleCode": "553558-136",
       "name": "Jordan 1 Low Triple White",
       "brand": "Jordan",
@@ -6372,7 +6372,7 @@
     },
     {
       "slug": "nike-air-max-95-og-big-bubble-black-anthracite",
-      "ticker": "HM8755001",
+      "ticker": "HM8755-001",
       "styleCode": "HM8755-001",
       "name": "Nike Air Max 95 OG Big Bubble Black Anthracite",
       "brand": "Nike",
@@ -6391,7 +6391,7 @@
     },
     {
       "slug": "asics-gel-1130-black-pure-silver-gs",
-      "ticker": "1204A16900",
+      "ticker": "1204A169-001",
       "styleCode": "1204A169-001",
       "name": "ASICS Gel-1130 Black Pure Silver (GS)",
       "brand": "ASICS",
@@ -6429,7 +6429,7 @@
     },
     {
       "slug": "air-jordan-14-retro-ferrari-2025",
-      "ticker": "IF5015600",
+      "ticker": "IF5015-600",
       "styleCode": "IF5015-600",
       "name": "Jordan 14 Retro Ferrari (2025)",
       "brand": "Jordan",
@@ -6448,7 +6448,7 @@
     },
     {
       "slug": "nike-sb-dunk-low-pro-som-tum",
-      "ticker": "IB6206701",
+      "ticker": "IB6206-701",
       "styleCode": "IB6206-701",
       "name": "Nike SB Dunk Low Pro Som Tum",
       "brand": "Nike",
@@ -6467,7 +6467,7 @@
     },
     {
       "slug": "nike-dunk-low-protro-kobe-bryant-draft-day",
-      "ticker": "IM0586500",
+      "ticker": "IM0586-500",
       "styleCode": "IM0586-500",
       "name": "Nike Dunk Low Protro Kobe Bryant Draft Day",
       "brand": "Nike",
@@ -6486,7 +6486,7 @@
     },
     {
       "slug": "birkenstock-boston-soft-footbed-suede-mocha",
-      "ticker": "0660461066",
+      "ticker": "0660461/0660463",
       "styleCode": "0660461/0660463",
       "name": "Birkenstock Boston Soft Footbed Suede Mocca",
       "brand": "Birkenstock",
@@ -6505,7 +6505,7 @@
     },
     {
       "slug": "air-jordan-1-low-golf-spiked-white-fir-elemental-pink",
-      "ticker": "IQ3417100",
+      "ticker": "IQ3417-100",
       "styleCode": "IQ3417-100",
       "name": "Jordan 1 Low Golf Spiked White Fir Elemental Pink",
       "brand": "Jordan",
@@ -6524,7 +6524,7 @@
     },
     {
       "slug": "nike-kd-4-aunt-pearl-2024",
-      "ticker": "HF9098600",
+      "ticker": "HF9098-600",
       "styleCode": "HF9098-600",
       "name": "Nike KD 4 Aunt Pearl (2024)",
       "brand": "Nike",
@@ -6543,7 +6543,7 @@
     },
     {
       "slug": "ugg-tasman-ii-slipper-black",
-      "ticker": "1174671BLK",
+      "ticker": "1174671-BLK",
       "styleCode": "1174671-BLK",
       "name": "UGG Tasman II Slipper Black",
       "brand": "UGG",
@@ -6562,7 +6562,7 @@
     },
     {
       "slug": "air-jordan-4-retro-tex-denim-worn-blue-womens",
-      "ticker": "IB6716100",
+      "ticker": "IB6716-100",
       "styleCode": "IB6716-100",
       "name": "Jordan 4 Retro TEX Denim Worn Blue (Women's)",
       "brand": "Jordan",
@@ -6581,7 +6581,7 @@
     },
     {
       "slug": "nike-air-max-90-zest-t90-laser",
-      "ticker": "HJ0624758",
+      "ticker": "HJ0624-758",
       "styleCode": "HJ0624-758",
       "name": "Nike Air Max 90 Zest T90 Laser",
       "brand": "Nike",
@@ -6600,7 +6600,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-sail-university-red",
-      "ticker": "IH4363100",
+      "ticker": "IH4363-100",
       "styleCode": "IH4363-100",
       "name": "Jordan 1 Retro High OG Sail University Red",
       "brand": "Jordan",
@@ -6619,7 +6619,7 @@
     },
     {
       "slug": "birkenstock-arizona-birkibuc-mocha-w",
-      "ticker": "0151181015",
+      "ticker": "0151181/0151183",
       "styleCode": "0151181/0151183",
       "name": "Birkenstock Arizona Birkibuc Mocca",
       "brand": "Birkenstock",
@@ -6638,7 +6638,7 @@
     },
     {
       "slug": "crocs-classic-clog-a-bathing-ape-bape-abc-camo-blue",
-      "ticker": "1L23191903",
+      "ticker": "1L23191903/209627-4TB",
       "styleCode": "1L23191903/209627-4TB",
       "name": "Crocs Classic Clog A Bathing Ape ABC Camo Blue",
       "brand": "Crocs",
@@ -6657,7 +6657,7 @@
     },
     {
       "slug": "air-jordan-4-retro-forget-me-not",
-      "ticker": "HV0823100",
+      "ticker": "HV0823-100",
       "styleCode": "HV0823-100",
       "name": "Jordan 4 Retro Forget Me Not (Women's)",
       "brand": "Jordan",
@@ -6676,7 +6676,7 @@
     },
     {
       "slug": "nike-dunk-low-pegasus-pack-linen-phantom",
-      "ticker": "IQ1118220",
+      "ticker": "IQ1118-220",
       "styleCode": "IQ1118-220",
       "name": "Nike Dunk Low Pegasus Pack Linen Phantom",
       "brand": "Nike",
@@ -6695,7 +6695,7 @@
     },
     {
       "slug": "air-jordan-4-retro-military-black",
-      "ticker": "DH6927111",
+      "ticker": "DH6927-111",
       "styleCode": "DH6927-111",
       "name": "Jordan 4 Retro Military Black",
       "brand": "Jordan",
@@ -6714,7 +6714,7 @@
     },
     {
       "slug": "nike-air-max-2017-triple-black",
-      "ticker": "849559004",
+      "ticker": "849559-004",
       "styleCode": "849559-004",
       "name": "Nike Air Max 2017 Triple Black",
       "brand": "Nike",
@@ -6733,7 +6733,7 @@
     },
     {
       "slug": "air-jordan-3-retro-black-cement-2024-gs",
-      "ticker": "DM0967010",
+      "ticker": "DM0967-010",
       "styleCode": "DM0967-010",
       "name": "Jordan 3 Retro Black Cement (2024) (GS)",
       "brand": "Jordan",
@@ -6752,7 +6752,7 @@
     },
     {
       "slug": "air-jordan-1-retro-low-og-mocha",
-      "ticker": "CZ0790102",
+      "ticker": "CZ0790-102",
       "styleCode": "CZ0790-102",
       "name": "Jordan 1 Retro Low OG Mocha",
       "brand": "Jordan",
@@ -6771,7 +6771,7 @@
     },
     {
       "slug": "air-air-jordan-4-retro-og-sp-nigel-sylvester-bike-air-firewood-orange",
-      "ticker": "HF4340800",
+      "ticker": "HF4340-800",
       "styleCode": "HF4340-800",
       "name": "Air Jordan 4 Retro OG SP Nigel Sylvester Brick by Brick",
       "brand": "Jordan",
@@ -6790,7 +6790,7 @@
     },
     {
       "slug": "crocs-classic-clog-mater",
-      "ticker": "2093710DA",
+      "ticker": "209371-0DA",
       "styleCode": "209371-0DA",
       "name": "Crocs Classic Clog Mater",
       "brand": "Crocs",
@@ -6809,7 +6809,7 @@
     },
     {
       "slug": "nike-air-max-1-milwaukee-brewers-city-connect-2026",
-      "ticker": "IQ2938400",
+      "ticker": "IQ2938-400",
       "styleCode": "IQ2938-400",
       "name": "Nike Air Max 1 Milwaukee Brewers City Connect (2026)",
       "brand": "Nike",
@@ -6828,7 +6828,7 @@
     },
     {
       "slug": "nike-air-max-plus-dark-obsidian",
-      "ticker": "IH4460400",
+      "ticker": "IH4460-400",
       "styleCode": "IH4460-400",
       "name": "Nike Air Max Plus Dark Obsidian",
       "brand": "Nike",
@@ -6847,7 +6847,7 @@
     },
     {
       "slug": "nike-air-max-95-og-big-bubble-comet-red",
-      "ticker": "IB7862100",
+      "ticker": "IB7862-100",
       "styleCode": "IB7862-100",
       "name": "Nike Air Max 95 OG Big Bubble Comet Red",
       "brand": "Nike",
@@ -6866,7 +6866,7 @@
     },
     {
       "slug": "nike-air-zoom-huarache-2k4-ot-black-2026",
-      "ticker": "IV0329001",
+      "ticker": "IV0329-001",
       "styleCode": "IV0329-001",
       "name": "Nike Air Zoom Huarache 2K4 OT Black (2026)",
       "brand": "Nike",
@@ -6885,7 +6885,7 @@
     },
     {
       "slug": "asics-gel-kayano-14-white-fjord-grey",
-      "ticker": "1203A53710",
+      "ticker": "1203A537-106",
       "styleCode": "1203A537-106",
       "name": "ASICS Gel-Kayano 14 White Fjord Grey",
       "brand": "ASICS",
@@ -6904,7 +6904,7 @@
     },
     {
       "slug": "nike-air-force-1-low-retro-premium-nyc-knicks",
-      "ticker": "IV2705819",
+      "ticker": "IV2705-819",
       "styleCode": "IV2705-819",
       "name": "Nike Air Force 1 Low Retro Premium NYC Knicks",
       "brand": "Nike",
@@ -6923,7 +6923,7 @@
     },
     {
       "slug": "puma-speedcat-ballet-black-mauve-mist-womens",
-      "ticker": "40128702",
+      "ticker": "401287-02",
       "styleCode": "401287-02",
       "name": "Puma Speedcat Ballet Black Mauve Mist (Women's)",
       "brand": "Puma",
@@ -6942,7 +6942,7 @@
     },
     {
       "slug": "nike-dunk-low-white-light-smoke-grey",
-      "ticker": "HF5441105",
+      "ticker": "HF5441-105",
       "styleCode": "HF5441-105",
       "name": "Nike Dunk Low White Light Smoke Grey",
       "brand": "Nike",
@@ -6980,7 +6980,7 @@
     },
     {
       "slug": "crocs-classic-clog-a-bathing-ape-bape-abc-camo-green",
-      "ticker": "209627212",
+      "ticker": "209627-212",
       "styleCode": "209627-212",
       "name": "Crocs Classic Clog A Bathing Ape ABC Camo Green",
       "brand": "Crocs",
@@ -7037,7 +7037,7 @@
     },
     {
       "slug": "air-jordan-1-low-og-obsidian-unc",
-      "ticker": "CZ0790400",
+      "ticker": "CZ0790-400",
       "styleCode": "CZ0790-400",
       "name": "Jordan 1 Low OG Obsidian UNC",
       "brand": "Jordan",
@@ -7056,7 +7056,7 @@
     },
     {
       "slug": "nike-air-vapormax-plus-white",
-      "ticker": "924453100",
+      "ticker": "924453-100",
       "styleCode": "924453-100",
       "name": "Nike Air VaporMax Plus White",
       "brand": "Nike",
@@ -7075,7 +7075,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-og-cool-grey",
-      "ticker": "DZ5485003",
+      "ticker": "DZ5485-003",
       "styleCode": "DZ5485-003",
       "name": "Jordan 1 Retro High OG All-Star Cool Grey",
       "brand": "Jordan",
@@ -7094,7 +7094,7 @@
     },
     {
       "slug": "air-jordan-11-retro-low-bred-2025-gs",
-      "ticker": "FV5121006",
+      "ticker": "FV5121-006",
       "styleCode": "FV5121-006",
       "name": "Jordan 11 Retro Low Bred (GS) (2025)",
       "brand": "Jordan",
@@ -7113,9 +7113,9 @@
     },
     {
       "slug": "air-jordan-4-retro-og-sp-a-ma-maniere-while-you-were-sleeping-womens",
-      "ticker": "FZ4810200",
+      "ticker": "FZ4810-200",
       "styleCode": "FZ4810-200",
-      "name": "Jordan 4 Retro OG SP A Ma Maniére While You Were Sleeping (Women's)",
+      "name": "Jordan 4 Retro OG SP A Ma Mani\u00e9re While You Were Sleeping (Women's)",
       "brand": "Jordan",
       "year": 2024,
       "releaseDate": "2024-09-20",
@@ -7151,7 +7151,7 @@
     },
     {
       "slug": "nike-ja-3-kool-aid",
-      "ticker": "IW1159700I",
+      "ticker": "IW1159-700 / IW1160-700",
       "styleCode": "IW1159-700 / IW1160-700",
       "name": "Nike Ja 3 Kool-Aid",
       "brand": "Nike",
@@ -7170,7 +7170,7 @@
     },
     {
       "slug": "nike-air-foamposite-pro-university-blue-2026",
-      "ticker": "HF0794400",
+      "ticker": "HF0794-400",
       "styleCode": "HF0794-400",
       "name": "Nike Air Foamposite Pro University Blue (2026)",
       "brand": "Nike",
@@ -7189,7 +7189,7 @@
     },
     {
       "slug": "nike-sb-dunk-low-pro-muni-lightning-denim-turquoise",
-      "ticker": "IR1888700",
+      "ticker": "IR1888-700",
       "styleCode": "IR1888-700",
       "name": "Nike SB Dunk Low Pro Muni Lightning Denim Turquoise",
       "brand": "Nike",
@@ -7208,7 +7208,7 @@
     },
     {
       "slug": "air-jordan-4-retro-toro-bravo-2026-td",
-      "ticker": "HV4382600",
+      "ticker": "HV4382-600",
       "styleCode": "HV4382-600",
       "name": "Jordan 4 Retro Toro Bravo (2026) (TD)",
       "brand": "Jordan",
@@ -7227,7 +7227,7 @@
     },
     {
       "slug": "nike-kd-17-aunt-pearl",
-      "ticker": "FZ1518600F",
+      "ticker": "FZ1518-600/FZ1519-600",
       "styleCode": "FZ1518-600/FZ1519-600",
       "name": "Nike KD 17 NRG Aunt Pearl",
       "brand": "Nike",
@@ -7284,7 +7284,7 @@
     },
     {
       "slug": "air-jordan-12-retro-taxi-2025-gs",
-      "ticker": "153265117",
+      "ticker": "153265-117",
       "styleCode": "153265-117",
       "name": "Jordan 12 Retro Taxi (2025) (GS)",
       "brand": "Jordan",
@@ -7303,7 +7303,7 @@
     },
     {
       "slug": "nike-air-max-97-white-wolf-grey",
-      "ticker": "921826101",
+      "ticker": "921826-101",
       "styleCode": "921826-101",
       "name": "Nike Air Max 97 Triple White Wolf Grey",
       "brand": "Nike",
@@ -7322,7 +7322,7 @@
     },
     {
       "slug": "nike-air-zoom-gt-cut-eybl-volt",
-      "ticker": "IH3991700",
+      "ticker": "IH3991-700",
       "styleCode": "IH3991-700",
       "name": "Nike Air Zoom GT Cut EYBL Volt",
       "brand": "Nike",
@@ -7341,7 +7341,7 @@
     },
     {
       "slug": "nike-air-max-correlate-black-white-grey",
-      "ticker": "511416011",
+      "ticker": "511416-011",
       "styleCode": "511416-011",
       "name": "Nike Air Max Correlate Black White Grey",
       "brand": "Nike",
@@ -7360,7 +7360,7 @@
     },
     {
       "slug": "air-jordan-4-retro-rare-air-gold-lettering",
-      "ticker": "GOLDFV5029",
+      "ticker": "(Gold) FV5029-003",
       "styleCode": "(Gold) FV5029-003",
       "name": "Jordan 4 Retro Rare Air (Gold Lettering)",
       "brand": "Jordan",
@@ -7379,9 +7379,9 @@
     },
     {
       "slug": "air-jordan-3-retro-og-sp-a-ma-maniere-black-violet-ore-womens",
-      "ticker": "FZ4811001",
+      "ticker": "FZ4811-001",
       "styleCode": "FZ4811-001",
-      "name": "Jordan 3 Retro OG SP A Ma Maniére While You Were Sleeping (Women's)",
+      "name": "Jordan 3 Retro OG SP A Ma Mani\u00e9re While You Were Sleeping (Women's)",
       "brand": "Jordan",
       "year": 2024,
       "releaseDate": "2024-08-20",
@@ -7398,7 +7398,7 @@
     },
     {
       "slug": "nike-cryoshot-zoom-m9-virgil-abloh-archives",
-      "ticker": "IM3886100",
+      "ticker": "IM3886-100",
       "styleCode": "IM3886-100",
       "name": "Nike Cryoshot Zoom M9 Virgil Abloh Archives",
       "brand": "Nike",
@@ -7417,7 +7417,7 @@
     },
     {
       "slug": "air-jordan-4-retro-toro-bravo-2026-ps",
-      "ticker": "HV4381600",
+      "ticker": "HV4381-600",
       "styleCode": "HV4381-600",
       "name": "Jordan 4 Retro Toro Bravo (2026) (PS)",
       "brand": "Jordan",
@@ -7436,7 +7436,7 @@
     },
     {
       "slug": "air-jordan-3-retro-fire-red-2022",
-      "ticker": "DN3707160",
+      "ticker": "DN3707-160",
       "styleCode": "DN3707-160",
       "name": "Jordan 3 Retro Fire Red (2022)",
       "brand": "Jordan",
@@ -7455,7 +7455,7 @@
     },
     {
       "slug": "nike-ja-3-zombie",
-      "ticker": "HV9923700H",
+      "ticker": "HV9923-700 / HV9924-700",
       "styleCode": "HV9923-700 / HV9924-700",
       "name": "Nike Ja 3 Zombie",
       "brand": "Nike",
@@ -7474,7 +7474,7 @@
     },
     {
       "slug": "nike-air-max-90-recraft-triple-black",
-      "ticker": "CN8490003",
+      "ticker": "CN8490-003",
       "styleCode": "CN8490-003",
       "name": "Nike Air Max 90 Recraft Triple Black",
       "brand": "Nike",
@@ -7493,7 +7493,7 @@
     },
     {
       "slug": "nike-kobe-8-protro-year-of-the-horse-2026",
-      "ticker": "IM0594600",
+      "ticker": "IM0594-600",
       "styleCode": "IM0594-600",
       "name": "Nike Kobe 8 Protro Year of the Horse (2026)",
       "brand": "Nike",
@@ -7531,7 +7531,7 @@
     },
     {
       "slug": "nike-zoom-vomero-5-sp-vast-grey",
-      "ticker": "BV1358001",
+      "ticker": "BV1358-001",
       "styleCode": "BV1358-001",
       "name": "Nike Zoom Vomero 5 SP Vast Grey",
       "brand": "Nike",
@@ -7550,7 +7550,7 @@
     },
     {
       "slug": "nike-air-max-95-big-bubble-woven-multi",
-      "ticker": "IB3695100",
+      "ticker": "IB3695-100",
       "styleCode": "IB3695-100",
       "name": "Nike Air Max 95 Big Bubble Woven Multi",
       "brand": "Nike",
@@ -7569,7 +7569,7 @@
     },
     {
       "slug": "nike-air-foamposite-one-carbon-fiber",
-      "ticker": "HF2902002",
+      "ticker": "HF2902-002",
       "styleCode": "HF2902-002",
       "name": "Nike Air Foamposite One Carbon Fiber",
       "brand": "Nike",
@@ -7588,7 +7588,7 @@
     },
     {
       "slug": "nike-killshot-2-ltr-prm-tiempo-pack-black",
-      "ticker": "HQ3489010",
+      "ticker": "HQ3489-010",
       "styleCode": "HQ3489-010",
       "name": "Nike Killshot 2 LTR PRM Tiempo Pack Black",
       "brand": "Nike",
@@ -7607,7 +7607,7 @@
     },
     {
       "slug": "nike-air-force-1-low-ja-morant-denim-light-armory-blue",
-      "ticker": "IQ9773400",
+      "ticker": "IQ9773-400",
       "styleCode": "IQ9773-400",
       "name": "Nike Air Force 1 Low Ja Morant Denim Light Armory Blue",
       "brand": "Nike",
@@ -7626,7 +7626,7 @@
     },
     {
       "slug": "nike-p-6000-triple-white",
-      "ticker": "CD6404100",
+      "ticker": "CD6404-100",
       "styleCode": "CD6404-100",
       "name": "Nike P-6000 Triple White",
       "brand": "Nike",
@@ -7645,7 +7645,7 @@
     },
     {
       "slug": "nike-air-rift-breathe-triple-black-womens",
-      "ticker": "DN1338004",
+      "ticker": "DN1338-004",
       "styleCode": "DN1338-004",
       "name": "Nike Air Rift Breathe Triple Black (Women's)",
       "brand": "Nike",
@@ -7664,7 +7664,7 @@
     },
     {
       "slug": "nike-air-griffey-max-1-freshwater-2021",
-      "ticker": "DM8311001",
+      "ticker": "DM8311-001",
       "styleCode": "DM8311-001",
       "name": "Nike Air Griffey Max 1 Freshwater (2021/2025)",
       "brand": "Nike",
@@ -7683,7 +7683,7 @@
     },
     {
       "slug": "air-jordan-4-retro-comic",
-      "ticker": "JA1135100",
+      "ticker": "JA1135-100",
       "styleCode": "JA1135-100",
       "name": "Jordan 4 Retro Comic",
       "brand": "Jordan",
@@ -7721,9 +7721,9 @@
     },
     {
       "slug": "air-jordan-4-retro-sp-a-ma-maniere-dark-mocha",
-      "ticker": "IF3102200",
+      "ticker": "IF3102-200",
       "styleCode": "IF3102-200",
-      "name": "Jordan 4 Retro SP A Ma Maniére Dark Mocha",
+      "name": "Jordan 4 Retro SP A Ma Mani\u00e9re Dark Mocha",
       "brand": "Jordan",
       "year": 2025,
       "releaseDate": "2025-12-23",
@@ -7740,7 +7740,7 @@
     },
     {
       "slug": "nike-dunk-low-white-midnight-navy",
-      "ticker": "HF5441107",
+      "ticker": "HF5441-107",
       "styleCode": "HF5441-107",
       "name": "Nike Dunk Low White Midnight Navy",
       "brand": "Nike",
@@ -7797,7 +7797,7 @@
     },
     {
       "slug": "nike-kobe-6-asg-hollywood-3d-2026-gs",
-      "ticker": "HM4824002",
+      "ticker": "HM4824-002",
       "styleCode": "HM4824-002",
       "name": "Nike Kobe 6 ASG Hollywood 3D (2026) (GS)",
       "brand": "Nike",
@@ -7816,7 +7816,7 @@
     },
     {
       "slug": "asics-gel-kayano-14-metropolis-jasper-green",
-      "ticker": "1203A53702",
+      "ticker": "1203A537-020",
       "styleCode": "1203A537-020",
       "name": "ASICS Gel-Kayano 14 Metropolis Jasper Green",
       "brand": "ASICS",
@@ -7835,7 +7835,7 @@
     },
     {
       "slug": "nike-air-force-1-low-le-triple-white-gs",
-      "ticker": "DH2920111F",
+      "ticker": "DH2920-111/FV5951-111",
       "styleCode": "DH2920-111/FV5951-111",
       "name": "Nike Air Force 1 Low LE Triple White (GS)",
       "brand": "Nike",
@@ -7854,7 +7854,7 @@
     },
     {
       "slug": "nike-air-force-1-low-protro-kobe-bryant-denim-obsidian-safety-orange",
-      "ticker": "IM1980400",
+      "ticker": "IM1980-400",
       "styleCode": "IM1980-400",
       "name": "Nike Air Force 1 Low Protro Kobe Bryant Denim Obsidian Safety Orange",
       "brand": "Nike",
@@ -7873,7 +7873,7 @@
     },
     {
       "slug": "air-jordan-4-retro-seafoam-sail-womens",
-      "ticker": "HV0823003",
+      "ticker": "HV0823-003",
       "styleCode": "HV0823-003",
       "name": "Jordan 4 Retro Seafoam Sail (Women's)",
       "brand": "Jordan",
@@ -7892,7 +7892,7 @@
     },
     {
       "slug": "nike-air-foamposite-one-cough-drop-2025",
-      "ticker": "IB2219001",
+      "ticker": "IB2219-001",
       "styleCode": "IB2219-001",
       "name": "Nike Air Foamposite One Cough Drop (2025)",
       "brand": "Nike",
@@ -7911,7 +7911,7 @@
     },
     {
       "slug": "nike-kobe-5-protro-year-of-the-mamba-eggplant",
-      "ticker": "IB4481500",
+      "ticker": "IB4481-500",
       "styleCode": "IB4481-500",
       "name": "Nike Kobe 5 Protro Year of the Mamba Eggplant",
       "brand": "Nike",
@@ -7930,7 +7930,7 @@
     },
     {
       "slug": "nike-kobe-3-low-protro-pink-quartz",
-      "ticker": "IF2497500",
+      "ticker": "IF2497-500",
       "styleCode": "IF2497-500",
       "name": "Nike Kobe 3 Low Protro Pink Quartz",
       "brand": "Nike",
@@ -7949,7 +7949,7 @@
     },
     {
       "slug": "nike-reactx-rejuven8-triple-black",
-      "ticker": "HV5060001",
+      "ticker": "HV5060-001",
       "styleCode": "HV5060-001",
       "name": "Nike ReactX Rejuven8 Triple Black",
       "brand": "Nike",
@@ -7987,7 +7987,7 @@
     },
     {
       "slug": "nike-kobe-9-elite-low-protro-perspective",
-      "ticker": "IO3673400",
+      "ticker": "IO3673-400",
       "styleCode": "IO3673-400",
       "name": "Nike Kobe 9 Elite Low Protro Perspective",
       "brand": "Nike",
@@ -8006,7 +8006,7 @@
     },
     {
       "slug": "nike-moon-shoe-sp-jacquemus-fauna-brown-womens",
-      "ticker": "HV8547200",
+      "ticker": "HV8547-200",
       "styleCode": "HV8547-200",
       "name": "Nike Moon Shoe SP Jacquemus Fauna Brown (Women's)",
       "brand": "Nike",
@@ -8025,7 +8025,7 @@
     },
     {
       "slug": "onitsuka-tiger-mexico-66-tgrs-black-cream-womens",
-      "ticker": "1182A67800",
+      "ticker": "1182A678-001",
       "styleCode": "1182A678-001",
       "name": "Onitsuka Tiger Mexico 66 TGRS Black Cream (Women's)",
       "brand": "ASICS",
@@ -8044,7 +8044,7 @@
     },
     {
       "slug": "air-jordan-4-retro-metallic-gold-womens",
-      "ticker": "AQ9129170",
+      "ticker": "AQ9129-170",
       "styleCode": "AQ9129-170",
       "name": "Jordan 4 Retro Metallic Gold (Women's)",
       "brand": "Jordan",
@@ -8063,7 +8063,7 @@
     },
     {
       "slug": "nike-air-max-joga-bonito-r9-brazil",
-      "ticker": "IX8646001",
+      "ticker": "IX8646-001",
       "styleCode": "IX8646-001",
       "name": "Nike Air Max Joga Bonito R9 Brazil",
       "brand": "Nike",
@@ -8082,7 +8082,7 @@
     },
     {
       "slug": "nike-air-diamond-turf-2-red-gold-2026",
-      "ticker": "HQ2631600",
+      "ticker": "HQ2631-600",
       "styleCode": "HQ2631-600",
       "name": "Nike Air Diamond Turf 2 Red Gold (2026)",
       "brand": "Nike",
@@ -8120,7 +8120,7 @@
     },
     {
       "slug": "nike-kobe-3-low-protro-mambacita",
-      "ticker": "IQ3916100",
+      "ticker": "IQ3916-100",
       "styleCode": "IQ3916-100",
       "name": "Nike Kobe 3 Low Protro Mambacita",
       "brand": "Nike",
@@ -8139,7 +8139,7 @@
     },
     {
       "slug": "nike-moon-shoe-sp-jacquemus-aluminum-pink-womens",
-      "ticker": "HV8547601",
+      "ticker": "HV8547-601",
       "styleCode": "HV8547-601",
       "name": "Nike Moon Shoe SP Jacquemus Aluminum Pink (Women's)",
       "brand": "Nike",
@@ -8177,7 +8177,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-white-university-blue-black",
-      "ticker": "555088134",
+      "ticker": "555088-134",
       "styleCode": "555088-134",
       "name": "Jordan 1 Retro High OG University Blue",
       "brand": "Jordan",
@@ -8196,7 +8196,7 @@
     },
     {
       "slug": "nike-air-force-1-low-07-stadium-green-crimson",
-      "ticker": "IB6834300",
+      "ticker": "IB6834-300",
       "styleCode": "IB6834-300",
       "name": "Nike Air Force 1 Low '07 Stadium Green Crimson",
       "brand": "Nike",
@@ -8215,7 +8215,7 @@
     },
     {
       "slug": "air-jordan-1-low-85-neutral-grey",
-      "ticker": "FB9933100",
+      "ticker": "FB9933-100",
       "styleCode": "FB9933-100",
       "name": "Jordan 1 Retro Low '85 Neutral Grey",
       "brand": "Jordan",
@@ -8234,7 +8234,7 @@
     },
     {
       "slug": "nike-air-max-95-og-big-bubble-neon-paisley-bandana",
-      "ticker": "IQ0620100",
+      "ticker": "IQ0620-100",
       "styleCode": "IQ0620-100",
       "name": "Nike Air Max 95 OG Big Bubble Neon Paisley Bandana",
       "brand": "Nike",
@@ -8253,7 +8253,7 @@
     },
     {
       "slug": "air-jordan-4-retro-se-paris",
-      "ticker": "FQ7928001",
+      "ticker": "FQ7928-001",
       "styleCode": "FQ7928-001",
       "name": "Jordan 4 Retro SE Paris Olympics Wet Cement",
       "brand": "Jordan",
@@ -8272,7 +8272,7 @@
     },
     {
       "slug": "nike-air-foamposite-pro-pine-green-2025",
-      "ticker": "HF0794300",
+      "ticker": "HF0794-300",
       "styleCode": "HF0794-300",
       "name": "Nike Air Foamposite Pro Pine Green (2025)",
       "brand": "Nike",
@@ -8291,7 +8291,7 @@
     },
     {
       "slug": "puma-speedcat-og-black-white",
-      "ticker": "3988460140",
+      "ticker": "398846-01 / 406329-01",
       "styleCode": "398846-01 / 406329-01",
       "name": "Puma Speedcat OG Black White",
       "brand": "Puma",
@@ -8310,7 +8310,7 @@
     },
     {
       "slug": "air-jordan-1-high-og-spider-man-across-the-spider-verse",
-      "ticker": "DV1748601",
+      "ticker": "DV1748-601",
       "styleCode": "DV1748-601",
       "name": "Jordan 1 Retro High OG Spider-Man Across the Spider-Verse",
       "brand": "Jordan",
@@ -8348,7 +8348,7 @@
     },
     {
       "slug": "vans-lx-old-skool-36-pearlized-pack-brown",
-      "ticker": "VN000E8VFS",
+      "ticker": "VN000E8VFSB",
       "styleCode": "VN000E8VFSB",
       "name": "Vans LX Old Skool 36 Pearlized Rust Bronze",
       "brand": "Vans",
@@ -8367,7 +8367,7 @@
     },
     {
       "slug": "air-jordan-13-retro-og-chicago-2026-gs",
-      "ticker": "DJ3003102",
+      "ticker": "DJ3003-102",
       "styleCode": "DJ3003-102",
       "name": "Jordan 13 Retro OG Chicago (2026) (GS)",
       "brand": "Jordan",
@@ -8386,7 +8386,7 @@
     },
     {
       "slug": "saucony-progrid-omni-9-white-black-silver-pink",
-      "ticker": "S7073916",
+      "ticker": "S70739-16",
       "styleCode": "S70739-16",
       "name": "Saucony ProGrid Omni 9 Silver Pink",
       "brand": "Saucony",
@@ -8405,7 +8405,7 @@
     },
     {
       "slug": "air-jordan-4-retro-fire-red-2020",
-      "ticker": "DC7770160",
+      "ticker": "DC7770-160",
       "styleCode": "DC7770-160",
       "name": "Jordan 4 Retro Fire Red (2020)",
       "brand": "Jordan",
@@ -8424,7 +8424,7 @@
     },
     {
       "slug": "nike-air-max-97-black-white-anthricite",
-      "ticker": "921826015",
+      "ticker": "921826-015",
       "styleCode": "921826-015",
       "name": "Nike Air Max 97 Black White Anthracite",
       "brand": "Nike",
@@ -8443,7 +8443,7 @@
     },
     {
       "slug": "nike-acg-ldv-brilliant-blue-turf-orange",
-      "ticker": "IF2857400",
+      "ticker": "IF2857-400",
       "styleCode": "IF2857-400",
       "name": "Nike ACG LDV Brilliant Blue Turf Orange",
       "brand": "Nike",
@@ -8462,7 +8462,7 @@
     },
     {
       "slug": "air-jordan-jumpman-jack-tr-travis-scott-x-chase-b-black-night-silver",
-      "ticker": "IH7971001",
+      "ticker": "IH7971-001",
       "styleCode": "IH7971-001",
       "name": "Jordan Jumpman Jack TR Travis Scott x Chase B Black Night Silver",
       "brand": "Jordan",
@@ -8481,7 +8481,7 @@
     },
     {
       "slug": "nike-dunk-low-se-triple-black",
-      "ticker": "IB6651001",
+      "ticker": "IB6651-001",
       "styleCode": "IB6651-001",
       "name": "Nike Dunk Low SE Triple Black",
       "brand": "Nike",
@@ -8538,7 +8538,7 @@
     },
     {
       "slug": "nike-air-force-1-low-flax-2019",
-      "ticker": "CJ9179200",
+      "ticker": "CJ9179-200",
       "styleCode": "CJ9179-200",
       "name": "Nike Air Force 1 Low Flax Wheat",
       "brand": "Nike",
@@ -8557,7 +8557,7 @@
     },
     {
       "slug": "nike-air-foamposite-one-deep-royal",
-      "ticker": "HJ5195400",
+      "ticker": "HJ5195-400",
       "styleCode": "HJ5195-400",
       "name": "Nike Air Foamposite One Deep Royal",
       "brand": "Nike",
@@ -8576,7 +8576,7 @@
     },
     {
       "slug": "nike-sb-dunk-low-the-wizard-of-oz-poppy-field",
-      "ticker": "FZ1291600",
+      "ticker": "FZ1291-600",
       "styleCode": "FZ1291-600",
       "name": "Nike SB Dunk Low The Wizard of Oz Poppy Field",
       "brand": "Nike",
@@ -8614,13 +8614,13 @@
     },
     {
       "slug": "puma-speedcat-og-pele-yellow-black",
-      "ticker": "39884619",
+      "ticker": "398846-19",
       "styleCode": "398846-19",
-      "name": "Puma Speedcat OG Pelé Yellow Black",
+      "name": "Puma Speedcat OG Pel\u00e9 Yellow Black",
       "brand": "Puma",
       "year": 2025,
       "releaseDate": "2025-02-06",
-      "colorway": "Pelé Yellow/Black",
+      "colorway": "Pel\u00e9 Yellow/Black",
       "retail": 100,
       "stockxUrl": "https://stockx.pvxt.net/c/4722526/1023711/9060?u=https%3A%2F%2Fstockx.com%2Fpuma-speedcat-og-pele-yellow-black",
       "fallbackImage": "https://images.stockx.com/images/Puma-Speedcat-OG-Pele-Yellow-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1739999509",
@@ -8633,7 +8633,7 @@
     },
     {
       "slug": "nike-air-max-90-coconut-milk-deep-royal-blue",
-      "ticker": "IR1950100",
+      "ticker": "IR1950-100",
       "styleCode": "IR1950-100",
       "name": "Nike Air Max 90 Coconut Milk Deep Royal Blue",
       "brand": "Nike",
@@ -8671,7 +8671,7 @@
     },
     {
       "slug": "air-jordan-cut-the-check-tr-travis-scott-mocha",
-      "ticker": "FZ8117204",
+      "ticker": "FZ8117-204",
       "styleCode": "FZ8117-204",
       "name": "Jordan Jumpman Jack TR Travis Scott Dark Mocha",
       "brand": "Jordan",
@@ -8709,7 +8709,7 @@
     },
     {
       "slug": "air-jordan-5-retro-medium-soft-pink-gs",
-      "ticker": "HQ7980102",
+      "ticker": "HQ7980-102",
       "styleCode": "HQ7980-102",
       "name": "Jordan 5 Retro Medium Soft Pink (GS)",
       "brand": "Jordan",
@@ -8747,8 +8747,8 @@
     },
     {
       "slug": "bravest-studios-monster-claw-mule-monster",
-      "ticker": "TOP516",
-      "styleCode": "bravest-studios-monster-claw-mule-monster",
+      "ticker": "\u2014",
+      "styleCode": "\u2014",
       "name": "Bravest Studios Monster Claw Mule Monster",
       "brand": "Bravest Studios",
       "year": 2025,
@@ -8785,7 +8785,7 @@
     },
     {
       "slug": "nike-mind-001-slide-solar-red",
-      "ticker": "HQ4307600",
+      "ticker": "HQ4307-600",
       "styleCode": "HQ4307-600",
       "name": "Nike Mind 001 Slide Solar Red",
       "brand": "Nike",
@@ -8804,7 +8804,7 @@
     },
     {
       "slug": "nike-air-force-1-mid-supreme-white",
-      "ticker": "FZ8784100",
+      "ticker": "FZ8784-100",
       "styleCode": "FZ8784-100",
       "name": "Nike Air Force 1 Mid Supreme White",
       "brand": "Nike",
@@ -8842,7 +8842,7 @@
     },
     {
       "slug": "nike-air-max-270-black-white",
-      "ticker": "AH8050002",
+      "ticker": "AH8050-002",
       "styleCode": "AH8050-002",
       "name": "Nike Air Max 270 Black White",
       "brand": "Nike",
@@ -8861,7 +8861,7 @@
     },
     {
       "slug": "nike-dunk-low-pro-sb-black-white-gum",
-      "ticker": "HF3704003",
+      "ticker": "HF3704-003",
       "styleCode": "HF3704-003",
       "name": "Nike Dunk Low Pro SB Black White Gum",
       "brand": "Nike",
@@ -8899,7 +8899,7 @@
     },
     {
       "slug": "nike-air-diamond-turf-cowboys",
-      "ticker": "FZ8224101",
+      "ticker": "FZ8224-101",
       "styleCode": "FZ8224-101",
       "name": "Nike Air Diamond Turf Cowboys",
       "brand": "Nike",
@@ -8918,7 +8918,7 @@
     },
     {
       "slug": "air-jordan-jumpman-jack-tr-travis-scott-bright-cactus",
-      "ticker": "FZ8117102",
+      "ticker": "FZ8117-102",
       "styleCode": "FZ8117-102",
       "name": "Jordan Jumpman Jack TR Travis Scott Bright Cactus",
       "brand": "Jordan",
@@ -8937,7 +8937,7 @@
     },
     {
       "slug": "nike-air-max-95-og-big-bubble-7-eleven",
-      "ticker": "IR1944102",
+      "ticker": "IR1944-102",
       "styleCode": "IR1944-102",
       "name": "Nike Air Max 95 OG Big Bubble 7-Eleven",
       "brand": "Nike",
@@ -8956,7 +8956,7 @@
     },
     {
       "slug": "nike-air-force-1-low-kobe-bryant-court-purple",
-      "ticker": "IB0018500",
+      "ticker": "IB0018-500",
       "styleCode": "IB0018-500",
       "name": "Nike Air Force 1 Low Kobe Bryant Court Purple",
       "brand": "Nike",
@@ -8975,7 +8975,7 @@
     },
     {
       "slug": "air-jordan-12-retro-melo-2025",
-      "ticker": "CT8013112",
+      "ticker": "CT8013-112",
       "styleCode": "CT8013-112",
       "name": "Jordan 12 Retro Melo (2025)",
       "brand": "Jordan",
@@ -8994,7 +8994,7 @@
     },
     {
       "slug": "air-jordan-5-retro-tokyo-t23-2025",
-      "ticker": "IO3372700",
+      "ticker": "IO3372-700",
       "styleCode": "IO3372-700",
       "name": "Jordan 5 Retro Tokyo T23 (2025)",
       "brand": "Jordan",
@@ -9013,7 +9013,7 @@
     },
     {
       "slug": "nike-sb-dunk-low-yuto-horigome-matcha",
-      "ticker": "HF8022300",
+      "ticker": "HF8022-300",
       "styleCode": "HF8022-300",
       "name": "Nike SB Dunk Low Yuto Horigome Matcha",
       "brand": "Nike",
@@ -9032,7 +9032,7 @@
     },
     {
       "slug": "nike-air-force-1-low-white-2018-w",
-      "ticker": "315115112D",
+      "ticker": "315115-112/DD8959-100",
       "styleCode": "315115-112/DD8959-100",
       "name": "Nike Air Force 1 Low '07 White (Women's)",
       "brand": "Nike",
@@ -9051,7 +9051,7 @@
     },
     {
       "slug": "nike-air-foamposite-pro-pearl-2025",
-      "ticker": "HF0794200",
+      "ticker": "HF0794-200",
       "styleCode": "HF0794-200",
       "name": "Nike Air Foamposite Pro Pearl (2025)",
       "brand": "Nike",
@@ -9070,7 +9070,7 @@
     },
     {
       "slug": "nike-shox-tl-white-metallic-silver",
-      "ticker": "AV3595100",
+      "ticker": "AV3595-100",
       "styleCode": "AV3595-100",
       "name": "Nike Shox TL White Metallic Silver",
       "brand": "Nike",
@@ -9089,7 +9089,7 @@
     },
     {
       "slug": "nike-air-diamond-turf-2-royals",
-      "ticker": "II7080100",
+      "ticker": "II7080-100",
       "styleCode": "II7080-100",
       "name": "Nike Air Diamond Turf 2 Royals",
       "brand": "Nike",
@@ -9108,7 +9108,7 @@
     },
     {
       "slug": "air-jordan-4-retro-cave-stone-gs",
-      "ticker": "IB4171200",
+      "ticker": "IB4171-200",
       "styleCode": "IB4171-200",
       "name": "Jordan 4 Retro Cave Stone (GS)",
       "brand": "Jordan",
@@ -9127,7 +9127,7 @@
     },
     {
       "slug": "asics-gel-nyc-concrete-barely-rose",
-      "ticker": "1203A38302",
+      "ticker": "1203A383-028",
       "styleCode": "1203A383-028",
       "name": "ASICS Gel-NYC Concrete Barely Rose",
       "brand": "ASICS",
@@ -9146,7 +9146,7 @@
     },
     {
       "slug": "asics-gel-1130-white-pure-silver-pink-womens",
-      "ticker": "1202A50710",
+      "ticker": "1202A507-100",
       "styleCode": "1202A507-100",
       "name": "ASICS Gel-1130 White Pure Silver Pink (Women's)",
       "brand": "ASICS",
@@ -9165,7 +9165,7 @@
     },
     {
       "slug": "air-jordan-11-retro-concord-2018",
-      "ticker": "378037100",
+      "ticker": "378037-100",
       "styleCode": "378037-100",
       "name": "Jordan 11 Retro Concord (2018)",
       "brand": "Jordan",
@@ -9184,7 +9184,7 @@
     },
     {
       "slug": "air-jordan-1-high-og-black-white",
-      "ticker": "DZ5485010",
+      "ticker": "DZ5485-010",
       "styleCode": "DZ5485-010",
       "name": "Jordan 1 Retro High OG Black White",
       "brand": "Jordan",
@@ -9241,7 +9241,7 @@
     },
     {
       "slug": "nike-ja-3-bright-pink-gs",
-      "ticker": "IB4773602",
+      "ticker": "IB4773-602",
       "styleCode": "IB4773-602",
       "name": "Nike Ja 3 Pink Foam (GS)",
       "brand": "Nike",
@@ -9260,7 +9260,7 @@
     },
     {
       "slug": "nike-zoom-kobe-4-protro-girl-dad",
-      "ticker": "FQ3545300",
+      "ticker": "FQ3545-300",
       "styleCode": "FQ3545-300",
       "name": "Nike Kobe 4 Protro Girl Dad",
       "brand": "Nike",
@@ -9279,7 +9279,7 @@
     },
     {
       "slug": "nike-kobe-9-elite-protro-what-the-2025",
-      "ticker": "FZ7335101",
+      "ticker": "FZ7335-101",
       "styleCode": "FZ7335-101",
       "name": "Nike Kobe 9 Elite Protro What The (2025)",
       "brand": "Nike",
@@ -9298,7 +9298,7 @@
     },
     {
       "slug": "air-jordan-6-retro-carmine-2020",
-      "ticker": "CT8529106",
+      "ticker": "CT8529-106",
       "styleCode": "CT8529-106",
       "name": "Jordan 6 Retro Carmine (2021)",
       "brand": "Jordan",
@@ -9317,7 +9317,7 @@
     },
     {
       "slug": "nike-air-zoom-pegasus-premium-white-metallic-silver",
-      "ticker": "HQ2592102",
+      "ticker": "HQ2592-102",
       "styleCode": "HQ2592-102",
       "name": "Nike Air Zoom Pegasus Premium White Metallic Silver",
       "brand": "Nike",
@@ -9374,7 +9374,7 @@
     },
     {
       "slug": "saucony-progrid-omni-9-deep-navy",
-      "ticker": "S7073941",
+      "ticker": "S70739-41",
       "styleCode": "S70739-41",
       "name": "Saucony ProGrid Omni 9 Deep Navy",
       "brand": "Saucony",
@@ -9431,7 +9431,7 @@
     },
     {
       "slug": "nike-dunk-low-grey-fog",
-      "ticker": "DD1391103",
+      "ticker": "DD1391-103",
       "styleCode": "DD1391-103",
       "name": "Nike Dunk Low Grey Fog",
       "brand": "Nike",
@@ -9469,7 +9469,7 @@
     },
     {
       "slug": "nike-cryoshot-ctr360-maestri-ii-g-dragon-peaceminusone-natural-university-red",
-      "ticker": "HQ1460100",
+      "ticker": "HQ1460-100",
       "styleCode": "HQ1460-100",
       "name": "Nike Cryoshot CTR360 Maestri II G-Dragon Peaceminusone Natural University Red",
       "brand": "Nike",
@@ -9488,7 +9488,7 @@
     },
     {
       "slug": "air-jordan-1-retro-high-dark-mocha",
-      "ticker": "555088105",
+      "ticker": "555088-105",
       "styleCode": "555088-105",
       "name": "Jordan 1 Retro High Dark Mocha",
       "brand": "Jordan",
