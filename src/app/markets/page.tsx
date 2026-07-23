@@ -59,7 +59,8 @@ export default async function MarketsBrowsePage({
               All markets
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
-              Top {quotes.length} StockX sneakers by sales rank — search and
+              Top {quotes.length} StockX sneakers by sales rank (apparel and
+              other categories skipped, so ranks can skip numbers). Search and
               sort any column.
             </p>
           </header>

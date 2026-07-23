@@ -43,23 +43,22 @@ export function CatalogTable({
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-dash-border bg-dash-elevated/60 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
             <tr>
-              <th className="px-4 py-3.5 font-medium sm:px-5">#</th>
+              <th className="px-4 py-3.5 font-medium sm:px-5">StockX rank</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Name</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Ticker</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Lowest ask</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Weekly orders</th>
-              <th className="px-4 py-3.5 font-medium sm:px-5">Rank</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--dash-border-subtle)]">
-            {rows.map((row, index) => (
+            {rows.map((row) => (
               <tr
                 key={row.slug}
                 className="group transition-colors hover:bg-dash-elevated/55"
               >
-                <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-faint sm:px-5">
-                  {index + 1}
+                <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
+                  {row.rank != null ? `#${row.rank}` : "—"}
                 </td>
                 <td className="px-4 py-3.5 sm:px-5">
                   <Link
@@ -95,9 +94,6 @@ export function CatalogTable({
                   {row.weeklyOrders != null
                     ? formatNumber(row.weeklyOrders)
                     : "—"}
-                </td>
-                <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
-                  {row.rank != null ? `#${row.rank}` : "—"}
                 </td>
                 <td className="px-4 py-3.5 sm:px-5">
                   <span

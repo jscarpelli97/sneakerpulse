@@ -20,7 +20,7 @@ type SortableColumn = {
 };
 
 const COLUMNS: SortableColumn[] = [
-  { key: "rank", label: "Rank" },
+  { key: "rank", label: "StockX rank" },
   { key: "name", label: "Name" },
   { key: "ticker", label: "Ticker" },
   { key: "price", label: "Lowest ask" },
@@ -101,7 +101,6 @@ export function CatalogMarketsExplorer({
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-dash-border bg-dash-elevated/60 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
             <tr>
-              <th className="px-4 py-3.5 font-medium sm:px-5">#</th>
               {COLUMNS.map((col) => {
                 const active = sortKey === col.key;
                 return (
@@ -127,21 +126,18 @@ export function CatalogMarketsExplorer({
             {visible.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={6}
                   className="px-4 py-10 text-center text-sm text-dash-muted sm:px-5"
                 >
                   No pairs match “{query.trim()}”.
                 </td>
               </tr>
             ) : (
-              visible.map((row, index) => (
+              visible.map((row) => (
                 <tr
                   key={row.slug}
                   className="group transition-colors hover:bg-dash-elevated/55"
                 >
-                  <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-faint sm:px-5">
-                    {index + 1}
-                  </td>
                   <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
                     {row.rank != null ? `#${row.rank}` : "—"}
                   </td>
