@@ -4,14 +4,13 @@ import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ClosetPanel } from "@/components/wardrobe/ClosetPanel";
 import { FitsPanel } from "@/components/wardrobe/FitsPanel";
-import type { PortfolioSession } from "@/lib/portfolio/types";
+import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
 import {
-  getAccount,
-  getSession,
   loginAccount,
   logoutAccount,
   registerAccount,
+  restoreSession,
   saveCloset,
   saveFits,
 } from "@/lib/portfolio/vault";
@@ -33,9 +32,7 @@ export function WardrobeApp() {
   const [closet, setCloset] = useState<ClosetItem[]>([]);
   const [fits, setFits] = useState<FitBoard[]>([]);
   const [holdingsCount, setHoldingsCount] = useState(0);
-  const [holdings, setHoldings] = useState(
-    [] as NonNullable<ReturnType<typeof getAccount>>["holdings"],
-  );
+  const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [catalog, setCatalog] = useState<CatalogRow[]>([]);
   const [tab, setTab] = useState<Tab>("closet");
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -45,19 +42,43 @@ export function WardrobeApp() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [authBusy, setAuthBusy] = useState(false);
   const [flash, setFlash] = useState<string | null>(null);
+  const [cloud, setCloud] = useState(false);
+  const [booting, setBooting] = useState(true);
 
-  const hydrate = useCallback((next: PortfolioSession) => {
-    setSession(next);
-    const account = getAccount(next.email);
-    setCloset(account?.closet ?? []);
-    setFits(account?.fits ?? []);
-    setHoldings(account?.holdings ?? []);
-    setHoldingsCount(account?.holdings?.length ?? 0);
-  }, []);
+  const hydrate = useCallback(
+    (
+      next: PortfolioSession,
+      vault?: {
+        closet?: ClosetItem[];
+        fits?: FitBoard[];
+        holdings?: PortfolioHolding[];
+      },
+      nextCloud?: boolean,
+    ) => {
+      setSession(next);
+      setCloset(vault?.closet ?? []);
+      setFits(vault?.fits ?? []);
+      setHoldings(vault?.holdings ?? []);
+      setHoldingsCount(vault?.holdings?.length ?? 0);
+      if (nextCloud != null) setCloud(nextCloud);
+    },
+    [],
+  );
 
   useEffect(() => {
-    const existing = getSession();
-    if (existing) hydrate(existing);
+    let cancelled = false;
+    (async () => {
+      const restored = await restoreSession();
+      if (cancelled) return;
+      setCloud(restored.cloud);
+      if (restored.session) {
+        hydrate(restored.session, restored.vault ?? undefined, restored.cloud);
+      }
+      setBooting(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [hydrate]);
 
   useEffect(() => {
@@ -100,12 +121,15 @@ export function WardrobeApp() {
       setAuthError(result.error);
       return;
     }
-    hydrate(result.session);
+    setCloud(result.cloud);
+    hydrate(result.session, result.vault, result.cloud);
     setPassword("");
     setFlash(
-      mode === "register"
-        ? "Account ready — start your closet."
-        : "Welcome back.",
+      result.imported
+        ? "Imported this device’s wardrobe into your cloud account."
+        : mode === "register"
+          ? "Account ready — start your closet."
+          : "Welcome back.",
     );
   }
 
@@ -121,6 +145,14 @@ export function WardrobeApp() {
     saveFits(session.email, next);
   }
 
+  if (booting) {
+    return (
+      <div className="mx-auto max-w-lg py-16 text-center text-sm text-dash-muted">
+        Loading account…
+      </div>
+    );
+  }
+
   if (!session) {
     return (
       <div className="mx-auto max-w-lg space-y-6">
@@ -132,8 +164,11 @@ export function WardrobeApp() {
             Closet + Fits
           </h1>
           <p className="text-base leading-relaxed text-dash-muted">
-            Same device account as Portfolio. Build a closet from the board and
-            your own PNGs, then arrange fits like Freeform.
+            Same account as Portfolio. Build a closet from the board and your
+            own PNGs, then arrange fits like Freeform.
+            {cloud
+              ? " Synced to the cloud across devices."
+              : " Stored on this device until cloud sync is enabled."}
           </p>
         </header>
 
@@ -205,12 +240,16 @@ export function WardrobeApp() {
               {authBusy
                 ? "Working…"
                 : mode === "register"
-                  ? "Create device account"
+                  ? cloud
+                    ? "Create cloud account"
+                    : "Create device account"
                   : "Log in"}
             </button>
           </form>
           <p className="mt-4 text-xs leading-relaxed text-dash-faint">
-            Stays on this browser.{" "}
+            {cloud
+              ? "Cloud login — same account on phone and desktop."
+              : "Stays on this browser until cloud sync is enabled."}{" "}
             <Link href="/portfolio" className="text-dash-accent hover:underline">
               Portfolio
             </Link>{" "}
@@ -241,11 +280,13 @@ export function WardrobeApp() {
         </div>
         <button
           type="button"
-          onClick={() => {
-            logoutAccount();
+          onClick={async () => {
+            await logoutAccount();
             setSession(null);
             setCloset([]);
             setFits([]);
+            setHoldings([]);
+            setHoldingsCount(0);
           }}
           className="rounded-xl border border-dash-border px-3 py-2 text-sm font-medium text-dash-muted hover:bg-dash-elevated hover:text-dash-text"
         >

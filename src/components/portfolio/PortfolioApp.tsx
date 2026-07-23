@@ -7,12 +7,11 @@ import { plusPublicEnabled } from "@/lib/plus/config";
 import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
 import {
-  getAccount,
-  getSession,
   loginAccount,
   logoutAccount,
   newHoldingId,
   registerAccount,
+  restoreSession,
   saveHoldings,
   updateUsername,
 } from "@/lib/portfolio/vault";
@@ -48,17 +47,41 @@ export function PortfolioApp() {
   const [selectedSlug, setSelectedSlug] = useState<string>("");
   const [rename, setRename] = useState("");
   const [flash, setFlash] = useState<string | null>(null);
+  const [cloud, setCloud] = useState(false);
+  const [booting, setBooting] = useState(true);
 
-  const hydrate = useCallback((next: PortfolioSession) => {
-    setSession(next);
-    const account = getAccount(next.email);
-    setHoldings(account?.holdings ?? []);
-    setRename(next.username);
-  }, []);
+  const hydrate = useCallback(
+    (
+      next: PortfolioSession,
+      nextHoldings?: PortfolioHolding[],
+      nextCloud?: boolean,
+    ) => {
+      setSession(next);
+      setHoldings(nextHoldings ?? []);
+      setRename(next.username);
+      if (nextCloud != null) setCloud(nextCloud);
+    },
+    [],
+  );
 
   useEffect(() => {
-    const existing = getSession();
-    if (existing) hydrate(existing);
+    let cancelled = false;
+    (async () => {
+      const restored = await restoreSession();
+      if (cancelled) return;
+      setCloud(restored.cloud);
+      if (restored.session) {
+        hydrate(
+          restored.session,
+          restored.vault?.holdings ?? [],
+          restored.cloud,
+        );
+      }
+      setBooting(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [hydrate]);
 
   useEffect(() => {
@@ -147,7 +170,11 @@ export function PortfolioApp() {
       setAuthError(result.error);
       return;
     }
-    hydrate(result.session);
+    setCloud(result.cloud);
+    hydrate(result.session, result.vault.holdings, result.cloud);
+    if (result.imported) {
+      setFlash("Imported this device’s collection into your cloud account.");
+    }
     setPassword("");
     setFlash(
       mode === "register"
@@ -198,9 +225,9 @@ export function PortfolioApp() {
     persist(holdings.filter((h) => h.id !== id));
   }
 
-  function onRename() {
+  async function onRename() {
     if (!session) return;
-    const result = updateUsername(session.email, rename);
+    const result = await updateUsername(session.email, rename);
     if (!result.ok) {
       setFlash(result.error);
       return;
@@ -209,10 +236,18 @@ export function PortfolioApp() {
     setFlash("Username updated");
   }
 
-  function onLogout() {
-    logoutAccount();
+  async function onLogout() {
+    await logoutAccount();
     setSession(null);
     setHoldings([]);
+  }
+
+  if (booting) {
+    return (
+      <div className="mx-auto max-w-lg py-16 text-center text-sm text-dash-muted">
+        Loading account…
+      </div>
+    );
   }
 
   if (!session) {
@@ -228,7 +263,9 @@ export function PortfolioApp() {
           <p className="text-sm leading-relaxed text-dash-muted sm:text-base">
             Create a simple account (email + password) to log pairs you own,
             mark cost basis in USD, and see market asks vs what you paid.
-            Accounts are stored on this device for now.
+            {cloud
+              ? " Syncs to the cloud so you can open it on any device."
+              : " Stored on this device until cloud sync is enabled."}
           </p>
         </header>
 
@@ -321,15 +358,17 @@ export function PortfolioApp() {
         </div>
 
         <p className="text-xs leading-relaxed text-dash-faint">
-          Not financial advice. Password stays on this browser — clearing site
-          data logs you out of the local vault.
+          Not financial advice.
+          {cloud
+            ? " Your account syncs across phones and computers when you log in."
+            : " Password stays on this browser — clearing site data logs you out of the local vault."}
           {plusPublicEnabled() ? (
             <>
               {" "}
               <Link href="/plus" className="text-dash-accent hover:underline">
                 Plus
               </Link>{" "}
-              will add cloud backup.
+              adds more tools later.
             </>
           ) : null}
         </p>
@@ -617,19 +656,11 @@ export function PortfolioApp() {
             Save username
           </button>
         </div>
-        {plusPublicEnabled() ? (
-          <p className="text-xs text-dash-faint">
-            Want cloud sync across phones?{" "}
-            <Link href="/plus" className="text-dash-accent hover:underline">
-              Join the Plus list
-            </Link>
-            .
-          </p>
-        ) : (
-          <p className="text-xs text-dash-faint">
-            Holdings stay on this device for now.
-          </p>
-        )}
+        <p className="text-xs text-dash-faint">
+          {cloud
+            ? "Cloud account — log in on any device to see the same holdings."
+            : "Device vault — enable DATABASE_URL for cloud sync across phones."}
+        </p>
       </section>
     </div>
   );
