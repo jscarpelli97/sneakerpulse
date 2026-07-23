@@ -43,7 +43,7 @@ export function CatalogTable({
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-dash-border bg-dash-elevated/60 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
             <tr>
-              <th className="px-4 py-3.5 font-medium sm:px-5">StockX rank</th>
+              <th className="px-4 py-3.5 font-medium sm:px-5">#</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Name</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Ticker</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Lowest ask</th>
@@ -52,13 +52,13 @@ export function CatalogTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--dash-border-subtle)]">
-            {rows.map((row) => (
+            {rows.map((row, index) => (
               <tr
                 key={row.slug}
                 className="group transition-colors hover:bg-dash-elevated/55"
               >
                 <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
-                  {row.rank != null ? `#${row.rank}` : "—"}
+                  {index + 1}
                 </td>
                 <td className="px-4 py-3.5 sm:px-5">
                   <Link
@@ -79,7 +79,8 @@ export function CatalogTable({
                         {row.name}
                       </span>
                       <span className="block text-xs text-dash-faint">
-                        {row.brand} · {row.styleCode} · {row.year}
+                        {row.brand} · {row.styleCode}
+                        {row.rank != null ? ` · StockX #${row.rank}` : ""}
                       </span>
                     </span>
                   </Link>
