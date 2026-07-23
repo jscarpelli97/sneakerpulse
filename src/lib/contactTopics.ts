@@ -1,10 +1,6 @@
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { isValidEmail } from "@/lib/email";
 
-export function isValidContactEmail(value: string) {
-  const email = value.trim().toLowerCase();
-  if (email.length < 5 || email.length > 160) return false;
-  return EMAIL_RE.test(email);
-}
+export const isValidContactEmail = isValidEmail;
 
 export const CONTACT_TOPICS = [
   { id: "feedback", label: "General feedback" },

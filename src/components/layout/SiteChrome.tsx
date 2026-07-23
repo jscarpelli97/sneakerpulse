@@ -4,9 +4,6 @@ import { PlusInterest } from "@/components/plus/PlusInterest";
 import { BRAND_NAME, FOUNDER_NAME } from "@/lib/brand";
 import { plusPublicEnabled } from "@/lib/plus/config";
 
-/** Site chrome uses the markets-terminal (homepage) look by default. */
-type ChromeVariant = "dashboard" | "light";
-
 const NAV_BASE = [
   { href: "/", label: "Home" },
   { href: "/markets", label: "All markets" },
@@ -25,45 +22,8 @@ function navItems() {
   ];
 }
 
-export function SiteHeader({
-  subtitle,
-  variant = "dashboard",
-}: {
-  subtitle?: string;
-  variant?: ChromeVariant;
-}) {
+export function SiteHeader({ subtitle }: { subtitle?: string }) {
   const nav = navItems();
-
-  if (variant === "light") {
-    return (
-      <header className="sticky top-0 z-40 border-b border-ink/8 bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:h-16 md:px-6">
-          <Link
-            href="/"
-            className="font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-ink transition-opacity hover:opacity-80"
-          >
-            {BRAND_NAME}
-          </Link>
-          <div className="flex items-center gap-3 sm:gap-5">
-            {subtitle ? (
-              <p className="hidden text-sm text-ink-soft sm:block">{subtitle}</p>
-            ) : null}
-            <nav className="flex items-center gap-1">
-              {nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-ink-soft hover:bg-paper hover:text-ink"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </div>
-      </header>
-    );
-  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-dash-border/90 bg-dash-surface/90 backdrop-blur-xl">
@@ -104,40 +64,9 @@ export function SiteHeader({
   );
 }
 
-export function SiteFooter({
-  variant = "dashboard",
-}: {
-  variant?: ChromeVariant;
-}) {
+export function SiteFooter() {
   const publicPlus = plusPublicEnabled();
   const year = new Date().getFullYear();
-
-  if (variant === "light") {
-    return (
-      <footer className="mt-auto border-t border-ink/8 bg-white px-4 py-6 md:px-6">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 text-sm text-ink-soft">
-          <span className="font-[family-name:var(--font-syne)] font-extrabold text-ink">
-            {BRAND_NAME}
-          </span>
-          <div className="space-y-1 text-right text-xs sm:text-sm">
-            <p>
-              {`Built by ${FOUNDER_NAME} · Independent sneaker markets terminal`}
-            </p>
-            <p>
-              <Link
-                href="/about#contact"
-                className="font-medium text-ink underline-offset-2 hover:underline"
-              >
-                Contact me
-              </Link>
-              {" · "}
-              feedback, shoes to add, thoughts
-            </p>
-          </div>
-        </div>
-      </footer>
-    );
-  }
 
   return (
     <footer className="mt-auto border-t border-dash-border bg-dash-surface px-4 py-6 sm:px-6 lg:px-8">

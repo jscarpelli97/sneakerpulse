@@ -9,7 +9,7 @@ import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
 import { resolveLocalHistory } from "@/services/market/historyStore";
 import { getEbayCompsForProduct } from "@/services/market/getEbayComps";
-import { emptyMarket, mapProductToMarket } from "@/lib/mapProductToMarket";
+import { emptyMarket, mapProductToMarket } from "@/services/market/mapProductToMarket";
 import {
   buildBootstrapSeries,
   salesToSeries,

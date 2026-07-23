@@ -1,22 +1,40 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import type { SneakerMarket } from "@/types/market";
+import { BRAND_NAME } from "@/lib/brand";
+import type { SneakerMarket, UpstreamStatus } from "@/types/market";
 import { changeClass, formatChange, formatMoney } from "@/utils/format";
+
+const FEED_LABEL: Record<UpstreamStatus, string> = {
+  live: "Live asks",
+  degraded: "Degraded feed",
+  cached: "Daily snapshot",
+  offline: "Offline",
+};
+
+const NAV = [
+  { href: "/", label: "Home" },
+  { href: "/markets", label: "All markets" },
+  { href: "/portfolio", label: "Portfolio" },
+  { href: "/compare", label: "Compare" },
+  { href: "/alerts", label: "Alerts" },
+  { href: "/about", label: "About" },
+] as const;
 
 export function MarketHeader({
   market,
-  live,
+  upstreamStatus,
   statusBadge,
 }: {
   market: SneakerMarket;
-  live: boolean;
+  upstreamStatus: UpstreamStatus;
   statusBadge?: ReactNode;
 }) {
   const today = formatChange(
     market.changeToday?.absolute,
     market.changeToday?.percent,
   );
+  const feedLive = upstreamStatus === "live";
 
   return (
     <header className="sticky top-0 z-40 border-b border-dash-border/90 bg-dash-surface/90 backdrop-blur-xl">
@@ -26,15 +44,11 @@ export function MarketHeader({
             href="/"
             className="shrink-0 font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text transition-opacity hover:opacity-90 sm:text-xl"
           >
-            SPI Markets
+            {BRAND_NAME}
           </Link>
           <span className="hidden text-dash-faint sm:inline">/</span>
-          <nav className="hidden items-center gap-1 text-sm font-medium text-dash-muted sm:flex">
-            {[
-              { href: "/", label: "Markets" },
-              { href: "/compare", label: "Compare" },
-              { href: "/alerts", label: "Alerts" },
-            ].map((item) => (
+          <nav className="hidden items-center gap-1 text-sm font-medium text-dash-muted lg:flex">
+            {NAV.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -49,9 +63,9 @@ export function MarketHeader({
           {statusBadge}
           <div className="hidden items-center gap-2 rounded-full border border-dash-border bg-dash-elevated/80 px-3 py-1.5 text-xs font-medium text-dash-muted sm:flex">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${live ? "animate-blink bg-dash-up" : "bg-dash-faint"}`}
+              className={`h-1.5 w-1.5 rounded-full ${feedLive ? "animate-blink bg-dash-up" : "bg-dash-faint"}`}
             />
-            {live ? "StockX live via KicksDB" : "Waiting for StockX credentials"}
+            {FEED_LABEL[upstreamStatus]}
           </div>
         </div>
         <div className="hidden text-right text-xs text-dash-muted md:block md:text-sm">

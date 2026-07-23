@@ -10,8 +10,7 @@ export type SummaryRule = {
 };
 
 /**
- * Deterministic market-narrative rules.
- * Swap the composer for an LLM later; keep this table as the ground-truth playbook.
+ * Deterministic market-narrative rules used by the Market read card.
  */
 export const MARKET_SUMMARY_RULES: SummaryRule[] = [
   {
@@ -94,7 +93,7 @@ export const INSUFFICIENT_RULE: SummaryRule = {
   inventory: "unknown",
   tone: "insufficient",
   headline: "Insufficient market signal",
-  body: "Not enough trusted price or inventory evidence to draft a confident summary yet.",
+  body: "Not enough trusted price or inventory evidence for a clear read yet.",
 };
 
 export function findSummaryRule(

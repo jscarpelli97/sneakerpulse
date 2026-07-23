@@ -2,7 +2,6 @@ import { CatalogTable } from "@/components/catalog/CatalogTable";
 import { MarketsHero } from "@/components/catalog/MarketsHero";
 import { MarketsQuickLook } from "@/components/catalog/MarketsQuickLook";
 import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
-import { DataModeBanner } from "@/components/layout/DataModeBanner";
 import { MarketIndexCard } from "@/components/market/MarketIndexCard";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { PlusInterest } from "@/components/plus/PlusInterest";
@@ -64,7 +63,6 @@ export default async function MarketsIndexPage() {
             ? `Free · top ${FREE_CATALOG_LIMIT} of ${access.total}`
             : dataMode.subtitle
         }
-        variant="dashboard"
       />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
@@ -87,14 +85,6 @@ export default async function MarketsIndexPage() {
               freeLimit={access.freeLimit}
             />
           ) : null}
-          <DataModeBanner
-            mode={dataMode.mode}
-            badge={dataMode.badge}
-            detail={dataMode.detail}
-          />
-          <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
-          <MarketsQuickLook look={quickLook} />
-          {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
           <CatalogTable
             rows={watchlist}
             title="Top 10 watchlist"
@@ -104,19 +94,20 @@ export default async function MarketsIndexPage() {
                 : `Hottest ${watchlist.length} of ${access.total} tracked StockX sellers`
             }
             hrefAll={{
-              href:
-                access.gated && publicPlus ? "/plus" : "/markets",
+              href: access.gated && publicPlus ? "/plus" : "/markets",
               label:
                 access.gated && publicPlus
                   ? `Unlock all ${access.total}`
                   : `View all ${access.total}`,
             }}
-            variant="dashboard"
           />
+          {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
+          <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
+          <MarketsQuickLook look={quickLook} />
           {publicPlus ? <PlusInterest variant="panel" source="home" /> : null}
         </div>
       </main>
-      <SiteFooter variant="dashboard" />
+      <SiteFooter />
       {publicPlus ? <PlusPopup /> : null}
     </div>
   );

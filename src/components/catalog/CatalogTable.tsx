@@ -13,8 +13,6 @@ export function CatalogTable({
   title?: string;
   subtitle?: string;
   hrefAll?: { href: string; label: string };
-  /** @deprecated Dashboard is the site-wide standard; prop ignored. */
-  variant?: "light" | "dashboard";
 }) {
   return (
     <section className="dash-card animate-rise stagger-3 overflow-hidden">

@@ -10,7 +10,7 @@ The **markets terminal** look from the homepage is the site-wide visual standard
 - Gold accent CTAs, teal/red for up/down
 - `dash-card` panels, sticky terminal chrome, `max-w-[1400px]` shells
 - Tokens and surfaces live in `src/app/globals.css` (`--dash-*`, `.dash-card`)
-- Root layout applies the `dashboard` class by default; `SiteHeader` / `SiteFooter` default to `variant="dashboard"`
+- Root layout applies the `dashboard` class by default; `SiteHeader` / `SiteFooter` use the terminal chrome
 
 Do not reintroduce the old light ink/paper theme unless asked.
 
@@ -38,13 +38,13 @@ Public dataset lives in [`open-data/`](open-data/) (CC0):
 ```bash
 gh auth login
 chmod +x scripts/publish-open-data-repo.sh
-./scripts/publish-open-data-repo.sh yourname/sneakerpulse-index
+./scripts/publish-open-data-repo.sh yourname/spi-markets-index
 ```
 
 Then others can:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/yourname/sneakerpulse-index/main/spi/daily.csv
+curl -sL https://raw.githubusercontent.com/yourname/spi-markets-index/main/spi/daily.csv
 ```
 
 Rebuild / extend:
@@ -81,14 +81,13 @@ Each snapshot stores: timestamp, lowest ask, highest bid, last sale, average sal
 
 The app still reads JSON under `src/data/snapshots/` until a `DATABASE_URL` collector is wired.
 
-## AI Market Summary
+## Market read
 
-Rule-based narrative card on each sneaker page (`MarketSummaryCard`).
+Automated narrative card on each sneaker page (`MarketSummaryCard`).
 
 - Signals: price direction (30d / today / series) × inventory proxy (asks ÷ weekly orders)
-- Playbook: `src/lib/summary/rules.ts` (e.g. price↑ + inventory↓ → “Demand appears to be increasing while supply is tightening.”)
+- Playbook: `src/lib/summary/rules.ts`
 - API: `GET /api/market/[slug]/summary`
-- Generator flagged as `rules` today — ready to swap in an LLM composer later without changing the card contract
 
 ## Stack
 
@@ -100,15 +99,19 @@ Rule-based narrative card on each sneaker page (`MarketSummaryCard`).
 
 ## Routes
 
-- `/` — homepage with SPI + top 10 watchlist
-- `/markets` — full top 500 list with search and column sorting
-- `/sneakers/[slug]` — full market page for one SKU (tracked set or any StockX slug)
-- `/compare` — side-by-side live quotes across the tracked top sellers
-- `/alerts` — browser-stored price alerts + evaluate API (no outbound webhooks)
+- `/` — homepage: hero, top 10 watchlist, SPI index
+- `/markets` — full top-seller board with search and column sorting
+- `/sneakers/[slug]` — market page (asks, size ladder, chart, market read)
+- `/portfolio` — device-local collection tracker
+- `/compare` — side-by-side quotes
+- `/alerts` — browser-stored price thresholds
+- `/about` — founder / data notes + contact form
+- `/spi` — SPI index methodology
 - `/api/market/[slug]` — JSON market payload
-- `/api/catalog` — catalog quotes for the top sellers
-- `/api/status` — coarse upstream health (`live` / `degraded` / `offline`); details only with `STATUS_TOKEN`
-- `/api/alerts/evaluate` — check alert thresholds in-process (webhooks disabled)
+- `/api/catalog` — catalog quotes
+- `/api/contact` — About contact form delivery
+- `/api/status` — upstream health (`STATUS_TOKEN` for details)
+- `/api/alerts/evaluate` — check alert thresholds (email is Plus-only)
 
 ## Catalog (top 500 sellers)
 
@@ -153,7 +156,7 @@ When StockX issues credentials, paste them here or into Vercel env — the scaff
 | `STOCKX_API_KEY` | Application `x-api-key` |
 | `STOCKX_CLIENT_ID` | Application client id |
 | `STOCKX_CLIENT_SECRET` | Application client secret |
-| `STOCKX_REDIRECT_URI` | `https://spi-markets.vercel.app/api/stockx/callback` (register this URI) |
+| `STOCKX_REDIRECT_URI` | `https://spimarkets.com/api/stockx/callback` (register this URI) |
 | `STOCKX_ACCESS_TOKEN` / `STOCKX_REFRESH_TOKEN` | After visiting `/api/stockx/auth` once |
 
 Flow: set the first three → redeploy → open `/api/stockx/auth` → authorize → copy tokens from the callback JSON into Vercel → redeploy. Catalog wiring will map StockX `/v2/catalog/search` into the existing watchlist.

@@ -15,7 +15,7 @@ export const metadata = {
 export default function SpiMethodologyPage() {
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
-      <SiteHeader subtitle={`${INDEX_NAME} · methodology`} variant="dashboard" />
+      <SiteHeader subtitle={`${INDEX_NAME} · methodology`} />
       <main className="flex-1">
         <div className="mx-auto max-w-3xl space-y-10 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <header className="space-y-4">
@@ -102,7 +102,7 @@ export default function SpiMethodologyPage() {
           </div>
         </div>
       </main>
-      <SiteFooter variant="dashboard" />
+      <SiteFooter />
     </div>
   );
 }

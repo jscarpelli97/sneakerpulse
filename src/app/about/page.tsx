@@ -23,7 +23,7 @@ export default function AboutPage() {
 
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
-      <SiteHeader subtitle="About · the person behind it" variant="dashboard" />
+      <SiteHeader subtitle="About · the person behind it" />
       <main className="flex-1">
         <div className="mx-auto max-w-3xl space-y-10 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <header className="space-y-4">
@@ -78,9 +78,8 @@ export default function AboutPage() {
               </li>
             </ul>
             <p className="text-sm text-dash-faint leading-relaxed">
-              Paid Plus features (My Size, email alerts, restock monitor) are
-              paused while we harden feeds and checkout — the free terminal is
-              the product for day one.
+              The free terminal is the product — no paywall on the board, size
+              ladder, portfolio, or alerts you run in this browser.
             </p>
           </section>
 
@@ -163,7 +162,7 @@ export default function AboutPage() {
           </div>
         </div>
       </main>
-      <SiteFooter variant="dashboard" />
+      <SiteFooter />
     </div>
   );
 }

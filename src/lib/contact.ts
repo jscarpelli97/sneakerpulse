@@ -1,5 +1,3 @@
-import { plusInterestEmail } from "@/lib/plusInterest";
-
 export {
   CONTACT_TOPICS,
   isContactTopic,
@@ -12,6 +10,6 @@ export function contactInboxEmail() {
   return (
     process.env.CONTACT_INBOX_EMAIL?.trim() ||
     process.env.PLUS_INTEREST_EMAIL?.trim() ||
-    plusInterestEmail()
+    ""
   );
 }

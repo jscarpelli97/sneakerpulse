@@ -1,3 +1,5 @@
+import { siteUrl } from "@/lib/brand";
+
 export const PLUS_COOKIE = "sp_plus_member";
 
 /**
@@ -34,12 +36,9 @@ export function plusJwtSecret() {
   );
 }
 
+/** @deprecated Prefer `siteUrl` from `@/lib/brand`. */
 export function siteOrigin() {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (explicit) return explicit.replace(/\/$/, "");
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
-  if (vercel) return `https://${vercel.replace(/^https?:\/\//, "")}`;
-  return "https://spimarkets.com";
+  return siteUrl();
 }
 
 /** OpenNode keys unlock live BTC/Lightning checkout. */

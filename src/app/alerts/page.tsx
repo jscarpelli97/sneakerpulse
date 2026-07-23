@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Alerts",
   description:
-    "Browser price alerts for sneaker asks. Email alerts come later with Plus.",
+    "Browser price alerts for sneaker asks — set above/below thresholds and check the tape.",
   alternates: { canonical: "/alerts" },
 };
 
@@ -44,9 +44,9 @@ export default async function AlertsPage() {
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
               {publicPlus
                 ? isPlus
-                  ? `Threshold alerts to your inbox${access.gated ? "" : " across the Plus board"}. Restock Monitor coming soon.`
-                  : "Email price alerts are a Plus feature — Restock Monitor (size restocks + soft drops) is coming soon for Plus too."
-                : "Save above/below thresholds in this browser. Email delivery and Restock Monitor come later."}
+                  ? `Threshold alerts to your inbox${access.gated ? "" : " across the Plus board"}.`
+                  : "Email price alerts are a Plus feature. Free stays on browser thresholds below."
+                : "Save above/below thresholds in this browser, then check asks against them anytime."}
             </p>
           </section>
           {access.gated && publicPlus && isPlus ? (

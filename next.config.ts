@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: [
-    "*.agent.cvm.dev",
-    "p-3000-pod-3lnfxh7p2vamxkftm4gfxgkaca-10e28c9aaddc532031ec-us7p.agent.cvm.dev",
-  ],
+  // Allow Cursor cloud / agent preview hosts during local `next dev`.
+  allowedDevOrigins: ["*.agent.cvm.dev"],
   headers: async () => [
     {
       source: "/sw.js",
@@ -25,10 +23,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.stockx.com",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
       },
       {
         protocol: "https",

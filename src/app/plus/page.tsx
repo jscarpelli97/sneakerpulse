@@ -23,14 +23,13 @@ export default function PlusPage() {
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
       <SiteHeader
         subtitle={publicPlus ? "Plus · Bitcoin checkout" : "Plus · paused"}
-        variant="dashboard"
       />
       <main className="flex-1">
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           {publicPlus ? <PlusApp /> : <PlusPausedNotice />}
         </div>
       </main>
-      <SiteFooter variant="dashboard" />
+      <SiteFooter />
     </div>
   );
 }

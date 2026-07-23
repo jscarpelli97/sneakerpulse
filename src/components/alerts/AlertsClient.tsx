@@ -9,7 +9,8 @@ import type { SneakerCatalogEntry } from "@/types/catalog";
 import type { PriceAlert } from "@/types/market";
 import { formatMoney } from "@/utils/format";
 
-const EMAIL_KEY = "sneakerpulse.alert-email";
+const EMAIL_KEY = "spi.alert-email";
+const LEGACY_EMAIL_KEY = "sneakerpulse.alert-email";
 
 function EmailAlertsPaywall() {
   return (
@@ -116,9 +117,13 @@ export function AlertsClient({
   useEffect(() => {
     if (!emailMode) return;
     try {
-      const stored = localStorage.getItem(EMAIL_KEY);
+      const stored =
+        localStorage.getItem(EMAIL_KEY) ??
+        localStorage.getItem(LEGACY_EMAIL_KEY);
       if (stored) {
         setEmail(stored);
+        localStorage.setItem(EMAIL_KEY, stored);
+        localStorage.removeItem(LEGACY_EMAIL_KEY);
         return;
       }
     } catch {
@@ -259,8 +264,8 @@ export function AlertsClient({
         </div>
         <p className="mt-3 text-xs text-dash-faint">
           {emailMode
-            ? 'Alerts are saved in this browser. "Check & email" evaluates live asks and emails only when something triggers.'
-            : "Outbound email is off for now while membership stays paused."}
+            ? 'Alerts are saved in this browser. "Check & email" evaluates asks and emails only when something triggers.'
+            : "Alerts stay in this browser. Check asks against your thresholds anytime — nothing leaves your device."}
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <button

@@ -6,7 +6,7 @@ import { MarketSummaryCard } from "@/components/market/MarketSummaryCard";
 import { PriceChart } from "@/charts/PriceChart";
 import { PriceOverview } from "@/components/market/PriceOverview";
 import { EbayCompsPanel } from "@/components/market/EbayCompsPanel";
-import { SetupBanner } from "@/components/market/SetupBanner";
+import { MarketLoadNotice } from "@/components/market/MarketLoadNotice";
 import { StatsPanel } from "@/components/market/StatsPanel";
 import { UpstreamStatusBadge } from "@/components/market/UpstreamStatusBadge";
 import { SiteFooter } from "@/components/layout/SiteChrome";
@@ -86,11 +86,11 @@ export default async function SneakerMarketPage({
   }
 
   const result = await getMarketBySlug(slug);
-  const live = result.ok;
   const market = result.ok
     ? result.data
     : await getMarketFallback(catalog);
   const summary = result.ok ? buildMarketSummary(result.data) : null;
+  const upstreamStatus = result.ok ? market.upstreamStatus : "offline";
 
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
@@ -105,7 +105,7 @@ export default async function SneakerMarketPage({
       />
       <MarketHeader
         market={market}
-        live={live}
+        upstreamStatus={upstreamStatus}
         statusBadge={
           result.ok ? (
             <UpstreamStatusBadge status={market.upstreamStatus} />
@@ -115,9 +115,7 @@ export default async function SneakerMarketPage({
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-5 px-4 py-5 sm:px-6 md:space-y-6 md:py-7 lg:px-8">
           {!result.ok ? (
-            <SetupBanner
-              code={result.code}
-              message={result.error}
+            <MarketLoadNotice
               sneakerName={catalog.name}
               styleCode={catalog.styleCode}
               stockxUrl={catalog.stockxUrl}
@@ -153,8 +151,8 @@ export default async function SneakerMarketPage({
 
           <p className="pb-4 text-center text-xs text-dash-faint md:text-left">
             {result.ok
-              ? `${BRAND_NAME} market view for ${market.name}. Source: StockX via KicksDB · chart=${market.historySource} · status=${market.upstreamStatus} · fetched ${new Date(market.fetchedAt).toLocaleString()}. Independent — not affiliated with StockX.`
-              : `Connect a market data key to stream live StockX pricing for ${catalog.name}.`}
+              ? `${BRAND_NAME} · ${market.name}. Asks via StockX data providers · ${market.upstreamStatus} · updated ${new Date(market.fetchedAt).toLocaleString()}. Independent — not affiliated with StockX.`
+              : `${BRAND_NAME} could not load a full market view for ${catalog.name}. Independent — not affiliated with StockX.`}
           </p>
         </div>
       </main>

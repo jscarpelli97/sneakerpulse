@@ -70,12 +70,13 @@ export function CatalogMarketsExplorer({
     <section className="dash-card animate-rise overflow-hidden">
       <div className="flex flex-col gap-4 border-b border-dash-border px-4 py-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:px-5">
         <div>
-          <h1 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text sm:text-xl">
-            All markets
-          </h1>
+          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
+            Browse
+          </p>
           <p className="mt-1 text-sm text-dash-muted">
-            Top {rows.length} StockX sneakers by sales rank — search and sort
-            any column
+            {visible.length === rows.length
+              ? `${rows.length} pairs`
+              : `${visible.length} of ${rows.length} pairs`}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">

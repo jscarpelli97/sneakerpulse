@@ -1,7 +1,7 @@
+import { siteUrl } from "@/lib/brand";
 import {
   openNodeBaseUrl,
   openNodeConfigured,
-  siteOrigin,
 } from "@/lib/plus/config";
 import type { PlusChargeView } from "@/lib/plus/public";
 
@@ -79,7 +79,7 @@ export async function createPlusCharge(input: {
   }
 
   const apiKey = process.env.OPENNODE_API_KEY!.trim();
-  const origin = siteOrigin();
+  const origin = siteUrl();
   const res = await fetch(`${openNodeBaseUrl()}/v1/charges`, {
     method: "POST",
     headers: {

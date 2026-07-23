@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { siteUrl } from "@/lib/brand";
 import { getMarketBySlug } from "@/services/market/getMarketBySlug";
 import { PLUS_COOKIE } from "@/lib/plus/config";
 import { verifyPlusMembership } from "@/lib/plus/membership";
-import { isValidInterestEmail } from "@/lib/plusInterest";
+import { isValidEmail } from "@/lib/email";
 import type { PriceAlert } from "@/types/market";
 import { formatMoney } from "@/utils/format";
 
@@ -85,7 +86,7 @@ export async function POST(request: Request) {
     }
 
     const email = (body.email ?? member?.email ?? "").trim().toLowerCase();
-    if (!isValidInterestEmail(email)) {
+    if (!isValidEmail(email)) {
       return NextResponse.json(
         {
           ok: false,
@@ -117,9 +118,9 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           name: "SPI Markets Alerts",
           email,
-          _replyto: "noreply@sneakerpulse.app",
+          _replyto: "noreply@spimarkets.com",
           _subject: subject,
-          message: `Your SPI Plus alerts fired:\n\n${lines.join("\n")}\n\nOpen https://spi-markets.vercel.app/alerts to manage them.`,
+          message: `Your SPI Plus alerts fired:\n\n${lines.join("\n")}\n\nOpen ${siteUrl()}/alerts to manage them.`,
         }),
       });
       if (res.ok) {

@@ -77,7 +77,7 @@ export async function POST(request: Request) {
 
   const at = new Date().toISOString();
   const payload = {
-    type: "sneakerpulse_plus_interest",
+    type: "spi_markets_plus_interest",
     email,
     source,
     at,

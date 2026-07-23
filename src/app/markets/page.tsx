@@ -48,10 +48,21 @@ export default async function MarketsBrowsePage({
             ? `Free · top ${FREE_CATALOG_LIMIT} of ${access.total}`
             : dataMode.subtitle
         }
-        variant="dashboard"
       />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+          <header className="animate-rise max-w-2xl">
+            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.16em] text-dash-faint">
+              Board
+            </p>
+            <h1 className="mt-2 font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight text-dash-text md:text-5xl">
+              All markets
+            </h1>
+            <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
+              Top {quotes.length} StockX sneakers by sales rank — search and
+              sort any column.
+            </p>
+          </header>
           {access.gated && publicPlus ? (
             <PlusCatalogGate
               visible={access.visible}
@@ -70,7 +81,7 @@ export default async function MarketsBrowsePage({
           />
         </div>
       </main>
-      <SiteFooter variant="dashboard" />
+      <SiteFooter />
     </div>
   );
 }

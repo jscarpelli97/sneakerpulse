@@ -43,6 +43,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.4,
     },
+    {
+      url: `${base}/alerts`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.4,
+    },
   ];
 
   const sneakers = getOfflineCatalogQuotes().map((row) => ({
