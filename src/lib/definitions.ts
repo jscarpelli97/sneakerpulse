@@ -1,5 +1,5 @@
 /**
- * Canonical metric definitions for the SneakerPulse market view.
+ * Canonical metric definitions for the SPI Markets market view.
  * Keep UI labels and mapper logic aligned with these meanings.
  */
 export const METRIC_DEFINITIONS = {

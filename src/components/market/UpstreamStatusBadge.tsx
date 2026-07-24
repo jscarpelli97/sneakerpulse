@@ -3,7 +3,7 @@ import type { UpstreamStatus } from "@/types/market";
 const LABELS: Record<UpstreamStatus, string> = {
   live: "Live",
   degraded: "Degraded",
-  cached: "Cached",
+  cached: "Snapshot",
   offline: "Offline",
 };
 

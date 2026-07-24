@@ -1,0 +1,14 @@
+{
+  "productId": "b7438c95-6832-4e27-a450-18f07588345a",
+  "slug": "converse-shai-001-ares-gray",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:15.696Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 102,
+      "orders": 84
+    }
+  ]
+}

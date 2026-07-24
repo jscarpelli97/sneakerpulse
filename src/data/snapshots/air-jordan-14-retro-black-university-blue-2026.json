@@ -3,12 +3,17 @@
   "slug": "air-jordan-14-retro-black-university-blue-2026",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.067Z",
+  "updatedAt": "2026-07-23T13:42:00.440Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 170,
       "orders": 666
+    },
+    {
+      "date": "2026-07-23",
+      "price": 170,
+      "orders": 657
     }
   ]
 }

@@ -3,12 +3,17 @@
   "slug": "air-jordan-6-retro-cap-and-gown",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.999Z",
+  "updatedAt": "2026-07-23T13:42:01.373Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 157,
       "orders": 445
+    },
+    {
+      "date": "2026-07-23",
+      "price": 157,
+      "orders": 449
     }
   ]
 }

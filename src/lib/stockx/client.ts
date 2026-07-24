@@ -25,7 +25,7 @@ export function getStockxCredentials(): StockxCredentials | null {
   const clientSecret = process.env.STOCKX_CLIENT_SECRET?.trim() || "";
   const redirectUri =
     process.env.STOCKX_REDIRECT_URI?.trim() ||
-    "https://sneakerpulse.vercel.app/api/stockx/callback";
+    "https://spimarkets.com/api/stockx/callback";
 
   if (!apiKey || !clientId || !clientSecret) return null;
 

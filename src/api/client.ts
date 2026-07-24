@@ -1,5 +1,5 @@
 /**
- * Browser-side API helpers for SneakerPulse Next.js route handlers.
+ * Browser-side API helpers for SPI Markets Next.js route handlers.
  * Keep Next.js routes in `src/app/api/*`; put shared fetch clients here.
  */
 

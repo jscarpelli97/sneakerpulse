@@ -12,7 +12,7 @@ export default function Error({
   return (
     <div className="dashboard flex min-h-screen flex-col items-center justify-center gap-4 bg-dash-bg px-4 text-center text-dash-text">
       <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-semibold uppercase tracking-[0.16em] text-dash-faint">
-        SneakerPulse
+        SPI Markets
       </p>
       <h1 className="font-[family-name:var(--font-syne)] text-3xl font-extrabold tracking-tight">
         Couldn’t load this market

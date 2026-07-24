@@ -3,12 +3,17 @@
   "slug": "nike-st-charge-cade-cunningham-detroit-tough",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:56.772Z",
+  "updatedAt": "2026-07-23T13:42:02.152Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 118,
       "orders": 334
+    },
+    {
+      "date": "2026-07-23",
+      "price": 118,
+      "orders": 340
     }
   ]
 }

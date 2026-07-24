@@ -1,0 +1,14 @@
+{
+  "productId": "019a4be0-7507-739d-8576-12b08e8e1b1b",
+  "slug": "nike-ja-3-daybreak",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:09.059Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 74,
+      "orders": 132
+    }
+  ]
+}

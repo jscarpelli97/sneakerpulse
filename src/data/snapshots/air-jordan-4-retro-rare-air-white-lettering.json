@@ -3,12 +3,17 @@
   "slug": "air-jordan-4-retro-rare-air-white-lettering",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:56.156Z",
+  "updatedAt": "2026-07-23T13:42:01.528Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 188,
       "orders": 409
+    },
+    {
+      "date": "2026-07-23",
+      "price": 185,
+      "orders": 411
     }
   ]
 }
