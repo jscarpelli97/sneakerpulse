@@ -359,7 +359,7 @@ function FitEditor({
 
       const result = await exportFitBoardJpeg(el, board.pieces, displayById, {
         name: board.name,
-        showName: true,
+        showName: false,
       });
       if (!result.ok) {
         onFlash(result.error);
