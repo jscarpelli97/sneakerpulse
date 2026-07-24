@@ -30,7 +30,7 @@ export function MarketsHero({
         }}
         aria-hidden
       />
-      <div className="relative grid gap-8 px-5 py-8 sm:px-8 sm:py-11 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:items-stretch lg:gap-10 lg:px-10 lg:py-14">
+      <div className="relative grid gap-8 px-5 py-8 sm:px-8 sm:py-11 lg:grid-cols-[minmax(0,0.9fr)_minmax(400px,1.15fr)] lg:items-stretch lg:gap-12 lg:px-10 lg:py-14">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-dash-border bg-dash-elevated/90 px-3 py-1 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-muted">

@@ -54,7 +54,7 @@ export function SpiHeroTicker({ index }: { index: MarketIndex }) {
   const vsPeakLabel =
     vsPeak == null
       ? null
-      : `${vsPeak > 0 ? "+" : ""}${vsPeak.toFixed(0)}% vs hype peak`;
+      : `${vsPeak > 0 ? "+" : ""}${vsPeak.toFixed(0)}% from hype peak`;
   const liveUp =
     live.length >= 2
       ? live[live.length - 1].price >= live[0].price
@@ -77,107 +77,107 @@ export function SpiHeroTicker({ index }: { index: MarketIndex }) {
   const priceRange = { min: sharedMin, max: sharedMax };
 
   return (
-    <aside className="flex h-full flex-col rounded-2xl border border-dash-border bg-dash-elevated/85 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <aside className="flex h-full flex-col gap-5 rounded-2xl border border-dash-border bg-dash-elevated/85 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-6">
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
             {INDEX_NAME} · daily tape
           </p>
-          <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-1 font-[family-name:var(--font-plex-mono)] tabular-nums">
-            <span className="text-2xl font-semibold text-dash-text sm:text-3xl">
+          <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-[family-name:var(--font-plex-mono)] tabular-nums">
+            <span className="text-3xl font-semibold tracking-tight text-dash-text sm:text-4xl">
               {formatIndexLevel(index.level)}
             </span>
-            <span className={`text-sm font-semibold sm:text-base ${changeClass(dayPct)}`}>
+            <span className={`text-base font-semibold ${changeClass(dayPct)}`}>
               {dayLabel}
             </span>
-            <span className="text-xs text-dash-faint">today</span>
           </div>
-          <p className="mt-1 text-xs text-dash-muted">
-            {formatShortDate(index.asOf)} · 100 = retail · updates daily
+          <p className="mt-1.5 text-sm text-dash-muted">
+            {formatShortDate(index.asOf)} · 100 = retail
           </p>
         </div>
         {vsPeakLabel ? (
-          <div className="rounded-xl border border-dash-border bg-dash-panel/80 px-3 py-2 text-right">
-            <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-faint">
-              vs 2020–21
-            </p>
-            <p
-              className={`mt-0.5 font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums ${
-                (vsPeak ?? 0) >= 0 ? "text-dash-up" : "text-dash-down"
-              }`}
-            >
-              {vsPeakLabel}
-            </p>
-          </div>
+          <p
+            className={`font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums ${
+              (vsPeak ?? 0) >= 0 ? "text-dash-up" : "text-dash-down"
+            }`}
+          >
+            {vsPeakLabel}
+          </p>
         ) : null}
       </div>
 
-      <div className="mt-4 grid min-h-0 flex-1 gap-3 sm:grid-cols-[minmax(96px,0.32fr)_minmax(0,1fr)]">
-        <div className="flex flex-col overflow-hidden rounded-xl border border-dash-up/25 bg-[rgba(38,166,154,0.06)]">
-          <div className="border-b border-dash-border/80 px-3 py-2">
+      {/* Boom reference — slim strip, not fighting the live chart for width */}
+      <div className="overflow-hidden rounded-xl border border-dash-up/20 bg-[rgba(38,166,154,0.05)]">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-3">
+          <div>
             <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-up">
-              Hype · 2020–21
+              Hype reference · 2020–21
             </p>
-            <p className="mt-0.5 font-[family-name:var(--font-plex-mono)] text-lg font-semibold tabular-nums text-dash-text">
-              {peak != null ? formatIndexLevel(peak) : "—"}
+            <p className="mt-1 font-[family-name:var(--font-plex-mono)] text-sm text-dash-muted">
+              Peak{" "}
+              <span className="font-semibold tabular-nums text-dash-text">
+                {peak != null ? formatIndexLevel(peak) : "—"}
+              </span>
+              <span className="text-dash-faint">
+                {" "}
+                · {formatShortDate(index.peakDate)}
+              </span>
             </p>
-            <p className="text-[11px] text-dash-muted">
-              peak · {formatShortDate(index.peakDate)}
-            </p>
-          </div>
-          <div className="relative min-h-[110px] flex-1 sm:min-h-0">
-            {hasBoom ? (
-              <LightweightPriceChart
-                data={boom}
-                up
-                eraColors
-                showTime={false}
-                referenceLevel={index.baseLevel}
-                referenceTitle="100"
-                peakLevel={peak ?? undefined}
-                priceRange={priceRange}
-                className="h-full min-h-[110px] w-full"
-              />
-            ) : (
-              <div className="flex h-full min-h-[110px] items-center justify-center px-3 text-center text-xs text-dash-faint">
-                Boom tape unavailable
-              </div>
-            )}
           </div>
         </div>
-
-        <div className="flex flex-col overflow-hidden rounded-xl border border-dash-accent/30 bg-[rgba(212,160,23,0.06)]">
-          <div className="border-b border-dash-border/80 px-3 py-2">
-            <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-accent">
-              Now · tracking
-            </p>
-            <p className="mt-0.5 text-[11px] text-dash-muted">
-              {liveWindowLabel(live)}
-            </p>
-          </div>
-          <div className="relative min-h-[160px] flex-1 sm:min-h-[200px]">
-            {hasLive ? (
-              <LightweightPriceChart
-                data={live}
-                up={liveUp}
-                showTime
-                referenceLevel={index.baseLevel}
-                referenceTitle="Retail"
-                priceRange={priceRange}
-                className="h-full min-h-[160px] w-full sm:min-h-[200px]"
-              />
-            ) : (
-              <div className="flex h-full min-h-[160px] items-center justify-center px-4 text-center text-sm text-dash-muted">
-                First SPI prints land as the daily tape grows.
-              </div>
-            )}
-          </div>
+        <div className="relative h-[72px] w-full sm:h-[84px]">
+          {hasBoom ? (
+            <LightweightPriceChart
+              data={boom}
+              up
+              eraColors
+              showTime={false}
+              referenceLevel={index.baseLevel}
+              referenceTitle="100"
+              peakLevel={peak ?? undefined}
+              priceRange={priceRange}
+              className="h-full w-full"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-xs text-dash-faint">
+              Boom tape unavailable
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-dash-border pt-3">
+      {/* Live tracking — main stage */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-dash-accent/25 bg-[rgba(212,160,23,0.05)]">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 px-4 pt-3">
+          <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-accent">
+            Now · tracking
+          </p>
+          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] text-dash-muted">
+            {liveWindowLabel(live)}
+          </p>
+        </div>
+        <div className="relative mt-1 min-h-[220px] flex-1 sm:min-h-[260px]">
+          {hasLive ? (
+            <LightweightPriceChart
+              data={live}
+              up={liveUp}
+              showTime
+              referenceLevel={index.baseLevel}
+              referenceTitle="Retail"
+              priceRange={priceRange}
+              className="h-full min-h-[220px] w-full sm:min-h-[260px]"
+            />
+          ) : (
+            <div className="flex h-full min-h-[220px] items-center justify-center px-4 text-center text-sm text-dash-muted">
+              First SPI prints land as the daily tape grows.
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-faint">
-          Same scale · boom vs now
+          Same Y scale · updates daily
         </p>
         <Link
           href="/spi"
