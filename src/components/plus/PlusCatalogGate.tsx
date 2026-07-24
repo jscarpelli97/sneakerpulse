@@ -50,16 +50,16 @@ export function PlusMarketLock({
       </p>
       <div className="flex flex-wrap justify-center gap-3 pt-1">
         <Link
-          href="/plus"
+          href="/plus#checkout"
           className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
         >
           Upgrade to Plus
         </Link>
         <Link
-          href="/markets"
+          href="/collection/portfolio"
           className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold hover:bg-dash-elevated"
         >
-          Free markets
+          Sign in
         </Link>
       </div>
     </div>

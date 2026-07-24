@@ -1,9 +1,15 @@
 import { CatalogMarketsExplorer } from "@/components/catalog/CatalogMarketsExplorer";
 import { DataModeBanner } from "@/components/layout/DataModeBanner";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
+import { MarketsAccountGate } from "@/components/markets/MarketsAccountGate";
 import { PlusCatalogGate } from "@/components/plus/PlusCatalogGate";
+import { readSession } from "@/lib/auth/http";
 import { getDataModeLabel } from "@/lib/dataMode";
-import { FREE_CATALOG_LIMIT, gateCatalogRows, getPlusAccess } from "@/lib/plus/access";
+import {
+  FREE_CATALOG_LIMIT,
+  gateCatalogRows,
+  getPlusAccess,
+} from "@/lib/plus/access";
 import { TOP_SELLERS_LIMIT } from "@/services/catalog/mapProductToCatalog";
 import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
@@ -47,6 +53,20 @@ export default async function MarketsBrowsePage({
   }>;
 }) {
   const { q, view, s, a, b, slug } = await searchParams;
+  const session = await readSession();
+
+  if (!session) {
+    return (
+      <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
+        <SiteHeader subtitle="Markets · sign in" />
+        <main className="flex flex-1 items-center justify-center px-4 py-16">
+          <MarketsAccountGate />
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
+
   const [{ isPlus, publicPlus }, allQuotes] = await Promise.all([
     getPlusAccess(),
     getCatalogQuotes(TOP_SELLERS_LIMIT),
