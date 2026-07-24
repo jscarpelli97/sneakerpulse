@@ -2,7 +2,6 @@ import Link from "next/link";
 import { CatalogTable } from "@/components/catalog/CatalogTable";
 import { HomeVisitorStory } from "@/components/catalog/HomeVisitorStory";
 import { MarketsHero } from "@/components/catalog/MarketsHero";
-import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
 import { MarketIndexCard } from "@/components/market/MarketIndexCard";
 import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { PlusInterest } from "@/components/plus/PlusInterest";
@@ -78,7 +77,6 @@ export default async function MarketsIndexPage() {
           {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
 
           <div id="board" className="scroll-mt-24 space-y-6 sm:space-y-7">
-            <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
             <CatalogTable
               rows={watchlist}
               title="Then look at sneakers"
