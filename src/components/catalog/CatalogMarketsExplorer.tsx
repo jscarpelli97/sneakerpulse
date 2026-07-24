@@ -210,7 +210,7 @@ export function CatalogMarketsExplorer({
 }) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
-  const [sortKey, setSortKey] = useState<CatalogSortKey>("rank");
+  const [sortKey, setSortKey] = useState<CatalogSortKey>("name");
   const [sortDir, setSortDir] = useState<CatalogSortDir>("asc");
   const [layout, setLayout] = useState<BrowseLayout>("columns");
   const [compareSlugs, setCompareSlugs] = useState(() =>

@@ -54,7 +54,9 @@ export async function getCatalogQuotes(
     return getOfflineCatalogQuotes(limit);
   }
 
-  return quotes.sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+  return quotes.sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+  );
 }
 
 /** @deprecated Prefer getOfflineCatalogQuotes via getCatalogQuotes fallback. */

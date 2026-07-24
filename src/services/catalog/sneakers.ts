@@ -60,7 +60,9 @@ export async function getTrackedCatalog(
       }),
     )
     .filter((entry): entry is SneakerCatalogEntry => entry != null)
-    .sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+    .sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+    );
 
   return mapped.length ? mapped : getOfflineCatalogEntries(limit);
 }

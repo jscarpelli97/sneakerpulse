@@ -40,20 +40,24 @@ export function filterBoardEntries(
   query: string,
 ) {
   const q = query.trim().toLowerCase();
-  if (!q) return sneakers;
-  return sneakers.filter((row) => {
-    const haystack = [
-      row.name,
-      row.brand,
-      row.ticker,
-      row.styleCode,
-      row.colorway,
-      row.slug,
-    ]
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(q);
-  });
+  const filtered = !q
+    ? [...sneakers]
+    : sneakers.filter((row) => {
+        const haystack = [
+          row.name,
+          row.brand,
+          row.ticker,
+          row.styleCode,
+          row.colorway,
+          row.slug,
+        ]
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(q);
+      });
+  return filtered.sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+  );
 }
 
 function toBoardSuggestion(row: SneakerCatalogEntry): PairSuggestion {
