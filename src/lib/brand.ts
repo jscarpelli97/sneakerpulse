@@ -60,7 +60,7 @@ export const PRODUCT_TOOLS = [
   {
     title: "Compare",
     href: "/markets?view=compare",
-    body: "Stack two colorways on ask, retail, premium, and flow — built into the Markets board.",
+    body: "Stack up to five colorways on ask, retail, premium, and flow — search the board, built into Markets.",
   },
   {
     title: "Deal check",

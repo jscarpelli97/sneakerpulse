@@ -44,7 +44,7 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
   {
     id: "compare",
     feature: "Head-to-head Compare",
-    detail: "Built into Markets — visual ask, premium vs retail, volume, and rank matchups.",
+    detail: "Built into Markets — search and stack 2–5 pairs on ask, premium, volume, and rank.",
     free: { label: `Top ${FREE_TOP}`, state: "limited" },
     plus: { label: "Full board", state: "yes" },
   },

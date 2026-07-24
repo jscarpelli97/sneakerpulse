@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { CompareClient } from "@/components/compare/CompareClient";
 import { SneakerThumb } from "@/components/catalog/SneakerThumb";
 import { MarketsDealCheck } from "@/components/markets/MarketsDealCheck";
+import { MAX_COMPARE } from "@/hooks/useCompareMarkets";
 import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
 import {
   filterCatalogRows,
@@ -34,7 +35,7 @@ const VIEW_LABELS: Record<MarketsView, { eyebrow: string; blurb: string }> = {
   icons: { eyebrow: "Browse", blurb: "pairs" },
   compare: {
     eyebrow: "Compare",
-    blurb: "Head-to-head on ask, premium, volume, and rank",
+    blurb: "Search and stack 2–5 pairs on ask, premium, volume, and rank",
   },
   deal: {
     eyebrow: "Deal check",
@@ -159,28 +160,34 @@ function StatusPill({ row }: { row: CatalogQuote }) {
   );
 }
 
-function defaultComparePair(rows: CatalogQuote[], preferA?: string) {
-  const a =
-    (preferA && rows.some((r) => r.slug === preferA) ? preferA : null) ??
-    rows[0]?.slug ??
-    "";
-  const b = rows.find((r) => r.slug !== a)?.slug ?? a;
-  return { a, b };
+function defaultCompareSlugs(
+  rows: CatalogQuote[],
+  seed: string[] = [],
+): string[] {
+  const out: string[] = [];
+  for (const slug of seed) {
+    if (rows.some((r) => r.slug === slug) && !out.includes(slug)) {
+      out.push(slug);
+    }
+  }
+  for (const row of rows) {
+    if (out.length >= 2) break;
+    if (!out.includes(row.slug)) out.push(row.slug);
+  }
+  return out.slice(0, MAX_COMPARE);
 }
 
 export function CatalogMarketsExplorer({
   rows,
   initialQuery = "",
   initialView = "columns",
-  initialCompareA,
-  initialCompareB,
+  initialCompareSlugs = [],
   initialDealSlug,
 }: {
   rows: CatalogQuote[];
   initialQuery?: string;
   initialView?: MarketsView;
-  initialCompareA?: string;
-  initialCompareB?: string;
+  initialCompareSlugs?: string[];
   initialDealSlug?: string;
 }) {
   const router = useRouter();
@@ -192,19 +199,10 @@ export function CatalogMarketsExplorer({
       ? initialView
       : "columns",
   );
-  const defaults = defaultComparePair(rows, initialCompareA);
-  const [compareA, setCompareA] = useState(
-    initialCompareA && rows.some((r) => r.slug === initialCompareA)
-      ? initialCompareA
-      : defaults.a,
+  const [compareSlugs, setCompareSlugs] = useState(() =>
+    defaultCompareSlugs(rows, initialCompareSlugs),
   );
-  const [compareB, setCompareB] = useState(
-    initialCompareB &&
-      rows.some((r) => r.slug === initialCompareB) &&
-      initialCompareB !== compareA
-      ? initialCompareB
-      : defaults.b,
-  );
+  const [compareKey, setCompareKey] = useState(0);
   const [dealSeed, setDealSeed] = useState<string | null>(
     initialDealSlug && rows.some((r) => r.slug === initialDealSlug)
       ? initialDealSlug
@@ -239,8 +237,7 @@ export function CatalogMarketsExplorer({
   function syncUrl(next: {
     view: MarketsView;
     q?: string;
-    a?: string;
-    b?: string;
+    compare?: string[];
     slug?: string;
   }) {
     const params = new URLSearchParams();
@@ -248,8 +245,8 @@ export function CatalogMarketsExplorer({
     if (q) params.set("q", q);
     if (next.view === "compare") {
       params.set("view", "compare");
-      if (next.a) params.set("a", next.a);
-      if (next.b) params.set("b", next.b);
+      const list = next.compare ?? compareSlugs;
+      if (list.length) params.set("s", list.join(","));
     } else if (next.view === "deal") {
       params.set("view", "deal");
       if (next.slug) params.set("slug", next.slug);
@@ -275,23 +272,21 @@ export function CatalogMarketsExplorer({
       syncUrl({ view: "deal", slug: dealSeed ?? undefined });
       return;
     }
-    const pair = defaultComparePair(rows, compareA);
-    const a = compareA || pair.a;
-    const b = compareB && compareB !== a ? compareB : pair.b;
-    setCompareA(a);
-    setCompareB(b);
-    syncUrl({ view: "compare", a, b });
+    const nextSlugs = defaultCompareSlugs(rows, compareSlugs);
+    setCompareSlugs(nextSlugs);
+    setCompareKey((key) => key + 1);
+    syncUrl({ view: "compare", compare: nextSlugs });
   }
 
   function openCompareWith(slug: string) {
-    const b =
-      compareB && compareB !== slug
-        ? compareB
-        : (rows.find((r) => r.slug !== slug)?.slug ?? slug);
-    setCompareA(slug);
-    setCompareB(b);
+    const next = defaultCompareSlugs(rows, [
+      slug,
+      ...compareSlugs.filter((s) => s !== slug),
+    ]);
+    setCompareSlugs(next);
+    setCompareKey((key) => key + 1);
     setView("compare");
-    syncUrl({ view: "compare", a: slug, b });
+    syncUrl({ view: "compare", compare: next });
   }
 
   function openDealWith(slug: string) {
@@ -335,8 +330,7 @@ export function CatalogMarketsExplorer({
     syncUrl({
       view,
       q: value,
-      a: compareA,
-      b: compareB,
+      compare: compareSlugs,
       slug: dealSeed ?? undefined,
     });
   }
@@ -445,10 +439,13 @@ export function CatalogMarketsExplorer({
             </p>
           ) : (
             <CompareClient
-              key={`${compareA}::${compareB}`}
+              key={compareKey}
               sneakers={rows}
-              initialA={compareA}
-              initialB={compareB}
+              initialSlugs={compareSlugs}
+              onSlugsChange={(next) => {
+                setCompareSlugs(next);
+                syncUrl({ view: "compare", compare: next });
+              }}
             />
           )}
         </div>

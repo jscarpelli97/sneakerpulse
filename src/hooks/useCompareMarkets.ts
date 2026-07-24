@@ -4,6 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchMarket } from "@/api/market";
 import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
+export const MAX_COMPARE = 5;
+export const MIN_COMPARE = 2;
+
 export type CompareQuote = {
   slug: string;
   name: string;
@@ -25,84 +28,90 @@ export type CompareQuote = {
   stockxUrl: string;
 };
 
-export type CompareSide = "left" | "right" | "tie" | null;
+export type CompareCell = {
+  slug: string;
+  display: string;
+  raw: number | null;
+};
 
-export type CompareRow = {
+export type CompareMetricRow = {
   label: string;
   hint?: string;
-  left: string;
-  right: string;
-  leftRaw: number | null;
-  rightRaw: number | null;
-  /** Which side "wins" for this metric (buyer-friendly when lower/higher matters). */
-  winner: CompareSide;
+  cells: CompareCell[];
+  /** Slug(s) that win this metric (ties allowed). */
+  winnerSlugs: string[];
   kind: "money" | "percent" | "number" | "rank" | "text";
 };
 
 function premiumPct(price: number | null, retail: number | null) {
   if (price == null || retail == null || retail <= 0) return null;
-  return ((price / retail) * 100) - 100;
+  return (price / retail) * 100 - 100;
 }
 
-function pickWinner(
-  left: number | null,
-  right: number | null,
-  prefer: "lower" | "higher",
-): CompareSide {
-  if (left == null && right == null) return null;
-  if (left == null) return "right";
-  if (right == null) return "left";
-  if (left === right) return "tie";
-  if (prefer === "lower") return left < right ? "left" : "right";
-  return left > right ? "left" : "right";
+function pickWinnerSlugs(
+  cells: { slug: string; raw: number | null }[],
+  prefer: "lower" | "higher" | null,
+): string[] {
+  if (!prefer) return [];
+  const ranked = cells.filter((c) => c.raw != null);
+  if (ranked.length === 0) return [];
+  const best =
+    prefer === "lower"
+      ? Math.min(...ranked.map((c) => c.raw as number))
+      : Math.max(...ranked.map((c) => c.raw as number));
+  return ranked.filter((c) => c.raw === best).map((c) => c.slug);
 }
 
-export function useCompareMarkets(initialA: string, initialB: string) {
-  const [a, setA] = useState(initialA);
-  const [b, setB] = useState(initialB);
+function toQuote(
+  slug: string,
+  res: Awaited<ReturnType<typeof fetchMarket>>,
+): CompareQuote | null {
+  if (!res.ok) return null;
+  const d = res.data;
+  return {
+    slug: d.slug || slug,
+    name: d.name,
+    ticker: d.ticker,
+    brand: d.brand,
+    colorway: d.colorway,
+    year: d.year,
+    styleCode: d.styleCode,
+    retail: d.retail ?? null,
+    price: d.price,
+    lastSale: d.stats.lastSale,
+    weeklyOrders: d.stats.weeklyOrders,
+    sales30d: d.stats.sales30d,
+    rank: d.stats.rank,
+    change30d: d.change30d?.percent ?? null,
+    high30d: d.stats.high30d,
+    low30d: d.stats.low30d,
+    image: d.image,
+    stockxUrl: d.stockxUrl,
+  };
+}
+
+export function useCompareMarkets(initialSlugs: string[]) {
+  const [slugs, setSlugs] = useState(() =>
+    uniqueSlugs(initialSlugs).slice(0, MAX_COMPARE),
+  );
   const [quotes, setQuotes] = useState<Record<string, CompareQuote | null>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestId = useRef(0);
 
   const compare = useCallback(async () => {
-    if (!a || !b || a === b) return;
+    if (slugs.length < MIN_COMPARE) return;
     const id = ++requestId.current;
     setLoading(true);
     setError(null);
     try {
-      const [ra, rb] = await Promise.all([fetchMarket(a), fetchMarket(b)]);
+      const results = await Promise.all(
+        slugs.map(async (slug) => [slug, await fetchMarket(slug)] as const),
+      );
       if (id !== requestId.current) return;
       const next: Record<string, CompareQuote | null> = {};
-      for (const [slug, res] of [
-        [a, ra],
-        [b, rb],
-      ] as const) {
-        if (!res.ok) {
-          next[slug] = null;
-          continue;
-        }
-        const d = res.data;
-        next[slug] = {
-          slug: d.slug,
-          name: d.name,
-          ticker: d.ticker,
-          brand: d.brand,
-          colorway: d.colorway,
-          year: d.year,
-          styleCode: d.styleCode,
-          retail: d.retail ?? null,
-          price: d.price,
-          lastSale: d.stats.lastSale,
-          weeklyOrders: d.stats.weeklyOrders,
-          sales30d: d.stats.sales30d,
-          rank: d.stats.rank,
-          change30d: d.change30d?.percent ?? null,
-          high30d: d.stats.high30d,
-          low30d: d.stats.low30d,
-          image: d.image,
-          stockxUrl: d.stockxUrl,
-        };
+      for (const [slug, res] of results) {
+        next[slug] = toQuote(slug, res);
       }
       setQuotes(next);
     } catch (err) {
@@ -111,7 +120,7 @@ export function useCompareMarkets(initialA: string, initialB: string) {
     } finally {
       if (id === requestId.current) setLoading(false);
     }
-  }, [a, b]);
+  }, [slugs]);
 
   useEffect(() => {
     const t = window.setTimeout(() => {
@@ -120,159 +129,167 @@ export function useCompareMarkets(initialA: string, initialB: string) {
     return () => window.clearTimeout(t);
   }, [compare]);
 
-  const left = quotes[a] ?? null;
-  const right = quotes[b] ?? null;
+  const orderedQuotes = useMemo(
+    () => slugs.map((slug) => quotes[slug] ?? null),
+    [slugs, quotes],
+  );
 
-  const rows = useMemo((): CompareRow[] => {
-    if (!left && !right) return [];
-
-    const leftPrem = premiumPct(left?.price ?? null, left?.retail ?? null);
-    const rightPrem = premiumPct(right?.price ?? null, right?.retail ?? null);
+  const rows = useMemo((): CompareMetricRow[] => {
+    if (slugs.length < MIN_COMPARE) return [];
+    if (!orderedQuotes.some(Boolean)) return [];
 
     const fmtPct = (v: number | null) =>
       v == null ? "—" : `${v > 0 ? "+" : ""}${v.toFixed(1)}%`;
 
-    return [
-      {
-        label: "Lowest ask",
-        hint: "Cheaper ask wins",
-        left: formatMaybeMoney(left?.price),
-        right: formatMaybeMoney(right?.price),
-        leftRaw: left?.price ?? null,
-        rightRaw: right?.price ?? null,
-        winner: pickWinner(left?.price ?? null, right?.price ?? null, "lower"),
-        kind: "money",
-      },
-      {
-        label: "Retail",
-        left: formatMaybeMoney(left?.retail),
-        right: formatMaybeMoney(right?.retail),
-        leftRaw: left?.retail ?? null,
-        rightRaw: right?.retail ?? null,
-        winner: null,
-        kind: "money",
-      },
-      {
-        label: "Premium vs retail",
-        hint: "Lower premium = closer to retail",
-        left: fmtPct(leftPrem),
-        right: fmtPct(rightPrem),
-        leftRaw: leftPrem,
-        rightRaw: rightPrem,
-        winner: pickWinner(leftPrem, rightPrem, "lower"),
-        kind: "percent",
-      },
-      {
-        label: "30d change",
-        left:
-          left?.change30d != null
-            ? `${left.change30d > 0 ? "+" : ""}${left.change30d.toFixed(2)}%`
-            : "—",
-        right:
-          right?.change30d != null
-            ? `${right.change30d > 0 ? "+" : ""}${right.change30d.toFixed(2)}%`
-            : "—",
-        leftRaw: left?.change30d ?? null,
-        rightRaw: right?.change30d ?? null,
-        winner: pickWinner(
-          left?.change30d ?? null,
-          right?.change30d ?? null,
-          "higher",
-        ),
-        kind: "percent",
-      },
-      {
-        label: "Last sale",
-        left: formatMaybeMoney(left?.lastSale),
-        right: formatMaybeMoney(right?.lastSale),
-        leftRaw: left?.lastSale ?? null,
-        rightRaw: right?.lastSale ?? null,
-        winner: pickWinner(
-          left?.lastSale ?? null,
-          right?.lastSale ?? null,
-          "lower",
-        ),
-        kind: "money",
-      },
-      {
-        label: "30d high / low",
-        left:
-          left?.high30d != null || left?.low30d != null
-            ? `${formatMaybeMoney(left?.high30d)} / ${formatMaybeMoney(left?.low30d)}`
-            : "—",
-        right:
-          right?.high30d != null || right?.low30d != null
-            ? `${formatMaybeMoney(right?.high30d)} / ${formatMaybeMoney(right?.low30d)}`
-            : "—",
-        leftRaw: left?.high30d ?? null,
-        rightRaw: right?.high30d ?? null,
-        winner: null,
-        kind: "text",
-      },
-      {
-        label: "Weekly orders",
-        hint: "Higher volume wins",
-        left:
-          left?.weeklyOrders != null ? formatNumber(left.weeklyOrders) : "—",
-        right:
-          right?.weeklyOrders != null ? formatNumber(right.weeklyOrders) : "—",
-        leftRaw: left?.weeklyOrders ?? null,
-        rightRaw: right?.weeklyOrders ?? null,
-        winner: pickWinner(
-          left?.weeklyOrders ?? null,
-          right?.weeklyOrders ?? null,
-          "higher",
-        ),
-        kind: "number",
-      },
-      {
-        label: "30d sales",
-        left: left?.sales30d != null ? formatNumber(left.sales30d) : "—",
-        right: right?.sales30d != null ? formatNumber(right.sales30d) : "—",
-        leftRaw: left?.sales30d ?? null,
-        rightRaw: right?.sales30d ?? null,
-        winner: pickWinner(
-          left?.sales30d ?? null,
-          right?.sales30d ?? null,
-          "higher",
-        ),
-        kind: "number",
-      },
-      {
-        label: "StockX rank",
-        hint: "Lower rank is hotter",
-        left: left?.rank != null ? `#${left.rank}` : "—",
-        right: right?.rank != null ? `#${right.rank}` : "—",
-        leftRaw: left?.rank ?? null,
-        rightRaw: right?.rank ?? null,
-        winner: pickWinner(left?.rank ?? null, right?.rank ?? null, "lower"),
-        kind: "rank",
-      },
-    ];
-  }, [left, right]);
+    const build = (
+      label: string,
+      prefer: "lower" | "higher" | null,
+      kind: CompareMetricRow["kind"],
+      cell: (q: CompareQuote | null) => CompareCell,
+      hint?: string,
+    ): CompareMetricRow => {
+      const cells = slugs.map((slug, i) => {
+        const built = cell(orderedQuotes[i] ?? null);
+        return { ...built, slug };
+      });
+      return {
+        label,
+        hint,
+        cells,
+        winnerSlugs: pickWinnerSlugs(cells, prefer),
+        kind,
+      };
+    };
 
-  const score = useMemo(() => {
-    let leftWins = 0;
-    let rightWins = 0;
+    return [
+      build(
+        "Lowest ask",
+        "lower",
+        "money",
+        (q) => ({
+          slug: "",
+          display: formatMaybeMoney(q?.price),
+          raw: q?.price ?? null,
+        }),
+        "Cheaper ask wins",
+      ),
+      build("Retail", null, "money", (q) => ({
+        slug: "",
+        display: formatMaybeMoney(q?.retail),
+        raw: q?.retail ?? null,
+      })),
+      build(
+        "Premium vs retail",
+        "lower",
+        "percent",
+        (q) => {
+          const prem = premiumPct(q?.price ?? null, q?.retail ?? null);
+          return { slug: "", display: fmtPct(prem), raw: prem };
+        },
+        "Lower premium = closer to retail",
+      ),
+      build("30d change", "higher", "percent", (q) => ({
+        slug: "",
+        display:
+          q?.change30d != null
+            ? `${q.change30d > 0 ? "+" : ""}${q.change30d.toFixed(2)}%`
+            : "—",
+        raw: q?.change30d ?? null,
+      })),
+      build("Last sale", "lower", "money", (q) => ({
+        slug: "",
+        display: formatMaybeMoney(q?.lastSale),
+        raw: q?.lastSale ?? null,
+      })),
+      build("30d high / low", null, "text", (q) => ({
+        slug: "",
+        display:
+          q?.high30d != null || q?.low30d != null
+            ? `${formatMaybeMoney(q?.high30d)} / ${formatMaybeMoney(q?.low30d)}`
+            : "—",
+        raw: q?.high30d ?? null,
+      })),
+      build(
+        "Weekly orders",
+        "higher",
+        "number",
+        (q) => ({
+          slug: "",
+          display: q?.weeklyOrders != null ? formatNumber(q.weeklyOrders) : "—",
+          raw: q?.weeklyOrders ?? null,
+        }),
+        "Higher volume wins",
+      ),
+      build("30d sales", "higher", "number", (q) => ({
+        slug: "",
+        display: q?.sales30d != null ? formatNumber(q.sales30d) : "—",
+        raw: q?.sales30d ?? null,
+      })),
+      build(
+        "StockX rank",
+        "lower",
+        "rank",
+        (q) => ({
+          slug: "",
+          display: q?.rank != null ? `#${q.rank}` : "—",
+          raw: q?.rank ?? null,
+        }),
+        "Lower rank is hotter",
+      ),
+    ];
+  }, [slugs, orderedQuotes]);
+
+  const winCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const slug of slugs) counts[slug] = 0;
     for (const row of rows) {
-      if (row.winner === "left") leftWins += 1;
-      if (row.winner === "right") rightWins += 1;
+      for (const winner of row.winnerSlugs) {
+        counts[winner] = (counts[winner] ?? 0) + 1;
+      }
     }
-    return { leftWins, rightWins };
-  }, [rows]);
+    return counts;
+  }, [rows, slugs]);
+
+  const addSlug = useCallback((slug: string) => {
+    setSlugs((prev) => {
+      if (prev.includes(slug) || prev.length >= MAX_COMPARE) return prev;
+      return [...prev, slug];
+    });
+  }, []);
+
+  const removeSlug = useCallback((slug: string) => {
+    setSlugs((prev) => prev.filter((s) => s !== slug));
+  }, []);
+
+  const replaceSlugs = useCallback((next: string[]) => {
+    setSlugs(uniqueSlugs(next).slice(0, MAX_COMPARE));
+  }, []);
 
   return {
-    a,
-    b,
-    setA,
-    setB,
+    slugs,
+    setSlugs: replaceSlugs,
+    addSlug,
+    removeSlug,
     quotes,
-    left,
-    right,
+    orderedQuotes,
     rows,
-    score,
+    winCounts,
     loading,
     error,
     compare,
+    canAdd: slugs.length < MAX_COMPARE,
+    ready: slugs.length >= MIN_COMPARE,
   };
+}
+
+function uniqueSlugs(slugs: string[]) {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const slug of slugs) {
+    const trimmed = slug.trim();
+    if (!trimmed || seen.has(trimmed)) continue;
+    seen.add(trimmed);
+    out.push(trimmed);
+  }
+  return out;
 }

@@ -17,18 +17,36 @@ export const metadata = {
   alternates: { canonical: "/markets" },
 };
 
+function parseCompareSlugs(params: {
+  s?: string;
+  a?: string;
+  b?: string;
+}): string[] {
+  if (typeof params.s === "string" && params.s.trim()) {
+    return params.s
+      .split(",")
+      .map((part) => part.trim())
+      .filter(Boolean);
+  }
+  const legacy: string[] = [];
+  if (typeof params.a === "string" && params.a.trim()) legacy.push(params.a.trim());
+  if (typeof params.b === "string" && params.b.trim()) legacy.push(params.b.trim());
+  return legacy;
+}
+
 export default async function MarketsBrowsePage({
   searchParams,
 }: {
   searchParams: Promise<{
     q?: string;
     view?: string;
+    s?: string;
     a?: string;
     b?: string;
     slug?: string;
   }>;
 }) {
-  const { q, view, a, b, slug } = await searchParams;
+  const { q, view, s, a, b, slug } = await searchParams;
   const [{ isPlus, publicPlus }, allQuotes] = await Promise.all([
     getPlusAccess(),
     getCatalogQuotes(TOP_SELLERS_LIMIT),
@@ -89,8 +107,7 @@ export default async function MarketsBrowsePage({
             rows={quotes}
             initialQuery={typeof q === "string" ? q : ""}
             initialView={initialView}
-            initialCompareA={typeof a === "string" ? a : undefined}
-            initialCompareB={typeof b === "string" ? b : undefined}
+            initialCompareSlugs={parseCompareSlugs({ s, a, b })}
             initialDealSlug={typeof slug === "string" ? slug : undefined}
           />
         </div>

@@ -2,12 +2,44 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCompareMarkets } from "@/hooks/useCompareMarkets";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  MAX_COMPARE,
+  MIN_COMPARE,
+  useCompareMarkets,
+  type CompareQuote,
+} from "@/hooks/useCompareMarkets";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 import { changeClass, formatMaybeMoney } from "@/utils/format";
 
+const CARD_GLOWS = [
+  "rgba(212,160,23,0.18)",
+  "rgba(56,189,248,0.14)",
+  "rgba(38,166,154,0.16)",
+  "rgba(244,114,182,0.14)",
+  "rgba(167,139,250,0.16)",
+];
+
 function catalogPick(sneakers: SneakerCatalogEntry[], slug: string) {
   return sneakers.find((s) => s.slug === slug) ?? null;
+}
+
+function filterEntries(sneakers: SneakerCatalogEntry[], query: string) {
+  const q = query.trim().toLowerCase();
+  if (!q) return sneakers;
+  return sneakers.filter((row) => {
+    const haystack = [
+      row.name,
+      row.brand,
+      row.ticker,
+      row.styleCode,
+      row.colorway,
+      row.slug,
+    ]
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(q);
+  });
 }
 
 function premiumLabel(price: number | null, retail: number | null) {
@@ -17,19 +49,23 @@ function premiumLabel(price: number | null, retail: number | null) {
 }
 
 function SideCard({
-  side,
+  index,
   slug,
   catalog,
   quote,
   wins,
   loading,
+  canRemove,
+  onRemove,
 }: {
-  side: "A" | "B";
+  index: number;
   slug: string;
   catalog: SneakerCatalogEntry | null;
-  quote: ReturnType<typeof useCompareMarkets>["left"];
+  quote: CompareQuote | null;
   wins: number;
   loading: boolean;
+  canRemove: boolean;
+  onRemove: () => void;
 }) {
   const name = quote?.name ?? catalog?.name ?? slug;
   const ticker = quote?.ticker ?? catalog?.ticker ?? "—";
@@ -41,50 +77,60 @@ function SideCard({
   const retail = quote?.retail ?? catalog?.retail ?? null;
   const change30d = quote?.change30d ?? null;
   const premium = premiumLabel(price, retail);
+  const glow = CARD_GLOWS[index % CARD_GLOWS.length];
 
   return (
-    <article className="relative flex min-h-[280px] flex-col overflow-hidden rounded-2xl border border-dash-border bg-gradient-to-b from-dash-elevated/90 via-dash-panel/40 to-dash-bg">
+    <article className="relative flex min-h-[260px] min-w-[220px] flex-1 flex-col overflow-hidden rounded-2xl border border-dash-border bg-gradient-to-b from-dash-elevated/90 via-dash-panel/40 to-dash-bg sm:min-w-[240px]">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-40"
         style={{
-          background:
-            side === "A"
-              ? "radial-gradient(ellipse 80% 55% at 20% 0%, rgba(212,160,23,0.18), transparent 60%)"
-              : "radial-gradient(ellipse 80% 55% at 80% 0%, rgba(56,189,248,0.14), transparent 60%)",
+          background: `radial-gradient(ellipse 80% 55% at ${index % 2 === 0 ? "20%" : "80%"} 0%, ${glow}, transparent 60%)`,
         }}
       />
-      <div className="relative flex items-center justify-between gap-2 px-4 pt-4 sm:px-5">
+      <div className="relative flex items-center justify-between gap-2 px-4 pt-4">
         <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.16em] text-dash-faint">
-          Side {side}
+          Pair {index + 1}
         </p>
-        <p className="rounded-lg border border-dash-border/80 bg-dash-bg/50 px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
-          {wins} metric{wins === 1 ? "" : "s"} ahead
-        </p>
+        <div className="flex items-center gap-1.5">
+          <p className="rounded-lg border border-dash-border/80 bg-dash-bg/50 px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
+            {wins} win{wins === 1 ? "" : "s"}
+          </p>
+          {canRemove ? (
+            <button
+              type="button"
+              onClick={onRemove}
+              aria-label={`Remove ${ticker}`}
+              className="rounded-lg border border-dash-border px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted hover:border-dash-down/50 hover:text-dash-down"
+            >
+              Remove
+            </button>
+          ) : null}
+        </div>
       </div>
 
-      <div className="relative mx-auto mt-2 flex h-36 w-full max-w-[220px] items-center justify-center sm:h-44">
+      <div className="relative mx-auto mt-2 flex h-32 w-full max-w-[200px] items-center justify-center sm:h-36">
         {image ? (
           <Image
             src={image}
             alt={name}
             fill
             className={`object-contain p-3 transition-opacity duration-300 ${loading ? "opacity-40" : "opacity-100"}`}
-            sizes="220px"
-            priority={side === "A"}
+            sizes="200px"
+            priority={index === 0}
           />
         ) : (
-          <div className="h-24 w-24 rounded-full bg-dash-elevated" />
+          <div className="h-20 w-20 rounded-full bg-dash-elevated" />
         )}
       </div>
 
-      <div className="relative mt-auto space-y-2 px-4 pb-5 pt-2 sm:px-5">
+      <div className="relative mt-auto space-y-2 px-4 pb-4 pt-2">
         <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
           {[brand, year].filter(Boolean).join(" · ")}
         </p>
         <Link
           href={`/sneakers/${slug}`}
-          className="block font-[family-name:var(--font-syne)] text-xl font-extrabold tracking-tight text-dash-text hover:underline sm:text-2xl"
+          className="block font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text hover:underline sm:text-xl"
         >
           {ticker}
         </Link>
@@ -98,7 +144,7 @@ function SideCard({
             <p className="text-[10px] uppercase tracking-[0.12em] text-dash-faint">
               Lowest ask
             </p>
-            <p className="font-[family-name:var(--font-plex-mono)] text-2xl font-semibold tabular-nums text-dash-text">
+            <p className="font-[family-name:var(--font-plex-mono)] text-xl font-semibold tabular-nums text-dash-text">
               {loading && price == null ? "…" : formatMaybeMoney(price)}
             </p>
           </div>
@@ -123,124 +169,259 @@ function SideCard({
   );
 }
 
-export function CompareClient({
+function PairSearchPicker({
   sneakers,
-  initialA,
-  initialB,
+  selected,
+  canAdd,
+  onAdd,
+  onRemove,
 }: {
   sneakers: SneakerCatalogEntry[];
-  initialA: string;
-  initialB: string;
+  selected: string[];
+  canAdd: boolean;
+  onAdd: (slug: string) => void;
+  onRemove: (slug: string) => void;
+}) {
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const selectedSet = useMemo(() => new Set(selected), [selected]);
+
+  const matches = useMemo(() => {
+    return filterEntries(sneakers, q)
+      .filter((row) => !selectedSet.has(row.slug))
+      .slice(0, 8);
+  }, [sneakers, q, selectedSet]);
+
+  useEffect(() => {
+    function onDocClick(event: MouseEvent) {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
+        {selected.map((slug) => {
+          const entry = catalogPick(sneakers, slug);
+          return (
+            <button
+              key={slug}
+              type="button"
+              onClick={() => onRemove(slug)}
+              className="inline-flex items-center gap-2 rounded-xl border border-dash-border bg-dash-elevated/60 px-3 py-1.5 text-left transition-colors hover:border-dash-down/40 hover:bg-dash-elevated"
+              title="Remove from compare"
+            >
+              <span className="font-[family-name:var(--font-plex-mono)] text-[11px] text-dash-accent">
+                {entry?.ticker ?? slug}
+              </span>
+              <span className="max-w-[10rem] truncate text-xs text-dash-muted">
+                {entry?.name ?? slug}
+              </span>
+              <span className="text-dash-faint" aria-hidden>
+                ×
+              </span>
+            </button>
+          );
+        })}
+        {selected.length === 0 ? (
+          <p className="text-sm text-dash-muted">
+            Search and add at least {MIN_COMPARE} pairs to compare.
+          </p>
+        ) : null}
+      </div>
+
+      <div ref={rootRef} className="relative max-w-xl">
+        <label className="block text-sm text-dash-muted">
+          Search board
+          <input
+            type="search"
+            value={q}
+            disabled={!canAdd}
+            onChange={(e) => {
+              setQ(e.target.value);
+              setOpen(true);
+            }}
+            onFocus={() => setOpen(true)}
+            placeholder={
+              canAdd
+                ? "Name, style ID, brand…"
+                : `Max ${MAX_COMPARE} pairs — remove one to add another`
+            }
+            className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent disabled:cursor-not-allowed disabled:opacity-50"
+          />
+        </label>
+        {open && canAdd ? (
+          <ul className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-dash-border bg-dash-surface shadow-[var(--shadow-md)]">
+            {matches.length === 0 ? (
+              <li className="px-3 py-3 text-sm text-dash-muted">
+                {q.trim()
+                  ? `No board matches for “${q.trim()}”.`
+                  : "Type to filter the board."}
+              </li>
+            ) : (
+              matches.map((row) => (
+                <li key={row.slug}>
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-dash-elevated"
+                    onClick={() => {
+                      onAdd(row.slug);
+                      setQ("");
+                      setOpen(false);
+                    }}
+                  >
+                    <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-dash-bg">
+                      {row.fallbackImage ? (
+                        <Image
+                          src={row.fallbackImage}
+                          alt=""
+                          fill
+                          className="object-contain p-1"
+                          sizes="36px"
+                        />
+                      ) : null}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-semibold text-dash-text">
+                        {row.name}
+                      </span>
+                      <span className="block truncate font-[family-name:var(--font-plex-mono)] text-[11px] text-dash-accent">
+                        {row.ticker}
+                        {row.rank != null ? ` · #${row.rank}` : ""}
+                      </span>
+                    </span>
+                    <span className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-faint">
+                      Add
+                    </span>
+                  </button>
+                </li>
+              ))
+            )}
+          </ul>
+        ) : null}
+      </div>
+      <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
+        {selected.length}/{MAX_COMPARE} selected · {MIN_COMPARE}–{MAX_COMPARE}{" "}
+        pairs
+      </p>
+    </div>
+  );
+}
+
+export function CompareClient({
+  sneakers,
+  initialSlugs,
+  onSlugsChange,
+}: {
+  sneakers: SneakerCatalogEntry[];
+  initialSlugs: string[];
+  onSlugsChange?: (slugs: string[]) => void;
 }) {
   const {
-    a,
-    b,
-    setA,
-    setB,
-    left,
-    right,
+    slugs,
+    addSlug,
+    removeSlug,
+    quotes,
     rows,
-    score,
+    winCounts,
     loading,
     error,
     compare,
-  } = useCompareMarkets(initialA, initialB);
+    canAdd,
+    ready,
+  } = useCompareMarkets(initialSlugs);
 
-  const catalogA = catalogPick(sneakers, a);
-  const catalogB = catalogPick(sneakers, b);
-  const samePick = a === b;
+  const onSlugsChangeRef = useRef(onSlugsChange);
+  onSlugsChangeRef.current = onSlugsChange;
+
+  useEffect(() => {
+    onSlugsChangeRef.current?.(slugs);
+  }, [slugs]);
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-        <label className="text-sm text-dash-muted">
-          Sneaker A
-          <select
-            className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted focus:border-dash-muted"
-            value={a}
-            onChange={(e) => setA(e.target.value)}
-          >
-            {sneakers.map((s) => (
-              <option key={s.slug} value={s.slug}>
-                #{s.rank ?? "—"} · {s.ticker} · {s.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-sm text-dash-muted">
-          Sneaker B
-          <select
-            className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-dash-text outline-none hover:border-dash-muted focus:border-dash-muted"
-            value={b}
-            onChange={(e) => setB(e.target.value)}
-          >
-            {sneakers.map((s) => (
-              <option key={s.slug} value={s.slug}>
-                #{s.rank ?? "—"} · {s.ticker} · {s.name}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0 flex-1">
+          <PairSearchPicker
+            sneakers={sneakers}
+            selected={slugs}
+            canAdd={canAdd}
+            onAdd={addSlug}
+            onRemove={removeSlug}
+          />
+        </div>
         <button
           type="button"
           onClick={compare}
-          disabled={loading || samePick}
-          className="self-end rounded-xl bg-dash-accent px-5 py-2.5 text-sm font-semibold text-dash-bg shadow-[var(--shadow-sm)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          disabled={loading || !ready}
+          className="shrink-0 self-start rounded-xl bg-dash-accent px-5 py-2.5 text-sm font-semibold text-dash-bg shadow-[var(--shadow-sm)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 lg:mt-6"
         >
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
 
-      {samePick ? (
-        <p className="text-sm text-dash-down">Pick two different sneakers.</p>
+      {!ready ? (
+        <p className="text-sm text-dash-muted">
+          Add at least {MIN_COMPARE} different pairs to run a compare.
+        </p>
       ) : null}
       {error ? <p className="text-sm text-dash-down">{error}</p> : null}
 
-      {!samePick ? (
-        <div className="relative grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-stretch">
-          <SideCard
-            side="A"
-            slug={a}
-            catalog={catalogA}
-            quote={left}
-            wins={score.leftWins}
-            loading={loading}
-          />
-          <div className="flex items-center justify-center lg:px-1">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-dash-border bg-dash-surface font-[family-name:var(--font-syne)] text-sm font-extrabold tracking-wide text-dash-accent shadow-[0_0_40px_rgba(212,160,23,0.12)]">
-              VS
-            </div>
-          </div>
-          <SideCard
-            side="B"
-            slug={b}
-            catalog={catalogB}
-            quote={right}
-            wins={score.rightWins}
-            loading={loading}
-          />
+      {ready ? (
+        <div className="flex gap-4 overflow-x-auto pb-1">
+          {slugs.map((slug, index) => (
+            <SideCard
+              key={slug}
+              index={index}
+              slug={slug}
+              catalog={catalogPick(sneakers, slug)}
+              quote={quotes[slug] ?? null}
+              wins={winCounts[slug] ?? 0}
+              loading={loading}
+              canRemove={slugs.length > MIN_COMPARE}
+              onRemove={() => removeSlug(slug)}
+            />
+          ))}
         </div>
       ) : null}
 
       {rows.length > 0 ? (
-        <section className="overflow-hidden rounded-2xl border border-dash-border">
-          <div className="grid grid-cols-[1.1fr_1fr_1fr] border-b border-dash-border bg-dash-elevated/50 text-xs font-semibold uppercase tracking-[0.08em] text-dash-faint sm:grid-cols-[1.2fr_1fr_1fr] sm:text-sm sm:normal-case sm:tracking-normal">
+        <section className="overflow-x-auto rounded-2xl border border-dash-border">
+          <div
+            className="min-w-max border-b border-dash-border bg-dash-elevated/50 text-xs font-semibold uppercase tracking-[0.08em] text-dash-faint sm:text-sm sm:normal-case sm:tracking-normal"
+            style={{
+              display: "grid",
+              gridTemplateColumns: `minmax(8rem,1.2fr) repeat(${slugs.length}, minmax(7.5rem,1fr))`,
+            }}
+          >
             <div className="px-3 py-3 sm:px-4">Metric</div>
-            <div className="px-3 py-3 sm:px-4">
-              <Link href={`/sneakers/${a}`} className="text-dash-text hover:underline">
-                {left?.ticker ?? catalogA?.ticker ?? "A"}
-              </Link>
-            </div>
-            <div className="px-3 py-3 sm:px-4">
-              <Link href={`/sneakers/${b}`} className="text-dash-text hover:underline">
-                {right?.ticker ?? catalogB?.ticker ?? "B"}
-              </Link>
-            </div>
+            {slugs.map((slug) => {
+              const quote = quotes[slug];
+              const catalog = catalogPick(sneakers, slug);
+              return (
+                <div key={slug} className="px-3 py-3 sm:px-4">
+                  <Link
+                    href={`/sneakers/${slug}`}
+                    className="text-dash-text hover:underline"
+                  >
+                    {quote?.ticker ?? catalog?.ticker ?? slug}
+                  </Link>
+                </div>
+              );
+            })}
           </div>
           {rows.map((row) => (
             <div
               key={row.label}
-              className="grid grid-cols-[1.1fr_1fr_1fr] border-b border-dash-border text-sm last:border-b-0 hover:bg-dash-elevated/30 sm:grid-cols-[1.2fr_1fr_1fr]"
+              className="min-w-max border-b border-dash-border text-sm last:border-b-0 hover:bg-dash-elevated/30"
+              style={{
+                display: "grid",
+                gridTemplateColumns: `minmax(8rem,1.2fr) repeat(${slugs.length}, minmax(7.5rem,1fr))`,
+              }}
             >
               <div className="px-3 py-3 sm:px-4">
                 <p className="text-dash-muted">{row.label}</p>
@@ -250,42 +431,32 @@ export function CompareClient({
                   </p>
                 ) : null}
               </div>
-              <div
-                className={`px-3 py-3 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums sm:px-4 ${
-                  row.winner === "left"
-                    ? "bg-dash-up/10 text-dash-up"
-                    : "text-dash-text"
-                }`}
-              >
-                {row.left}
-                {row.winner === "left" ? (
-                  <span className="ml-1.5 hidden text-[10px] font-medium uppercase tracking-wide sm:inline">
-                    win
-                  </span>
-                ) : null}
-              </div>
-              <div
-                className={`px-3 py-3 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums sm:px-4 ${
-                  row.winner === "right"
-                    ? "bg-dash-up/10 text-dash-up"
-                    : "text-dash-text"
-                }`}
-              >
-                {row.right}
-                {row.winner === "right" ? (
-                  <span className="ml-1.5 hidden text-[10px] font-medium uppercase tracking-wide sm:inline">
-                    win
-                  </span>
-                ) : null}
-              </div>
+              {row.cells.map((cell) => {
+                const isWin = row.winnerSlugs.includes(cell.slug);
+                return (
+                  <div
+                    key={`${row.label}-${cell.slug}`}
+                    className={`px-3 py-3 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums sm:px-4 ${
+                      isWin ? "bg-dash-up/10 text-dash-up" : "text-dash-text"
+                    }`}
+                  >
+                    {cell.display}
+                    {isWin ? (
+                      <span className="ml-1.5 hidden text-[10px] font-medium uppercase tracking-wide sm:inline">
+                        win
+                      </span>
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
           ))}
         </section>
-      ) : !samePick ? (
+      ) : ready ? (
         <p className="text-sm text-dash-muted">
           {loading
             ? "Loading live StockX quotes…"
-            : "Quotes will appear once both markets load."}
+            : "Quotes will appear once markets load."}
         </p>
       ) : null}
     </div>
