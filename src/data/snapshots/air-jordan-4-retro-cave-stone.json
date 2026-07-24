@@ -3,12 +3,17 @@
   "slug": "air-jordan-4-retro-cave-stone",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.378Z",
+  "updatedAt": "2026-07-23T13:42:00.700Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 134,
       "orders": 601
+    },
+    {
+      "date": "2026-07-23",
+      "price": 133,
+      "orders": 617
     }
   ]
 }

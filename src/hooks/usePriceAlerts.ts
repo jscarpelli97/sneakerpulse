@@ -3,7 +3,8 @@
 import { useSyncExternalStore } from "react";
 import type { PriceAlert } from "@/types/market";
 
-const STORAGE_KEY = "sneakerpulse.alerts";
+const STORAGE_KEY = "spi.alerts";
+const LEGACY_STORAGE_KEY = "sneakerpulse.alerts";
 
 let memoryAlerts: PriceAlert[] | null = null;
 const listeners = new Set<() => void>();
@@ -14,8 +15,16 @@ function emit() {
 
 function loadAlerts(): PriceAlert[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as PriceAlert[]) : [];
+    const raw =
+      localStorage.getItem(STORAGE_KEY) ??
+      localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as PriceAlert[];
+    if (localStorage.getItem(LEGACY_STORAGE_KEY) && !localStorage.getItem(STORAGE_KEY)) {
+      localStorage.setItem(STORAGE_KEY, raw);
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    }
+    return parsed;
   } catch {
     return [];
   }
@@ -23,6 +32,7 @@ function loadAlerts(): PriceAlert[] {
 
 function saveAlerts(alerts: PriceAlert[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(alerts));
+  localStorage.removeItem(LEGACY_STORAGE_KEY);
 }
 
 function subscribe(onStoreChange: () => void) {

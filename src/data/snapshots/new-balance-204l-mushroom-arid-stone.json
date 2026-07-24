@@ -1,0 +1,14 @@
+{
+  "productId": "59f876d6-9149-4a34-bbf1-5ff4cd325047",
+  "slug": "new-balance-204l-mushroom-arid-stone",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:09.779Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 42,
+      "orders": 124
+    }
+  ]
+}

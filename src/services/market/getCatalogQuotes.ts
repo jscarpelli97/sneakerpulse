@@ -11,6 +11,7 @@ import {
   fetchTopStockxSneakers,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
+import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 
 export type CatalogQuote = SneakerCatalogEntry & {
   price: number | null;
@@ -23,7 +24,9 @@ export async function getCatalogQuotes(
   limit = TOP_SELLERS_LIMIT,
 ): Promise<CatalogQuote[]> {
   const apiKey = getKicksApiKey();
-  if (!apiKey) {
+  // Prefer the committed offline catalog on page views unless live reads
+  // are explicitly enabled — keeps free-tier quota for the daily job.
+  if (!apiKey || !kicksLiveReadsEnabled()) {
     return getOfflineCatalogQuotes(limit);
   }
 
@@ -51,7 +54,9 @@ export async function getCatalogQuotes(
     return getOfflineCatalogQuotes(limit);
   }
 
-  return quotes.sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+  return quotes.sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+  );
 }
 
 /** @deprecated Prefer getOfflineCatalogQuotes via getCatalogQuotes fallback. */
