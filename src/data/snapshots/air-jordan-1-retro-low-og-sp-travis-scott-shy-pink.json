@@ -3,12 +3,17 @@
   "slug": "air-jordan-1-retro-low-og-sp-travis-scott-shy-pink",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:53.716Z",
+  "updatedAt": "2026-07-23T13:41:59.095Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 301,
       "orders": 1694
+    },
+    {
+      "date": "2026-07-23",
+      "price": 300,
+      "orders": 1726
     }
   ]
 }

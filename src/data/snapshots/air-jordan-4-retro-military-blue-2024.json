@@ -3,12 +3,17 @@
   "slug": "air-jordan-4-retro-military-blue-2024",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:58.632Z",
+  "updatedAt": "2026-07-23T13:42:03.861Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 179,
       "orders": 248
+    },
+    {
+      "date": "2026-07-23",
+      "price": 179,
+      "orders": 249
     }
   ]
 }

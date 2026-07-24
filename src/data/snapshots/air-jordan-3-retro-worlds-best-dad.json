@@ -3,12 +3,17 @@
   "slug": "air-jordan-3-retro-worlds-best-dad",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:54.287Z",
+  "updatedAt": "2026-07-23T13:41:59.668Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 132,
       "orders": 852
+    },
+    {
+      "date": "2026-07-23",
+      "price": 132,
+      "orders": 858
     }
   ]
 }

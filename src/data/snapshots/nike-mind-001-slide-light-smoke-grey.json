@@ -3,12 +3,17 @@
   "slug": "nike-mind-001-slide-light-smoke-grey",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.896Z",
+  "updatedAt": "2026-07-23T13:42:01.272Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 152,
       "orders": 469
+    },
+    {
+      "date": "2026-07-23",
+      "price": 151,
+      "orders": 470
     }
   ]
 }

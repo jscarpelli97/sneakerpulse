@@ -3,12 +3,17 @@
   "slug": "vans-lx-old-skool-36-pearlized-pack-vintage-cocoa-brown",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.431Z",
+  "updatedAt": "2026-07-23T13:42:00.856Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 250,
       "orders": 613
+    },
+    {
+      "date": "2026-07-23",
+      "price": 251,
+      "orders": 587
     }
   ]
 }
