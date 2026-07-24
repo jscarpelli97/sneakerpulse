@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchMarket } from "@/api/market";
+import { fetchMarket, fetchMarketSizeLadder } from "@/api/market";
 import { DealCheckPanel } from "@/components/market/DealCheckPanel";
 import {
   BoardPairSearch,
@@ -27,6 +27,7 @@ export function MarketsDealCheck({
   const [market, setMarket] = useState<SneakerMarket | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [askLive, setAskLive] = useState(false);
 
   useEffect(() => {
     if (!seedSlug) return;
@@ -39,6 +40,7 @@ export function MarketsDealCheck({
       setMarket(null);
       setError(null);
       setLoading(false);
+      setAskLive(false);
       return;
     }
 
@@ -46,28 +48,55 @@ export function MarketsDealCheck({
     setLoading(true);
     setError(null);
     setMarket(null);
+    setAskLive(false);
 
-    void fetchMarket(slug)
-      .then((result) => {
+    void (async () => {
+      try {
+        const result = await fetchMarket(slug);
         if (cancelled) return;
         if (!result.ok) {
           setMarket(null);
           setError(result.error || "Could not load that pair.");
           return;
         }
-        setMarket(result.data);
-      })
-      .catch((err: unknown) => {
+
+        let next = result.data;
+        // Snapshot markets have no size ladder — pull live asks like Portfolio.
+        if (!next.sizes.length) {
+          try {
+            const ladder = await fetchMarketSizeLadder(slug);
+            if (
+              !cancelled &&
+              ladder.ok &&
+              ladder.data &&
+              ladder.data.sizes.length > 0
+            ) {
+              next = {
+                ...next,
+                sizes: ladder.data.sizes,
+                upstreamStatus: ladder.data.live ? "live" : next.upstreamStatus,
+              };
+              setAskLive(ladder.data.live);
+            }
+          } catch {
+            /* keep snapshot market; Deal will show limited data */
+          }
+        } else {
+          setAskLive(next.upstreamStatus === "live");
+        }
+
+        if (!cancelled) setMarket(next);
+      } catch (err: unknown) {
         if (!cancelled) {
           setMarket(null);
           setError(
             err instanceof Error ? err.message : "Could not load that pair.",
           );
         }
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setLoading(false);
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;
@@ -104,7 +133,7 @@ export function MarketsDealCheck({
 
       {loading ? (
         <p className="rounded-2xl border border-dash-border bg-dash-elevated/40 px-5 py-8 text-sm text-dash-muted">
-          Loading size ladder…
+          Loading live size asks…
         </p>
       ) : null}
 
@@ -114,7 +143,18 @@ export function MarketsDealCheck({
         </p>
       ) : null}
 
-      {market && !loading ? <DealCheckPanel market={market} /> : null}
+      {market && !loading ? (
+        <div className="space-y-2">
+          {askLive || market.sizes.length > 0 ? (
+            <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
+              {askLive || market.upstreamStatus === "live"
+                ? "Size asks · live"
+                : "Size asks · cached ladder"}
+            </p>
+          ) : null}
+          <DealCheckPanel market={market} />
+        </div>
+      ) : null}
     </div>
   );
 }

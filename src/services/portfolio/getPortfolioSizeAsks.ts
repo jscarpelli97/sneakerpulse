@@ -1,11 +1,9 @@
-import { fetchStockxProduct, getKicksApiKey } from "@/lib/kicksdb/client";
 import {
   resolveHoldingAsk,
   type HoldingAskSource,
 } from "@/lib/portfolio/resolveHoldingAsk";
 import { resolveCatalogQuoteBySlug } from "@/services/catalog/discoveredProducts";
-import { mapProductToMarket } from "@/services/market/mapProductToMarket";
-import type { SizeAsk } from "@/types/market";
+import { getLiveSizeLadder } from "@/services/market/getLiveSizeLadder";
 
 export type PortfolioAskLine = {
   id: string;
@@ -23,13 +21,6 @@ export type PortfolioAskResult = {
   live: boolean;
 };
 
-type LadderCache = {
-  sizes: SizeAsk[];
-  marketPrice: number | null;
-  statsLowestAsk: number | null;
-  live: boolean;
-};
-
 /**
  * Live size asks for Portfolio holdings only.
  * Bypasses KICKSDB_LIVE_READS so the board can stay on the daily snapshot
@@ -40,70 +31,18 @@ export async function getPortfolioSizeAsks(
 ): Promise<PortfolioAskResult[]> {
   if (!lines.length) return [];
 
-  const apiKey = getKicksApiKey();
-  const uniqueSlugs = [...new Set(lines.map((line) => line.slug).filter(Boolean))];
-  const ladders = new Map<string, LadderCache>();
-
-  await Promise.all(
-    uniqueSlugs.map(async (slug) => {
-      const offline = await resolveCatalogQuoteBySlug(slug);
-      const catalogFallback = {
-        slug,
-        ticker: offline?.ticker ?? slug.slice(0, 8).toUpperCase(),
-        styleCode: offline?.styleCode ?? slug,
-        name: offline?.name ?? slug,
-        brand: offline?.brand ?? "Unknown",
-        year: offline?.year ?? new Date().getUTCFullYear(),
-        releaseDate: offline?.releaseDate ?? `${new Date().getUTCFullYear()}-01-01`,
-        colorway: offline?.colorway ?? "—",
-        retail: offline?.retail ?? 0,
-        stockxUrl: offline?.stockxUrl ?? `https://stockx.com/${slug}`,
-        fallbackImage: offline?.fallbackImage ?? "",
-      };
-
-      if (!apiKey) {
-        ladders.set(slug, {
-          sizes: [],
-          marketPrice: offline?.price ?? null,
-          statsLowestAsk: offline?.price ?? null,
-          live: false,
-        });
-        return;
-      }
-
-      const productRes = await fetchStockxProduct(slug, apiKey);
-      if (!productRes.ok || !productRes.data?.data) {
-        ladders.set(slug, {
-          sizes: [],
-          marketPrice: offline?.price ?? null,
-          statsLowestAsk: offline?.price ?? null,
-          live: false,
-        });
-        return;
-      }
-
-      const product = productRes.data.data;
-      const market = mapProductToMarket({
-        product,
-        catalog: catalogFallback,
-        chartSeries: [],
-        historySource: "bootstrap",
-        upstreamStatus: productRes.cacheHit ? "cached" : "live",
-      });
-
-      ladders.set(slug, {
-        sizes: market.sizes,
-        marketPrice: market.price > 0 ? market.price : null,
-        statsLowestAsk:
-          market.stats.lowestAsk != null && market.stats.lowestAsk > 0
-            ? market.stats.lowestAsk
-            : null,
-        live: !productRes.cacheHit || market.sizes.length > 0,
-      });
-    }),
+  const uniqueSlugs = [
+    ...new Set(lines.map((line) => line.slug).filter(Boolean)),
+  ];
+  const ladders = new Map(
+    await Promise.all(
+      uniqueSlugs.map(
+        async (slug) => [slug, await getLiveSizeLadder(slug)] as const,
+      ),
+    ),
   );
 
-  return await Promise.all(
+  return Promise.all(
     lines.map(async (line) => {
       const ladder = ladders.get(line.slug);
       const offline = await resolveCatalogQuoteBySlug(line.slug);

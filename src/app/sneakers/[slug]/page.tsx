@@ -29,6 +29,7 @@ import {
   getMarketBySlug,
   getMarketFallback,
 } from "@/services/market/getMarketBySlug";
+import { getLiveSizeLadder } from "@/services/market/getLiveSizeLadder";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
@@ -87,10 +88,21 @@ export default async function SneakerMarketPage({
   }
 
   const result = await getMarketBySlug(slug);
-  const market = result.ok
-    ? result.data
-    : await getMarketFallback(catalog);
-  const summary = result.ok ? buildMarketSummary(result.data) : null;
+  let market = result.ok ? result.data : await getMarketFallback(catalog);
+
+  // Snapshot markets have no size ladder — hydrate live asks for Deal + size table.
+  if (result.ok && market.sizes.length === 0) {
+    const ladder = await getLiveSizeLadder(slug);
+    if (ladder.sizes.length > 0) {
+      market = {
+        ...market,
+        sizes: ladder.sizes,
+        upstreamStatus: ladder.live ? "live" : market.upstreamStatus,
+      };
+    }
+  }
+
+  const summary = result.ok ? buildMarketSummary(market) : null;
   const upstreamStatus = result.ok ? market.upstreamStatus : "offline";
 
   return (
