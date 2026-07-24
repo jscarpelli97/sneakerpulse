@@ -1,6 +1,7 @@
 {
-  "note": "John's personal collection from inventory spreadsheet. Import into Closet — skips pieces already owned. Chicago/Mocha doubles kept as separate pairs.",
+  "note": "John's personal collection parsed from Resale Inventory & Budget Tracker PDF. Import into Closet — skips pieces already owned. Chicago/Mocha doubles kept as separate pairs.",
   "updatedAt": "2026-07-24",
+  "sourcePdf": "Resale_20Inventory_20__20Budget_20Tracker.pdf_4579.pdf",
   "items": [
     {
       "id": "pc-supreme-nyc-tee",
@@ -11,7 +12,7 @@
       "size": "XL",
       "image": "https://images.stockx.com/images/Supreme-NYC-Tee-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
       "notes": "Used · Supreme · $43.34 total · 12/14/2023 · [pc:supreme-nyc-tee]",
-      "source": "personal"
+      "source": "personal-pdf"
     },
     {
       "id": "pc-supreme-bogo-tee-fw23",
@@ -20,10 +21,10 @@
       "brand": "Supreme",
       "colorway": "Black",
       "size": "XL",
-      "slug": "supreme-box-logo-tee-fw23-black",
       "image": "https://images.stockx.com/images/Supreme-Box-Logo-Tee-FW23-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
       "notes": "Used · StockX · $115.90 total · 12/15/2023 · [pc:supreme-bogo-tee-fw23]",
-      "source": "personal"
+      "source": "personal-pdf",
+      "slug": "supreme-box-logo-tee-fw23-black"
     },
     {
       "id": "pc-j1-mocha-finishline",
@@ -32,11 +33,11 @@
       "brand": "Jordan",
       "colorway": "Mocha",
       "size": "12",
-      "slug": "air-jordan-1-retro-low-og-mocha",
-      "styleCode": "CZ0790-102",
       "image": "https://images.stockx.com/images/Air-Jordan-1-Retro-Low-OG-Mocha-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
-      "notes": "Used · Finish Line · $130.00 · 10/18/2024 · [pc:j1-mocha-finishline]",
-      "source": "personal"
+      "notes": "Used · Finish Line · $130.00 total · 10/18/2024 · [pc:j1-mocha-finishline]",
+      "source": "personal-pdf",
+      "slug": "air-jordan-1-retro-low-og-mocha",
+      "styleCode": "CZ0790-102"
     },
     {
       "id": "pc-j1-chicago-hibbett",
@@ -45,10 +46,10 @@
       "brand": "Jordan",
       "colorway": "Chicago",
       "size": "12",
-      "slug": "air-jordan-1-retro-low-og-chicago",
       "image": "https://images.stockx.com/images/Air-Jordan-1-Retro-Low-OG-Chicago-2025-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
-      "notes": "Used · Hibbett Sports · $143.32 · 11/17/2025 · [pc:j1-chicago-hibbett]",
-      "source": "personal"
+      "notes": "Used · Hibbett Sports · $143.32 total · 11/17/2025 · [pc:j1-chicago-hibbett]",
+      "source": "personal-pdf",
+      "slug": "air-jordan-1-retro-low-og-chicago"
     },
     {
       "id": "pc-j1-chicago-snipes",
@@ -57,10 +58,10 @@
       "brand": "Jordan",
       "colorway": "Chicago",
       "size": "12",
-      "slug": "air-jordan-1-retro-low-og-chicago",
       "image": "https://images.stockx.com/images/Air-Jordan-1-Retro-Low-OG-Chicago-2025-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
       "notes": "New · Snipes USA · $154.95 total · 11/18/2025 · [pc:j1-chicago-snipes]",
-      "source": "personal"
+      "source": "personal-pdf",
+      "slug": "air-jordan-1-retro-low-og-chicago"
     },
     {
       "id": "pc-supreme-bogo-hoodie-fw25",
@@ -69,10 +70,10 @@
       "brand": "Supreme",
       "colorway": "Black",
       "size": "L",
-      "slug": "supreme-box-logo-hooded-sweatshirt-fw25-black",
       "image": "https://images.stockx.com/images/Supreme-Box-Logo-Hooded-Sweatshirt-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
       "notes": "Used · Supreme · $178.00 total · 12/4/2025 · [pc:supreme-bogo-hoodie-fw25]",
-      "source": "personal"
+      "source": "personal-pdf",
+      "slug": "supreme-box-logo-hooded-sweatshirt-fw25-black"
     },
     {
       "id": "pc-supreme-mophie-qi2",
@@ -83,7 +84,7 @@
       "size": "OS",
       "image": "/wardrobe/collection/supreme-mophie-qi2.jpg",
       "notes": "Used · Supreme · $88.06 total · 12/4/2025 · [pc:supreme-mophie-qi2]",
-      "source": "personal"
+      "source": "personal-pdf"
     },
     {
       "id": "pc-j1-mocha-stockx",
@@ -92,11 +93,11 @@
       "brand": "Jordan",
       "colorway": "Mocha",
       "size": "12",
-      "slug": "air-jordan-1-retro-low-og-mocha",
-      "styleCode": "CZ0790-102",
       "image": "https://images.stockx.com/images/Air-Jordan-1-Retro-Low-OG-Mocha-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
       "notes": "New · StockX · $210.29 total · 12/9/2025 · [pc:j1-mocha-stockx]",
-      "source": "personal"
+      "source": "personal-pdf",
+      "slug": "air-jordan-1-retro-low-og-mocha",
+      "styleCode": "CZ0790-102"
     },
     {
       "id": "pc-supreme-tyler-tee",
@@ -105,10 +106,10 @@
       "brand": "Supreme",
       "colorway": "Black",
       "size": "L",
-      "slug": "supreme-tyler-the-creator-tee-black",
       "image": "https://images.stockx.com/images/Supreme-Tyler-The-Creator-Tee-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
-      "notes": "Used · StockX · $83.71 total · 12/16/2025 · [pc:supreme-tyler-tee]",
-      "source": "personal"
+      "notes": "Used · StockX · $83.71 total · 12/16/2025 · Purchased on StockX at near retail but became expensive after fees and shipping; potential personal item with resale optional. · [pc:supreme-tyler-tee]",
+      "source": "personal-pdf",
+      "slug": "supreme-tyler-the-creator-tee-black"
     },
     {
       "id": "pc-stussy-8ball-rug",
@@ -118,8 +119,8 @@
       "colorway": "Black/White",
       "size": "OS",
       "image": "/wardrobe/collection/stussy-8ball-rug.jpg",
-      "notes": "Used · Stüssy · $73.67 total · 12/29/2025 · personal rug · [pc:stussy-8ball-rug]",
-      "source": "personal"
+      "notes": "Used · Stüssy · $73.67 total · 12/29/2025 · Bought 2 Stüssy 8-Ball Rugs at $65 each for resale. Strong StockX demand ~$130–140, margins ~$30/unit. Keep in original box; first rug already personal. · [pc:stussy-8ball-rug]",
+      "source": "personal-pdf"
     },
     {
       "id": "pc-palace-earwarmer",
@@ -129,8 +130,8 @@
       "colorway": "Black",
       "size": "L/XL",
       "image": "https://images.stockx.com/images/Palace-Polartec-Lazer-Earwarmer-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
-      "notes": "Used · Palace · $30.00 total · 1/9/2026 · [pc:palace-earwarmer]",
-      "source": "personal"
+      "notes": "Used · Palace · $30.00 total · 1/9/2026 · Purchased for personal use; resale optional depending on market. · [pc:palace-earwarmer]",
+      "source": "personal-pdf"
     },
     {
       "id": "pc-palace-jogger",
@@ -140,8 +141,8 @@
       "colorway": "Black",
       "size": "L",
       "image": "https://images.stockx.com/images/Palace-Polartec-200-Jogger-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
-      "notes": "Used · Palace · $105.00 total · 1/9/2026 · [pc:palace-jogger]",
-      "source": "personal"
+      "notes": "Used · Palace · $105.00 total · 1/9/2026 · Purchased for personal use; may resell if secondary demand is strong. · [pc:palace-jogger]",
+      "source": "personal-pdf"
     },
     {
       "id": "pc-palace-flannel",
@@ -152,7 +153,7 @@
       "size": "L",
       "image": "https://images.stockx.com/images/Palace-Patchy-Flannel-Shirt-Red.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
       "notes": "Used · Palace · $190.00 total · 2/20/2026 · [pc:palace-flannel]",
-      "source": "personal"
+      "source": "personal-pdf"
     },
     {
       "id": "pc-youngla-batman",
@@ -162,8 +163,8 @@
       "colorway": "Black",
       "size": "XL",
       "image": "/wardrobe/collection/youngla-batman-tee.jpg",
-      "notes": "Used · YoungLA · $40.80 · 3/17/2026 · swap in a photo when you can · [pc:youngla-batman]",
-      "source": "personal"
+      "notes": "Used · YoungLA · $40.80 total · 3/17/2026 · swap in a photo when you can · [pc:youngla-batman]",
+      "source": "personal-pdf"
     },
     {
       "id": "pc-gymshark-onyx-hoodie",
@@ -173,8 +174,8 @@
       "colorway": "Black/Light Grey",
       "size": "XL",
       "image": "/wardrobe/collection/gymshark-onyx-hoodie.webp",
-      "notes": "Used · Gymshark · $57.60 · 3/26/2026 · [pc:gymshark-onyx-hoodie]",
-      "source": "personal"
+      "notes": "Used · Gymshark · $57.60 total · 3/26/2026 · [pc:gymshark-onyx-hoodie]",
+      "source": "personal-pdf"
     },
     {
       "id": "pc-gymshark-onyx-tee",
@@ -185,7 +186,7 @@
       "size": "XL",
       "image": "/wardrobe/collection/gymshark-onyx-tee.jpg",
       "notes": "New · StockX · $83.71 total · 4/3/2026 · swap in a photo when you can · [pc:gymshark-onyx-tee]",
-      "source": "personal"
+      "source": "personal-pdf"
     },
     {
       "id": "pc-supreme-drawstring-fw25",
@@ -196,7 +197,7 @@
       "size": "OS",
       "image": "/wardrobe/collection/supreme-drawstring-realtree.jpg",
       "notes": "New · StockX · $36.87 total · 4/7/2026 · swap in a photo when you can · [pc:supreme-drawstring-fw25]",
-      "source": "personal"
+      "source": "personal-pdf"
     },
     {
       "id": "pc-palace-beach-towel",
@@ -207,7 +208,7 @@
       "size": "OS",
       "image": "https://images.stockx.com/images/Palace-Basically-A-Beach-Towel-White.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color",
       "notes": "New · Palace · $88.88 total · 5/8/2026 · [pc:palace-beach-towel]",
-      "source": "personal"
+      "source": "personal-pdf"
     },
     {
       "id": "pc-palace-gargoyle",
@@ -216,10 +217,10 @@
       "brand": "Palace",
       "colorway": "Black",
       "size": "L",
-      "slug": "palace-gargoyle-l-s-t-shirt-black",
       "image": "https://images.stockx.com/images/Palace-Gargoyle-L-S-T-shirt-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1778519611",
       "notes": "New · Palace · $86.30 total · 5/8/2026 · [pc:palace-gargoyle]",
-      "source": "personal"
+      "source": "personal-pdf",
+      "slug": "palace-gargoyle-l-s-t-shirt-black"
     },
     {
       "id": "pc-ee-blue-yonder",
@@ -228,10 +229,10 @@
       "brand": "Eric Emanuel",
       "colorway": "Blue Yonder/White",
       "size": "XL",
-      "slug": "eric-emanuel-ee-basic-short-blue-yonder-white",
       "image": "https://images.stockx.com/images/Eric-Emanuel-EE-Basic-Short-Blue-Yonder-White.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1659547786",
       "notes": "New · Eric Emanuel · $104.86 total · 5/14/2026 · [pc:ee-blue-yonder]",
-      "source": "personal"
+      "source": "personal-pdf",
+      "slug": "eric-emanuel-ee-basic-short-blue-yonder-white"
     },
     {
       "id": "pc-j11-uni-blue",
@@ -240,11 +241,11 @@
       "brand": "Jordan",
       "colorway": "University Blue",
       "size": "12",
-      "slug": "air-jordan-11-retro-low-university-blue-2026",
-      "styleCode": "FV5104-100",
       "image": "https://images.stockx.com/images/Air-Jordan-11-Retro-Low-University-Blue-2026-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1784332827",
       "notes": "New · StockX · $167.19 total · 7/1/2026 · [pc:j11-uni-blue]",
-      "source": "personal"
+      "source": "personal-pdf",
+      "slug": "air-jordan-11-retro-low-university-blue-2026",
+      "styleCode": "FV5104-100"
     }
   ]
 }
