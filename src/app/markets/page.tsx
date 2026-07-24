@@ -68,8 +68,9 @@ export default async function MarketsBrowsePage({
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
               Top {quotes.length} sneakers by sales volume — board # is 1–
-              {quotes.length} in order. Use the toolbar for Compare and Deal
-              check, or open any pair for the full page.
+              {quotes.length} in order. Browse 10, 50, or 100 at a time; use
+              Compare and Deal in the toolbar, or open any pair for the full
+              page.
             </p>
           </header>
           {access.gated && publicPlus ? (
