@@ -12,20 +12,20 @@ export const INDEX_LONG_NAME = "Sneaker Price Index";
 
 /** Short line for titles, OG, PWA — plain English. */
 export const BRAND_TAGLINE =
-  "Sneaker prices, the index, and your collection — in one place";
+  "Sneaker Price Index, asks, and your collection — in one place";
 
 /**
  * One-paragraph description for SEO, About, and LinkedIn.
  * Covers what’s live today without underselling.
  */
 export const BRAND_BLURB =
-  "SPI Markets tracks what sneakers are selling for, how expensive the market is vs retail (SPI), and what you own or wear — with deal checks, compares, and alerts on top. Independent and honest about the data.";
+  "SPI Markets is the Sneaker Price Index (SPI) plus a board of asks — so you can see if the market is cheap or rich vs retail, check deals on pairs, and track what you own or wear. Independent of StockX.";
 
 /**
  * Hero answer to “what is this?” — identity in one breath.
  */
 export const BRAND_HERO_LINE =
-  "A sneaker price terminal: one index for the whole market vs retail, a live-style board of asks, and tools for what you own and wear — independent of StockX.";
+  "SPI = Sneaker Price Index: one score for how expensive popular sneakers are vs retail, then a board of asks you can act on.";
 
 /**
  * Hero answer to “why not just use StockX?”
@@ -83,7 +83,7 @@ export const SOFT_LAUNCH_PILLARS = PRODUCT_PILLARS;
 
 /** Short line for footers / About closing. */
 export const PRODUCT_FOOTNOTE =
-  "SPI · markets · portfolio · wardrobe — with deal checks, compare, and alerts on the board.";
+  "Index · Markets · Mine — SPI, asks, and what you own or wear.";
 
 /** @deprecated Prefer PRODUCT_FOOTNOTE */
 export const SOFT_LAUNCH_MORE = PRODUCT_FOOTNOTE;

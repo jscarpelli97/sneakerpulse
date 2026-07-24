@@ -7,6 +7,7 @@ import { FREE_CATALOG_LIMIT, gateCatalogRows, getPlusAccess } from "@/lib/plus/a
 import { TOP_SELLERS_LIMIT } from "@/services/catalog/mapProductToCatalog";
 import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -61,8 +62,29 @@ export default async function MarketsBrowsePage({
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
               Top {quotes.length} sneakers by sales volume — board # is 1–
               {quotes.length} in order; StockX’s own rank is noted under each
-              name (it can skip numbers for non-sneakers).
+              name (it can skip numbers for non-sneakers). Open a pair for deal
+              check. Compare and alerts sit here too.
             </p>
+            <div className="mt-4 flex flex-wrap gap-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
+              <Link
+                href="/compare"
+                className="rounded-lg border border-dash-border px-3 py-1.5 text-dash-muted hover:border-dash-muted hover:text-dash-text"
+              >
+                Compare
+              </Link>
+              <Link
+                href="/alerts"
+                className="rounded-lg border border-dash-border px-3 py-1.5 text-dash-muted hover:border-dash-muted hover:text-dash-text"
+              >
+                Alerts
+              </Link>
+              <Link
+                href="/"
+                className="rounded-lg border border-dash-border px-3 py-1.5 text-dash-muted hover:border-dash-muted hover:text-dash-text"
+              >
+                SPI index
+              </Link>
+            </div>
           </header>
           {access.gated && publicPlus ? (
             <PlusCatalogGate

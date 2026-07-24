@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { CatalogTable } from "@/components/catalog/CatalogTable";
+import { HomeVisitorStory } from "@/components/catalog/HomeVisitorStory";
 import { MarketsHero } from "@/components/catalog/MarketsHero";
 import { MarketsStatStrip } from "@/components/catalog/MarketsStatStrip";
 import { MarketIndexCard } from "@/components/market/MarketIndexCard";
@@ -20,7 +22,6 @@ import {
 import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
 import { getMarketIndex } from "@/services/market/getMarketIndex";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,7 @@ export const metadata = {
   description: BRAND_BLURB,
   alternates: { canonical: "/" },
 };
+
 export default async function MarketsIndexPage() {
   const [{ isPlus, publicPlus }, allQuotes, marketIndex] = await Promise.all([
     getPlusAccess(),
@@ -57,57 +59,63 @@ export default async function MarketsIndexPage() {
       <SiteHeader
         subtitle={
           access.gated
-            ? `Free · top ${FREE_CATALOG_LIMIT} of ${access.total}`
-            : dataMode.subtitle
+            ? `Free · top ${FREE_CATALOG_LIMIT}`
+            : `Free · ${INDEX_NAME} + top ${FREE_CATALOG_LIMIT}`
         }
       />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
-          {/* Free surface: SPI + top-10 board */}
           {marketIndex ? (
             <MarketsHero
               index={marketIndex}
               modeBadge={dataMode.badge}
-              modeSubtitle={
-                access.gated
-                  ? `Free top ${FREE_CATALOG_LIMIT} · ${access.total} on Plus`
-                  : dataMode.subtitle
-              }
-              totalMarkets={access.gated ? FREE_CATALOG_LIMIT : quotes.length}
+              modeSubtitle={dataMode.subtitle}
             />
           ) : null}
 
+          <HomeVisitorStory />
+
           {marketIndex ? <MarketIndexCard index={marketIndex} /> : null}
 
-          <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
-          <CatalogTable
-            rows={watchlist}
-            title="Top sellers"
-            subtitle={`Free board · top ${watchlist.length} asks`}
-            hrefAll={{
-              href: "/plus",
-              label: "See Plus tools",
-            }}
-          />
+          <div id="board" className="scroll-mt-24 space-y-6 sm:space-y-7">
+            <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
+            <CatalogTable
+              rows={watchlist}
+              title="Then look at sneakers"
+              subtitle={`Free board · top ${watchlist.length} seller asks`}
+              hrefAll={{
+                href: "/markets",
+                label: "Full Markets",
+              }}
+            />
+          </div>
 
           <section className="rounded-2xl border border-dash-border bg-dash-elevated/25 px-5 py-5 sm:px-6">
             <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-              Free vs Plus
+              When you’re ready for more
             </p>
             <h2 className="mt-1 font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text sm:text-xl">
-              This page stays free — {INDEX_NAME} and the top{" "}
-              {FREE_CATALOG_LIMIT}
+              Plus opens Markets depth and Mine
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted">
-              Portfolio, wardrobe, full board, compare, alerts, and deal checks
-              live on Plus. Plus is free for now.
+              Full board, compare, alerts, deal checks, portfolio, and wardrobe.
+              Free for now — pay later when checkout is on. This homepage stays{" "}
+              {INDEX_NAME} + top {FREE_CATALOG_LIMIT}.
             </p>
-            <Link
-              href="/plus"
-              className="mt-4 inline-flex items-center rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
-            >
-              Open Plus →
-            </Link>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link
+                href="/plus"
+                className="inline-flex items-center rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
+              >
+                See Plus →
+              </Link>
+              <Link
+                href="/mine"
+                className="inline-flex items-center rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold text-dash-text hover:bg-dash-elevated"
+              >
+                Open Mine
+              </Link>
+            </div>
           </section>
 
           {publicPlus ? <PlusInterest variant="panel" source="home" /> : null}

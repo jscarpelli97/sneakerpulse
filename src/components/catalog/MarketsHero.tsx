@@ -1,23 +1,23 @@
 import Link from "next/link";
 import { SpiHeroTicker } from "@/components/catalog/SpiHeroTicker";
 import {
-  BRAND_HERO_LINE,
   BRAND_NAME,
-  BRAND_VALUE_LINE,
+  INDEX_EXPANSION,
   INDEX_NAME,
 } from "@/lib/brand";
+import { FREE_CATALOG_LIMIT } from "@/lib/plus/access";
 import type { MarketIndex } from "@/types/market";
 
 export function MarketsHero({
   index,
   modeBadge,
   modeSubtitle,
-  totalMarkets,
 }: {
   index: MarketIndex;
   modeBadge: string;
   modeSubtitle: string;
-  totalMarkets: number;
+  /** @deprecated kept for call-site compat */
+  totalMarkets?: number;
 }) {
   return (
     <section className="dash-card animate-rise relative overflow-hidden">
@@ -46,43 +46,48 @@ export function MarketsHero({
               {modeSubtitle}
             </span>
             <span className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-faint">
-              {modeBadge === "Live" ? "StockX via KicksDB" : "Daily catalog"}
+              Free · {INDEX_NAME} + top {FREE_CATALOG_LIMIT}
             </span>
           </div>
 
           <h1 className="mt-5 font-[family-name:var(--font-syne)] text-4xl font-extrabold leading-[1.02] tracking-tight text-dash-text sm:text-5xl lg:text-[3.5rem]">
             {BRAND_NAME}
           </h1>
+          <p className="mt-3 font-[family-name:var(--font-plex-mono)] text-sm uppercase tracking-[0.14em] text-dash-accent sm:text-[15px]">
+            {INDEX_NAME} = {INDEX_EXPANSION}
+          </p>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-dash-muted sm:text-lg">
-            {BRAND_HERO_LINE}
+            One number for how expensive the sneaker market is vs retail — then
+            a board of real asks so you can act on it. Not another StockX tab.
           </p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-dash-faint sm:text-base">
-            {BRAND_VALUE_LINE}
+            <span className="font-[family-name:var(--font-plex-mono)] text-dash-text">
+              100 ≈ retail
+            </span>
+            . StockX shows a listing. We show if the market is cheap or rich,
+            if your size is a deal, and what you own is worth.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
-              href="/markets"
+              href="#spi"
               className="inline-flex items-center rounded-xl bg-dash-accent px-5 py-3 text-sm font-semibold text-dash-bg shadow-[0_8px_24px_rgba(212,160,23,0.22)] hover:brightness-110 active:translate-y-px"
             >
-              Browse markets
+              What {INDEX_NAME} is today
+            </Link>
+            <Link
+              href="#board"
+              className="inline-flex items-center rounded-xl border border-dash-border bg-dash-elevated px-5 py-3 text-sm font-semibold text-dash-text hover:border-dash-muted hover:bg-dash-panel"
+            >
+              Top {FREE_CATALOG_LIMIT} asks
             </Link>
             <Link
               href="/plus"
-              className="inline-flex items-center rounded-xl border border-dash-border bg-dash-elevated px-5 py-3 text-sm font-semibold text-dash-text hover:border-dash-muted hover:bg-dash-panel"
-            >
-              Explore Plus
-            </Link>
-            <Link
-              href="/portfolio"
               className="inline-flex items-center rounded-xl border border-dash-border px-5 py-3 text-sm font-semibold text-dash-muted hover:border-dash-muted hover:bg-dash-elevated hover:text-dash-text"
             >
-              Open portfolio
+              Plus tools
             </Link>
           </div>
-          <p className="mt-3 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
-            {totalMarkets} pairs on the board · {INDEX_NAME} tape updates daily
-          </p>
         </div>
 
         <SpiHeroTicker index={index} />

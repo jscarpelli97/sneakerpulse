@@ -55,7 +55,7 @@ export function MarketIndexCard({ index }: { index: MarketIndex }) {
       <div className="px-4 py-5 sm:px-6 sm:py-6">
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.16em] text-dash-faint">
-            Why not just StockX?
+            Why this beats a listing tab
           </p>
           <span className="rounded-full border border-dash-border bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
             {INDEX_NAME} · {index.ticker}

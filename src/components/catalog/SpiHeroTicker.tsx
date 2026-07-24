@@ -81,7 +81,7 @@ export function SpiHeroTicker({ index }: { index: MarketIndex }) {
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            {INDEX_NAME} · daily tape
+            {INDEX_NAME} · daily index
           </p>
           <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-[family-name:var(--font-plex-mono)] tabular-nums">
             <span className="text-3xl font-semibold tracking-tight text-dash-text sm:text-4xl">
@@ -140,7 +140,7 @@ export function SpiHeroTicker({ index }: { index: MarketIndex }) {
             />
           ) : (
             <div className="flex h-full items-center justify-center text-xs text-dash-faint">
-              Boom tape unavailable
+              Boom history unavailable
             </div>
           )}
         </div>
@@ -169,7 +169,7 @@ export function SpiHeroTicker({ index }: { index: MarketIndex }) {
             />
           ) : (
             <div className="flex h-full min-h-[220px] items-center justify-center px-4 text-center text-sm text-dash-muted">
-              First SPI prints land as the daily tape grows.
+              First SPI prints land as the daily series grows.
             </div>
           )}
         </div>

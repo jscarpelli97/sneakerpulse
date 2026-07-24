@@ -5,29 +5,24 @@ import { PlusInterest } from "@/components/plus/PlusInterest";
 import { BRAND_NAME, FOUNDER_NAME, PRODUCT_FOOTNOTE } from "@/lib/brand";
 import { plusPublicEnabled } from "@/lib/plus/config";
 
-/** Primary chrome — what people do every day. */
+/** Primary chrome — three doors + about. */
 const NAV_PRIMARY = [
   { href: "/markets", label: "Markets" },
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/wardrobe", label: "Wardrobe" },
+  { href: "/mine", label: "Mine" },
   { href: "/plus", label: "Plus" },
   { href: "/about", label: "About" },
 ] as const;
 
-/** Tools + index — footer / secondary. */
+/** Secondary — tools live under Markets story. */
 const NAV_TOOLS = [
   { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
   { href: "/spi", label: "SPI index" },
+  { href: "/portfolio", label: "Portfolio" },
+  { href: "/wardrobe", label: "Wardrobe" },
 ] as const;
 
-function primaryNav() {
-  return [...NAV_PRIMARY];
-}
-
 export function SiteHeader({ subtitle }: { subtitle?: string }) {
-  const nav = primaryNav();
-
   return (
     <header className="sticky top-0 z-40 border-b border-dash-border/90 bg-dash-surface/90 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-3 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
@@ -49,7 +44,7 @@ export function SiteHeader({ subtitle }: { subtitle?: string }) {
           <SpiTicker className="sm:hidden" compact />
           <SiteSearch className="hidden sm:flex" />
           <nav className="flex items-center gap-0.5 sm:gap-1">
-            {nav.map((item) => (
+            {NAV_PRIMARY.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -96,26 +91,16 @@ export function SiteFooter() {
             ) : null}
           </div>
           <nav className="flex flex-wrap gap-x-4 gap-y-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
-            <Link href="/markets" className="hover:text-dash-text">
-              Markets
-            </Link>
-            <Link href="/portfolio" className="hover:text-dash-text">
-              Portfolio
-            </Link>
-            <Link href="/wardrobe" className="hover:text-dash-text">
-              Wardrobe
-            </Link>
-            <Link href="/plus" className="hover:text-dash-text">
-              Plus
-            </Link>
+            {NAV_PRIMARY.map((item) => (
+              <Link key={item.href} href={item.href} className="hover:text-dash-text">
+                {item.label}
+              </Link>
+            ))}
             {NAV_TOOLS.map((item) => (
               <Link key={item.href} href={item.href} className="hover:text-dash-text">
                 {item.label}
               </Link>
             ))}
-            <Link href="/about" className="hover:text-dash-text">
-              About
-            </Link>
           </nav>
         </div>
         <p className="border-t border-dash-border pt-3 text-xs leading-relaxed text-dash-faint">
