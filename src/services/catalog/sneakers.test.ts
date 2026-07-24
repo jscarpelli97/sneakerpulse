@@ -1,4 +1,44 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("server-only", () => ({}));
+vi.mock("@/services/catalog/discoveredProducts", async () => {
+  const offline = await import("@/services/catalog/offlineCatalog");
+  return {
+    quoteToCatalogEntry: (quote: {
+      slug: string;
+      ticker: string;
+      styleCode: string;
+      name: string;
+      brand: string;
+      year: number;
+      releaseDate: string;
+      colorway: string;
+      retail: number;
+      stockxUrl: string;
+      fallbackImage: string;
+      featured?: boolean;
+      rank?: number | null;
+    }) => ({
+      slug: quote.slug,
+      ticker: quote.ticker,
+      styleCode: quote.styleCode,
+      name: quote.name,
+      brand: quote.brand,
+      year: quote.year,
+      releaseDate: quote.releaseDate,
+      colorway: quote.colorway,
+      retail: quote.retail,
+      stockxUrl: quote.stockxUrl,
+      fallbackImage: quote.fallbackImage,
+      featured: quote.featured,
+      rank: quote.rank,
+    }),
+    rememberProductLater: vi.fn(),
+    resolveCatalogQuoteBySlug: async (slug: string) =>
+      offline.getOfflineQuoteBySlug(slug),
+  };
+});
+
 import {
   FALLBACK_SNEAKERS,
   getAllSneakerSlugs,

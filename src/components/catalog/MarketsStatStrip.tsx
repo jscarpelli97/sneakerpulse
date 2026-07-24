@@ -20,9 +20,9 @@ export function MarketsStatStrip({
 
   const cards = [
     {
-      label: liveCount > 0 ? "Live feeds" : "Cached feeds",
+      label: liveCount > 0 ? "Live feeds" : "Daily snapshots",
       value: `${liveCount > 0 ? liveCount : priced.length}/${quotes.length}`,
-      note: liveCount > 0 ? "KicksDB · StockX" : "Free offline catalog",
+      note: liveCount > 0 ? "KicksDB · StockX" : "Committed daily catalog",
     },
     {
       label: "Watchlist size",

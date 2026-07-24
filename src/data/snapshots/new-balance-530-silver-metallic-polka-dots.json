@@ -3,12 +3,17 @@
   "slug": "new-balance-530-silver-metallic-polka-dots",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.016Z",
+  "updatedAt": "2026-07-23T13:42:00.388Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 104,
       "orders": 661
+    },
+    {
+      "date": "2026-07-23",
+      "price": 104,
+      "orders": 670
     }
   ]
 }

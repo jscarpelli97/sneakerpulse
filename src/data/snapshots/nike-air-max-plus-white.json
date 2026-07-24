@@ -1,0 +1,14 @@
+{
+  "productId": "ec2d9a72-b5d8-472f-ac46-b675b166104b",
+  "slug": "nike-air-max-plus-white",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:12.762Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 105,
+      "orders": 101
+    }
+  ]
+}

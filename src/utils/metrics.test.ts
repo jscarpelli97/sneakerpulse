@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mapProductToMarket } from "@/lib/mapProductToMarket";
+import { mapProductToMarket } from "@/services/market/mapProductToMarket";
 import type { KicksProduct } from "@/types/kicksdb";
 import {
   buildBootstrapSeries,

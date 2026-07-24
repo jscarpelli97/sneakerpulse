@@ -1,6 +1,6 @@
 /* SneakerPulse service worker — offline shell + static asset cache */
 const CACHE = "sneakerpulse-v1";
-const PRECACHE = ["/", "/markets", "/compare", "/alerts", "/manifest.webmanifest"];
+const PRECACHE = ["/", "/markets", "/collection", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
