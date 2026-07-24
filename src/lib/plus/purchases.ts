@@ -47,11 +47,24 @@ function memoryStore() {
   return globalThis.__spiPlusPurchasesMem;
 }
 
+function isLiveFoundingPurchase(row: {
+  id: string;
+  provider: PlusProvider;
+  plan: PlusPlanKind;
+  status: string;
+}) {
+  if (row.plan !== "founding" || row.status !== "paid") return false;
+  if (row.provider === "mock") return false;
+  // Stripe test Checkout sessions must not burn the founding 100.
+  if (row.id.startsWith("cs_test_") || row.id.startsWith("mock_")) return false;
+  return true;
+}
+
 export async function countPaidFoundingMembers(): Promise<number> {
   if (!databaseConfigured()) {
     let n = 0;
     for (const row of memoryStore().values()) {
-      if (row.plan === "founding" && row.status === "paid") n += 1;
+      if (isLiveFoundingPurchase(row)) n += 1;
     }
     return n;
   }
@@ -59,7 +72,11 @@ export async function countPaidFoundingMembers(): Promise<number> {
     const { rows } = await query<{ n: number }>(
       `SELECT COUNT(*)::int AS n
        FROM plus_purchases
-       WHERE plan = 'founding' AND status = 'paid'`,
+       WHERE plan = 'founding'
+         AND status = 'paid'
+         AND provider <> 'mock'
+         AND id NOT LIKE 'cs_test_%'
+         AND id NOT LIKE 'mock_%'`,
     );
     return rows[0]?.n ?? 0;
   } catch {

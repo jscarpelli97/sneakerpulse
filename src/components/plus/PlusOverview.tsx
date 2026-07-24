@@ -25,7 +25,6 @@ const DOORS = [
 
 /**
  * Plus hub — plan map of the three doors + suite detail.
- * Checkout stays off until PLUS_PUBLIC is enabled.
  */
 export function PlusOverview() {
   const checkoutLive = plusPublicEnabled();
@@ -45,15 +44,14 @@ export function PlusOverview() {
           <strong className="text-dash-text">
             top {FREE_CATALOG_LIMIT} seller asks
           </strong>
-          . Plus opens the rest when you’re ready to go deeper — or pay, once
-          checkout is on.
+          . Plus opens the rest of the board and tools.
         </p>
         <div className="inline-flex items-center gap-2 rounded-xl border border-dash-accent/35 bg-[rgba(212,160,23,0.12)] px-3.5 py-2">
           <span className="h-1.5 w-1.5 rounded-full bg-dash-accent" aria-hidden />
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-accent">
             {checkoutLive
-              ? "Paid checkout is live"
-              : "Plus is free for now · no checkout"}
+              ? "Founding checkout is open · $10 / first year"
+              : "Plus checkout is paused"}
           </p>
         </div>
       </header>

@@ -7,7 +7,7 @@ vi.mock("@/lib/db", () => ({
   query: vi.fn(),
 }));
 
-import { resolvePlusOffer } from "@/lib/plus/purchases";
+import { recordPlusPurchase, resolvePlusOffer } from "@/lib/plus/purchases";
 
 describe("resolvePlusOffer", () => {
   beforeEach(() => {
@@ -19,6 +19,20 @@ describe("resolvePlusOffer", () => {
     expect(offer.plan).toBe("founding");
     expect(offer.amountUsd).toBe(10);
     expect(offer.termDays).toBe(365);
+    expect(offer.foundingRemaining).toBe(100);
+  });
+
+  it("does not count Stripe test sessions against the founding cap", async () => {
+    await recordPlusPurchase({
+      id: "cs_test_fake_session",
+      email: "tester@example.com",
+      provider: "stripe",
+      plan: "founding",
+      amountUsd: 10,
+      termDays: 365,
+      status: "paid",
+    });
+    const offer = await resolvePlusOffer();
     expect(offer.foundingRemaining).toBe(100);
   });
 });
