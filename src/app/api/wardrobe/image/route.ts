@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 const ALLOWED_HOSTS = new Set([
   "images.stockx.com",
   "images.unsplash.com",
+  "cdn.shopify.com",
 ]);
 
 /**

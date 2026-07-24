@@ -63,14 +63,14 @@
         {
           "id": "piece-ee-shopping-bag",
           "kind": "bottom",
-          "name": "Eric Emanuel EE Basic/Core Short",
+          "name": "Eric Emanuel EE Basic Short",
           "brand": "Eric Emanuel",
-          "colorway": "Shopping Bag Blue/Off-White",
+          "colorway": "Shopping Bag/Off White",
           "size": "XL",
-          "slug": null,
-          "image": "https://images.stockx.com/images/Eric-Emanuel-EE-Basic-Core-Short-Shopping-Bag-Black.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1776881261",
-          "notes": "Exact Blue/Off-White colorway image pending \u2014 name/size preserved from your fit.",
-          "source": "stockx-nearby"
+          "slug": "ee-r-basic-short-20260717-9",
+          "image": "https://cdn.shopify.com/s/files/1/0708/1301/files/EE_Basics_Boneless_ShoppingBag-1.jpg?v=1784242507",
+          "notes": "Official EE Basic Short — shopping bag w/ off white EE®.",
+          "source": "ericemanuel"
         },
         {
           "id": "piece-j1-mocha",

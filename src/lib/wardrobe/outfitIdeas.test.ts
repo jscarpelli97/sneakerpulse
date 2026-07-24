@@ -33,4 +33,12 @@ describe("outfit ideas", () => {
       true,
     );
   });
+
+  it("uses the official EE Shopping Bag / Off White short image", () => {
+    const knicks = getOutfitIdeas().find((o) => o.id === "outfit-knicks-mocha");
+    const shorts = knicks?.pieces.find((p) => p.id === "piece-ee-shopping-bag");
+    expect(shorts?.colorway).toMatch(/Shopping Bag/i);
+    expect(shorts?.image).toContain("EE_Basics_Boneless_ShoppingBag");
+    expect(shorts?.image).toContain("cdn.shopify.com");
+  });
 });
