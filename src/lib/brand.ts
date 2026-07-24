@@ -39,9 +39,9 @@ export const BRAND_VALUE_LINE =
  */
 export const PRODUCT_PILLARS = [
   {
-    title: "Portfolio",
-    href: "/portfolio",
-    body: "Mark what you own to your size’s ask — not the all-size low — vs what you paid.",
+    title: "Collection",
+    href: "/collection",
+    body: "Portfolio value and wardrobe fits — what you own and wear, one account.",
   },
   {
     title: "Price board",
@@ -52,11 +52,6 @@ export const PRODUCT_PILLARS = [
     title: "Sneaker Price Index",
     href: "/spi",
     body: "One number for how expensive the market is vs retail. 100 ≈ retail — something a single StockX page can’t tell you.",
-  },
-  {
-    title: "Wardrobe",
-    href: "/wardrobe",
-    body: "Closet + fits from real outfit ideas, synced with your account.",
   },
 ] as const;
 
@@ -83,7 +78,7 @@ export const SOFT_LAUNCH_PILLARS = PRODUCT_PILLARS;
 
 /** Short line for footers / About closing. */
 export const PRODUCT_FOOTNOTE =
-  "Index · Markets · Mine — SPI, asks, and what you own or wear.";
+  "Index · Markets · Collection — SPI, asks, and what you own or wear.";
 
 /** @deprecated Prefer PRODUCT_FOOTNOTE */
 export const SOFT_LAUNCH_MORE = PRODUCT_FOOTNOTE;

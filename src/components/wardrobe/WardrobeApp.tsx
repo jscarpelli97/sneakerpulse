@@ -242,7 +242,7 @@ export function WardrobeApp() {
           </form>
           <p className="mt-4 text-xs leading-relaxed text-dash-faint">
             Same login on phone and desktop.{" "}
-            <Link href="/portfolio" className="text-dash-accent hover:underline">
+            <Link href="/collection/portfolio" className="text-dash-accent hover:underline">
               Portfolio
             </Link>{" "}
             shares the account for cost basis and P&amp;L.

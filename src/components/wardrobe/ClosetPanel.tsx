@@ -679,7 +679,7 @@ export function ClosetPanel({
             <div className="space-y-3">
               <p className="text-sm text-dash-muted">
                 Bring pairs you already track in{" "}
-                <Link href="/portfolio" className="text-dash-accent hover:underline">
+                <Link href="/collection/portfolio" className="text-dash-accent hover:underline">
                   Portfolio
                 </Link>{" "}
                 into the closet for Fits.

@@ -40,7 +40,7 @@ function EmailAlertsPaywall() {
               Unlock email alerts
             </Link>
             <Link
-              href="/portfolio"
+              href="/collection/portfolio"
               className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold hover:bg-dash-elevated"
             >
               Create account first

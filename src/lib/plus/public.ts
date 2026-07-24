@@ -8,7 +8,7 @@ export const PLUS_BENEFITS = [
   "Email price alerts when asks cross your thresholds",
   `Full top-seller board (not just the free top ${FREE_TOP})`,
   "Live ask refresh (when feeds are connected)",
-  "Portfolio + Wardrobe with synced accounts",
+  "Portfolio + Wardrobe in Collection, with synced accounts",
   "Restock Monitor — size restocks & soft price drops (coming soon)",
 ] as const;
 
@@ -66,8 +66,8 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
   },
   {
     id: "portfolio",
-    feature: "Portfolio + Wardrobe",
-    detail: "Log pairs, sizes, and USD cost basis — same account on any device.",
+    feature: "Collection",
+    detail: "Portfolio value and wardrobe fits — same account on any device.",
     free: { label: "Not on free homepage", state: "no" },
     plus: { label: "Included", state: "yes" },
   },

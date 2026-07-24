@@ -7,6 +7,11 @@ import { plusPublicEnabled } from "@/lib/plus/config";
 
 const DOORS = [
   {
+    title: "Collection",
+    href: "/collection",
+    body: "Portfolio value + wardrobe fits — your collection, one account.",
+  },
+  {
     title: "Index",
     href: "/",
     body: `${INDEX_NAME} — is the sneaker market cheap or rich vs retail? Free forever.`,
@@ -15,11 +20,6 @@ const DOORS = [
     title: "Markets",
     href: "/markets",
     body: `Pair asks, charts, compare, alerts, and deal checks. Free top ${FREE_CATALOG_LIMIT}; full board on Plus.`,
-  },
-  {
-    title: "Mine",
-    href: "/mine",
-    body: "Portfolio value + wardrobe fits — your collection, one account.",
   },
 ] as const;
 
@@ -110,10 +110,10 @@ export function PlusOverview() {
             Open Markets
           </Link>
           <Link
-            href="/mine"
+            href="/collection"
             className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold text-dash-muted hover:bg-dash-elevated hover:text-dash-text"
           >
-            Open Mine
+            Open Collection
           </Link>
         </div>
       </section>

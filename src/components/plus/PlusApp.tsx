@@ -186,7 +186,7 @@ export function PlusApp() {
           </p>
           <div className="flex flex-wrap gap-3 pt-1">
             <Link
-              href="/portfolio"
+              href="/collection/portfolio"
               className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
             >
               Open portfolio

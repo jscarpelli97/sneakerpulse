@@ -3,6 +3,19 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Allow Cursor cloud / agent preview hosts during local `next dev`.
   allowedDevOrigins: ["*.agent.cvm.dev"],
+  redirects: async () => [
+    { source: "/mine", destination: "/collection", permanent: true },
+    {
+      source: "/portfolio",
+      destination: "/collection/portfolio",
+      permanent: true,
+    },
+    {
+      source: "/wardrobe",
+      destination: "/collection/wardrobe",
+      permanent: true,
+    },
+  ],
   headers: async () => [
     {
       source: "/sw.js",

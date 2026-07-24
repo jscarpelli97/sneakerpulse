@@ -32,13 +32,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
-      url: `${base}/portfolio`,
+      url: `${base}/collection`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${base}/collection/portfolio`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.5,
     },
     {
-      url: `${base}/wardrobe`,
+      url: `${base}/collection/wardrobe`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.5,

@@ -8,17 +8,15 @@ import { SiteSearch } from "@/components/layout/SiteSearch";
 
 const PRIMARY = [
   { href: "/about", label: "About" },
+  { href: "/collection", label: "Collection" },
   { href: "/markets", label: "Markets" },
-  { href: "/mine", label: "Mine" },
   { href: "/plus", label: "Plus" },
 ] as const;
 
 const TOOLS = [
   { href: "/alerts", label: "Alerts" },
   { href: "/compare", label: "Compare" },
-  { href: "/portfolio", label: "Portfolio" },
   { href: "/spi", label: "SPI index" },
-  { href: "/wardrobe", label: "Wardrobe" },
 ] as const;
 
 export function MobileNavMenu() {

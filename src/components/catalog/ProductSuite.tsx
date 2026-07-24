@@ -18,11 +18,11 @@ export function ProductSuite({
             {eyebrow}
           </p>
           <h2 className="mt-1 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
-            Four things you can’t stitch together on StockX alone
+            What you can’t stitch together on StockX alone
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted sm:text-base">
-            Index for the market, a board for pairs, a portfolio for what you
-            paid, and a wardrobe for what you wear.
+            Index for the market, a board for pairs, and a collection for what
+            you own and wear.
           </p>
         </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
