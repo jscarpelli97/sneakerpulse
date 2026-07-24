@@ -120,10 +120,8 @@ export default function AboutPage() {
               without hammering feeds on every click.
             </p>
             <p className="text-sm text-dash-faint leading-relaxed">
-              I’m looking into all options to enhance freshness and coverage
-              over time — open, nothing promised. You may see a Snapshot badge
-              instead of Live; that&apos;s intentional — we&apos;d rather be
-              clear than fake realtime.
+              You may see a Snapshot badge instead of Live — that&apos;s
+              intentional. We&apos;d rather be clear than fake realtime.
             </p>
             <Link
               href="/spi"

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ProductSuite } from "@/components/catalog/ProductSuite";
 import { PlusApp } from "@/components/plus/PlusApp";
+import { PlusPausedNotice } from "@/components/plus/PlusPausedNotice";
 import { BRAND_NAME, INDEX_NAME } from "@/lib/brand";
 import { FREE_CATALOG_LIMIT } from "@/lib/plus/access";
 import { plusPublicEnabled } from "@/lib/plus/config";
@@ -24,10 +25,14 @@ const DOORS = [
 ] as const;
 
 /**
- * Plus hub — plan map of the three doors + suite detail.
+ * Plus hub — plan map of the three doors + live checkout.
  */
 export function PlusOverview() {
   const checkoutLive = plusPublicEnabled();
+
+  if (!checkoutLive) {
+    return <PlusPausedNotice />;
+  }
 
   return (
     <div className="space-y-10 sm:space-y-12">
@@ -44,14 +49,12 @@ export function PlusOverview() {
           <strong className="text-dash-text">
             top {FREE_CATALOG_LIMIT} seller asks
           </strong>
-          . Plus opens the rest of the board and tools.
+          . Plus opens the rest of the board and Collection.
         </p>
         <div className="inline-flex items-center gap-2 rounded-xl border border-dash-accent/35 bg-[rgba(212,160,23,0.12)] px-3.5 py-2">
           <span className="h-1.5 w-1.5 rounded-full bg-dash-accent" aria-hidden />
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-accent">
-            {checkoutLive
-              ? "Founding checkout is open · $10 / first year"
-              : "Plus checkout is paused"}
+            Founding checkout open · $10 / first year
           </p>
         </div>
       </header>
@@ -86,24 +89,23 @@ export function PlusOverview() {
 
       <section className="rounded-2xl border border-dash-border bg-dash-elevated/25 px-5 py-5 sm:px-6">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text">
-          Why someone eventually pays
+          What’s included
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted sm:text-base">
           Free proves the idea: market temperature + a real ask board. Plus is
-          for when you use {BRAND_NAME} to decide on pairs, track what you own,
-          and get pinged — every day, not once. Checkout stays off until we’re
-          ready; the free homepage doesn’t change.
+          for when you use {BRAND_NAME} to decide on pairs and track what you
+          own — full board, Compare, Deal check, and Collection.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
-            href="/"
-            className="rounded-xl border border-dash-border bg-dash-elevated px-4 py-2.5 text-sm font-semibold text-dash-text hover:border-dash-muted"
+            href="#checkout"
+            className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
           >
-            Free homepage
+            Go to checkout
           </Link>
           <Link
             href="/markets"
-            className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
+            className="rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold text-dash-text hover:bg-dash-elevated"
           >
             Open Markets
           </Link>
@@ -116,11 +118,9 @@ export function PlusOverview() {
         </div>
       </section>
 
-      {checkoutLive ? (
-        <section className="border-t border-dash-border pt-10">
-          <PlusApp />
-        </section>
-      ) : null}
+      <section className="border-t border-dash-border pt-10">
+        <PlusApp />
+      </section>
     </div>
   );
 }

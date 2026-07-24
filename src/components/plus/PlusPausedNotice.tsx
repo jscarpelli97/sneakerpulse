@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-/** Soft landing when Plus checkout is paused — no paid pitch. */
+/** Soft landing when Plus checkout env flag is off. */
 export function PlusPausedNotice() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -9,21 +9,13 @@ export function PlusPausedNotice() {
           Membership
         </p>
         <h1 className="font-[family-name:var(--font-syne)] text-4xl font-extrabold tracking-tight sm:text-5xl">
-          Plus is on pause
+          Plus is temporarily unavailable
         </h1>
         <p className="text-lg leading-relaxed text-dash-muted">
-          Paid checkout is paused for now. SPI Markets stays usable on free —
-          no Plus upsells until we turn it back on.
+          Checkout is offline right now. The free board, index, and Collection
+          tools stay available.
         </p>
       </header>
-
-      <section className="rounded-2xl border border-dash-border bg-dash-elevated/30 px-5 py-5">
-        <p className="text-sm leading-relaxed text-dash-muted">
-          I&apos;m looking into all options to enhance the experience over time
-          — open, nothing promised. Daily snapshot data keeps the terminal
-          usable in the meantime.
-        </p>
-      </section>
 
       <div className="flex flex-wrap gap-3">
         <Link

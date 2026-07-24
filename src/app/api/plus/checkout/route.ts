@@ -12,8 +12,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error:
-          "Plus checkout is paused while we finish soft-launch testing",
+        error: "Plus checkout is temporarily unavailable",
       },
       { status: 503 },
     );

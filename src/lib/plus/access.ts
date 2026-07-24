@@ -20,7 +20,7 @@ export async function getPlusAccess() {
 
 export function gateCatalogRows<T>(rows: T[], isPlus: boolean) {
   const total = rows.length;
-  // While Plus is privately paused (StockX review), keep the full board open.
+  // When Plus checkout is off, keep the full board open for everyone.
   if (!plusPublicEnabled() || isPlus || total <= FREE_CATALOG_LIMIT) {
     return {
       rows,

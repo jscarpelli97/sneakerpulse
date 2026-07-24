@@ -181,9 +181,8 @@ export function PlusApp() {
             term.
           </p>
           <p className="text-xs text-dash-faint">
-            Thanks for supporting the build. I’m looking into all options to
-            enhance the experience over time — open, nothing promised beyond
-            what’s live today.
+            Thanks for supporting SPI Markets. Full board and Collection stay
+            unlocked on this account for your term.
           </p>
           <div className="flex flex-wrap gap-3 pt-1">
             <Link

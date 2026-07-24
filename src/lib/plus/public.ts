@@ -10,7 +10,7 @@ export const FOUNDING_TERM_LABEL = "first year";
 export const PLUS_BENEFITS = [
   `Full top-seller board with Compare + Deal check (not just the free top ${FREE_TOP})`,
   "Portfolio + Wardrobe in Collection, with synced accounts",
-  "Looking into options to enhance the experience over time — open, nothing promised yet",
+  "Founding pricing while spots last — $10 for the first year",
 ] as const;
 
 /** Free-tier bullets — homepage surface only. */
@@ -86,14 +86,6 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
       "Board asks may use a daily snapshot or a live refresh depending on how data is connected. We stay clear about which mode you’re in.",
     free: { label: "Snapshot / limited", state: "limited" },
     plus: { label: "Full board access", state: "yes" },
-  },
-  {
-    id: "next",
-    feature: "What’s next",
-    detail:
-      "I’m looking into all options to enhance the experience — fresher data, more coverage, restocks, new releases, and other tools. Open to what helps; nothing locked in or promised yet.",
-    free: { label: "—", state: "no" },
-    plus: { label: "Exploring", state: "soon" },
   },
 ];
 

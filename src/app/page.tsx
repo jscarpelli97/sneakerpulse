@@ -90,22 +90,22 @@ export default async function MarketsIndexPage() {
 
           <section className="rounded-2xl border border-dash-border bg-dash-elevated/25 px-5 py-5 sm:px-6">
             <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-              When you’re ready for more
+              Ready for more
             </p>
             <h2 className="mt-1 font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text sm:text-xl">
               Plus opens Markets depth and Collection
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted">
               Full board, compare, deal checks, and Collection (portfolio +
-              wardrobe). Free for now — pay later when checkout is on. This
-              homepage stays {INDEX_NAME} + top {FREE_CATALOG_LIMIT}.
+              wardrobe). This homepage stays {INDEX_NAME} + top{" "}
+              {FREE_CATALOG_LIMIT}. Founding members: $10 for the first year.
             </p>
             <div className="mt-4 flex flex-wrap gap-3">
               <Link
-                href="/plus"
+                href="/plus#checkout"
                 className="inline-flex items-center rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
               >
-                See Plus →
+                Upgrade to Plus →
               </Link>
               <Link
                 href="/collection"

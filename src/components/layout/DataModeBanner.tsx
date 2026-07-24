@@ -30,10 +30,10 @@ export function DataModeBanner({
       <div className="flex shrink-0 flex-wrap items-center gap-3">
         {mode !== "live" && plusPublicEnabled() ? (
           <Link
-            href="/plus"
+            href="/plus#checkout"
             className="shrink-0 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-muted underline-offset-4 hover:text-dash-text hover:underline"
           >
-            Plus soon
+            Upgrade to Plus
           </Link>
         ) : null}
         <Link

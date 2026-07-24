@@ -34,7 +34,7 @@ function EmailAlertsPaywall() {
           </p>
           <div className="flex flex-wrap gap-3 pt-1">
             <Link
-              href="/plus"
+              href="/plus#checkout"
               className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
             >
               Unlock email alerts
@@ -48,28 +48,7 @@ function EmailAlertsPaywall() {
           </div>
         </div>
       </section>
-
-      <ComingSoonCard />
     </div>
-  );
-}
-
-function ComingSoonCard() {
-  return (
-    <section className="rounded-2xl border border-dashed border-dash-border bg-dash-elevated/30 px-4 py-5 sm:px-5">
-      <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
-        Exploring for Plus
-      </p>
-      <h3 className="mt-2 font-[family-name:var(--font-syne)] text-lg font-bold text-dash-text">
-        What&apos;s next
-      </h3>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted">
-        Threshold alerts work today. Beyond that, I&apos;m looking into all
-        options to enhance the experience — things like restocks, new releases,
-        fresher data, and other tools. Open to what helps; nothing locked in or
-        promised yet.
-      </p>
-    </section>
   );
 }
 
@@ -179,15 +158,13 @@ export function AlertsClient({
 
   return (
     <div className="space-y-6">
-      {emailMode ? <ComingSoonCard /> : null}
-
       <section className="dash-card p-4 md:p-5">
         <h2 className="font-[family-name:var(--font-syne)] text-lg font-bold">
           {emailMode ? "Email price alert" : "Create alert"}
         </h2>
         <p className="mt-1 text-sm text-dash-muted">
           {emailMode
-            ? "Threshold alerts email your inbox when you check them. I’m exploring more ways to enhance alerts over time — nothing promised yet."
+            ? "Threshold alerts email your inbox when you check them."
             : "Thresholds stay in this browser. Check now evaluates against live asks."}
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">

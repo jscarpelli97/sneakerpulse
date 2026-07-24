@@ -32,9 +32,9 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Plus waitlist is paused while StockX API access is pending",
+        error: "Plus interest signup is closed — upgrade at /plus",
       },
-      { status: 503 },
+      { status: 410 },
     );
   }
 

@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import { PlusInterestForm } from "@/components/plus/PlusInterest";
 
 const STORAGE_KEY = "sp-plus-popup-dismissed-v1";
 const SHOW_AFTER_MS = 2800;
 
-/** First-visit modal pitching Plus for collectors and shop floors. */
+/** First-visit modal pitching live Plus checkout. */
 export function PlusPopup() {
   const [open, setOpen] = useState(false);
   const titleId = useId();
@@ -67,7 +66,7 @@ export function PlusPopup() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.16em] text-dash-accent">
-                SPI Plus
+                SPI Plus · live
               </p>
               <h2
                 id={titleId}
@@ -87,9 +86,8 @@ export function PlusPopup() {
             </button>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-dash-muted">
-            Whether you&apos;re hunting the next pair or running a shop floor —
-            Plus is meant to streamline bias-light market info: what&apos;s
-            moving, what&apos;s soft, and what might not be worth holding.
+            Full Markets board, Compare, Deal check, and Collection — built for
+            collectors and shop floors who want a bias-light read on asks.
           </p>
         </div>
 
@@ -104,30 +102,34 @@ export function PlusPopup() {
               a cleaner read on keep vs dump across your shelves.
             </li>
             <li>
-              <span className="text-dash-text">What’s next</span> — I’m
-              looking into all options to enhance the experience. Open to ideas;
-              nothing locked in yet.
+              <span className="text-dash-text">Founding</span> — first 100 paid
+              members get $10 for the first year.
             </li>
           </ul>
 
-          <PlusInterestForm source="popup" inputId="plus-email-popup" compact />
-
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <Link
+              href="/plus#checkout"
+              onClick={dismiss}
+              className="inline-flex items-center justify-center rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
+            >
+              Upgrade to Plus →
+            </Link>
             <Link
               href="/plus#compare"
               onClick={dismiss}
-              className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-accent underline-offset-4 hover:underline"
+              className="inline-flex items-center justify-center rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold text-dash-text hover:bg-dash-elevated"
             >
-              Free vs Plus checklist →
+              Free vs Plus
             </Link>
-            <button
-              type="button"
-              onClick={dismiss}
-              className="text-xs text-dash-faint hover:text-dash-muted"
-            >
-              Maybe later
-            </button>
           </div>
+          <button
+            type="button"
+            onClick={dismiss}
+            className="text-xs text-dash-faint hover:text-dash-muted"
+          >
+            Maybe later
+          </button>
           <p className="text-[11px] leading-relaxed text-dash-faint">
             Not investment advice. Markets move — do your own research.
           </p>

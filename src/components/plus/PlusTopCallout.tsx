@@ -34,17 +34,17 @@ export function PlusTopCallout() {
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
         <p className="min-w-0 text-sm leading-snug text-dash-text">
           <span className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-accent">
-            Plus · soon
+            Plus · live
           </span>{" "}
           <span className="text-dash-muted">
-            Live, bias-light tape for collectors and shops — keep, dump, or
-            hunt the next pair.
+            Full board + Collection — founding $10 / first year for the first
+            100.
           </span>{" "}
           <Link
-            href="/plus"
+            href="/plus#checkout"
             className="font-medium text-dash-accent underline-offset-2 hover:underline"
           >
-            See Plus
+            Upgrade
           </Link>
         </p>
         <button
