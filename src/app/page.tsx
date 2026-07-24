@@ -95,7 +95,8 @@ export default async function MarketsIndexPage() {
             />
           ) : null}
 
-          {/* 4) Show me — proof on the board */}
+          {/* 4) Board pulse, then top sellers */}
+          <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
           <CatalogTable
             rows={watchlist}
             title="See it on the board"
@@ -112,7 +113,6 @@ export default async function MarketsIndexPage() {
                   : `View all ${access.total}`,
             }}
           />
-          <MarketsStatStrip quotes={quotes} liveCount={liveCount} />
           <MarketsQuickLook look={quickLook} />
 
           {publicPlus ? <PlusInterest variant="panel" source="home" /> : null}
