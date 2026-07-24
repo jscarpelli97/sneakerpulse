@@ -1,0 +1,14 @@
+{
+  "productId": "3a258abc-5138-4adf-95cd-2baa128d8f98",
+  "slug": "new-balance-9060-black-castlerock",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:22.991Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 95,
+      "orders": 64
+    }
+  ]
+}

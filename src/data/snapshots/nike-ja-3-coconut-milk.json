@@ -1,0 +1,14 @@
+{
+  "productId": "8707d33b-29e1-4bc3-93a8-ec0c709fef64",
+  "slug": "nike-ja-3-coconut-milk",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:09.007Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 100,
+      "orders": 130
+    }
+  ]
+}

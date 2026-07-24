@@ -130,7 +130,7 @@ export function selectChronoBasket(
 
   return {
     id: "spi-chronopulse-basket",
-    name: "SneakerPulse ChronoPulse basket",
+    name: "SPI ChronoPulse basket",
     methodology: "chronopulse_laspeyres",
     brandCount: brands.length,
     modelsPerBrand,

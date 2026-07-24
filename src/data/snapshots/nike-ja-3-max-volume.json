@@ -1,0 +1,14 @@
+{
+  "productId": "11adef8a-6225-45c9-af15-11c2ff713ec9",
+  "slug": "nike-ja-3-max-volume",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:15.337Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 127,
+      "orders": 86
+    }
+  ]
+}

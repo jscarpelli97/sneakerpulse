@@ -60,7 +60,7 @@ export function PwaRegister() {
       <div className="flex items-center gap-3 rounded-2xl border border-dash-border bg-dash-surface/95 p-3 shadow-[0_12px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl">
         <div className="min-w-0 flex-1">
           <p className="font-[family-name:var(--font-syne)] text-sm font-bold text-dash-text">
-            Install SneakerPulse
+            Install SPI Markets
           </p>
           <p className="text-xs text-dash-muted">
             Add to your home screen for a full-screen markets app.

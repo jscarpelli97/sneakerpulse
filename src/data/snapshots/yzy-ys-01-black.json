@@ -3,12 +3,17 @@
   "slug": "yzy-ys-01-black",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:53.508Z",
+  "updatedAt": "2026-07-23T13:41:58.867Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 32,
       "orders": 13433
+    },
+    {
+      "date": "2026-07-23",
+      "price": 34,
+      "orders": 13429
     }
   ]
 }

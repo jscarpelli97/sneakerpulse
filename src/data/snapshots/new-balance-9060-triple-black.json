@@ -3,11 +3,16 @@
   "slug": "new-balance-9060-triple-black",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:54.704Z",
+  "updatedAt": "2026-07-23T13:42:00.028Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 98,
+      "orders": 773
+    },
+    {
+      "date": "2026-07-23",
+      "price": 94,
       "orders": 773
     }
   ]

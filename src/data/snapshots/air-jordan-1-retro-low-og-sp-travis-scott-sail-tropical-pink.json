@@ -3,12 +3,17 @@
   "slug": "air-jordan-1-retro-low-og-sp-travis-scott-sail-tropical-pink",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:53.664Z",
+  "updatedAt": "2026-07-23T13:41:59.043Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 306,
       "orders": 1834
+    },
+    {
+      "date": "2026-07-23",
+      "price": 305,
+      "orders": 1863
     }
   ]
 }
