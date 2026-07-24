@@ -73,8 +73,7 @@ export function HomeVisitorStory() {
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted sm:text-base">
           Free forever on this page: {INDEX_NAME} and the top{" "}
-          {FREE_CATALOG_LIMIT} seller asks. Everything else is Plus — free for
-          now.
+          {FREE_CATALOG_LIMIT} seller asks. Everything else unlocks with Plus.
         </p>
       </div>
       <ol className="divide-y divide-dash-border">
