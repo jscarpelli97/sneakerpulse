@@ -450,10 +450,13 @@ export function PortfolioApp() {
           {plusPublicEnabled() ? (
             <>
               {" "}
-              <Link href="/plus" className="text-dash-accent hover:underline">
-                Plus
+              <Link
+                href="/plus#checkout"
+                className="text-dash-accent hover:underline"
+              >
+                Upgrade to Plus
               </Link>{" "}
-              adds more tools later.
+              for the full board and founding pricing.
             </>
           ) : null}
         </p>
