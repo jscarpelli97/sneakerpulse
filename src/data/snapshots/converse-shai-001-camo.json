@@ -1,0 +1,14 @@
+{
+  "productId": "019c730b-162c-7a2b-abb3-ddba3b2a4e22",
+  "slug": "converse-shai-001-camo",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:11.175Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 96,
+      "orders": 111
+    }
+  ]
+}

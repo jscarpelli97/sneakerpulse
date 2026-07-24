@@ -3,12 +3,17 @@
   "slug": "air-jordan-1-retro-low-og-chicago-2025",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:58.112Z",
+  "updatedAt": "2026-07-23T13:42:03.395Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 95,
       "orders": 258
+    },
+    {
+      "date": "2026-07-23",
+      "price": 95,
+      "orders": 259
     }
   ]
 }

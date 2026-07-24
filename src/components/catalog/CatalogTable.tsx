@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
+import { SneakerThumb } from "@/components/catalog/SneakerThumb";
 import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
 import { formatMaybeMoney, formatNumber } from "@/utils/format";
 
@@ -13,8 +15,6 @@ export function CatalogTable({
   title?: string;
   subtitle?: string;
   hrefAll?: { href: string; label: string };
-  /** @deprecated Dashboard is the site-wide standard; prop ignored. */
-  variant?: "light" | "dashboard";
 }) {
   return (
     <section className="dash-card animate-rise stagger-3 overflow-hidden">
@@ -47,10 +47,9 @@ export function CatalogTable({
             <tr>
               <th className="px-4 py-3.5 font-medium sm:px-5">#</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Name</th>
-              <th className="px-4 py-3.5 font-medium sm:px-5">Ticker</th>
+              <th className="px-4 py-3.5 font-medium sm:px-5">Style ID</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Lowest ask</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Weekly orders</th>
-              <th className="px-4 py-3.5 font-medium sm:px-5">Rank</th>
               <th className="px-4 py-3.5 font-medium sm:px-5">Status</th>
             </tr>
           </thead>
@@ -60,7 +59,7 @@ export function CatalogTable({
                 key={row.slug}
                 className="group transition-colors hover:bg-dash-elevated/55"
               >
-                <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-faint sm:px-5">
+                <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
                   {index + 1}
                 </td>
                 <td className="px-4 py-3.5 sm:px-5">
@@ -68,21 +67,22 @@ export function CatalogTable({
                     href={`/sneakers/${row.slug}`}
                     className="flex items-center gap-3"
                   >
-                    <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-dash-border bg-dash-elevated transition-transform group-hover:scale-[1.03]">
-                      <Image
-                        src={row.fallbackImage}
-                        alt={row.name}
-                        fill
-                        className="object-contain p-1"
-                        sizes="44px"
-                      />
-                    </span>
+                    <SneakerThumb
+                      src={row.fallbackImage}
+                      alt={row.name}
+                      size={44}
+                      previewWidth={280}
+                    />
                     <span>
                       <span className="block font-semibold text-dash-text transition-colors group-hover:text-white">
                         {row.name}
                       </span>
                       <span className="block text-xs text-dash-faint">
-                        {row.brand} · {row.styleCode} · {row.year}
+                        {row.brand}
+                        {row.colorway && row.colorway !== "—"
+                          ? ` · ${row.colorway}`
+                          : ""}
+                        {row.rank != null ? ` · StockX #${row.rank}` : ""}
                       </span>
                     </span>
                   </Link>
@@ -97,9 +97,6 @@ export function CatalogTable({
                   {row.weeklyOrders != null
                     ? formatNumber(row.weeklyOrders)
                     : "—"}
-                </td>
-                <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
-                  {row.rank != null ? `#${row.rank}` : "—"}
                 </td>
                 <td className="px-4 py-3.5 sm:px-5">
                   <span
@@ -120,7 +117,11 @@ export function CatalogTable({
                             : "bg-dash-faint"
                       }`}
                     />
-                    {row.live ? "Live" : row.price != null ? "Cached" : "Offline"}
+                    {row.live
+                      ? "Live"
+                      : row.price != null
+                        ? "Snapshot"
+                        : "Offline"}
                   </span>
                 </td>
               </tr>

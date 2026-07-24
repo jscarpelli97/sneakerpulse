@@ -3,12 +3,17 @@
   "slug": "asics-gel-kayano-14-white-graphite-grey",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.739Z",
+  "updatedAt": "2026-07-23T13:42:01.116Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 128,
       "orders": 509
+    },
+    {
+      "date": "2026-07-23",
+      "price": 129,
+      "orders": 522
     }
   ]
 }

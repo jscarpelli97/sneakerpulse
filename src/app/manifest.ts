@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
+import { BRAND_NAME, BRAND_SHORT, BRAND_TAGLINE } from "@/lib/brand";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "SneakerPulse",
-    short_name: "SneakerPulse",
-    description:
-      "StockX-style sneaker markets terminal — top sellers, asks, SPI index, and quick look.",
+    name: BRAND_NAME,
+    short_name: BRAND_SHORT,
+    description: BRAND_TAGLINE,
     start_url: "/",
     scope: "/",
     display: "standalone",

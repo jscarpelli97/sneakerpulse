@@ -3,12 +3,17 @@
   "slug": "asics-gel-kayano-14-black-pure-silver",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:58.579Z",
+  "updatedAt": "2026-07-23T13:42:03.705Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 96,
       "orders": 247
+    },
+    {
+      "date": "2026-07-23",
+      "price": 96,
+      "orders": 254
     }
   ]
 }

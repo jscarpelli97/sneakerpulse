@@ -3,12 +3,17 @@
   "slug": "adidas-yeezy-slide-black-onyx",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:58.319Z",
+  "updatedAt": "2026-07-23T13:42:03.500Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 117,
       "orders": 253
+    },
+    {
+      "date": "2026-07-23",
+      "price": 114,
+      "orders": 256
     }
   ]
 }
