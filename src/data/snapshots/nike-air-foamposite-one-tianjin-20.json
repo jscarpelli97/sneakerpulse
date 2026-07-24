@@ -3,12 +3,17 @@
   "slug": "nike-air-foamposite-one-tianjin-20",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:58.060Z",
+  "updatedAt": "2026-07-23T13:42:03.292Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 188,
       "orders": 260
+    },
+    {
+      "date": "2026-07-23",
+      "price": 207,
+      "orders": 264
     }
   ]
 }

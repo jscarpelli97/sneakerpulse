@@ -4,13 +4,21 @@
   "base": 100,
   "base_meaning": "retail_parity",
   "unit": "ask_over_retail_x100",
-  "updated_at": "2026-07-22T16:08:58.739Z",
-  "as_of": "2026-07-22",
+  "updated_at": "2026-07-23T13:42:24.641Z",
+  "as_of": "2026-07-23",
   "points": [
     {
       "date": "2026-07-22",
       "spi": 93.92,
       "premium_pct": -6.08,
+      "constituents": 51,
+      "at_or_below_retail": "",
+      "brand_count": 12
+    },
+    {
+      "date": "2026-07-23",
+      "spi": 95.75,
+      "premium_pct": -4.25,
       "constituents": 51,
       "at_or_below_retail": 37,
       "brand_count": 12

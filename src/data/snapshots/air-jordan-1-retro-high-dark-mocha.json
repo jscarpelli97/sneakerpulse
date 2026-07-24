@@ -3,7 +3,7 @@
   "slug": "air-jordan-1-retro-high-dark-mocha",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T14:17:27.644206Z",
+  "updatedAt": "2026-07-23T13:42:24.584Z",
   "points": [
     {
       "date": "2026-05-24",
@@ -302,8 +302,13 @@
     },
     {
       "date": "2026-07-22",
-      "price": 201.0,
+      "price": 201,
       "orders": 61
+    },
+    {
+      "date": "2026-07-23",
+      "price": 200,
+      "orders": 60
     }
   ]
 }

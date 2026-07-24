@@ -3,12 +3,17 @@
   "slug": "yzy-ys-01-fudge",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:56.463Z",
+  "updatedAt": "2026-07-23T13:42:01.840Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 23,
       "orders": 369
+    },
+    {
+      "date": "2026-07-23",
+      "price": 33,
+      "orders": 372
     }
   ]
 }

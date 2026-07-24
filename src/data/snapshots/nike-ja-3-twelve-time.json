@@ -1,0 +1,14 @@
+{
+  "productId": "019a5106-fa46-7b80-8e02-3eb3409d7fe0",
+  "slug": "nike-ja-3-twelve-time",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:09.986Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 106,
+      "orders": 121
+    }
+  ]
+}

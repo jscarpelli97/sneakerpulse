@@ -1,9 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: [
-    "*.agent.cvm.dev",
-    "p-3000-pod-3lnfxh7p2vamxkftm4gfxgkaca-10e28c9aaddc532031ec-us7p.agent.cvm.dev",
+  // Allow Cursor cloud / agent preview hosts during local `next dev`.
+  allowedDevOrigins: ["*.agent.cvm.dev"],
+  redirects: async () => [
+    { source: "/mine", destination: "/collection", permanent: true },
+    {
+      source: "/portfolio",
+      destination: "/collection/portfolio",
+      permanent: true,
+    },
+    {
+      source: "/wardrobe",
+      destination: "/collection/wardrobe",
+      permanent: true,
+    },
   ],
   headers: async () => [
     {
@@ -19,6 +30,13 @@ const nextConfig: NextConfig = {
         { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
       ],
     },
+    {
+      source: "/og.png",
+      headers: [
+        { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+        { key: "Content-Type", value: "image/png" },
+      ],
+    },
   ],
   images: {
     remotePatterns: [
@@ -29,6 +47,14 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.qrserver.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.shopify.com",
       },
     ],
   },

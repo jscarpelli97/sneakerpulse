@@ -1,45 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { CHART_RANGES } from "@/charts/constants";
-import { LightweightPriceChart } from "@/charts/LightweightPriceChart";
-import type { ChartPoint, MarketIndex } from "@/types/market";
-import { changeClass, formatNumber } from "@/utils/format";
-
-type Range = (typeof CHART_RANGES)[number];
-
-function filterByRange(points: ChartPoint[], range: Range): ChartPoint[] {
-  if (points.length === 0) return points;
-  if (range === "ALL") return points;
-
-  const last = Date.parse(points[points.length - 1].date.slice(0, 10));
-  const dayMs = 24 * 60 * 60 * 1000;
-  const lookback: Record<Exclude<Range, "ALL">, number> = {
-    "1D": 1,
-    "7D": 7,
-    "1M": 30,
-    "3M": 90,
-    "1Y": 365,
-  };
-  const from = last - lookback[range] * dayMs;
-  const filtered = points.filter(
-    (point) => Date.parse(point.date.slice(0, 10)) >= from,
-  );
-  return filtered.length > 1 ? filtered : points.slice(-2);
-}
-
-/** Pad a single live tip so Lightweight Charts can draw the present segment. */
-function padLiveTip(points: ChartPoint[]): ChartPoint[] {
-  if (points.length !== 1) return points;
-  const tip = points[0];
-  const ms = Date.parse(`${tip.date}T00:00:00.000Z`);
-  if (!Number.isFinite(ms)) return points;
-  const prev = new Date(ms - 86_400_000).toISOString().slice(0, 10);
-  return [
-    { date: prev, price: tip.price, orders: 0 },
-    tip,
-  ];
-}
+import { useState } from "react";
+import { INDEX_LONG_NAME, INDEX_NAME } from "@/lib/brand";
+import type { MarketIndex } from "@/types/market";
+import { formatNumber } from "@/utils/format";
 
 function formatIndexLevel(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -48,274 +12,210 @@ function formatIndexLevel(value: number) {
   }).format(value);
 }
 
-function formatPremiumPercent(level: number, baseLevel: number) {
-  const premium = level - baseLevel;
-  const sign = premium > 0 ? "+" : "";
-  return `${sign}${premium.toFixed(1)}% vs retail`;
+function formatVsRetail(level: number, baseLevel: number) {
+  const delta = level - baseLevel;
+  const sign = delta > 0 ? "+" : "";
+  return `${sign}${delta.toFixed(1)}% vs retail`;
 }
 
-function formatIndexChange(change: MarketIndex["changeToday"]) {
-  if (!change) return { absolute: "—", percent: "—" };
-  const sign = change.absolute > 0 ? "+" : "";
-  return {
-    absolute: `${sign}${formatIndexLevel(change.absolute)}`,
-    percent: `${sign}${change.percent.toFixed(2)}%`,
-  };
+function formatShortDate(iso: string | null | undefined) {
+  if (!iso) return "—";
+  const d = new Date(`${iso.slice(0, 10)}T00:00:00.000Z`);
+  if (!Number.isFinite(d.getTime())) return iso.slice(0, 10);
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+function offPeakPercent(level: number, peak: number | null) {
+  if (peak == null || !(peak > 0)) return null;
+  return ((level - peak) / peak) * 100;
 }
 
 export function MarketIndexCard({ index }: { index: MarketIndex }) {
-  const [range, setRange] = useState<Range>("ALL");
+  const [showMethod, setShowMethod] = useState(false);
 
-  const { primary, secondary, gapNote } = useMemo(() => {
-    if (range === "ALL" || range === "1Y") {
-      const hist = filterByRange(index.historicalSeries, range);
-      const live = padLiveTip(filterByRange(index.liveSeries, range));
-      const hasGap =
-        hist.length >= 2 &&
-        live.length >= 1 &&
-        hist.at(-1)!.date.slice(0, 4) !== live[0]!.date.slice(0, 4);
-      return {
-        primary: hist.length >= 2 ? hist : filterByRange(index.series, range),
-        secondary: hasGap || live.length >= 2 ? live : undefined,
-        gapNote: hasGap
-          ? `No public daily premium tape ${hist.at(-1)!.date.slice(0, 4)}→${live.at(-1)!.date.slice(0, 4)} — gap left empty on purpose`
-          : null,
-      };
-    }
-    // Short ranges must never bridge the 2022–2025 gap by falling back to
-    // the concatenated series (that drew a fake crash from ~196 → ~94).
-    const live = padLiveTip(filterByRange(index.liveSeries, range));
-    return {
-      primary: live.length >= 2 ? live : [],
-      secondary: undefined,
-      gapNote:
-        live.length < 2
-          ? "Need at least two live daily captures for this range — ALL / 1Y show the historical tape"
-          : null,
-    };
-  }, [index, range]);
-
-  const hasSeries = primary.length > 1;
-  const tip = secondary?.at(-1) ?? primary.at(-1);
-  const start = primary[0];
-  const isUp = Boolean(
-    tip && start && tip.price >= start.price && !secondary?.length,
-  );
-  const month = formatIndexChange(index.change30d);
-  const historical = formatIndexChange(index.changeHistorical);
-  const premiumLabel = formatPremiumPercent(index.level, index.baseLevel);
-  const vsRetailTone = changeClass(index.level - index.baseLevel);
+  const peak = index.peakLevel;
+  const offPeak = offPeakPercent(index.level, peak);
+  const boomVsRetail =
+    peak != null ? formatVsRetail(peak, index.baseLevel) : null;
+  const nowVsRetail = formatVsRetail(index.level, index.baseLevel);
+  const nowTone =
+    index.level >= index.baseLevel ? "text-dash-up" : "text-dash-down";
+  const offPeakLabel =
+    offPeak == null
+      ? null
+      : `${offPeak > 0 ? "+" : ""}${offPeak.toFixed(0)}% from boom peak`;
 
   return (
-    <section className="dash-card animate-rise stagger-2 overflow-hidden">
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-dash-border px-4 py-4 sm:px-5">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.16em] text-dash-faint">
-              Market index
-            </p>
-            <span className="rounded-full border border-dash-border bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
-              {index.ticker}
-            </span>
-            <span className="rounded-full bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
-              Premium vs retail · 100 = retail
-            </span>
-          </div>
-          <h2 className="mt-2 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
-            {index.name}
-          </h2>
-          <p className="mt-1 max-w-3xl text-sm text-dash-muted">
-            Volume-weighted ask ÷ retail. Teal = 2020–2021 boom tape. Gold =
-            live SPI from {index.liveSeries[0]?.date ?? index.asOf} forward —
-            one new point every daily snapshot (same series as{" "}
-            <code className="text-dash-faint">open-data/spi/daily.csv</code>
-            ). The 2022–mid‑2025 hole stays empty on purpose.
+    <section id="spi" className="dash-card animate-rise scroll-mt-24 overflow-hidden">
+      <div className="px-4 py-5 sm:px-6 sm:py-6">
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.16em] text-dash-faint">
+            Why this beats a listing tab
           </p>
+          <span className="rounded-full border border-dash-border bg-dash-elevated px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted">
+            {INDEX_NAME} · {index.ticker}
+          </span>
+          <span className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-faint">
+            100 = retail
+          </span>
         </div>
-        <div className="text-right">
-          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            Live SPI
-          </p>
-          <p className="mt-1 font-[family-name:var(--font-syne)] text-3xl font-extrabold tabular-nums text-dash-text sm:text-4xl">
-            {formatIndexLevel(index.level)}
-          </p>
-          <p
-            className={`mt-1 font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums ${vsRetailTone}`}
-          >
-            {premiumLabel}
-          </p>
-        </div>
-      </div>
 
-      <div className="grid gap-3 border-b border-dash-border px-4 py-3 sm:grid-cols-4 sm:px-5">
-        {[
-          {
-            label: "vs retail",
-            value: premiumLabel.replace(" vs retail", ""),
-            sub: `Live ${formatIndexLevel(index.level)} · base ${formatIndexLevel(index.baseLevel)}`,
-            tone: vsRetailTone,
-          },
-          {
-            label: "30d live",
-            value: month.percent,
-            sub:
-              month.absolute === "—"
-                ? "Need more daily snapshots"
-                : month.absolute,
-            tone: changeClass(index.change30d?.percent),
-          },
-          {
-            label: "vs 2020 tape",
-            value: historical.percent,
-            sub:
-              index.peakLevel != null
-                ? `Boom peak ${formatIndexLevel(index.peakLevel)}`
-                : "Boom-era premium",
-            tone: changeClass(index.changeHistorical?.percent),
-          },
-          {
-            label: "Basket",
-            value: formatNumber(index.constituents),
-            sub:
-              index.brandCount != null
-                ? `${index.brandCount} brands × ≤${index.modelsPerBrand ?? "—"}`
-                : "Live models",
-            tone: "text-dash-text",
-          },
-        ].map((metric) => (
-          <div
-            key={metric.label}
-            className="rounded-xl bg-dash-elevated/50 px-3 py-2.5"
-          >
-            <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
-              {metric.label}
+        <h2 className="mt-3 max-w-2xl font-[family-name:var(--font-syne)] text-2xl font-extrabold tracking-tight text-dash-text sm:text-3xl">
+          One number for the whole market vs retail
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted sm:text-base">
+          A listing page can’t tell you if sneakers are cheap or rich.{" "}
+          {INDEX_LONG_NAME} does — boom peak vs today on the same basket.
+        </p>
+
+        <div className="mt-6 grid gap-0 sm:grid-cols-[1fr_auto_1fr] sm:items-stretch">
+          <div className="relative overflow-hidden rounded-2xl border border-dash-up/25 bg-[rgba(38,166,154,0.07)] px-4 py-4 sm:px-5 sm:py-5">
+            <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.16em] text-dash-up">
+              Boom peak
+            </p>
+            <p className="mt-2 font-[family-name:var(--font-syne)] text-4xl font-extrabold tabular-nums tracking-tight text-dash-text sm:text-5xl">
+              {peak != null ? formatIndexLevel(peak) : "—"}
+            </p>
+            <p className="mt-2 font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums text-dash-up">
+              {boomVsRetail ?? "—"}
+            </p>
+            <p className="mt-1 text-sm text-dash-muted">
+              {formatShortDate(index.peakDate)}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center py-3 sm:px-4 sm:py-0">
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span
+                className="hidden h-px w-8 bg-dash-border sm:block"
+                aria-hidden
+              />
+              <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-semibold uppercase tracking-[0.12em] text-dash-accent">
+                {offPeakLabel ?? "→"}
+              </p>
+              <span
+                className="hidden h-px w-8 bg-dash-border sm:block"
+                aria-hidden
+              />
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-2xl border border-dash-accent/30 bg-[rgba(212,160,23,0.08)] px-4 py-4 sm:px-5 sm:py-5">
+            <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.16em] text-dash-accent">
+              Today
+            </p>
+            <p className="mt-2 font-[family-name:var(--font-syne)] text-4xl font-extrabold tabular-nums tracking-tight text-dash-text sm:text-5xl">
+              {formatIndexLevel(index.level)}
             </p>
             <p
-              className={`mt-1 font-[family-name:var(--font-syne)] text-xl font-bold tabular-nums ${metric.tone}`}
+              className={`mt-2 font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums ${nowTone}`}
             >
-              {metric.value}
+              {nowVsRetail}
             </p>
-            <p className="mt-0.5 text-xs text-dash-muted">{metric.sub}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="px-2 py-4 md:px-4 md:py-5">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-2">
-          <p className="text-sm text-dash-muted">
-            {hasSeries
-              ? secondary?.length
-                ? `Boom ${primary[0]?.date}→${primary.at(-1)?.date} · live tape ${index.liveSeries[0]?.date}→${index.asOf} (${formatNumber(index.liveSeries.length)} day${index.liveSeries.length === 1 ? "" : "s"})`
-                : `Premium · ${primary[0]?.date} → ${primary.at(-1)?.date}`
-              : "Index series unavailable"}
-          </p>
-          <div className="flex flex-wrap gap-1 rounded-xl bg-dash-elevated p-1">
-            {CHART_RANGES.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setRange(item)}
-                className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${
-                  range === item
-                    ? "bg-dash-accent text-dash-bg"
-                    : "text-dash-muted hover:bg-dash-panel hover:text-dash-text"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
+            <p className="mt-1 text-sm text-dash-muted">
+              {formatShortDate(index.asOf)}
+              {index.change30d
+                ? ` · 30d ${index.change30d.percent > 0 ? "+" : ""}${index.change30d.percent.toFixed(1)}%`
+                : ""}
+            </p>
           </div>
         </div>
-        {gapNote ? (
-          <p className="mb-3 px-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.08em] text-dash-accent">
-            {gapNote}
-          </p>
-        ) : null}
-        <div className="relative h-[280px] w-full md:h-[340px]">
-          {hasSeries ? (
-            <LightweightPriceChart
-              data={primary}
-              secondaryData={secondary}
-              up={isUp}
-              showTime
-              referenceLevel={index.baseLevel}
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-dash-border bg-dash-elevated/40 text-sm text-dash-muted">
-              No index points to plot yet.
+      </div>
+
+      <div className="border-t border-dash-border px-4 py-4 sm:px-6">
+        <button
+          type="button"
+          onClick={() => setShowMethod((v) => !v)}
+          className="flex w-full items-center justify-between gap-3 text-left"
+          aria-expanded={showMethod}
+        >
+          <span className="font-[family-name:var(--font-syne)] text-base font-bold tracking-tight text-dash-text">
+            How {INDEX_NAME} works
+          </span>
+          <span className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-muted">
+            {showMethod ? "Hide" : "Show"}
+          </span>
+        </button>
+
+        {showMethod ? (
+          <div className="mt-4 space-y-4 border-t border-dash-border pt-4">
+            <p className="text-sm leading-relaxed text-dash-muted">
+              Volume-weighted ask ÷ retail × 100. Boom peak uses real daily
+              premium tape from Nov 2020–Dec 2021. Today’s level comes from the
+              live basket snapshot. Years in between stay unused on purpose —
+              there is no free public daily feed to fill them honestly.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div>
+                <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
+                  Basket
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-dash-muted">
+                  {index.howItWorks.selection}
+                </p>
+              </div>
+              <div>
+                <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
+                  Calculation
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-dash-muted">
+                  {index.howItWorks.calculation}
+                </p>
+              </div>
+              <div>
+                <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
+                  Updates
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-dash-muted">
+                  {index.howItWorks.updates}
+                </p>
+              </div>
             </div>
-          )}
-        </div>
-        <p className="mt-3 px-2 text-xs leading-relaxed text-dash-faint">
-          {index.methodology}
-          {index.citation ? (
-            <>
-              {" "}
-              Boom-era premiums via{" "}
-              <a
-                href={index.citation}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-dash-link underline-offset-2 hover:underline"
-              >
-                Flurin17
-              </a>
-              .
-            </>
-          ) : null}
-        </p>
-      </div>
-
-      <div className="border-t border-dash-border px-4 py-5 sm:px-5">
-        <h3 className="font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text">
-          How does the index work?
-        </h3>
-        <div className="mt-4 space-y-4">
-          <div>
-            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-dash-faint">
-              How are the brands and models selected?
-            </p>
-            <p className="mt-1.5 text-sm leading-relaxed text-dash-muted">
-              {index.howItWorks.selection}
-            </p>
-          </div>
-          <div>
-            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-dash-faint">
-              How is the sneaker index calculated?
-            </p>
-            <p className="mt-1.5 text-sm leading-relaxed text-dash-muted">
-              {index.howItWorks.calculation}
-            </p>
-          </div>
-          <div>
-            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-dash-faint">
-              How often is the index updated?
-            </p>
-            <p className="mt-1.5 text-sm leading-relaxed text-dash-muted">
-              {index.howItWorks.updates}
-            </p>
-          </div>
-        </div>
-        {index.brands.length > 0 ? (
-          <div className="mt-5">
-            <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.14em] text-dash-faint">
-              Active basket · {formatNumber(index.constituents)} models ·{" "}
-              {index.brandCount ?? index.brands.length} brands
-              {index.rebalancedAt ? ` · rebalanced ${index.rebalancedAt}` : ""}
-            </p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {index.brands.map((row) => (
-                <span
-                  key={row.brand}
-                  className="rounded-lg border border-dash-border bg-dash-elevated/60 px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.08em] text-dash-muted"
+            {index.brands.length > 0 ? (
+              <div>
+                <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
+                  Active basket · {formatNumber(index.constituents)} models ·{" "}
+                  {index.brandCount ?? index.brands.length} brands
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {index.brands.map((row) => (
+                    <span
+                      key={row.brand}
+                      className="rounded-lg border border-dash-border bg-dash-elevated/60 px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.08em] text-dash-muted"
+                    >
+                      {row.brand}
+                      <span className="text-dash-faint"> · {row.models}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+            {index.citation ? (
+              <p className="text-xs text-dash-faint">
+                Boom-era premiums via{" "}
+                <a
+                  href={index.citation}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-dash-link underline-offset-2 hover:underline"
                 >
-                  {row.brand}
-                  <span className="text-dash-faint"> · {row.models}</span>
-                </span>
-              ))}
-            </div>
+                  Flurin17
+                </a>
+                .
+              </p>
+            ) : null}
           </div>
-        ) : null}
+        ) : (
+          <p className="mt-2 text-sm text-dash-faint">
+            Ask ÷ retail × 100 · {formatNumber(index.constituents || 0)} models
+            in basket
+          </p>
+        )}
       </div>
     </section>
   );
