@@ -13,11 +13,7 @@ const PRIMARY = [
   { href: "/plus", label: "Plus" },
 ] as const;
 
-const TOOLS = [
-  { href: "/alerts", label: "Alerts" },
-  { href: "/compare", label: "Compare" },
-  { href: "/spi", label: "SPI index" },
-] as const;
+const TOOLS = [{ href: "/spi", label: "SPI index" }] as const;
 
 export function MobileNavMenu() {
   const [open, setOpen] = useState(false);

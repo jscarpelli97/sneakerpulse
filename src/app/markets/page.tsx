@@ -7,23 +7,22 @@ import { FREE_CATALOG_LIMIT, gateCatalogRows, getPlusAccess } from "@/lib/plus/a
 import { TOP_SELLERS_LIMIT } from "@/services/catalog/mapProductToCatalog";
 import { getOfflineCatalogAsOf } from "@/services/catalog/offlineCatalog";
 import { getCatalogQuotes } from "@/services/market/getCatalogQuotes";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Markets",
   description:
-    "Browse the SPI Markets top-seller board — StockX-style asks, rank, and weekly volume.",
+    "Browse the SPI Markets top-seller board — StockX-style asks, rank, weekly volume, and head-to-head compare.",
   alternates: { canonical: "/markets" },
 };
 
 export default async function MarketsBrowsePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; view?: string; a?: string; b?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, view, a, b } = await searchParams;
   const [{ isPlus, publicPlus }, allQuotes] = await Promise.all([
     getPlusAccess(),
     getCatalogQuotes(TOP_SELLERS_LIMIT),
@@ -40,6 +39,7 @@ export default async function MarketsBrowsePage({
     total: quotes.length,
     asOf: getOfflineCatalogAsOf(),
   });
+  const initialView = view === "compare" ? "compare" : "columns";
 
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
@@ -61,30 +61,9 @@ export default async function MarketsBrowsePage({
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
               Top {quotes.length} sneakers by sales volume — board # is 1–
-              {quotes.length} in order; StockX’s own rank is noted under each
-              name (it can skip numbers for non-sneakers). Open a pair for deal
-              check. Compare and alerts sit here too.
+              {quotes.length} in order. Open a pair for deal check, or switch to
+              Compare in the board toolbar.
             </p>
-            <div className="mt-4 flex flex-wrap gap-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
-              <Link
-                href="/alerts"
-                className="rounded-lg border border-dash-border px-3 py-1.5 text-dash-muted hover:border-dash-muted hover:text-dash-text"
-              >
-                Alerts
-              </Link>
-              <Link
-                href="/compare"
-                className="rounded-lg border border-dash-border px-3 py-1.5 text-dash-muted hover:border-dash-muted hover:text-dash-text"
-              >
-                Compare
-              </Link>
-              <Link
-                href="/"
-                className="rounded-lg border border-dash-border px-3 py-1.5 text-dash-muted hover:border-dash-muted hover:text-dash-text"
-              >
-                SPI index
-              </Link>
-            </div>
           </header>
           {access.gated && publicPlus ? (
             <PlusCatalogGate
@@ -101,6 +80,9 @@ export default async function MarketsBrowsePage({
           <CatalogMarketsExplorer
             rows={quotes}
             initialQuery={typeof q === "string" ? q : ""}
+            initialView={initialView}
+            initialCompareA={typeof a === "string" ? a : undefined}
+            initialCompareB={typeof b === "string" ? b : undefined}
           />
         </div>
       </main>

@@ -14,12 +14,8 @@ const NAV_PRIMARY = [
   { href: "/plus", label: "Plus" },
 ] as const;
 
-/** Secondary — tools live under Markets / Collection. */
-const NAV_TOOLS = [
-  { href: "/alerts", label: "Alerts" },
-  { href: "/compare", label: "Compare" },
-  { href: "/spi", label: "SPI index" },
-] as const;
+/** Secondary — Markets tools + index. */
+const NAV_TOOLS = [{ href: "/spi", label: "SPI index" }] as const;
 
 export function SiteHeader({ subtitle }: { subtitle?: string }) {
   return (

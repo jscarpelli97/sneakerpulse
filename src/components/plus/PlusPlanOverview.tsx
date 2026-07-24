@@ -55,9 +55,9 @@ export function PlusPlanOverview({
           What you get
         </h1>
         <p className="max-w-2xl text-lg leading-relaxed text-dash-muted">
-          Free keeps the terminal open. Plus unlocks the full board, email
-          alerts, and the Restock Monitor roadmap — paid with Lightning or
-          on-chain Bitcoin only.
+          Free keeps the terminal open. Plus unlocks the full board, Collection,
+          and the Restock Monitor roadmap — paid with Lightning or on-chain
+          Bitcoin only.
         </p>
         <p className="font-[family-name:var(--font-plex-mono)] text-sm text-dash-text">
           ${price}

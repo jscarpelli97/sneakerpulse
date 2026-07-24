@@ -46,7 +46,7 @@ export const PRODUCT_PILLARS = [
   {
     title: "Price board",
     href: "/markets",
-    body: "Top sellers with size asks, charts, market reads, and cop / stretch / pass on every pair.",
+    body: "Top sellers with size asks, charts, compare, market reads, and cop / stretch / pass on every pair.",
   },
   {
     title: "Sneaker Price Index",
@@ -57,16 +57,6 @@ export const PRODUCT_PILLARS = [
 
 /** Helper tools — secondary nav / About. */
 export const PRODUCT_TOOLS = [
-  {
-    title: "Alerts",
-    href: "/alerts",
-    body: "Browser alerts when an ask crosses your level.",
-  },
-  {
-    title: "Compare",
-    href: "/compare",
-    body: "Stack two colorways on ask, retail, premium, and flow.",
-  },
   {
     title: "Deal check",
     body: "Size + offer → heat check: cop, stretch, or pass vs that size’s ask.",

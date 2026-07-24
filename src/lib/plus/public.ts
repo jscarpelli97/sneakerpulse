@@ -3,10 +3,9 @@ import { HOMEPAGE_WATCHLIST_LIMIT } from "@/services/catalog/mapProductToCatalog
 const FREE_TOP = HOMEPAGE_WATCHLIST_LIMIT;
 
 export const PLUS_BENEFITS = [
-  "Compare, alerts, and deal checks on every pair",
+  "Deal check on every pair",
   "Early access to GOAT / Stadium Goods tape as APIs land",
-  "Email price alerts when asks cross your thresholds",
-  `Full top-seller board (not just the free top ${FREE_TOP})`,
+  `Full top-seller board with compare (not just the free top ${FREE_TOP})`,
   "Live ask refresh (when feeds are connected)",
   "Portfolio + Wardrobe in Collection, with synced accounts",
   "Restock Monitor — size restocks & soft price drops (coming soon)",
@@ -46,14 +45,14 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
   {
     id: "compare",
     feature: "Head-to-head Compare",
-    detail: "Visual ask, premium vs retail, volume, and rank matchups.",
+    detail: "Built into Markets — visual ask, premium vs retail, volume, and rank matchups.",
     free: { label: `Top ${FREE_TOP}`, state: "limited" },
     plus: { label: "Full board", state: "yes" },
   },
   {
     id: "detail",
     feature: "Sneaker detail pages",
-    detail: "Charts, sizes, and tape for a single SKU.",
+    detail: "Charts, sizes, and deal check for a single SKU.",
     free: { label: `Top ${FREE_TOP}`, state: "limited" },
     plus: { label: "Full board", state: "yes" },
   },
@@ -69,20 +68,6 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
     feature: "Collection",
     detail: "Portfolio value and wardrobe fits — same account on any device.",
     free: { label: "Not on free homepage", state: "no" },
-    plus: { label: "Included", state: "yes" },
-  },
-  {
-    id: "tools",
-    feature: "Compare · Alerts · Deal check",
-    detail: "Decide with head-to-head stacks, thresholds, and cop / stretch / pass.",
-    free: { label: "Not on free homepage", state: "no" },
-    plus: { label: "Included", state: "yes" },
-  },
-  {
-    id: "email-alerts",
-    feature: "Email price alerts",
-    detail: "Threshold alerts to your inbox when a live ask crosses above/below.",
-    free: { label: "Not included", state: "no" },
     plus: { label: "Included", state: "yes" },
   },
   {

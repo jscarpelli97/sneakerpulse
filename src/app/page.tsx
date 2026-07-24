@@ -96,9 +96,9 @@ export default async function MarketsIndexPage() {
               Plus opens Markets depth and Collection
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted">
-              Full board, compare, alerts, deal checks, and Collection
-              (portfolio + wardrobe). Free for now — pay later when checkout is
-              on. This homepage stays {INDEX_NAME} + top {FREE_CATALOG_LIMIT}.
+              Full board, compare, deal checks, and Collection (portfolio +
+              wardrobe). Free for now — pay later when checkout is on. This
+              homepage stays {INDEX_NAME} + top {FREE_CATALOG_LIMIT}.
             </p>
             <div className="mt-4 flex flex-wrap gap-3">
               <Link

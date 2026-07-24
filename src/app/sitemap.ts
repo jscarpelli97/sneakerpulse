@@ -50,16 +50,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
-      url: `${base}/compare`,
+      url: `${base}/plus`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.4,
-    },
-    {
-      url: `${base}/alerts`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.4,
+      priority: 0.5,
     },
   ];
 

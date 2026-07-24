@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { CompareClient } from "@/components/compare/CompareClient";
 import { SneakerThumb } from "@/components/catalog/SneakerThumb";
 import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
 import {
@@ -19,7 +20,7 @@ type SortableColumn = {
   label: string;
 };
 
-type MarketsView = "columns" | "icons";
+type MarketsView = "columns" | "icons" | "compare";
 
 const VIEW_STORAGE_KEY = "spi-markets-view";
 
@@ -57,36 +58,111 @@ function StatusPill({ row }: { row: CatalogQuote }) {
   );
 }
 
+function defaultComparePair(rows: CatalogQuote[], preferA?: string) {
+  const a =
+    (preferA && rows.some((r) => r.slug === preferA) ? preferA : null) ??
+    rows[0]?.slug ??
+    "";
+  const b = rows.find((r) => r.slug !== a)?.slug ?? a;
+  return { a, b };
+}
+
 export function CatalogMarketsExplorer({
   rows,
   initialQuery = "",
+  initialView = "columns",
+  initialCompareA,
+  initialCompareB,
 }: {
   rows: CatalogQuote[];
   initialQuery?: string;
+  initialView?: MarketsView;
+  initialCompareA?: string;
+  initialCompareB?: string;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [sortKey, setSortKey] = useState<CatalogSortKey>("rank");
   const [sortDir, setSortDir] = useState<CatalogSortDir>("asc");
-  const [view, setView] = useState<MarketsView>("columns");
+  const [view, setView] = useState<MarketsView>(
+    initialView === "compare" ? "compare" : "columns",
+  );
+  const defaults = defaultComparePair(rows, initialCompareA);
+  const [compareA, setCompareA] = useState(
+    initialCompareA && rows.some((r) => r.slug === initialCompareA)
+      ? initialCompareA
+      : defaults.a,
+  );
+  const [compareB, setCompareB] = useState(
+    initialCompareB &&
+      rows.some((r) => r.slug === initialCompareB) &&
+      initialCompareB !== compareA
+      ? initialCompareB
+      : defaults.b,
+  );
   const [, startTransition] = useTransition();
 
   useEffect(() => {
+    if (initialView === "compare") {
+      setView("compare");
+      return;
+    }
     try {
       const saved = window.localStorage.getItem(VIEW_STORAGE_KEY);
       if (saved === "columns" || saved === "icons") setView(saved);
     } catch {
       /* ignore */
     }
-  }, []);
+  }, [initialView]);
+
+  function syncUrl(next: {
+    view: MarketsView;
+    q?: string;
+    a?: string;
+    b?: string;
+  }) {
+    const params = new URLSearchParams();
+    const q = (next.q ?? query).trim();
+    if (q) params.set("q", q);
+    if (next.view === "compare") {
+      params.set("view", "compare");
+      if (next.a) params.set("a", next.a);
+      if (next.b) params.set("b", next.b);
+    }
+    const qs = params.toString();
+    startTransition(() => {
+      router.replace(qs ? `/markets?${qs}` : "/markets");
+    });
+  }
 
   function setViewMode(next: MarketsView) {
     setView(next);
-    try {
-      window.localStorage.setItem(VIEW_STORAGE_KEY, next);
-    } catch {
-      /* ignore */
+    if (next === "columns" || next === "icons") {
+      try {
+        window.localStorage.setItem(VIEW_STORAGE_KEY, next);
+      } catch {
+        /* ignore */
+      }
+      syncUrl({ view: next });
+      return;
     }
+    const pair = defaultComparePair(rows, compareA);
+    const a = compareA || pair.a;
+    const b = compareB && compareB !== a ? compareB : pair.b;
+    setCompareA(a);
+    setCompareB(b);
+    syncUrl({ view: "compare", a, b });
+  }
+
+  function openCompareWith(slug: string) {
+    const b =
+      compareB && compareB !== slug
+        ? compareB
+        : (rows.find((r) => r.slug !== slug)?.slug ?? slug);
+    setCompareA(slug);
+    setCompareB(b);
+    setView("compare");
+    syncUrl({ view: "compare", a: slug, b });
   }
 
   const visible = useMemo(() => {
@@ -108,10 +184,7 @@ export function CatalogMarketsExplorer({
 
   function onQueryChange(value: string) {
     setQuery(value);
-    startTransition(() => {
-      const next = value.trim();
-      router.replace(next ? `/markets?q=${encodeURIComponent(next)}` : "/markets");
-    });
+    syncUrl({ view, q: value, a: compareA, b: compareB });
   }
 
   return (
@@ -119,12 +192,14 @@ export function CatalogMarketsExplorer({
       <div className="flex flex-col gap-4 border-b border-dash-border px-4 py-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:px-5">
         <div>
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            Browse
+            {view === "compare" ? "Compare" : "Browse"}
           </p>
           <p className="mt-1 text-sm text-dash-muted">
-            {visible.length === rows.length
-              ? `${rows.length} pairs`
-              : `${visible.length} of ${rows.length} pairs`}
+            {view === "compare"
+              ? "Head-to-head on ask, premium, volume, and rank"
+              : visible.length === rows.length
+                ? `${rows.length} pairs`
+                : `${visible.length} of ${rows.length} pairs`}
             {view === "columns" ? (
               <span className="text-dash-faint"> · hover a thumb to enlarge</span>
             ) : null}
@@ -140,6 +215,7 @@ export function CatalogMarketsExplorer({
               [
                 ["columns", "Columns"],
                 ["icons", "Icons"],
+                ["compare", "Compare"],
               ] as const
             ).map(([id, label]) => (
               <button
@@ -157,24 +233,43 @@ export function CatalogMarketsExplorer({
               </button>
             ))}
           </div>
-          <label className="sr-only" htmlFor="markets-search">
-            Search markets
-          </label>
-          <input
-            id="markets-search"
-            type="search"
-            value={query}
-            onChange={(e) => onQueryChange(e.target.value)}
-            placeholder="Name, style ID, brand…"
-            className="w-full min-w-[220px] rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent sm:w-72"
-          />
-          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            {visible.length} shown
-          </p>
+          {view !== "compare" ? (
+            <>
+              <label className="sr-only" htmlFor="markets-search">
+                Search markets
+              </label>
+              <input
+                id="markets-search"
+                type="search"
+                value={query}
+                onChange={(e) => onQueryChange(e.target.value)}
+                placeholder="Name, style ID, brand…"
+                className="w-full min-w-[220px] rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent sm:w-72"
+              />
+              <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
+                {visible.length} shown
+              </p>
+            </>
+          ) : null}
         </div>
       </div>
 
-      {view === "columns" ? (
+      {view === "compare" ? (
+        <div className="p-4 sm:p-5">
+          {rows.length < 2 ? (
+            <p className="py-10 text-center text-sm text-dash-muted">
+              Need at least two pairs on the board to compare.
+            </p>
+          ) : (
+            <CompareClient
+              key={`${compareA}::${compareB}`}
+              sneakers={rows}
+              initialA={compareA}
+              initialB={compareB}
+            />
+          )}
+        </div>
+      ) : view === "columns" ? (
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-dash-border bg-dash-elevated/60 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
@@ -198,13 +293,14 @@ export function CatalogMarketsExplorer({
                     </th>
                   );
                 })}
+                <th className="px-4 py-3.5 font-medium sm:px-5"> </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--dash-border-subtle)]">
               {visible.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-4 py-10 text-center text-sm text-dash-muted sm:px-5"
                   >
                     No pairs match “{query.trim()}”.
@@ -258,6 +354,15 @@ export function CatalogMarketsExplorer({
                     <td className="px-4 py-3.5 sm:px-5">
                       <StatusPill row={row} />
                     </td>
+                    <td className="px-4 py-3.5 sm:px-5">
+                      <button
+                        type="button"
+                        onClick={() => openCompareWith(row.slug)}
+                        className="rounded-lg border border-dash-border px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted opacity-0 transition-opacity hover:border-dash-muted hover:text-dash-text group-hover:opacity-100 focus:opacity-100"
+                      >
+                        Vs
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -294,7 +399,7 @@ export function CatalogMarketsExplorer({
               </div>
               <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                 {visible.map((row, index) => (
-                  <li key={row.slug}>
+                  <li key={row.slug} className="relative">
                     <Link
                       href={`/sneakers/${row.slug}`}
                       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-dash-border bg-dash-elevated/25 transition-colors hover:border-dash-muted hover:bg-dash-elevated/55"
@@ -328,6 +433,13 @@ export function CatalogMarketsExplorer({
                         </div>
                       </div>
                     </Link>
+                    <button
+                      type="button"
+                      onClick={() => openCompareWith(row.slug)}
+                      className="absolute right-2 top-2 rounded-md border border-dash-border bg-dash-bg/90 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted backdrop-blur-sm hover:text-dash-text"
+                    >
+                      Vs
+                    </button>
                   </li>
                 ))}
               </ul>

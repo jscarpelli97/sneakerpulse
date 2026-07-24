@@ -19,7 +19,7 @@ const DOORS = [
   {
     title: "Markets",
     href: "/markets",
-    body: `Pair asks, charts, compare, alerts, and deal checks. Free top ${FREE_CATALOG_LIMIT}; full board on Plus.`,
+    body: `Pair asks, charts, compare, and deal checks. Free top ${FREE_CATALOG_LIMIT}; full board on Plus.`,
   },
 ] as const;
 
