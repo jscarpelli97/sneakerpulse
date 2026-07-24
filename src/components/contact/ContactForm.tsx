@@ -1,7 +1,14 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { CONTACT_TOPICS } from "@/lib/contactTopics";
+import { useEffect, useState, type FormEvent } from "react";
+import {
+  CONTACT_TOPICS,
+  isContactTopic,
+  type ContactTopicId,
+} from "@/lib/contactTopics";
+
+const PLUS_BTC_MESSAGE =
+  "I'd like to pay for SPI Plus with Lightning. Please send an invoice. My Plus account email is: ";
 
 export function ContactForm() {
   const [name, setName] = useState("");
@@ -12,6 +19,18 @@ export function ContactForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("topic");
+    if (!raw || !isContactTopic(raw)) return;
+    const next: ContactTopicId = raw;
+    setTopic(next);
+    if (next === "plus-btc") {
+      setMessage((current) => (current.trim() ? current : PLUS_BTC_MESSAGE));
+    }
+  }, []);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();

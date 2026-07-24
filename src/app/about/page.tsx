@@ -140,9 +140,9 @@ export default function AboutPage() {
               Contact me
             </h2>
             <p className="text-sm leading-relaxed text-dash-muted">
-              Feedback, shoes to add, thoughts on SPI or the board — I read
-              every message. Leave your email so I can reply; it is never shown
-              publicly.
+              Feedback, shoes to add, thoughts on SPI or the board, or a Plus
+              Lightning invoice request — I read every message. Leave your email
+              so I can reply; it is never shown publicly.
             </p>
             <ContactForm />
           </section>

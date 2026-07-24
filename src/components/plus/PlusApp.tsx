@@ -1,11 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { FoundingMemberNotice } from "@/components/auth/FoundingMemberNotice";
 import { PlusPlanOverview } from "@/components/plus/PlusPlanOverview";
-import type { PlusChargeView } from "@/lib/plus/public";
 import type { PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
 import {
@@ -31,12 +29,6 @@ type MeResponse = {
   openNodeReady?: boolean;
 };
 
-type PlusCharge = PlusChargeView;
-
-function qrUrl(data: string) {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(data)}`;
-}
-
 function formatExpiry(iso: string | null) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("en-US", {
@@ -46,18 +38,18 @@ function formatExpiry(iso: string | null) {
   });
 }
 
+const LIGHTNING_CONTACT_HREF =
+  "/about?topic=plus-btc#contact";
+
 export function PlusApp() {
   const [session, setSession] = useState<PortfolioSession | null>(null);
   const [me, setMe] = useState<MeResponse | null>(null);
-  const [charge, setCharge] = useState<PlusCharge | null>(null);
-  const [tab, setTab] = useState<"lightning" | "onchain">("lightning");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [copied, setCopied] = useState<string | null>(null);
 
   const refreshMe = useCallback(async () => {
     const res = await fetch("/api/plus/me", { cache: "no-store" });
@@ -109,40 +101,6 @@ export function PlusApp() {
     };
   }, [refreshMe]);
 
-  useEffect(() => {
-    if (!charge || charge.status === "paid") return;
-    const timer = window.setInterval(async () => {
-      const res = await fetch(`/api/plus/charge/${charge.id}`, {
-        cache: "no-store",
-      });
-      const json = (await res.json()) as { data?: PlusCharge };
-      if (!json.data) return;
-      setCharge(json.data);
-      if (json.data.status === "paid" || json.data.status === "processing") {
-        await activate(json.data.id, false);
-      }
-    }, 4000);
-    return () => window.clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [charge?.id, charge?.status, session?.email]);
-
-  async function activate(chargeId: string, mockPay: boolean) {
-    if (!session) return;
-    const res = await fetch(`/api/plus/charge/${chargeId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: session.email, mockPay }),
-    });
-    const json = (await res.json()) as { ok?: boolean; error?: string };
-    if (!res.ok || !json.ok) {
-      if (!mockPay) return;
-      setError(json.error ?? "Could not activate Plus");
-      return;
-    }
-    setCharge(null);
-    await refreshMe();
-  }
-
   async function onAuth(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
@@ -160,7 +118,7 @@ export function PlusApp() {
     setPassword("");
   }
 
-  async function startCheckout(provider: "stripe" | "opennode") {
+  async function startStripeCheckout() {
     if (!session) return;
     setBusy(true);
     setError(null);
@@ -168,49 +126,27 @@ export function PlusApp() {
       const res = await fetch("/api/plus/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: session.email, provider }),
+        body: JSON.stringify({ email: session.email, provider: "stripe" }),
       });
       const json = (await res.json()) as {
         ok?: boolean;
         error?: string;
-        provider?: string;
-        data?: PlusCharge & { url?: string; mock?: boolean };
+        data?: { url?: string };
       };
-      if (!res.ok || !json.ok || !json.data) {
+      if (!res.ok || !json.ok || !json.data?.url) {
         setError(json.error ?? "Could not start checkout");
         return;
       }
-
-      if (json.provider === "stripe" || json.provider === "mock") {
-        if (json.data.url) {
-          window.location.href = json.data.url;
-          return;
-        }
-        setError("Stripe checkout URL missing");
-        return;
-      }
-
-      setCharge(json.data);
-      setTab(json.data.lightningInvoice ? "lightning" : "onchain");
+      window.location.href = json.data.url;
     } finally {
       setBusy(false);
-    }
-  }
-
-  async function copyText(label: string, value: string) {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(label);
-      window.setTimeout(() => setCopied(null), 1600);
-    } catch {
-      setError("Could not copy — select and copy manually");
     }
   }
 
   function onLogout() {
     logoutAccount();
     setSession(null);
-    setCharge(null);
+    setError(null);
   }
 
   const isMember =
@@ -274,137 +210,6 @@ export function PlusApp() {
     );
   }
 
-  // ——— Checkout invoice ———
-  if (session && charge) {
-    const payData =
-      tab === "lightning"
-        ? charge.lightningInvoice
-        : charge.onchainAddress;
-    const qrData =
-      tab === "lightning"
-        ? charge.lightningInvoice
-        : charge.uri ||
-          (charge.onchainAddress
-            ? `bitcoin:${charge.onchainAddress}`
-            : null);
-
-    return (
-      <div className="mx-auto max-w-lg space-y-6">
-        <header className="space-y-2">
-          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-accent">
-            Checkout · ${me?.priceUsd ?? charge.amountUsd} USD
-          </p>
-          <h1 className="font-[family-name:var(--font-syne)] text-3xl font-extrabold">
-            Pay with Bitcoin
-          </h1>
-          <p className="text-sm text-dash-muted">
-            Lightning is usually instant. On-chain may take a confirmation.
-            This page checks payment automatically.
-          </p>
-        </header>
-
-        <div className="flex gap-2 rounded-xl bg-dash-elevated p-1">
-          {(["lightning", "onchain"] as const).map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setTab(item)}
-              className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold capitalize ${
-                tab === item
-                  ? "bg-dash-accent text-dash-bg"
-                  : "text-dash-muted hover:text-dash-text"
-              }`}
-            >
-              {item === "lightning" ? "Lightning" : "On-chain"}
-            </button>
-          ))}
-        </div>
-
-        <div className="dash-card space-y-4 p-5">
-          {qrData ? (
-            <div className="flex justify-center">
-              <Image
-                src={qrUrl(qrData)}
-                alt="Payment QR code"
-                width={220}
-                height={220}
-                className="rounded-xl bg-white p-2"
-                unoptimized
-              />
-            </div>
-          ) : (
-            <p className="text-center text-sm text-dash-muted">
-              Invoice details unavailable for this rail.
-            </p>
-          )}
-
-          {payData ? (
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.12em] text-dash-faint">
-                {tab === "lightning" ? "BOLT11 invoice" : "BTC address"}
-              </p>
-              <p className="mt-1 break-all rounded-xl border border-dash-border bg-dash-bg px-3 py-2 font-[family-name:var(--font-plex-mono)] text-xs text-dash-muted">
-                {payData}
-              </p>
-              <button
-                type="button"
-                onClick={() => copyText(tab, payData)}
-                className="mt-2 text-xs text-dash-accent hover:underline"
-              >
-                {copied === tab ? "Copied" : "Copy"}
-              </button>
-            </div>
-          ) : null}
-
-          {charge.amountSats != null ? (
-            <p className="text-sm text-dash-muted">
-              ≈ {charge.amountSats.toLocaleString()} sats
-              {charge.expiresAt
-                ? ` · expires ${formatExpiry(charge.expiresAt)}`
-                : ""}
-            </p>
-          ) : null}
-
-          {charge.hostedCheckoutUrl ? (
-            <a
-              href={charge.hostedCheckoutUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-center text-sm text-dash-accent hover:underline"
-            >
-              Open hosted checkout →
-            </a>
-          ) : null}
-
-          <p className="text-center text-xs text-dash-faint">
-            Status: <span className="text-dash-muted">{charge.status}</span>
-          </p>
-
-          {charge.mock ? (
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => activate(charge.id, true)}
-              className="w-full rounded-xl border border-dash-accent/40 bg-[rgba(212,160,23,0.1)] px-4 py-2.5 text-sm font-semibold text-dash-accent hover:brightness-110"
-            >
-              Simulate payment (dev — OpenNode not configured)
-            </button>
-          ) : null}
-
-          {error ? <p className="text-sm text-dash-down">{error}</p> : null}
-
-          <button
-            type="button"
-            onClick={() => setCharge(null)}
-            className="w-full text-sm text-dash-faint hover:text-dash-muted"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // ——— Logged out ———
   if (!session) {
     return (
@@ -422,8 +227,9 @@ export function PlusApp() {
             Sign in to checkout
           </h2>
           <p className="text-sm leading-relaxed text-dash-muted">
-            Plus checkout needs an account so we can attach your Bitcoin /
-            Lightning payment to you. Same email + password as Portfolio.
+            Plus checkout needs an account so we can attach your payment to you.
+            Same email + password as Portfolio. Prefer Bitcoin? After you sign
+            in, request a Lightning invoice and John will send one.
           </p>
 
           <div className="flex gap-2 rounded-xl bg-dash-elevated p-1">
@@ -518,7 +324,10 @@ export function PlusApp() {
               ${me?.priceUsd ?? 10}
               <span className="text-base font-semibold text-dash-muted">
                 {" "}
-                / {me?.termDays === 365 ? "first year" : `${me?.termDays ?? 30} days`}
+                /{" "}
+                {me?.termDays === 365
+                  ? "first year"
+                  : `${me?.termDays ?? 30} days`}
               </span>
             </p>
             {me?.offerLabel ? (
@@ -526,41 +335,44 @@ export function PlusApp() {
             ) : null}
           </div>
           <p className="max-w-xs text-sm text-dash-muted">
-            Pay with <strong className="text-dash-text">card (Stripe)</strong>{" "}
-            or <strong className="text-dash-text">Bitcoin</strong>{" "}
-            (Lightning / on-chain).
+            Pay with <strong className="text-dash-text">card (Stripe)</strong>,
+            or request a{" "}
+            <strong className="text-dash-text">Lightning invoice</strong> from
+            John.
           </p>
         </div>
 
-        {me?.mockCheckout ? (
+        {me?.mockCheckout && !me?.stripeReady ? (
           <p className="rounded-xl border border-dash-border bg-dash-elevated/50 px-3 py-2 text-xs text-dash-faint">
-            No live payment keys yet — checkout runs in mock mode. Add{" "}
-            <code className="text-dash-muted">STRIPE_SECRET_KEY</code> and/or{" "}
-            <code className="text-dash-muted">OPENNODE_API_KEY</code> on Vercel
-            for real payments.
+            No live Stripe key yet — card checkout runs in mock mode. Add{" "}
+            <code className="text-dash-muted">STRIPE_SECRET_KEY</code> on Vercel
+            for real card payments.
           </p>
         ) : null}
 
         {error ? <p className="text-sm text-dash-down">{error}</p> : null}
 
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <button
             type="button"
             disabled={busy}
-            onClick={() => startCheckout("stripe")}
+            onClick={() => void startStripeCheckout()}
             className="w-full rounded-xl bg-dash-accent px-4 py-3 text-sm font-semibold text-dash-bg hover:brightness-110 disabled:opacity-60 sm:w-auto"
           >
             {busy ? "Starting…" : "Pay with card"}
           </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => startCheckout("opennode")}
-            className="w-full rounded-xl border border-dash-border px-4 py-3 text-sm font-semibold text-dash-text hover:bg-dash-elevated disabled:opacity-60 sm:w-auto"
+          <Link
+            href={LIGHTNING_CONTACT_HREF}
+            className="inline-flex w-full items-center justify-center rounded-xl border border-dash-border px-4 py-3 text-sm font-semibold text-dash-text hover:bg-dash-elevated sm:w-auto"
           >
-            Pay with Bitcoin
-          </button>
+            Request Lightning invoice
+          </Link>
         </div>
+        <p className="text-xs leading-relaxed text-dash-faint">
+          Bitcoin is manual for now: message John with your account email and
+          he’ll send a Lightning invoice. After payment clears, he’ll unlock
+          Plus on your account.
+        </p>
         <button
           type="button"
           onClick={onLogout}
@@ -571,9 +383,9 @@ export function PlusApp() {
       </section>
 
       <p className="text-xs leading-relaxed text-dash-faint">
-        Not financial advice. Cards go through Stripe; Bitcoin through OpenNode
-        (Lightning + on-chain). Founding: first {me?.foundingCap ?? 100} paid
-        members get $10 for the first year.
+        Not financial advice. Cards go through Stripe. Bitcoin / Lightning is
+        handled directly by John (invoice on request). Founding: first{" "}
+        {me?.foundingCap ?? 100} paid members get $10 for the first year.
       </p>
     </div>
   );

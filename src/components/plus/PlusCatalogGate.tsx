@@ -45,8 +45,8 @@ export function PlusMarketLock({
         {name} is behind Plus
       </h1>
       <p className="text-sm leading-relaxed text-dash-muted">
-        Free accounts get the top {FREE_LIMIT_COPY} sellers. Upgrade with
-        Bitcoin or Lightning to open the full board.
+        Free accounts get the top {FREE_LIMIT_COPY} sellers. Upgrade with card
+        or a Lightning invoice from John to open the full board.
       </p>
       <div className="flex flex-wrap justify-center gap-3 pt-1">
         <Link

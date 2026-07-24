@@ -121,7 +121,7 @@ export function PlusInterest({
           href="/plus"
           className="text-dash-muted underline-offset-2 hover:text-dash-text hover:underline"
         >
-          Bitcoin / Lightning checkout
+          Card or Lightning checkout
         </Link>
       </p>
     );
@@ -141,8 +141,8 @@ export function PlusInterest({
             Spot the next pair — and what to keep on the shelf
           </h2>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-dash-muted">
-            Live tape for collectors and shop floors. Pay with Lightning or
-            on-chain Bitcoin — free mode stays.{" "}
+            Live tape for collectors and shop floors. Pay with card, or request
+            a Lightning invoice — free mode stays.{" "}
             <Link
               href="/plus#compare"
               className="text-dash-accent underline-offset-2 hover:underline"

@@ -65,7 +65,8 @@ export function PlusPlanOverview({
         </h1>
         <p className="max-w-2xl text-lg leading-relaxed text-dash-muted">
           Free keeps the terminal open. Plus unlocks the full board, Collection,
-          and the Restock Monitor roadmap — pay with card (Stripe) or Bitcoin.
+          and the Restock Monitor roadmap — pay with card (Stripe), or request a
+          Lightning invoice from John.
         </p>
         <p className="font-[family-name:var(--font-plex-mono)] text-sm text-dash-text">
           ${price}

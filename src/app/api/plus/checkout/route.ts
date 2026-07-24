@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server";
-import {
-  openNodeConfigured,
-  plusPublicEnabled,
-  stripeConfigured,
-} from "@/lib/plus/config";
-import { createPlusCharge } from "@/lib/plus/opennode";
+import { plusPublicEnabled, stripeConfigured } from "@/lib/plus/config";
 import {
   recordPlusPurchase,
   resolvePlusOffer,
@@ -40,50 +35,29 @@ export async function POST(request: Request) {
   }
 
   const requested = (body.provider ?? "stripe").trim().toLowerCase();
-  const provider =
-    requested === "opennode" || requested === "bitcoin" || requested === "btc"
-      ? "opennode"
-      : "stripe";
+  if (
+    requested === "opennode" ||
+    requested === "bitcoin" ||
+    requested === "btc" ||
+    requested === "lightning"
+  ) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Bitcoin / Lightning is manual — contact John for an invoice via About → Contact (topic: Plus · Bitcoin / Lightning invoice).",
+      },
+      { status: 400 },
+    );
+  }
 
   try {
     const offer = await resolvePlusOffer();
-
-    if (provider === "stripe") {
-      const session = await createStripeCheckoutSession({ email, offer });
-      await recordPlusPurchase({
-        id: session.id,
-        email,
-        provider: session.mock ? "mock" : "stripe",
-        plan: offer.plan,
-        amountUsd: offer.amountUsd,
-        termDays: offer.termDays,
-        status: "pending",
-      });
-      return NextResponse.json({
-        ok: true,
-        provider: session.mock ? "mock" : "stripe",
-        configured: stripeConfigured(),
-        offer,
-        data: {
-          id: session.id,
-          url: session.url,
-          email: session.email,
-          amountUsd: session.amountUsd,
-          plan: session.plan,
-          termDays: session.termDays,
-          mock: session.mock,
-        },
-      });
-    }
-
-    const charge = await createPlusCharge({
-      email,
-      amountUsd: offer.amountUsd,
-    });
+    const session = await createStripeCheckoutSession({ email, offer });
     await recordPlusPurchase({
-      id: charge.id,
+      id: session.id,
       email,
-      provider: charge.mock ? "mock" : "opennode",
+      provider: session.mock ? "mock" : "stripe",
       plan: offer.plan,
       amountUsd: offer.amountUsd,
       termDays: offer.termDays,
@@ -91,10 +65,18 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({
       ok: true,
-      data: charge,
-      provider: charge.mock ? "mock" : "opennode",
-      configured: openNodeConfigured(),
+      provider: session.mock ? "mock" : "stripe",
+      configured: stripeConfigured(),
       offer,
+      data: {
+        id: session.id,
+        url: session.url,
+        email: session.email,
+        amountUsd: session.amountUsd,
+        plan: session.plan,
+        termDays: session.termDays,
+        mock: session.mock,
+      },
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Checkout failed";

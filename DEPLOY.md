@@ -47,7 +47,7 @@ npx vercel --prod --yes
 2. Connect the GitHub account / install the Vercel GitHub app if prompted  
 3. Link repo `jscarpelli97/spi-markets`, production branch `main`
 
-## Plus (Stripe cards + OpenNode Bitcoin)
+## Plus (Stripe cards + manual Lightning)
 
 Keep Plus off for day one (`NEXT_PUBLIC_PLUS_PUBLIC` unset). When you're ready:
 
@@ -56,22 +56,22 @@ Keep Plus off for day one (`NEXT_PUBLIC_PLUS_PUBLIC` unset). When you're ready:
    - Webhook endpoint: `https://spimarkets.com/api/plus/webhook/stripe`  
      Events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`  
    - Optional: create Prices and set `STRIPE_PRICE_FOUNDING_YEARLY` / `STRIPE_PRICE_PLUS`  
-2. **OpenNode** (BTC / Lightning) — optional second rail  
+2. **Bitcoin / Lightning** — manual for now. Buyers use About → Contact
+   (topic: Plus · Bitcoin / Lightning invoice). You send a Lightning invoice
+   and unlock Plus after payment clears.
 3. In Vercel set:
    - `STRIPE_SECRET_KEY`
    - `STRIPE_WEBHOOK_SECRET`
    - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (optional for future Elements)
-   - `OPENNODE_API_KEY` / `OPENNODE_ENV=dev` (optional)
    - `PLUS_JWT_SECRET` (long random string)
    - `PLUS_PRICE_USD=10` / `PLUS_TERM_DAYS=30` (post-founding standard plan)
    - `NEXT_PUBLIC_SITE_URL=https://spimarkets.com`
    - `NEXT_PUBLIC_PLUS_PUBLIC=1` only when checkout is ready to sell
 4. Run `DATABASE_URL=… node scripts/migrate-users.mjs` so `plus_purchases` exists (founding 100 cap).
-5. Redeploy. Without Stripe/OpenNode keys, `/plus` still works in **mock** mode when public.
+5. Redeploy. Without Stripe keys, `/plus` still works in **mock** card mode when public.
 
 Founding offer (first 100 paid): **$10 / first year**, tracked in Neon `plus_purchases`.
 
-OpenNode webhook (BTC): `https://spimarkets.com/api/plus/webhook`  
 Stripe webhook (cards): `https://spimarkets.com/api/plus/webhook/stripe`
 
 ## Daily SPI snapshots

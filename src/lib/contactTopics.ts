@@ -6,6 +6,10 @@ export const CONTACT_TOPICS = [
   { id: "feedback", label: "General feedback" },
   { id: "shoe", label: "Shoe to add" },
   { id: "thoughts", label: "Thoughts / ideas" },
+  {
+    id: "plus-btc",
+    label: "Plus · Bitcoin / Lightning invoice",
+  },
   { id: "other", label: "Something else" },
 ] as const;
 
