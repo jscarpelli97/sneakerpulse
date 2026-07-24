@@ -24,6 +24,10 @@ type SortableColumn = {
 type MarketsView = "columns" | "icons" | "compare" | "deal";
 
 const VIEW_STORAGE_KEY = "spi-markets-view";
+const PAGE_SIZE_STORAGE_KEY = "spi-markets-page-size";
+const PAGE_SIZES = [10, 50, 100] as const;
+type PageSize = (typeof PAGE_SIZES)[number];
+const DEFAULT_PAGE_SIZE: PageSize = 10;
 
 const VIEW_LABELS: Record<MarketsView, { eyebrow: string; blurb: string }> = {
   columns: { eyebrow: "Browse", blurb: "pairs" },
@@ -46,6 +50,89 @@ const COLUMNS: SortableColumn[] = [
   { key: "weeklyOrders", label: "Weekly orders" },
   { key: "status", label: "Status" },
 ];
+
+function isPageSize(value: unknown): value is PageSize {
+  return PAGE_SIZES.includes(value as PageSize);
+}
+
+function BoardPager({
+  page,
+  pageCount,
+  pageSize,
+  total,
+  rangeStart,
+  rangeEnd,
+  onPage,
+  onPageSize,
+}: {
+  page: number;
+  pageCount: number;
+  pageSize: PageSize;
+  total: number;
+  rangeStart: number;
+  rangeEnd: number;
+  onPage: (page: number) => void;
+  onPageSize: (size: PageSize) => void;
+}) {
+  if (total === 0) return null;
+
+  return (
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+      <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
+        {rangeStart}–{rangeEnd} of {total}
+      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <div
+          className="inline-flex items-center gap-1"
+          role="group"
+          aria-label="Rows per page"
+        >
+          <span className="mr-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
+            Per page
+          </span>
+          {PAGE_SIZES.map((size) => (
+            <button
+              key={size}
+              type="button"
+              onClick={() => onPageSize(size)}
+              aria-pressed={pageSize === size}
+              className={`rounded-lg px-2.5 py-1 font-[family-name:var(--font-plex-mono)] text-[11px] tabular-nums tracking-[0.08em] transition-colors ${
+                pageSize === size
+                  ? "bg-dash-accent text-dash-bg"
+                  : "border border-dash-border text-dash-muted hover:text-dash-text"
+              }`}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
+        {pageCount > 1 ? (
+          <div className="inline-flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => onPage(page - 1)}
+              disabled={page <= 1}
+              className="rounded-lg border border-dash-border px-2.5 py-1 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-muted transition-colors hover:text-dash-text disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Prev
+            </button>
+            <span className="min-w-[4.5rem] text-center font-[family-name:var(--font-plex-mono)] text-[11px] tabular-nums text-dash-faint">
+              {page} / {pageCount}
+            </span>
+            <button
+              type="button"
+              onClick={() => onPage(page + 1)}
+              disabled={page >= pageCount}
+              className="rounded-lg border border-dash-border px-2.5 py-1 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-muted transition-colors hover:text-dash-text disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
 
 function StatusPill({ row }: { row: CatalogQuote }) {
   return (
@@ -123,6 +210,8 @@ export function CatalogMarketsExplorer({
       ? initialDealSlug
       : null,
   );
+  const [pageSize, setPageSize] = useState<PageSize>(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
 
   useEffect(() => {
@@ -137,6 +226,15 @@ export function CatalogMarketsExplorer({
       /* ignore */
     }
   }, [initialView]);
+
+  useEffect(() => {
+    try {
+      const saved = Number(window.localStorage.getItem(PAGE_SIZE_STORAGE_KEY));
+      if (isPageSize(saved)) setPageSize(saved);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   function syncUrl(next: {
     view: MarketsView;
@@ -206,7 +304,19 @@ export function CatalogMarketsExplorer({
     return sortCatalogRows(filterCatalogRows(rows, query), sortKey, sortDir);
   }, [rows, query, sortKey, sortDir]);
 
+  const pageCount = Math.max(1, Math.ceil(visible.length / pageSize));
+  const safePage = Math.min(page, pageCount);
+  const pageOffset = (safePage - 1) * pageSize;
+  const pageRows = visible.slice(pageOffset, pageOffset + pageSize);
+  const rangeStart = visible.length === 0 ? 0 : pageOffset + 1;
+  const rangeEnd = Math.min(pageOffset + pageRows.length, visible.length);
+
+  useEffect(() => {
+    if (page !== safePage) setPage(safePage);
+  }, [page, safePage]);
+
   function toggleSort(key: CatalogSortKey) {
+    setPage(1);
     if (sortKey === key) {
       setSortDir((dir) => (dir === "asc" ? "desc" : "asc"));
       return;
@@ -221,6 +331,7 @@ export function CatalogMarketsExplorer({
 
   function onQueryChange(value: string) {
     setQuery(value);
+    setPage(1);
     syncUrl({
       view,
       q: value,
@@ -230,8 +341,30 @@ export function CatalogMarketsExplorer({
     });
   }
 
+  function changePageSize(size: PageSize) {
+    setPageSize(size);
+    setPage(1);
+    try {
+      window.localStorage.setItem(PAGE_SIZE_STORAGE_KEY, String(size));
+    } catch {
+      /* ignore */
+    }
+  }
+
   const showSearch = view === "columns" || view === "icons";
   const viewMeta = VIEW_LABELS[view];
+  const pager = showSearch ? (
+    <BoardPager
+      page={safePage}
+      pageCount={pageCount}
+      pageSize={pageSize}
+      total={visible.length}
+      rangeStart={rangeStart}
+      rangeEnd={rangeEnd}
+      onPage={setPage}
+      onPageSize={changePageSize}
+    />
+  ) : null;
 
   return (
     <section className="dash-card animate-rise overflow-hidden">
@@ -293,13 +426,16 @@ export function CatalogMarketsExplorer({
                 placeholder="Name, style ID, brand…"
                 className="w-full min-w-[220px] rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent sm:w-72"
               />
-              <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-                {visible.length} shown
-              </p>
             </>
           ) : null}
         </div>
       </div>
+
+      {showSearch && visible.length > 0 ? (
+        <div className="border-b border-dash-border px-4 py-3 sm:px-5">
+          {pager}
+        </div>
+      ) : null}
 
       {view === "compare" ? (
         <div className="p-4 sm:p-5">
@@ -365,13 +501,13 @@ export function CatalogMarketsExplorer({
                   </td>
                 </tr>
               ) : (
-                visible.map((row, index) => (
+                pageRows.map((row, index) => (
                   <tr
                     key={row.slug}
                     className="group transition-colors hover:bg-dash-elevated/55"
                   >
                     <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
-                      {index + 1}
+                      {pageOffset + index + 1}
                     </td>
                     <td className="px-4 py-3.5 sm:px-5">
                       <Link
@@ -465,7 +601,7 @@ export function CatalogMarketsExplorer({
                 })}
               </div>
               <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                {visible.map((row, index) => (
+                {pageRows.map((row, index) => (
                   <li key={row.slug} className="relative">
                     <Link
                       href={`/sneakers/${row.slug}`}
@@ -480,7 +616,7 @@ export function CatalogMarketsExplorer({
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
                         />
                         <span className="absolute left-2 top-2 rounded-md bg-dash-bg/85 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] tabular-nums text-dash-muted backdrop-blur-sm">
-                          #{index + 1}
+                          #{pageOffset + index + 1}
                         </span>
                       </div>
                       <div className="flex flex-1 flex-col gap-1.5 p-3">
@@ -523,6 +659,12 @@ export function CatalogMarketsExplorer({
           )}
         </div>
       )}
+
+      {showSearch && visible.length > 0 ? (
+        <div className="border-t border-dash-border px-4 py-3 sm:px-5">
+          {pager}
+        </div>
+      ) : null}
     </section>
   );
 }
