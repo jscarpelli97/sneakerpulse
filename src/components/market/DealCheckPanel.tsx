@@ -14,7 +14,7 @@ const VERDICT_STYLES: Record<
 > = {
   buy: {
     badge: "bg-[rgba(38,166,154,0.14)] text-dash-up",
-    label: "Buy",
+    label: "Cop",
     accent: "border-l-dash-up",
   },
   stretch: {
@@ -122,12 +122,13 @@ export function DealCheckPanel({ market }: { market: SneakerMarket }) {
             Deal check
           </p>
           <h2 className="mt-1 font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text">
-            Does this price make sense?
+            Heat check — does this price make sense?
           </h2>
           <p className="mt-1 max-w-xl text-sm text-dash-muted">
-            Size is required. We compare your price to{" "}
+            Size is required. We compare your offer to{" "}
             <span className="text-dash-text">that size’s ask</span>, retail, and
-            the 30d tape — never StockX’s all-size low.
+            the 30d tape — never StockX’s all-size low. Verdicts read as cop,
+            stretch, or pass.
           </p>
         </div>
         {result ? (
@@ -204,7 +205,7 @@ export function DealCheckPanel({ market }: { market: SneakerMarket }) {
             type="submit"
             className="rounded-xl bg-dash-accent px-4 py-2.5 text-sm font-semibold text-dash-bg hover:brightness-110"
           >
-            Check deal
+            Run heat check
           </button>
         </form>
 
@@ -253,7 +254,7 @@ export function DealCheckPanel({ market }: { market: SneakerMarket }) {
           </>
         ) : (
           <p className="text-sm text-dash-muted">
-            Pick a size and price to stack the deal.
+            Pick a size and offer to stack the heat check.
           </p>
         )}
 

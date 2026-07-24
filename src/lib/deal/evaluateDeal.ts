@@ -197,11 +197,11 @@ export function evaluateDeal(
 
   if (score >= 2) {
     verdict = "buy";
-    headline = "Looks like a buy";
+    headline = "Looks like a cop";
     body =
       ask != null && offer <= ask
-        ? `$${Math.round(offer)} sits at or under the size ${sizeLabel} ask — relative to this board, the tape supports it.`
-        : `$${Math.round(offer)} for size ${sizeLabel} screens well vs retail and recent range for this pair.`;
+        ? `$${Math.round(offer)} sits at or under the size ${sizeLabel} ask — relative to this board, the tape supports the cop.`
+        : `$${Math.round(offer)} for size ${sizeLabel} screens well vs retail and recent range for this colorway.`;
   } else if (score >= 0) {
     verdict = "stretch";
     headline = "Stretch / fair";

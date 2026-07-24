@@ -163,8 +163,8 @@ export function WardrobeApp() {
           </h1>
           <p className="text-base leading-relaxed text-dash-muted">
             Same account as Portfolio. Start from outfit ideas, pull sneakers
-            from the board, or upload pieces — then arrange Fits. Available on
-            any device when you sign in.
+            from the board, or upload pieces — then drop Fits. Available on any
+            device when you sign in.
           </p>
         </header>
 

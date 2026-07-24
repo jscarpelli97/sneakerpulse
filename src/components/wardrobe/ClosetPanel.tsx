@@ -328,8 +328,8 @@ export function ClosetPanel({
     onSaveOutfit?.({ name: fitName, items: fitItems });
     onFlash(
       added
-        ? `Added ${fitName} (${added} new · Fit ready)`
-        : `${fitName} pieces already in closet — Fit ready`,
+        ? `Added ${fitName} (${added} new · Fit locked in)`
+        : `${fitName} pieces already in closet — Fit locked in`,
     );
   }
 

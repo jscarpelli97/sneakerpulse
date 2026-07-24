@@ -31,7 +31,7 @@ export const BRAND_HERO_LINE =
  * Hero answer to “why not just use StockX?”
  */
 export const BRAND_VALUE_LINE =
-  "StockX shows a listing. We show whether the market is cheap, whether your size is a deal, and what your collection is actually worth.";
+  "StockX shows a listing. We show whether the market is cheap or rich, whether your size is a deal, and what your collection is actually worth.";
 
 /**
  * Core product doors — thesis, workbench, yours.
@@ -46,7 +46,7 @@ export const PRODUCT_PILLARS = [
   {
     title: "Price board",
     href: "/markets",
-    body: "Top sellers with size asks, charts, market reads, and buy/stretch/pass on every pair.",
+    body: "Top sellers with size asks, charts, market reads, and cop / stretch / pass on every pair.",
   },
   {
     title: "Portfolio",
@@ -64,12 +64,12 @@ export const PRODUCT_PILLARS = [
 export const PRODUCT_TOOLS = [
   {
     title: "Deal check",
-    body: "Size + price → buy, stretch, or pass vs that size’s ask.",
+    body: "Size + offer → heat check: cop, stretch, or pass vs that size’s ask.",
   },
   {
     title: "Compare",
     href: "/compare",
-    body: "Stack two pairs on ask, retail, premium, and flow.",
+    body: "Stack two colorways on ask, retail, premium, and flow.",
   },
   {
     title: "Alerts",

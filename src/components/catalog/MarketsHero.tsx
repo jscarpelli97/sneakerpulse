@@ -85,7 +85,7 @@ export function MarketsHero({
             </Link>
           </div>
           <p className="mt-3 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
-            {totalMarkets} pairs on the board · deal check on every market page
+            {totalMarkets} pairs on the board · heat check on every market page
           </p>
         </div>
 

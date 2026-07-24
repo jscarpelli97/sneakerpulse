@@ -345,11 +345,11 @@ export function PortfolioApp() {
             Track your collection
           </h1>
           <p className="text-sm leading-relaxed text-dash-muted sm:text-base">
-            Create a simple account (email + password) to log pairs you own,
-            mark cost basis in USD, and see{" "}
+            Create a simple account (email + password) to log pairs you own —
+            grails and daily beaters alike. Mark cost in USD and see{" "}
             <span className="text-dash-text">your size’s ask</span> vs what you
-            paid — not StockX’s all-size low. Log in
-            on any device to pick up where you left off.
+            paid — not StockX’s all-size low. Log in on any device to pick up
+            where you left off.
           </p>
         </header>
 
@@ -470,8 +470,7 @@ export function PortfolioApp() {
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-dash-muted">
             Mark what you own, what you paid, and see each size’s ask vs cost —
-            available
-            wherever you sign in.
+            grails and beaters both mark to your size, wherever you sign in.
           </p>
         </div>
         <button

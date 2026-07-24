@@ -104,7 +104,7 @@ export default async function MarketsIndexPage() {
             subtitle={
               access.gated
                 ? `Free top ${watchlist.length} · unlock all ${access.total} with Plus`
-                : `Hottest ${watchlist.length} of ${access.total} tracked StockX sellers`
+                : `Heat on the board · top ${watchlist.length} of ${access.total} tracked sellers`
             }
             hrefAll={{
               href: access.gated && publicPlus ? "/plus" : "/markets",
