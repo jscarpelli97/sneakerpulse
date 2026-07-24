@@ -1,9 +1,16 @@
 /**
  * Local catalog of pairs discovered via search / market loads.
  * Prefer this (+ offline JSON) before spending KicksDB quota again.
+ *
+ * Server-only — never import from Client Components.
  */
+import "server-only";
+
 import { databaseConfigured, query } from "@/lib/db";
-import type { OfflineCatalogQuote } from "@/services/catalog/offlineCatalog";
+import {
+  getOfflineQuoteBySlug,
+  type OfflineCatalogQuote,
+} from "@/services/catalog/offlineCatalog";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 
 export type DiscoveredSource = "search" | "market" | "remember";
@@ -270,9 +277,20 @@ export async function searchDiscovered(
   }
 }
 
-/** Fire-and-forget persist — never blocks the request path. */
 export function rememberProductLater(input: DiscoveredProductInput) {
   void upsertDiscoveredProduct(input).catch(() => {
     /* ignore */
   });
+}
+
+/**
+ * Offline JSON first, then pairs previously discovered via search/market.
+ * Use this before spending KicksDB quota.
+ */
+export async function resolveCatalogQuoteBySlug(
+  slug: string,
+): Promise<OfflineCatalogQuote | null> {
+  const offline = getOfflineQuoteBySlug(slug);
+  if (offline) return offline;
+  return getDiscoveredBySlug(slug);
 }

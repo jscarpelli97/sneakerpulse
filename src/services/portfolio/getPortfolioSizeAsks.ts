@@ -3,7 +3,7 @@ import {
   resolveHoldingAsk,
   type HoldingAskSource,
 } from "@/lib/portfolio/resolveHoldingAsk";
-import { resolveCatalogQuoteBySlug } from "@/services/catalog/sneakers";
+import { resolveCatalogQuoteBySlug } from "@/services/catalog/discoveredProducts";
 import { mapProductToMarket } from "@/services/market/mapProductToMarket";
 import type { SizeAsk } from "@/types/market";
 

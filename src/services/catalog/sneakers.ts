@@ -2,7 +2,6 @@ import {
   getOfflineCatalogEntries,
   getOfflineCatalogQuotes,
   getOfflineQuoteBySlug,
-  resolveCatalogQuoteBySlug,
 } from "@/services/catalog/offlineCatalog";
 import {
   mapListedProductToCatalog,
@@ -19,6 +18,7 @@ import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import {
   quoteToCatalogEntry,
   rememberProductLater,
+  resolveCatalogQuoteBySlug,
 } from "@/services/catalog/discoveredProducts";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 
@@ -106,5 +106,5 @@ export async function getSneakerBySlug(slug: string) {
 export {
   getOfflineCatalogQuotes,
   getOfflineQuoteBySlug,
-  resolveCatalogQuoteBySlug,
 };
+export { resolveCatalogQuoteBySlug } from "@/services/catalog/discoveredProducts";

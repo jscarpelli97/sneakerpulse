@@ -5,7 +5,7 @@ vi.mock("@/lib/kicksdb/client", () => ({
   fetchStockxProduct: vi.fn(),
 }));
 
-vi.mock("@/services/catalog/sneakers", () => ({
+vi.mock("@/services/catalog/discoveredProducts", () => ({
   resolveCatalogQuoteBySlug: vi.fn(async () => ({
     slug: "air-jordan-1-retro-low-og-mocha",
     ticker: "CZ0790-102",
@@ -24,6 +24,10 @@ vi.mock("@/services/catalog/sneakers", () => ({
     featured: false,
     live: false,
   })),
+}));
+
+vi.mock("@/services/catalog/sneakers", () => ({
+  getOfflineQuoteBySlug: vi.fn(),
 }));
 
 import { fetchStockxProduct } from "@/lib/kicksdb/client";

@@ -1,6 +1,5 @@
 import {
   getSneakerBySlug,
-  resolveCatalogQuoteBySlug,
 } from "@/services/catalog/sneakers";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 import {
@@ -10,7 +9,10 @@ import {
 } from "@/lib/kicksdb/client";
 import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
-import { rememberProductLater } from "@/services/catalog/discoveredProducts";
+import {
+  rememberProductLater,
+  resolveCatalogQuoteBySlug,
+} from "@/services/catalog/discoveredProducts";
 import { resolveLocalHistory } from "@/services/market/historyStore";
 import { getEbayCompsForProduct } from "@/services/market/getEbayComps";
 import { emptyMarket, mapProductToMarket } from "@/services/market/mapProductToMarket";
