@@ -12,10 +12,12 @@ export function isFounderEmail(email: string | null | undefined) {
 }
 
 export function founderGrantAuthorized(token: string | null | undefined) {
-  const expected =
-    process.env.STATUS_TOKEN?.trim() ||
-    process.env.PLUS_FOUNDER_GRANT_TOKEN?.trim() ||
-    "";
-  if (!expected || !token) return false;
-  return token.trim() === expected;
+  if (!token?.trim()) return false;
+  const provided = token.trim();
+  const founders =
+    process.env.PLUS_FOUNDER_GRANT_TOKEN?.trim() || "";
+  const status = process.env.STATUS_TOKEN?.trim() || "";
+  if (founders && provided === founders) return true;
+  if (status && provided === status) return true;
+  return false;
 }
