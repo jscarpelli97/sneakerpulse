@@ -1,28 +1,24 @@
-import Image from "next/image";
 import Link from "next/link";
-import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
+import { SpiHeroTicker } from "@/components/catalog/SpiHeroTicker";
 import {
   BRAND_HERO_LINE,
   BRAND_NAME,
   BRAND_VALUE_LINE,
+  INDEX_NAME,
 } from "@/lib/brand";
-import { formatMaybeMoney, formatNumber } from "@/utils/format";
+import type { MarketIndex } from "@/types/market";
 
 export function MarketsHero({
-  featured,
+  index,
   modeBadge,
   modeSubtitle,
   totalMarkets,
 }: {
-  featured: CatalogQuote;
+  index: MarketIndex;
   modeBadge: string;
   modeSubtitle: string;
   totalMarkets: number;
 }) {
-  const hasPrice = featured.price != null;
-  const hasOrders = featured.weeklyOrders != null;
-  const hasRank = featured.rank != null;
-
   return (
     <section className="dash-card animate-rise relative overflow-hidden">
       <div
@@ -34,7 +30,7 @@ export function MarketsHero({
         }}
         aria-hidden
       />
-      <div className="relative grid gap-8 px-5 py-8 sm:px-8 sm:py-11 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-center lg:gap-12 lg:px-10 lg:py-14">
+      <div className="relative grid gap-8 px-5 py-8 sm:px-8 sm:py-11 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:items-stretch lg:gap-10 lg:px-10 lg:py-14">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-dash-border bg-dash-elevated/90 px-3 py-1 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-muted">
@@ -85,77 +81,11 @@ export function MarketsHero({
             </Link>
           </div>
           <p className="mt-3 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
-            {totalMarkets} pairs on the board · heat check on every market page
+            {totalMarkets} pairs on the board · {INDEX_NAME} tape updates daily
           </p>
         </div>
 
-        <aside className="rounded-2xl border border-dash-border bg-dash-elevated/85 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-                Featured · {featured.ticker}
-              </p>
-              <p className="mt-1 truncate font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text">
-                {featured.name}
-              </p>
-              <p className="mt-1 text-sm text-dash-muted">
-                {featured.brand} · {featured.styleCode} · {featured.year}
-              </p>
-            </div>
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-dash-border bg-dash-panel transition-transform duration-300 hover:scale-[1.03] sm:h-24 sm:w-24">
-              <Image
-                src={featured.fallbackImage}
-                alt={featured.name}
-                fill
-                className="object-contain p-2"
-                sizes="96px"
-                priority
-              />
-            </div>
-          </div>
-
-          <dl className="mt-5 grid grid-cols-2 gap-3 border-t border-dash-border pt-4">
-            <div>
-              <dt className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
-                Lowest ask
-              </dt>
-              <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-2xl font-semibold tabular-nums text-dash-text">
-                {hasPrice ? formatMaybeMoney(featured.price) : "—"}
-              </dd>
-            </div>
-            <div>
-              <dt className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
-                Weekly orders
-              </dt>
-              <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-2xl font-semibold tabular-nums text-dash-text">
-                {hasOrders ? formatNumber(featured.weeklyOrders!) : "—"}
-              </dd>
-            </div>
-            <div>
-              <dt className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
-                StockX rank
-              </dt>
-              <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-lg font-medium tabular-nums text-dash-muted">
-                {hasRank ? `#${formatNumber(featured.rank!)}` : "—"}
-              </dd>
-            </div>
-            <div>
-              <dt className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
-                Retail
-              </dt>
-              <dd className="mt-1 font-[family-name:var(--font-plex-mono)] text-lg font-medium tabular-nums text-dash-muted">
-                {formatMaybeMoney(featured.retail)}
-              </dd>
-            </div>
-          </dl>
-
-          <Link
-            href={`/sneakers/${featured.slug}`}
-            className="mt-5 flex w-full items-center justify-center rounded-xl border border-dash-border px-4 py-2.5 text-sm font-semibold text-dash-link hover:bg-dash-panel"
-          >
-            View full market →
-          </Link>
-        </aside>
+        <SpiHeroTicker index={index} />
       </div>
     </section>
   );

@@ -47,8 +47,6 @@ export default async function MarketsIndexPage() {
   const cachedCount = quotes.filter(
     (row) => !row.live && row.price != null,
   ).length;
-  const featured =
-    quotes.find((row) => row.featured) ?? quotes[0] ?? null;
   const watchlist = quotes.slice(0, HOMEPAGE_WATCHLIST_LIMIT);
   const dataMode = getDataModeLabel({
     liveCount,
@@ -69,10 +67,10 @@ export default async function MarketsIndexPage() {
       />
       <main className="flex-1">
         <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
-          {/* 1) What is SPI Markets? */}
-          {featured ? (
+          {/* 1) What is SPI Markets? + daily SPI tape */}
+          {marketIndex ? (
             <MarketsHero
-              featured={featured}
+              index={marketIndex}
               modeBadge={dataMode.badge}
               modeSubtitle={
                 access.gated

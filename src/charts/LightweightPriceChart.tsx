@@ -28,6 +28,9 @@ type Props = {
    * and secondary stays gold (today) regardless of up/down.
    */
   eraColors?: boolean;
+  /** Force a shared Y range (e.g. boom peak vs live tip on matching scales). */
+  priceRange?: { min: number; max: number };
+  className?: string;
 };
 
 function toChartPoints(data: ChartPoint[]) {
@@ -73,6 +76,8 @@ export function LightweightPriceChart({
   peakLevel,
   peakTitle = "Boom peak",
   eraColors = false,
+  priceRange,
+  className = "h-full min-h-[260px] w-full",
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -109,7 +114,7 @@ export function LightweightPriceChart({
       handleScale: true,
     });
 
-    const hasSecondary = Boolean(secondaryData && secondaryData.length >= 2);
+    const hasSecondary = Boolean(secondaryData && secondaryData.length >= 1);
     const primaryLine = eraColors
       ? "#26a69a"
       : up
@@ -133,6 +138,16 @@ export function LightweightPriceChart({
       lineWidth: 2,
       priceLineVisible: !hasSecondary,
       lastValueVisible: !hasSecondary,
+      ...(priceRange
+        ? {
+            autoscaleInfoProvider: () => ({
+              priceRange: {
+                minValue: priceRange.min,
+                maxValue: priceRange.max,
+              },
+            }),
+          }
+        : {}),
     });
 
     const points = toChartPoints(data);
@@ -156,6 +171,16 @@ export function LightweightPriceChart({
         lineWidth: 2,
         priceLineVisible: true,
         lastValueVisible: true,
+        ...(priceRange
+          ? {
+              autoscaleInfoProvider: () => ({
+                priceRange: {
+                  minValue: priceRange.min,
+                  maxValue: priceRange.max,
+                },
+              }),
+            }
+          : {}),
       });
       const secondaryPoints = toChartPoints(secondaryData);
       if (secondaryPoints.length > 0) {
@@ -190,12 +215,15 @@ export function LightweightPriceChart({
     peakLevel,
     peakTitle,
     eraColors,
+    priceRange?.min,
+    priceRange?.max,
+    className,
   ]);
 
   return (
     <div
       ref={containerRef}
-      className="h-full min-h-[260px] w-full"
+      className={className}
       role="img"
       aria-label="SPI Index chart"
     />
