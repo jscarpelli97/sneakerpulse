@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteSearch } from "@/components/layout/SiteSearch";
+import { SpiTicker } from "@/components/market/SpiTicker";
 import { PlusInterest } from "@/components/plus/PlusInterest";
 import { BRAND_NAME, FOUNDER_NAME, PRODUCT_FOOTNOTE } from "@/lib/brand";
 import { plusPublicEnabled } from "@/lib/plus/config";
@@ -41,13 +42,15 @@ export function SiteHeader({ subtitle }: { subtitle?: string }) {
           >
             {BRAND_NAME}
           </Link>
+          <SpiTicker className="hidden sm:inline-flex" />
           {subtitle ? (
-            <span className="hidden truncate font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-muted lg:inline">
+            <span className="hidden truncate font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-muted xl:inline">
               {subtitle}
             </span>
           ) : null}
         </div>
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <SpiTicker className="sm:hidden" compact />
           <SiteSearch className="hidden sm:flex" />
           <nav className="flex items-center gap-0.5 sm:gap-1">
             {nav.map((item) => (

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { SpiTicker } from "@/components/market/SpiTicker";
 import { BRAND_NAME } from "@/lib/brand";
 import type { SneakerMarket, UpstreamStatus } from "@/types/market";
 import { changeClass, formatChange, formatMoney } from "@/utils/format";
@@ -44,7 +45,8 @@ export function MarketHeader({
           >
             {BRAND_NAME}
           </Link>
-          <span className="hidden text-dash-faint sm:inline">/</span>
+          <SpiTicker className="hidden sm:inline-flex" />
+          <span className="hidden text-dash-faint lg:inline">/</span>
           <nav className="hidden items-center gap-1 text-sm font-medium text-dash-muted lg:flex">
             {NAV.map((item) => (
               <Link
@@ -57,7 +59,7 @@ export function MarketHeader({
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:gap-3">
           {statusBadge}
           <div className="hidden items-center gap-2 rounded-full border border-dash-border bg-dash-elevated/80 px-3 py-1.5 text-xs font-medium text-dash-muted sm:flex">
             <span
@@ -65,18 +67,19 @@ export function MarketHeader({
             />
             {FEED_LABEL[upstreamStatus]}
           </div>
-        </div>
-        <div className="hidden text-right text-xs text-dash-muted md:block md:text-sm">
-          <span className="font-[family-name:var(--font-plex-mono)] font-semibold text-dash-text">
-            {market.ticker}
-          </span>
-          <span className="mx-2 text-dash-faint">·</span>
-          <span className={changeClass(market.changeToday?.percent)}>
-            {today.percent}
-          </span>
-          <span className="ml-2 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-dash-text">
-            {formatMoney(market.price)}
-          </span>
+          <SpiTicker className="sm:hidden" compact />
+          <div className="text-right text-xs text-dash-muted sm:text-sm">
+            <span className="font-[family-name:var(--font-plex-mono)] font-semibold text-dash-text">
+              {market.ticker}
+            </span>
+            <span className="mx-1.5 text-dash-faint sm:mx-2">·</span>
+            <span className={changeClass(market.changeToday?.percent)}>
+              {today.percent}
+            </span>
+            <span className="ml-1.5 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-dash-text sm:ml-2">
+              {formatMoney(market.price)}
+            </span>
+          </div>
         </div>
       </div>
 

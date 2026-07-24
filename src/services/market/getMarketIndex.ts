@@ -113,7 +113,7 @@ function loadLegacyExtensionSeries(): ChartPoint[] {
 }
 
 /** Merge open-data + in-app extension so the site chart grows with every daily commit. */
-function loadExtensionSeries(): ChartPoint[] {
+export function loadExtensionSeries(): ChartPoint[] {
   const byDate = new Map<string, ChartPoint>();
   for (const point of loadLegacyExtensionSeries()) {
     byDate.set(point.date, point);
