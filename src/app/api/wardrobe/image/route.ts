@@ -29,7 +29,8 @@ export async function GET(request: Request) {
   try {
     const upstream = await fetch(target.toString(), {
       headers: {
-        Accept: "image/avif,image/webp,image/*,*/*;q=0.8",
+        // Prefer formats every mobile canvas can decode (avoid AVIF).
+        Accept: "image/jpeg,image/png,image/webp,image/*;q=0.8,*/*;q=0.5",
         "User-Agent": "SPI-Markets-Wardrobe/1.0",
       },
       // CDN images are cacheable; Next will still edge-cache the response.
