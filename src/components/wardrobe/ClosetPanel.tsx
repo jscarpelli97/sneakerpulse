@@ -12,6 +12,10 @@ import {
   type OutfitIdeaPiece,
 } from "@/lib/wardrobe/outfitIdeas";
 import {
+  getPersonalCollection,
+  mergePersonalCollection,
+} from "@/lib/wardrobe/personalCollection";
+import {
   CLOSET_KIND_LABELS,
   CLOSET_KINDS,
   type ClosetItem,
@@ -60,6 +64,24 @@ export function ClosetPanel({
   const [closetQuery, setClosetQuery] = useState("");
 
   const outfitIdeas = useMemo(() => getOutfitIdeas(), []);
+  const personalCollection = useMemo(() => getPersonalCollection(), []);
+
+  function importPersonalCollection() {
+    const result = mergePersonalCollection(closet, newClosetItemId);
+    if (!result.added) {
+      onFlash(
+        result.skipped
+          ? "Personal collection already in closet"
+          : "No personal collection pieces found",
+      );
+      return;
+    }
+    onChange(result.closet);
+    onFlash(
+      `Added ${result.added} from your collection` +
+        (result.skipped ? ` · ${result.skipped} already owned` : ""),
+    );
+  }
 
   const { hits: liveHits, busy: searchBusy } = useCatalogSearch(
     query,
@@ -345,6 +367,24 @@ export function ClosetPanel({
         <div className="space-y-4 p-4 sm:p-5">
           {tab === "outfits" ? (
             <>
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dash-border bg-dash-elevated/40 px-4 py-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-dash-text">
+                    Personal collection
+                  </p>
+                  <p className="text-xs text-dash-muted">
+                    {personalCollection.length} pieces from your inventory sheet
+                    — Chicago & Mocha doubles included.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={importPersonalCollection}
+                  className="rounded-xl bg-dash-accent px-3 py-2 text-sm font-semibold text-dash-bg hover:brightness-110"
+                >
+                  Import collection
+                </button>
+              </div>
               <p className="max-w-2xl text-sm text-dash-muted">
                 Real outfit ideas — tee, shorts, sneakers with sizes. Some fits
                 include <span className="text-dash-text">sneaker inspo</span>{" "}
