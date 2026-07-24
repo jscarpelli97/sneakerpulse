@@ -2,21 +2,25 @@ import Link from "next/link";
 import { PRODUCT_PILLARS, PRODUCT_TOOLS } from "@/lib/brand";
 
 /**
- * “What do we provide?” — pillars then tools.
- * Sits after identity (hero) and differentiation (SPI).
+ * Product suite — pillars then tools.
+ * Lives on Plus; homepage free surface is SPI + top-10 board only.
  */
-export function HomeWhatWeProvide() {
+export function ProductSuite({
+  eyebrow = "What Plus includes",
+}: {
+  eyebrow?: string;
+} = {}) {
   return (
-    <div className="space-y-6 sm:space-y-7 lg:space-y-8">
+    <div className="space-y-8 sm:space-y-10">
       <section className="animate-rise">
-        <div className="mb-3">
+        <div className="mb-4">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            What we provide
+            {eyebrow}
           </p>
-          <h2 className="mt-1 font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text sm:text-xl">
+          <h2 className="mt-1 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
             Four things you can’t stitch together on StockX alone
           </h2>
-          <p className="mt-1 max-w-2xl text-sm text-dash-muted">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted sm:text-base">
             Index for the market, a board for pairs, a portfolio for what you
             paid, and a wardrobe for what you wear.
           </p>
@@ -47,11 +51,11 @@ export function HomeWhatWeProvide() {
       </section>
 
       <section className="animate-rise">
-        <div className="mb-3">
+        <div className="mb-4">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
             On every pair
           </p>
-          <h2 className="mt-1 font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-dash-text sm:text-xl">
+          <h2 className="mt-1 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
             Tools when you’re deciding
           </h2>
         </div>

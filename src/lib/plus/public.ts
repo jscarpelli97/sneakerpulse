@@ -4,18 +4,19 @@ const FREE_TOP = HOMEPAGE_WATCHLIST_LIMIT;
 
 export const PLUS_BENEFITS = [
   `Full top-seller board (not just the free top ${FREE_TOP})`,
+  "Portfolio + Wardrobe with synced accounts",
+  "Compare, alerts, and deal checks on every pair",
   "Email price alerts when asks cross your thresholds",
   "Restock Monitor — size restocks & soft price drops (coming soon)",
   "Live ask refresh (when feeds are connected)",
   "Early access to GOAT / Stadium Goods tape as APIs land",
 ] as const;
 
-/** Free-tier bullets for marketing / plan pages. */
+/** Free-tier bullets — homepage surface only. */
 export const FREE_BENEFITS = [
-  `Top ${FREE_TOP} sellers on Markets, Compare, and detail pages`,
-  "SPI Index and the free markets terminal",
-  "Portfolio + Wardrobe with USD cost basis (sign in on any device)",
-  "No account required to browse the free board",
+  "SPI Index — market premium vs retail",
+  `Top ${FREE_TOP} seller ask board`,
+  "No account required",
 ] as const;
 
 export type PlanCell = {
@@ -67,7 +68,14 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
     id: "portfolio",
     feature: "Portfolio + Wardrobe",
     detail: "Log pairs, sizes, and USD cost basis — same account on any device.",
-    free: { label: "Included", state: "yes" },
+    free: { label: "Not on free homepage", state: "no" },
+    plus: { label: "Included", state: "yes" },
+  },
+  {
+    id: "tools",
+    feature: "Compare · Alerts · Deal check",
+    detail: "Decide with head-to-head stacks, thresholds, and cop / stretch / pass.",
+    free: { label: "Not on free homepage", state: "no" },
     plus: { label: "Included", state: "yes" },
   },
   {

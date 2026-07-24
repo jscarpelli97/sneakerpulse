@@ -10,6 +10,7 @@ const NAV_PRIMARY = [
   { href: "/markets", label: "Markets" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/wardrobe", label: "Wardrobe" },
+  { href: "/plus", label: "Plus" },
   { href: "/about", label: "About" },
 ] as const;
 
@@ -21,12 +22,7 @@ const NAV_TOOLS = [
 ] as const;
 
 function primaryNav() {
-  if (!plusPublicEnabled()) return [...NAV_PRIMARY];
-  return [
-    ...NAV_PRIMARY.slice(0, 3),
-    { href: "/plus", label: "Plus" },
-    ...NAV_PRIMARY.slice(3),
-  ];
+  return [...NAV_PRIMARY];
 }
 
 export function SiteHeader({ subtitle }: { subtitle?: string }) {
@@ -109,6 +105,9 @@ export function SiteFooter() {
             <Link href="/wardrobe" className="hover:text-dash-text">
               Wardrobe
             </Link>
+            <Link href="/plus" className="hover:text-dash-text">
+              Plus
+            </Link>
             {NAV_TOOLS.map((item) => (
               <Link key={item.href} href={item.href} className="hover:text-dash-text">
                 {item.label}
@@ -117,11 +116,6 @@ export function SiteFooter() {
             <Link href="/about" className="hover:text-dash-text">
               About
             </Link>
-            {publicPlus ? (
-              <Link href="/plus" className="hover:text-dash-text">
-                Plus
-              </Link>
-            ) : null}
           </nav>
         </div>
         <p className="border-t border-dash-border pt-3 text-xs leading-relaxed text-dash-faint">

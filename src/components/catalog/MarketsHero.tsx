@@ -68,10 +68,10 @@ export function MarketsHero({
               Browse markets
             </Link>
             <Link
-              href="#spi"
+              href="/plus"
               className="inline-flex items-center rounded-xl border border-dash-border bg-dash-elevated px-5 py-3 text-sm font-semibold text-dash-text hover:border-dash-muted hover:bg-dash-panel"
             >
-              See the index
+              Explore Plus
             </Link>
             <Link
               href="/portfolio"
