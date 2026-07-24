@@ -55,8 +55,14 @@ function isLiveFoundingPurchase(row: {
 }) {
   if (row.plan !== "founding" || row.status !== "paid") return false;
   if (row.provider === "mock") return false;
-  // Stripe test Checkout sessions must not burn the founding 100.
-  if (row.id.startsWith("cs_test_") || row.id.startsWith("mock_")) return false;
+  // Stripe test Checkout sessions / founder comps must not burn the founding 100.
+  if (
+    row.id.startsWith("cs_test_") ||
+    row.id.startsWith("mock_") ||
+    row.id.startsWith("founder_")
+  ) {
+    return false;
+  }
   return true;
 }
 
@@ -76,7 +82,8 @@ export async function countPaidFoundingMembers(): Promise<number> {
          AND status = 'paid'
          AND provider <> 'mock'
          AND id NOT LIKE 'cs_test_%'
-         AND id NOT LIKE 'mock_%'`,
+         AND id NOT LIKE 'mock_%'
+         AND id NOT LIKE 'founder_%'`,
     );
     return rows[0]?.n ?? 0;
   } catch {
