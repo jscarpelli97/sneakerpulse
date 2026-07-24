@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CompareClient } from "@/components/compare/CompareClient";
 import { SneakerThumb } from "@/components/catalog/SneakerThumb";
+import { MarketsDealCheck } from "@/components/markets/MarketsDealCheck";
 import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
 import {
   filterCatalogRows,
@@ -20,9 +21,22 @@ type SortableColumn = {
   label: string;
 };
 
-type MarketsView = "columns" | "icons" | "compare";
+type MarketsView = "columns" | "icons" | "compare" | "deal";
 
 const VIEW_STORAGE_KEY = "spi-markets-view";
+
+const VIEW_LABELS: Record<MarketsView, { eyebrow: string; blurb: string }> = {
+  columns: { eyebrow: "Browse", blurb: "pairs" },
+  icons: { eyebrow: "Browse", blurb: "pairs" },
+  compare: {
+    eyebrow: "Compare",
+    blurb: "Head-to-head on ask, premium, volume, and rank",
+  },
+  deal: {
+    eyebrow: "Deal check",
+    blurb: "Size + offer → cop, stretch, or pass vs the board",
+  },
+};
 
 const COLUMNS: SortableColumn[] = [
   { key: "rank", label: "#" },
@@ -73,19 +87,23 @@ export function CatalogMarketsExplorer({
   initialView = "columns",
   initialCompareA,
   initialCompareB,
+  initialDealSlug,
 }: {
   rows: CatalogQuote[];
   initialQuery?: string;
   initialView?: MarketsView;
   initialCompareA?: string;
   initialCompareB?: string;
+  initialDealSlug?: string;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [sortKey, setSortKey] = useState<CatalogSortKey>("rank");
   const [sortDir, setSortDir] = useState<CatalogSortDir>("asc");
   const [view, setView] = useState<MarketsView>(
-    initialView === "compare" ? "compare" : "columns",
+    initialView === "compare" || initialView === "deal"
+      ? initialView
+      : "columns",
   );
   const defaults = defaultComparePair(rows, initialCompareA);
   const [compareA, setCompareA] = useState(
@@ -100,11 +118,16 @@ export function CatalogMarketsExplorer({
       ? initialCompareB
       : defaults.b,
   );
+  const [dealSeed, setDealSeed] = useState<string | null>(
+    initialDealSlug && rows.some((r) => r.slug === initialDealSlug)
+      ? initialDealSlug
+      : null,
+  );
   const [, startTransition] = useTransition();
 
   useEffect(() => {
-    if (initialView === "compare") {
-      setView("compare");
+    if (initialView === "compare" || initialView === "deal") {
+      setView(initialView);
       return;
     }
     try {
@@ -120,6 +143,7 @@ export function CatalogMarketsExplorer({
     q?: string;
     a?: string;
     b?: string;
+    slug?: string;
   }) {
     const params = new URLSearchParams();
     const q = (next.q ?? query).trim();
@@ -128,6 +152,9 @@ export function CatalogMarketsExplorer({
       params.set("view", "compare");
       if (next.a) params.set("a", next.a);
       if (next.b) params.set("b", next.b);
+    } else if (next.view === "deal") {
+      params.set("view", "deal");
+      if (next.slug) params.set("slug", next.slug);
     }
     const qs = params.toString();
     startTransition(() => {
@@ -144,6 +171,10 @@ export function CatalogMarketsExplorer({
         /* ignore */
       }
       syncUrl({ view: next });
+      return;
+    }
+    if (next === "deal") {
+      syncUrl({ view: "deal", slug: dealSeed ?? undefined });
       return;
     }
     const pair = defaultComparePair(rows, compareA);
@@ -165,6 +196,12 @@ export function CatalogMarketsExplorer({
     syncUrl({ view: "compare", a: slug, b });
   }
 
+  function openDealWith(slug: string) {
+    setDealSeed(slug);
+    setView("deal");
+    syncUrl({ view: "deal", slug });
+  }
+
   const visible = useMemo(() => {
     return sortCatalogRows(filterCatalogRows(rows, query), sortKey, sortDir);
   }, [rows, query, sortKey, sortDir]);
@@ -184,22 +221,31 @@ export function CatalogMarketsExplorer({
 
   function onQueryChange(value: string) {
     setQuery(value);
-    syncUrl({ view, q: value, a: compareA, b: compareB });
+    syncUrl({
+      view,
+      q: value,
+      a: compareA,
+      b: compareB,
+      slug: dealSeed ?? undefined,
+    });
   }
+
+  const showSearch = view === "columns" || view === "icons";
+  const viewMeta = VIEW_LABELS[view];
 
   return (
     <section className="dash-card animate-rise overflow-hidden">
       <div className="flex flex-col gap-4 border-b border-dash-border px-4 py-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:px-5">
         <div>
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            {view === "compare" ? "Compare" : "Browse"}
+            {viewMeta.eyebrow}
           </p>
           <p className="mt-1 text-sm text-dash-muted">
-            {view === "compare"
-              ? "Head-to-head on ask, premium, volume, and rank"
-              : visible.length === rows.length
-                ? `${rows.length} pairs`
-                : `${visible.length} of ${rows.length} pairs`}
+            {view === "columns" || view === "icons"
+              ? visible.length === rows.length
+                ? `${rows.length} ${viewMeta.blurb}`
+                : `${visible.length} of ${rows.length} ${viewMeta.blurb}`
+              : viewMeta.blurb}
             {view === "columns" ? (
               <span className="text-dash-faint"> · hover a thumb to enlarge</span>
             ) : null}
@@ -214,8 +260,9 @@ export function CatalogMarketsExplorer({
             {(
               [
                 ["columns", "Columns"],
-                ["icons", "Icons"],
                 ["compare", "Compare"],
+                ["deal", "Deal"],
+                ["icons", "Icons"],
               ] as const
             ).map(([id, label]) => (
               <button
@@ -233,7 +280,7 @@ export function CatalogMarketsExplorer({
               </button>
             ))}
           </div>
-          {view !== "compare" ? (
+          {showSearch ? (
             <>
               <label className="sr-only" htmlFor="markets-search">
                 Search markets
@@ -268,6 +315,17 @@ export function CatalogMarketsExplorer({
               initialB={compareB}
             />
           )}
+        </div>
+      ) : view === "deal" ? (
+        <div className="p-4 sm:p-5">
+          <MarketsDealCheck
+            quotes={rows}
+            seedSlug={dealSeed}
+            onClearSeed={() => setDealSeed(null)}
+            onSlugChange={(next) => {
+              syncUrl({ view: "deal", slug: next || undefined });
+            }}
+          />
         </div>
       ) : view === "columns" ? (
         <div className="overflow-x-auto">
@@ -355,13 +413,22 @@ export function CatalogMarketsExplorer({
                       <StatusPill row={row} />
                     </td>
                     <td className="px-4 py-3.5 sm:px-5">
-                      <button
-                        type="button"
-                        onClick={() => openCompareWith(row.slug)}
-                        className="rounded-lg border border-dash-border px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted opacity-0 transition-opacity hover:border-dash-muted hover:text-dash-text group-hover:opacity-100 focus:opacity-100"
-                      >
-                        Vs
-                      </button>
+                      <div className="flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                        <button
+                          type="button"
+                          onClick={() => openCompareWith(row.slug)}
+                          className="rounded-lg border border-dash-border px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted hover:border-dash-muted hover:text-dash-text"
+                        >
+                          Vs
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openDealWith(row.slug)}
+                          className="rounded-lg border border-dash-border px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted hover:border-dash-muted hover:text-dash-text"
+                        >
+                          Deal
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -433,13 +500,22 @@ export function CatalogMarketsExplorer({
                         </div>
                       </div>
                     </Link>
-                    <button
-                      type="button"
-                      onClick={() => openCompareWith(row.slug)}
-                      className="absolute right-2 top-2 rounded-md border border-dash-border bg-dash-bg/90 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted backdrop-blur-sm hover:text-dash-text"
-                    >
-                      Vs
-                    </button>
+                    <div className="absolute right-2 top-2 flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => openCompareWith(row.slug)}
+                        className="rounded-md border border-dash-border bg-dash-bg/90 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted backdrop-blur-sm hover:text-dash-text"
+                      >
+                        Vs
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openDealWith(row.slug)}
+                        className="rounded-md border border-dash-border bg-dash-bg/90 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted backdrop-blur-sm hover:text-dash-text"
+                      >
+                        Deal
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>

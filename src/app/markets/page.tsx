@@ -13,16 +13,22 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Markets",
   description:
-    "Browse the SPI Markets top-seller board — StockX-style asks, rank, weekly volume, and head-to-head compare.",
+    "Browse the SPI Markets top-seller board — asks, rank, weekly volume, compare, and deal check.",
   alternates: { canonical: "/markets" },
 };
 
 export default async function MarketsBrowsePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; view?: string; a?: string; b?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    view?: string;
+    a?: string;
+    b?: string;
+    slug?: string;
+  }>;
 }) {
-  const { q, view, a, b } = await searchParams;
+  const { q, view, a, b, slug } = await searchParams;
   const [{ isPlus, publicPlus }, allQuotes] = await Promise.all([
     getPlusAccess(),
     getCatalogQuotes(TOP_SELLERS_LIMIT),
@@ -39,7 +45,8 @@ export default async function MarketsBrowsePage({
     total: quotes.length,
     asOf: getOfflineCatalogAsOf(),
   });
-  const initialView = view === "compare" ? "compare" : "columns";
+  const initialView =
+    view === "compare" || view === "deal" ? view : "columns";
 
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
@@ -61,8 +68,8 @@ export default async function MarketsBrowsePage({
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
               Top {quotes.length} sneakers by sales volume — board # is 1–
-              {quotes.length} in order. Open a pair for deal check, or switch to
-              Compare in the board toolbar.
+              {quotes.length} in order. Use the toolbar for Compare and Deal
+              check, or open any pair for the full page.
             </p>
           </header>
           {access.gated && publicPlus ? (
@@ -83,6 +90,7 @@ export default async function MarketsBrowsePage({
             initialView={initialView}
             initialCompareA={typeof a === "string" ? a : undefined}
             initialCompareB={typeof b === "string" ? b : undefined}
+            initialDealSlug={typeof slug === "string" ? slug : undefined}
           />
         </div>
       </main>

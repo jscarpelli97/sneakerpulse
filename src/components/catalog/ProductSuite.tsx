@@ -53,53 +53,31 @@ export function ProductSuite({
       <section className="animate-rise">
         <div className="mb-4">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            On every pair · in Markets
+            Built into Markets
           </p>
           <h2 className="mt-1 font-[family-name:var(--font-syne)] text-xl font-bold tracking-tight text-dash-text sm:text-2xl">
             Tools when you’re deciding
           </h2>
         </div>
         <ul className="grid gap-3 sm:grid-cols-2">
-          <li>
-            <Link
-              href="/markets?view=compare"
-              className="group flex h-full flex-col rounded-2xl border border-dash-border bg-dash-elevated/20 px-4 py-4 transition-colors hover:border-dash-muted hover:bg-dash-elevated/50"
-            >
-              <p className="font-[family-name:var(--font-syne)] text-base font-bold text-dash-text transition-colors group-hover:text-white">
-                Compare
-              </p>
-              <p className="mt-1.5 flex-1 text-sm leading-relaxed text-dash-muted">
-                Stack two colorways on ask, retail, premium, and flow — built
-                into the Markets board.
-              </p>
-              <span className="mt-3 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-accent">
-                Open in Markets →
-              </span>
-            </Link>
-          </li>
-          {PRODUCT_TOOLS.map((tool) => {
-            const href = "href" in tool && tool.href ? tool.href : "/markets";
-            const label =
-              tool.title === "Deal check" ? "Open a pair →" : "Open →";
-            return (
-              <li key={tool.title}>
-                <Link
-                  href={href}
-                  className="group flex h-full flex-col rounded-2xl border border-dash-border bg-dash-elevated/20 px-4 py-4 transition-colors hover:border-dash-muted hover:bg-dash-elevated/50"
-                >
-                  <p className="font-[family-name:var(--font-syne)] text-base font-bold text-dash-text transition-colors group-hover:text-white">
-                    {tool.title}
-                  </p>
-                  <p className="mt-1.5 flex-1 text-sm leading-relaxed text-dash-muted">
-                    {tool.body}
-                  </p>
-                  <span className="mt-3 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-accent">
-                    {label}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
+          {PRODUCT_TOOLS.map((tool) => (
+            <li key={tool.title}>
+              <Link
+                href={tool.href}
+                className="group flex h-full flex-col rounded-2xl border border-dash-border bg-dash-elevated/20 px-4 py-4 transition-colors hover:border-dash-muted hover:bg-dash-elevated/50"
+              >
+                <p className="font-[family-name:var(--font-syne)] text-base font-bold text-dash-text transition-colors group-hover:text-white">
+                  {tool.title}
+                </p>
+                <p className="mt-1.5 flex-1 text-sm leading-relaxed text-dash-muted">
+                  {tool.body}
+                </p>
+                <span className="mt-3 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-accent">
+                  Open in Markets →
+                </span>
+              </Link>
+            </li>
+          ))}
         </ul>
       </section>
     </div>

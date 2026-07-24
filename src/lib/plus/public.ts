@@ -3,9 +3,8 @@ import { HOMEPAGE_WATCHLIST_LIMIT } from "@/services/catalog/mapProductToCatalog
 const FREE_TOP = HOMEPAGE_WATCHLIST_LIMIT;
 
 export const PLUS_BENEFITS = [
-  "Deal check on every pair",
   "Early access to GOAT / Stadium Goods tape as APIs land",
-  `Full top-seller board with compare (not just the free top ${FREE_TOP})`,
+  `Full top-seller board with Compare + Deal check (not just the free top ${FREE_TOP})`,
   "Live ask refresh (when feeds are connected)",
   "Portfolio + Wardrobe in Collection, with synced accounts",
   "Restock Monitor — size restocks & soft price drops (coming soon)",
@@ -50,9 +49,16 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
     plus: { label: "Full board", state: "yes" },
   },
   {
+    id: "deal",
+    feature: "Deal check",
+    detail: "Built into Markets — size + offer → cop, stretch, or pass vs the board ask.",
+    free: { label: `Top ${FREE_TOP}`, state: "limited" },
+    plus: { label: "Full board", state: "yes" },
+  },
+  {
     id: "detail",
     feature: "Sneaker detail pages",
-    detail: "Charts, sizes, and deal check for a single SKU.",
+    detail: "Charts, size ladder, and the same deal check on a single SKU.",
     free: { label: `Top ${FREE_TOP}`, state: "limited" },
     plus: { label: "Full board", state: "yes" },
   },

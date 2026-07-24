@@ -91,16 +91,12 @@ export default function AboutPage() {
               <ul className="mt-3 space-y-2 text-dash-muted">
                 {PRODUCT_TOOLS.map((tool) => (
                   <li key={tool.title}>
-                    {"href" in tool && tool.href ? (
-                      <Link
-                        href={tool.href}
-                        className="font-semibold text-dash-text hover:text-dash-accent"
-                      >
-                        {tool.title}
-                      </Link>
-                    ) : (
-                      <strong className="text-dash-text">{tool.title}</strong>
-                    )}
+                    <Link
+                      href={tool.href}
+                      className="font-semibold text-dash-text hover:text-dash-accent"
+                    >
+                      {tool.title}
+                    </Link>
                     {" — "}
                     {tool.body}
                   </li>
