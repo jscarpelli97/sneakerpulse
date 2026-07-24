@@ -3,20 +3,20 @@ import { HOMEPAGE_WATCHLIST_LIMIT } from "@/services/catalog/mapProductToCatalog
 const FREE_TOP = HOMEPAGE_WATCHLIST_LIMIT;
 
 export const PLUS_BENEFITS = [
-  `Full top-seller board (not just the free top ${FREE_TOP})`,
-  "Portfolio + Wardrobe with synced accounts",
   "Compare, alerts, and deal checks on every pair",
-  "Email price alerts when asks cross your thresholds",
-  "Restock Monitor — size restocks & soft price drops (coming soon)",
-  "Live ask refresh (when feeds are connected)",
   "Early access to GOAT / Stadium Goods tape as APIs land",
+  "Email price alerts when asks cross your thresholds",
+  `Full top-seller board (not just the free top ${FREE_TOP})`,
+  "Live ask refresh (when feeds are connected)",
+  "Portfolio + Wardrobe with synced accounts",
+  "Restock Monitor — size restocks & soft price drops (coming soon)",
 ] as const;
 
 /** Free-tier bullets — homepage surface only. */
 export const FREE_BENEFITS = [
+  "No account required",
   "SPI Index — market premium vs retail",
   `Top ${FREE_TOP} seller ask board`,
-  "No account required",
 ] as const;
 
 export type PlanCell = {

@@ -39,9 +39,9 @@ export const BRAND_VALUE_LINE =
  */
 export const PRODUCT_PILLARS = [
   {
-    title: "Sneaker Price Index",
-    href: "/spi",
-    body: "One number for how expensive the market is vs retail. 100 ≈ retail — something a single StockX page can’t tell you.",
+    title: "Portfolio",
+    href: "/portfolio",
+    body: "Mark what you own to your size’s ask — not the all-size low — vs what you paid.",
   },
   {
     title: "Price board",
@@ -49,9 +49,9 @@ export const PRODUCT_PILLARS = [
     body: "Top sellers with size asks, charts, market reads, and cop / stretch / pass on every pair.",
   },
   {
-    title: "Portfolio",
-    href: "/portfolio",
-    body: "Mark what you own to your size’s ask — not the all-size low — vs what you paid.",
+    title: "Sneaker Price Index",
+    href: "/spi",
+    body: "One number for how expensive the market is vs retail. 100 ≈ retail — something a single StockX page can’t tell you.",
   },
   {
     title: "Wardrobe",
@@ -63,8 +63,9 @@ export const PRODUCT_PILLARS = [
 /** Helper tools — secondary nav / About. */
 export const PRODUCT_TOOLS = [
   {
-    title: "Deal check",
-    body: "Size + offer → heat check: cop, stretch, or pass vs that size’s ask.",
+    title: "Alerts",
+    href: "/alerts",
+    body: "Browser alerts when an ask crosses your level.",
   },
   {
     title: "Compare",
@@ -72,9 +73,8 @@ export const PRODUCT_TOOLS = [
     body: "Stack two colorways on ask, retail, premium, and flow.",
   },
   {
-    title: "Alerts",
-    href: "/alerts",
-    body: "Browser alerts when an ask crosses your level.",
+    title: "Deal check",
+    body: "Size + offer → heat check: cop, stretch, or pass vs that size’s ask.",
   },
 ] as const;
 

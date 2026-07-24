@@ -67,16 +67,16 @@ export default async function MarketsBrowsePage({
             </p>
             <div className="mt-4 flex flex-wrap gap-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em]">
               <Link
-                href="/compare"
-                className="rounded-lg border border-dash-border px-3 py-1.5 text-dash-muted hover:border-dash-muted hover:text-dash-text"
-              >
-                Compare
-              </Link>
-              <Link
                 href="/alerts"
                 className="rounded-lg border border-dash-border px-3 py-1.5 text-dash-muted hover:border-dash-muted hover:text-dash-text"
               >
                 Alerts
+              </Link>
+              <Link
+                href="/compare"
+                className="rounded-lg border border-dash-border px-3 py-1.5 text-dash-muted hover:border-dash-muted hover:text-dash-text"
+              >
+                Compare
               </Link>
               <Link
                 href="/"

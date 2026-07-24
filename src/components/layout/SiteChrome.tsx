@@ -8,18 +8,18 @@ import { plusPublicEnabled } from "@/lib/plus/config";
 
 /** Primary chrome — three doors + about. */
 const NAV_PRIMARY = [
+  { href: "/about", label: "About" },
   { href: "/markets", label: "Markets" },
   { href: "/mine", label: "Mine" },
   { href: "/plus", label: "Plus" },
-  { href: "/about", label: "About" },
 ] as const;
 
 /** Secondary — tools live under Markets story. */
 const NAV_TOOLS = [
-  { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
-  { href: "/spi", label: "SPI index" },
+  { href: "/compare", label: "Compare" },
   { href: "/portfolio", label: "Portfolio" },
+  { href: "/spi", label: "SPI index" },
   { href: "/wardrobe", label: "Wardrobe" },
 ] as const;
 

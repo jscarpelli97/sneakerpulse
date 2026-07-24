@@ -15,10 +15,10 @@ const FEED_LABEL: Record<UpstreamStatus, string> = {
 };
 
 const NAV = [
+  { href: "/about", label: "About" },
   { href: "/markets", label: "Markets" },
   { href: "/mine", label: "Mine" },
   { href: "/plus", label: "Plus" },
-  { href: "/about", label: "About" },
 ] as const;
 
 export function MarketHeader({

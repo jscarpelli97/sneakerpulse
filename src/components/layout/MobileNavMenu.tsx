@@ -7,17 +7,17 @@ import { createPortal } from "react-dom";
 import { SiteSearch } from "@/components/layout/SiteSearch";
 
 const PRIMARY = [
+  { href: "/about", label: "About" },
   { href: "/markets", label: "Markets" },
   { href: "/mine", label: "Mine" },
   { href: "/plus", label: "Plus" },
-  { href: "/about", label: "About" },
 ] as const;
 
 const TOOLS = [
-  { href: "/compare", label: "Compare" },
   { href: "/alerts", label: "Alerts" },
-  { href: "/spi", label: "SPI index" },
+  { href: "/compare", label: "Compare" },
   { href: "/portfolio", label: "Portfolio" },
+  { href: "/spi", label: "SPI index" },
   { href: "/wardrobe", label: "Wardrobe" },
 ] as const;
 
