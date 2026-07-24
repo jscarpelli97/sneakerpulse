@@ -69,7 +69,7 @@ export function SpiHeroTicker({ index }: { index: MarketIndex }) {
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-dash-accent/25 bg-[rgba(212,160,23,0.05)]">
-        <div className="relative min-h-[240px] flex-1 sm:min-h-[280px]">
+        <div className="relative min-h-[200px] flex-1 sm:min-h-[280px]">
           {hasLive ? (
             <LightweightPriceChart
               data={live}
@@ -77,10 +77,10 @@ export function SpiHeroTicker({ index }: { index: MarketIndex }) {
               showTime
               referenceLevel={index.baseLevel}
               referenceTitle="Retail"
-              className="h-full min-h-[240px] w-full sm:min-h-[280px]"
+              className="h-full min-h-[200px] w-full sm:min-h-[280px]"
             />
           ) : (
-            <div className="flex h-full min-h-[240px] items-center justify-center px-4 text-center text-sm text-dash-muted">
+            <div className="flex h-full min-h-[200px] items-center justify-center px-4 text-center text-sm text-dash-muted">
               First SPI prints land as the daily series grows.
             </div>
           )}

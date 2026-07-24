@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { MobileNavMenu } from "@/components/layout/MobileNavMenu";
 import { SiteSearch } from "@/components/layout/SiteSearch";
 import { SpiTicker } from "@/components/market/SpiTicker";
 import { PlusInterest } from "@/components/plus/PlusInterest";
-import { BRAND_NAME, FOUNDER_NAME, PRODUCT_FOOTNOTE } from "@/lib/brand";
+import { BRAND_NAME, BRAND_SHORT, FOUNDER_NAME, PRODUCT_FOOTNOTE } from "@/lib/brand";
 import { plusPublicEnabled } from "@/lib/plus/config";
 
 /** Primary chrome — three doors + about. */
@@ -24,31 +25,32 @@ const NAV_TOOLS = [
 
 export function SiteHeader({ subtitle }: { subtitle?: string }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-dash-border/90 bg-dash-surface/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-3 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+    <header className="sticky top-0 z-40 border-b border-dash-border/90 bg-dash-surface/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-2 px-3 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
           <Link
             href="/"
             className="shrink-0 font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text transition-opacity hover:opacity-90 sm:text-xl"
           >
-            {BRAND_NAME}
+            <span className="sm:hidden">{BRAND_SHORT}</span>
+            <span className="hidden sm:inline">{BRAND_NAME}</span>
           </Link>
-          <SpiTicker className="hidden sm:inline-flex" />
+          <SpiTicker className="min-w-0 truncate" />
           {subtitle ? (
             <span className="hidden truncate font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-muted xl:inline">
               {subtitle}
             </span>
           ) : null}
         </div>
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <SpiTicker className="sm:hidden" compact />
-          <SiteSearch className="hidden sm:flex" />
-          <nav className="flex items-center gap-0.5 sm:gap-1">
+
+        <div className="flex shrink-0 items-center gap-2">
+          <SiteSearch className="hidden md:flex" />
+          <nav className="hidden items-center gap-0.5 md:flex md:gap-1">
             {NAV_PRIMARY.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`rounded-lg px-2 py-1.5 text-sm font-medium hover:bg-dash-elevated sm:px-3 ${
+                className={`rounded-lg px-2.5 py-1.5 text-sm font-medium hover:bg-dash-elevated sm:px-3 ${
                   item.href === "/plus"
                     ? "text-dash-accent hover:text-dash-accent"
                     : "text-dash-muted hover:text-dash-text"
@@ -58,6 +60,7 @@ export function SiteHeader({ subtitle }: { subtitle?: string }) {
               </Link>
             ))}
           </nav>
+          <MobileNavMenu />
         </div>
       </div>
     </header>
@@ -69,7 +72,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto border-t border-dash-border bg-dash-surface px-4 py-6 sm:px-6 lg:px-8">
+    <footer className="mt-auto border-t border-dash-border bg-dash-surface px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-[1400px] flex-col gap-4">
         <div className="flex flex-wrap items-start justify-between gap-4 text-sm text-dash-muted">
           <div className="max-w-md space-y-1.5">

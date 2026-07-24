@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { MobileNavMenu } from "@/components/layout/MobileNavMenu";
 import { SpiTicker } from "@/components/market/SpiTicker";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME, BRAND_SHORT } from "@/lib/brand";
 import type { SneakerMarket, UpstreamStatus } from "@/types/market";
 import { changeClass, formatChange, formatMoney } from "@/utils/format";
 
@@ -36,17 +37,17 @@ export function MarketHeader({
   const feedLive = upstreamStatus === "live";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-dash-border/90 bg-dash-surface/90 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 items-center gap-3">
+    <header className="sticky top-0 z-40 border-b border-dash-border/90 bg-dash-surface/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-2 px-3 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Link
             href="/"
             className="shrink-0 font-[family-name:var(--font-syne)] text-lg font-extrabold tracking-tight text-dash-text transition-opacity hover:opacity-90 sm:text-xl"
           >
-            {BRAND_NAME}
+            <span className="sm:hidden">{BRAND_SHORT}</span>
+            <span className="hidden sm:inline">{BRAND_NAME}</span>
           </Link>
-          <SpiTicker className="hidden sm:inline-flex" />
-          <span className="hidden text-dash-faint lg:inline">/</span>
+          <SpiTicker className="min-w-0 truncate" />
           <nav className="hidden items-center gap-1 text-sm font-medium text-dash-muted lg:flex">
             {NAV.map((item) => (
               <Link
@@ -59,7 +60,7 @@ export function MarketHeader({
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2">
           {statusBadge}
           <div className="hidden items-center gap-2 rounded-full border border-dash-border bg-dash-elevated/80 px-3 py-1.5 text-xs font-medium text-dash-muted sm:flex">
             <span
@@ -67,8 +68,7 @@ export function MarketHeader({
             />
             {FEED_LABEL[upstreamStatus]}
           </div>
-          <SpiTicker className="sm:hidden" compact />
-          <div className="text-right text-xs text-dash-muted sm:text-sm">
+          <div className="hidden text-right text-xs text-dash-muted sm:block sm:text-sm">
             <span className="font-[family-name:var(--font-plex-mono)] font-semibold text-dash-text">
               {market.ticker}
             </span>
@@ -80,12 +80,13 @@ export function MarketHeader({
               {formatMoney(market.price)}
             </span>
           </div>
+          <MobileNavMenu />
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 pb-5 pt-1 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6 lg:px-8">
-        <div className="flex items-center gap-4">
-          <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-dash-border bg-dash-elevated md:h-20 md:w-20">
+      <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-3 pb-4 pt-1 sm:gap-4 sm:px-6 sm:pb-5 md:flex-row md:items-center md:justify-between md:gap-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-dash-border bg-dash-elevated sm:h-16 sm:w-16 md:h-20 md:w-20">
             <Image
               src={market.image}
               alt={market.name}
@@ -99,15 +100,27 @@ export function MarketHeader({
             <p className="font-[family-name:var(--font-plex-mono)] text-[11px] font-medium uppercase tracking-[0.16em] text-dash-faint">
               {market.brand} · {market.year}
             </p>
-            <h1 className="truncate font-[family-name:var(--font-syne)] text-2xl font-extrabold tracking-tight text-dash-text md:text-3xl">
+            <h1 className="truncate font-[family-name:var(--font-syne)] text-xl font-extrabold tracking-tight text-dash-text sm:text-2xl md:text-3xl">
               {market.name}
             </h1>
             <p className="mt-1 truncate text-sm text-dash-muted">
-              {market.ticker}
-              <span className="mx-2 text-dash-faint">·</span>
-              {market.styleCode}
-              <span className="mx-2 text-dash-faint">·</span>
-              {market.colorway}
+              <span className="font-[family-name:var(--font-plex-mono)] font-semibold text-dash-text sm:hidden">
+                {market.ticker}
+                <span className="mx-1.5 text-dash-faint">·</span>
+                <span className={changeClass(market.changeToday?.percent)}>
+                  {today.percent}
+                </span>
+                <span className="ml-1.5 tabular-nums text-dash-text">
+                  {formatMoney(market.price)}
+                </span>
+              </span>
+              <span className="hidden sm:inline">
+                {market.ticker}
+                <span className="mx-2 text-dash-faint">·</span>
+                {market.styleCode}
+                <span className="mx-2 text-dash-faint">·</span>
+                {market.colorway}
+              </span>
             </p>
           </div>
         </div>

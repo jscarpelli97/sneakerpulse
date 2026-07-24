@@ -37,7 +37,7 @@ export function SiteSearch({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search pairs…"
-        className="w-36 rounded-lg border border-dash-border bg-dash-elevated px-2.5 py-1.5 font-[family-name:var(--font-instrument)] text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent sm:w-44 md:w-56"
+        className="min-w-0 flex-1 rounded-lg border border-dash-border bg-dash-elevated px-2.5 py-1.5 font-[family-name:var(--font-instrument)] text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent md:w-44 md:flex-none lg:w-56"
       />
       <button
         type="submit"

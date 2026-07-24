@@ -53,11 +53,9 @@ async function SpiTickerInner({
 function SpiTickerFallback({ className = "" }: { className?: string }) {
   return (
     <span
-      className={`inline-flex items-center font-[family-name:var(--font-plex-mono)] text-xs text-dash-faint sm:text-sm ${className}`}
+      className={`inline-flex h-4 w-[7.5rem] items-center ${className}`}
       aria-hidden
-    >
-      SPI · …
-    </span>
+    />
   );
 }
 

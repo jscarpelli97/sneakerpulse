@@ -64,7 +64,7 @@ export default async function MarketsIndexPage() {
         }
       />
       <main className="flex-1">
-        <div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
+        <div className="mx-auto max-w-[1400px] space-y-5 px-3 py-5 sm:space-y-7 sm:px-6 sm:py-8 lg:space-y-8 lg:px-8 lg:py-10">
           {marketIndex ? (
             <MarketsHero
               index={marketIndex}
