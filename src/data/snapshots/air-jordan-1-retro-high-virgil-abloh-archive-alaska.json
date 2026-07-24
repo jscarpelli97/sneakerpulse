@@ -3,12 +3,17 @@
   "slug": "air-jordan-1-retro-high-virgil-abloh-archive-alaska",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:55.637Z",
+  "updatedAt": "2026-07-23T13:42:00.960Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 241,
       "orders": 584
+    },
+    {
+      "date": "2026-07-23",
+      "price": 240,
+      "orders": 549
     }
   ]
 }

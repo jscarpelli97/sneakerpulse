@@ -1,0 +1,14 @@
+{
+  "productId": "db2372ed-19d3-4cac-a7dd-8106a7bcb1c8",
+  "slug": "nike-ja-3-light-show",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:10.607Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 101,
+      "orders": 115
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "note": "Manufacturer / GOAT style IDs for products where StockX leaves sku blank (common on independent YZY drops). Keyed by StockX slug. Prefer live StockX sku when present.",
+  "updatedAt": "2026-07-23",
+  "bySlug": {
+    "yzy-ys-01-black": "09390-1002500YYB-BLAC",
+    "yzy-ys-01-silver-green": "09390-10000YC-CREA",
+    "yzy-ys-01-fudge": "09390-10000YF-FUDG",
+    "yzy-ys-01-blue": "09390-10000YB-BLUE"
+  }
+}

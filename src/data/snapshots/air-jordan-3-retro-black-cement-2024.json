@@ -3,12 +3,17 @@
   "slug": "air-jordan-3-retro-black-cement-2024",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:57.956Z",
+  "updatedAt": "2026-07-23T13:42:03.343Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 182,
       "orders": 262
+    },
+    {
+      "date": "2026-07-23",
+      "price": 183,
+      "orders": 263
     }
   ]
 }

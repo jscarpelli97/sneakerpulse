@@ -11,7 +11,7 @@ export default function NotFound() {
             Sneaker not found
           </h1>
           <p className="mt-3 text-dash-muted">
-            That slug is not in the SneakerPulse catalog yet.
+            That slug is not in the SPI Markets catalog yet.
           </p>
           <Link
             href="/"

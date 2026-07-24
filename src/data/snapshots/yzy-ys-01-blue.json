@@ -1,0 +1,14 @@
+{
+  "productId": "019a3177-d04c-7e76-acae-79afdfae11d8",
+  "slug": "yzy-ys-01-blue",
+  "source": "snapshot",
+  "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
+  "updatedAt": "2026-07-23T13:42:12.915Z",
+  "points": [
+    {
+      "date": "2026-07-23",
+      "price": 54,
+      "orders": 99
+    }
+  ]
+}

@@ -3,12 +3,17 @@
   "slug": "yzy-ys-01-silver-green",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:53.819Z",
+  "updatedAt": "2026-07-23T13:41:59.200Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 32,
       "orders": 1525
+    },
+    {
+      "date": "2026-07-23",
+      "price": 34,
+      "orders": 1521
     }
   ]
 }

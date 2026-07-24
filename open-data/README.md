@@ -1,4 +1,4 @@
-# SneakerPulse Index — open data
+# SPI Index — open data
 
 Daily **StockX sneaker market premium index** for anyone to chart, research, or build on.
 
@@ -52,7 +52,7 @@ print(df.tail())
 
 ## How this is updated
 
-The parent **SneakerPulse** app runs `npm run snapshot` daily (GitHub Action `daily-spi.yml`, ~13:05 UTC). That job:
+The parent **SPI Markets** app runs `npm run snapshot` daily (GitHub Action `daily-spi.yml`, ~13:05 UTC). That job:
 
 1. Pulls the current top StockX sellers via [KicksDB](https://kicks.dev)  
 2. Measures the premium index + writes member rows  
@@ -83,6 +83,6 @@ Data in this folder is dedicated to the public domain under [CC0 1.0](LICENSE). 
 ## Citation
 
 ```
-SneakerPulse Index (SPI), open daily premium series.
+SPI Index (SPI), open daily premium series.
 https://github.com/<owner>/sneakerpulse-index
 ```
