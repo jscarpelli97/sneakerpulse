@@ -1,5 +1,6 @@
 import type { KicksProduct, KicksTrait } from "@/types/kicksdb";
 import type { SneakerCatalogEntry } from "@/types/catalog";
+import styleIdOverrides from "@/data/catalog/style-id-overrides.json";
 
 /** Tracked StockX sneaker universe (sales rank). */
 export const TOP_SELLERS_LIMIT = 500;
@@ -7,6 +8,12 @@ export const TOP_SELLERS_LIMIT = 500;
 export const HOMEPAGE_WATCHLIST_LIMIT = 10;
 /** Pre-render this many market pages at build; rest use dynamicParams. */
 export const STATIC_PARAMS_LIMIT = 50;
+
+type StyleIdOverridesFile = {
+  bySlug?: Record<string, string>;
+};
+
+const overrides = (styleIdOverrides as StyleIdOverridesFile).bySlug ?? {};
 
 export function traitValue(
   traits: KicksTrait[] | null | undefined,
@@ -19,16 +26,27 @@ export function traitValue(
   return value ? value : null;
 }
 
-export function makeTicker(product: KicksProduct): string {
+/** StockX style ID / SKU exactly as upstream sends it (keep hyphens). */
+export function stockxStyleId(product: KicksProduct): string | null {
   const sku = product.sku?.trim();
-  if (sku) {
-    return sku.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10) || sku;
+  if (sku) return sku;
+  const styleTrait = traitValue(product.traits, "Style");
+  if (styleTrait) return styleTrait;
+  const slug = product.slug?.trim();
+  if (slug) {
+    const override = overrides[slug]?.trim();
+    if (override) return override;
   }
-  if (product.rank != null) {
-    return `TOP${product.rank}`;
-  }
-  const slug = product.slug ?? product.id;
-  return slug.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10);
+  return null;
+}
+
+/**
+ * Board "ticker" = StockX Style ID / SKU when StockX has one.
+ * Falls back to curated manufacturer IDs for known blank-SKU drops (e.g. YZY).
+ * No invented short codes — missing SKU stays blank ("—").
+ */
+export function makeTicker(product: KicksProduct): string {
+  return stockxStyleId(product) ?? "—";
 }
 
 export function mapListedProductToCatalog(
@@ -44,11 +62,12 @@ export function mapListedProductToCatalog(
   const yearMatch = releaseDate.match(/^(\d{4})/);
   const retailRaw = traitValue(product.traits, "Retail Price");
   const retail = retailRaw != null ? Number(retailRaw) : 0;
+  const styleId = stockxStyleId(product);
 
   return {
     slug,
-    ticker: makeTicker(product),
-    styleCode: product.sku?.trim() || slug,
+    ticker: styleId ?? "—",
+    styleCode: styleId ?? "—",
     name: product.title || slug,
     brand: product.brand || "Unknown",
     year: yearMatch ? Number(yearMatch[1]) : new Date().getUTCFullYear(),

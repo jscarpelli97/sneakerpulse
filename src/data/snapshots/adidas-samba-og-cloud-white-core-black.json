@@ -3,12 +3,17 @@
   "slug": "adidas-samba-og-cloud-white-core-black",
   "source": "snapshot",
   "note": "Daily lowest-ask snapshots. Prefer StockX sales/daily when available.",
-  "updatedAt": "2026-07-22T16:08:56.052Z",
+  "updatedAt": "2026-07-23T13:42:01.425Z",
   "points": [
     {
       "date": "2026-07-22",
       "price": 52,
       "orders": 435
+    },
+    {
+      "date": "2026-07-23",
+      "price": 52,
+      "orders": 445
     }
   ]
 }

@@ -1,13 +1,21 @@
-import { getSneakerBySlug, getOfflineQuoteBySlug } from "@/services/catalog/sneakers";
+import {
+  getSneakerBySlug,
+} from "@/services/catalog/sneakers";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 import {
   fetchStockxDailySales,
   fetchStockxProduct,
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
+import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
+import {
+  rememberProductLater,
+  resolveCatalogQuoteBySlug,
+} from "@/services/catalog/discoveredProducts";
 import { resolveLocalHistory } from "@/services/market/historyStore";
-import { emptyMarket, mapProductToMarket } from "@/lib/mapProductToMarket";
+import { getEbayCompsForProduct } from "@/services/market/getEbayComps";
+import { emptyMarket, mapProductToMarket } from "@/services/market/mapProductToMarket";
 import {
   buildBootstrapSeries,
   salesToSeries,
@@ -16,17 +24,27 @@ import {
 import type {
   HistorySource,
   MarketLoadResult,
+  SneakerMarket,
   UpstreamStatus,
 } from "@/types/market";
 import type { KicksProduct } from "@/types/kicksdb";
 
-function marketFromCachedCatalog(slug: string): MarketLoadResult {
-  const quote = getOfflineQuoteBySlug(slug);
+async function withEbayComps(market: SneakerMarket): Promise<SneakerMarket> {
+  const ebay = await getEbayCompsForProduct({
+    styleCode: market.styleCode,
+    name: market.name,
+  });
+  if (!ebay) return market;
+  return { ...market, ebay };
+}
+
+async function marketFromCachedCatalog(slug: string): Promise<MarketLoadResult> {
+  const quote = await resolveCatalogQuoteBySlug(slug);
   if (!quote) {
     return {
       ok: false,
       code: "not_found",
-      error: `Sneaker "${slug}" was not found in the free offline catalog.`,
+      error: `Sneaker "${slug}" was not found in the local catalog.`,
     };
   }
 
@@ -86,27 +104,29 @@ function marketFromCachedCatalog(slug: string): MarketLoadResult {
 
   return {
     ok: true,
-    data: mapProductToMarket({
-      product,
-      catalog,
-      chartSeries,
-      historySource,
-      upstreamStatus: "cached",
-    }),
+    data: await withEbayComps(
+      mapProductToMarket({
+        product,
+        catalog,
+        chartSeries,
+        historySource,
+        upstreamStatus: "cached",
+      }),
+    ),
   };
 }
 
 export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
   const apiKey = getKicksApiKey();
-  if (!apiKey) {
-    return marketFromCachedCatalog(slug);
+  if (!apiKey || !kicksLiveReadsEnabled()) {
+    return await marketFromCachedCatalog(slug);
   }
 
   const productRes = await fetchStockxProduct(slug, apiKey);
   if (!productRes.ok) {
     // Inactive / exhausted free key → serve committed catalog instead of hard fail.
     if (productRes.status === 401 || productRes.status === 429) {
-      const cached = marketFromCachedCatalog(slug);
+      const cached = await marketFromCachedCatalog(slug);
       if (cached.ok) return cached;
     }
     if (productRes.status === 404) {
@@ -116,7 +136,7 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
         error: `Sneaker "${slug}" was not found on StockX via KicksDB.`,
       };
     }
-    const cached = marketFromCachedCatalog(slug);
+    const cached = await marketFromCachedCatalog(slug);
     if (cached.ok) return cached;
     return {
       ok: false,
@@ -144,6 +164,18 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
       fallbackImage: product.image || "",
       rank: product.rank ?? null,
     } satisfies SneakerCatalogEntry);
+
+  rememberProductLater({
+    ...catalog,
+    price:
+      typeof product.min_price === "number"
+        ? product.min_price
+        : typeof product.avg_price === "number"
+          ? product.avg_price
+          : null,
+    weeklyOrders: product.weekly_orders ?? null,
+    source: "market",
+  });
 
   let upstreamStatus: UpstreamStatus = productRes.cacheHit
     ? "cached"
@@ -203,16 +235,18 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
 
   return {
     ok: true,
-    data: mapProductToMarket({
-      product,
-      catalog,
-      chartSeries,
-      historySource,
-      upstreamStatus,
-    }),
+    data: await withEbayComps(
+      mapProductToMarket({
+        product,
+        catalog,
+        chartSeries,
+        historySource,
+        upstreamStatus,
+      }),
+    ),
   };
 }
 
-export function getMarketFallback(catalog: SneakerCatalogEntry) {
-  return emptyMarket(catalog);
+export async function getMarketFallback(catalog: SneakerCatalogEntry) {
+  return withEbayComps(emptyMarket(catalog));
 }

@@ -38,9 +38,44 @@ await loadEnvLocal();
 
 const API_KEY = process.env.KICKSDB_API_KEY?.trim();
 const BASE = "https://api.kicks.dev/v3";
+const MONTHLY_LIMIT = Number(process.env.KICKSDB_MONTHLY_LIMIT ?? "1000") || 1000;
+
+async function recordSnapshotQuota(pages) {
+  const url = process.env.DATABASE_URL?.trim();
+  if (!url || pages <= 0) return;
+  try {
+    const pg = await import("pg");
+    const local =
+      url.includes("localhost") ||
+      url.includes("127.0.0.1") ||
+      url.includes("@postgres:");
+    const client = new pg.default.Client({
+      connectionString: url,
+      ssl: local ? false : { rejectUnauthorized: false },
+    });
+    await client.connect();
+    const month = new Date().toISOString().slice(0, 7);
+    const { rows } = await client.query(
+      `INSERT INTO kicks_quota (month_key, used, updated_at)
+       VALUES ($1, $2, now())
+       ON CONFLICT (month_key) DO UPDATE SET
+         used = kicks_quota.used + EXCLUDED.used,
+         updated_at = now()
+       RETURNING used`,
+      [month, pages],
+    );
+    console.log(
+      `KicksDB quota ${month}: ${rows[0]?.used ?? "?"}/${MONTHLY_LIMIT} (snapshot +${pages})`,
+    );
+    await client.end();
+  } catch (err) {
+    console.warn("Could not record KicksDB quota:", err?.message ?? err);
+  }
+}
 
 async function fetchTopSellers() {
   const products = [];
+  let pagesFetched = 0;
   for (let page = 1; products.length < TOP_SELLERS_LIMIT && page <= 20; page += 1) {
     const query = new URLSearchParams({
       market: "US",
@@ -58,6 +93,7 @@ async function fetchTopSellers() {
       },
     });
     const body = await res.text();
+    pagesFetched += 1;
     if (!res.ok) {
       throw new Error(`top sellers page ${page} -> ${res.status} ${body.slice(0, 200)}`);
     }
@@ -67,6 +103,7 @@ async function fetchTopSellers() {
     products.push(...batch);
     if (batch.length < PAGE_SIZE) break;
   }
+  await recordSnapshotQuota(pagesFetched);
   return products.slice(0, TOP_SELLERS_LIMIT);
 }
 
@@ -350,6 +387,19 @@ async function upsertSpiExtension(products) {
 }
 
 async function writeOfflineCatalog(products) {
+  let styleIdBySlug = {};
+  try {
+    const raw = JSON.parse(
+      await fs.readFile(
+        path.join(ROOT, "src/data/catalog/style-id-overrides.json"),
+        "utf8",
+      ),
+    );
+    styleIdBySlug = raw?.bySlug ?? {};
+  } catch {
+    // optional
+  }
+
   function traitValue(traits, name) {
     const hit = traits?.find(
       (t) => String(t.trait || "").toLowerCase() === name.toLowerCase(),
@@ -360,12 +410,12 @@ async function writeOfflineCatalog(products) {
 
   function tickerFor(product) {
     const sku = product.sku?.trim();
-    if (sku) {
-      return sku.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10) || sku;
-    }
-    if (product.rank != null) return `TOP${product.rank}`;
-    const slug = product.slug ?? product.id;
-    return String(slug).replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10);
+    if (sku) return sku;
+    const style = traitValue(product.traits, "Style");
+    if (style) return style;
+    const slug = product.slug?.trim();
+    if (slug && styleIdBySlug[slug]) return styleIdBySlug[slug];
+    return "—";
   }
 
   const now = new Date().toISOString();
@@ -381,10 +431,11 @@ async function writeOfflineCatalog(products) {
     const retail = retailRaw
       ? Number(String(retailRaw).replace(/[^0-9.]/g, ""))
       : product.avg_price ?? product.min_price ?? 0;
+    const styleId = tickerFor(product);
     mapped.push({
       slug,
-      ticker: tickerFor(product),
-      styleCode: product.sku || slug,
+      ticker: styleId,
+      styleCode: styleId,
       name: product.title || slug,
       brand: product.brand || "Unknown",
       year: yearMatch ? Number(yearMatch[1]) : new Date().getUTCFullYear(),
