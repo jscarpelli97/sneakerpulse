@@ -357,7 +357,7 @@ function FitEditor({
       await new Promise<void>((r) => requestAnimationFrame(() => r()));
       await new Promise((r) => window.setTimeout(r, 50));
 
-      const result = await exportFitBoardJpeg(el, {
+      const result = await exportFitBoardJpeg(el, board.pieces, displayById, {
         name: board.name,
         showName: true,
       });
@@ -370,6 +370,8 @@ function FitEditor({
         onFlash("Shared — pick Save Image or Instagram");
       } else if (saved.mode === "download") {
         onFlash("Downloaded — check your downloads folder");
+      } else if (saved.mode === "cancelled") {
+        onFlash("Export cancelled");
       }
     } catch (err) {
       onFlash(err instanceof Error ? err.message : "Export failed");

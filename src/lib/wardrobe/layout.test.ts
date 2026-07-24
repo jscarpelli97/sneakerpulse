@@ -11,7 +11,12 @@ import {
   pieceSize,
   pullPiecesTogether,
 } from "@/lib/wardrobe/layout";
-import { pieceBox } from "@/lib/wardrobe/exportFit";
+import {
+  exportFilename,
+  pieceBox,
+  toExportImageSrc,
+  toProxyImageSrc,
+} from "@/lib/wardrobe/exportFit";
 import type { ClosetItem, FitPiece } from "@/lib/wardrobe/types";
 
 function item(
@@ -156,5 +161,18 @@ describe("fit export math", () => {
     expect(box.boxW).toBeCloseTo(1080 * 0.34, 5);
     expect(box.x).toBeCloseTo(1080 * 0.36, 5);
     expect(box.y).toBeCloseTo(1080 * 0.2, 5);
+  });
+
+  it("builds same-origin export image URLs", () => {
+    const remote = "https://images.stockx.com/x.jpg";
+    expect(toExportImageSrc(remote)).toContain("/_next/image?url=");
+    expect(toExportImageSrc(remote)).toContain(encodeURIComponent(remote));
+    expect(toProxyImageSrc(remote)).toBe(
+      `/api/wardrobe/image?url=${encodeURIComponent(remote)}`,
+    );
+    expect(toExportImageSrc("data:image/png;base64,xx")).toBe(
+      "data:image/png;base64,xx",
+    );
+    expect(exportFilename("Mocha Fit")).toBe("mocha-fit-spi.jpg");
   });
 });

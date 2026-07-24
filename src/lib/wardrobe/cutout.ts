@@ -4,21 +4,37 @@ const MAX_CUTOUT_EDGE = 520;
 /** Cap so vault JSON stays healthy (~3 items ≈ fine). */
 const MAX_CUTOUT_CHARS = 700_000;
 
-function sameOriginSrc(src: string) {
+function sameOriginCandidates(src: string): string[] {
   if (isDataImageUrl(src) || src.startsWith("/") || src.startsWith("blob:")) {
-    return src;
+    return [src];
   }
-  return `/_next/image?url=${encodeURIComponent(src)}&w=640&q=90`;
+  return [
+    `/_next/image?url=${encodeURIComponent(src)}&w=640&q=90`,
+    `/api/wardrobe/image?url=${encodeURIComponent(src)}`,
+  ];
 }
 
-function loadImage(src: string): Promise<HTMLImageElement> {
+function loadImageOnce(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.decoding = "async";
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error("Could not load image for cutout"));
-    img.src = sameOriginSrc(src);
+    img.src = src;
   });
+}
+
+async function loadImage(src: string): Promise<HTMLImageElement> {
+  const candidates = sameOriginCandidates(src);
+  let lastError: Error | null = null;
+  for (const candidate of candidates) {
+    try {
+      return await loadImageOnce(candidate);
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error("load failed");
+    }
+  }
+  throw lastError ?? new Error("Could not load image for cutout");
 }
 
 function colorDist(r: number, g: number, b: number, cr: number, cg: number, cb: number) {

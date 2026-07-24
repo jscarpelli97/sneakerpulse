@@ -1,6 +1,6 @@
-import { toJpeg } from "html-to-image";
+import { isDataImageUrl } from "@/lib/wardrobe/image";
 import { FIT_BASE_SIZE } from "@/lib/wardrobe/layout";
-import type { FitPiece } from "@/lib/wardrobe/types";
+import type { ClosetItem, FitPiece } from "@/lib/wardrobe/types";
 
 /** Instagram square (1:1) — matches the fit board. */
 export const FIT_EXPORT_WIDTH = 1080;
@@ -15,121 +15,193 @@ export type FitExportOptions = {
   showName?: boolean;
 };
 
+/** Same-origin URL so canvas can read StockX (and other remote) pixels. */
+export function toExportImageSrc(src: string): string {
+  if (!src) return src;
+  if (
+    isDataImageUrl(src) ||
+    src.startsWith("blob:") ||
+    src.startsWith("/")
+  ) {
+    return src;
+  }
+  return `/_next/image?url=${encodeURIComponent(src)}&w=1080&q=90`;
+}
+
+export function toProxyImageSrc(src: string): string {
+  return `/api/wardrobe/image?url=${encodeURIComponent(src)}`;
+}
+
+async function bitmapFromBlob(blob: Blob): Promise<ImageBitmap> {
+  if (!blob.size) throw new Error("Empty image");
+  return createImageBitmap(blob);
+}
+
+async function fetchBitmap(url: string, init?: RequestInit): Promise<ImageBitmap> {
+  const res = await fetch(url, init);
+  if (!res.ok) throw new Error(`Image fetch failed (${res.status})`);
+  return bitmapFromBlob(await res.blob());
+}
+
 /**
- * Export the live fit board DOM to a white square JPEG via html-to-image.
- * Captures whatever is painted (Next/Image + cutout PNGs), so export matches the board.
+ * Fetch an image into a canvas-safe bitmap.
+ * Tries Next optimizer → wardrobe proxy → direct CORS fetch.
+ */
+export async function loadExportBitmap(src: string): Promise<ImageBitmap> {
+  if (!src) throw new Error("No image");
+
+  if (isDataImageUrl(src) || src.startsWith("blob:")) {
+    return fetchBitmap(src);
+  }
+
+  // Already same-origin path.
+  if (src.startsWith("/")) {
+    return fetchBitmap(src, { cache: "force-cache" });
+  }
+
+  const errors: string[] = [];
+
+  try {
+    return await fetchBitmap(toExportImageSrc(src), { cache: "force-cache" });
+  } catch (err) {
+    errors.push(err instanceof Error ? err.message : "next/image failed");
+  }
+
+  try {
+    return await fetchBitmap(toProxyImageSrc(src), { cache: "force-cache" });
+  } catch (err) {
+    errors.push(err instanceof Error ? err.message : "proxy failed");
+  }
+
+  try {
+    return await fetchBitmap(src, { mode: "cors", cache: "force-cache" });
+  } catch (err) {
+    errors.push(err instanceof Error ? err.message : "direct fetch failed");
+  }
+
+  throw new Error(errors[0] || "Could not load image for export");
+}
+
+function encodeCanvasJpeg(
+  canvas: HTMLCanvasElement,
+  quality: number,
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob && blob.size > 0) {
+          resolve(blob);
+          return;
+        }
+        try {
+          const dataUrl = canvas.toDataURL("image/jpeg", quality);
+          const bin = atob(dataUrl.split(",")[1] ?? "");
+          const bytes = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          const fallback = new Blob([bytes], { type: "image/jpeg" });
+          if (!fallback.size) {
+            reject(new Error("JPEG encode failed"));
+            return;
+          }
+          resolve(fallback);
+        } catch (err) {
+          reject(err instanceof Error ? err : new Error("JPEG encode failed"));
+        }
+      },
+      "image/jpeg",
+      quality,
+    );
+  });
+}
+
+export function exportFilename(label: string, explicit?: string): string {
+  const safe = (explicit || label || "fit")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40);
+  return `${safe || "fit"}-spi.jpg`;
+}
+
+/**
+ * Build a white 1:1 JPEG from fit piece data + closet images.
+ * Draws onto canvas from fetched bitmaps — no DOM screenshot libraries.
  */
 export async function exportFitBoardJpeg(
-  boardEl: HTMLElement,
+  _boardEl: HTMLElement | null,
+  pieces: FitPiece[],
+  closetById: Map<string, ClosetItem>,
   opts?: FitExportOptions,
 ): Promise<{ ok: true; blob: Blob; filename: string } | { ok: false; error: string }> {
+  void _boardEl;
+
   if (typeof document === "undefined") {
     return { ok: false, error: "Export only works in the browser" };
   }
 
   const size = opts?.size ?? FIT_EXPORT_WIDTH;
   const quality = opts?.quality ?? 0.92;
-  const rootRect = boardEl.getBoundingClientRect();
-  if (rootRect.width < 8 || rootRect.height < 8) {
-    return { ok: false, error: "Board isn't ready to export yet" };
-  }
 
-  const pieces = boardEl.querySelectorAll("[data-fit-piece]");
   if (pieces.length === 0) {
     return { ok: false, error: "Add pieces to the fit before exporting" };
   }
 
-  const imgs = Array.from(boardEl.querySelectorAll("img"));
-  await Promise.all(
-    imgs.map(async (img) => {
-      if (img.complete && img.naturalWidth > 0) return;
-      try {
-        await img.decode();
-      } catch {
-        // Ignore — html-to-image may still pick it up after a short wait.
-      }
-    }),
-  );
-  await new Promise<void>((r) => requestAnimationFrame(() => r()));
-
-  const pixelRatio = Math.max(2, size / Math.max(rootRect.width, 1));
-
-  let dataUrl: string;
-  try {
-    dataUrl = await toJpeg(boardEl, {
-      quality,
-      backgroundColor: "#ffffff",
-      pixelRatio,
-      cacheBust: true,
-      width: rootRect.width,
-      height: rootRect.height,
-      style: {
-        backgroundColor: "#ffffff",
-        backgroundImage: "none",
-        borderRadius: "0",
-        border: "none",
-      },
-      filter: (node) => {
-        if (!(node instanceof HTMLElement)) return true;
-        if (node.hasAttribute("data-fit-guide")) return false;
-        if (node.hasAttribute("data-fit-chrome")) return false;
-        return true;
-      },
-    });
-  } catch (err) {
-    return {
-      ok: false,
-      error:
-        err instanceof Error
-          ? err.message
-          : "Couldn't capture the board — try again after images load",
-    };
-  }
-
-  let blob: Blob;
-  try {
-    const res = await fetch(dataUrl);
-    blob = await res.blob();
-  } catch {
-    return { ok: false, error: "Could not encode JPEG" };
-  }
-  if (!blob.size) {
-    return { ok: false, error: "Export produced an empty image" };
-  }
-
-  // Optional fit name footer — stamp onto a final 1080 canvas so IG size is exact.
-  try {
-    blob = await stampToSquare(blob, size, opts);
-  } catch {
-    // Keep the raw capture if stamping fails.
-  }
-
-  const label = opts?.name ?? "";
-  const safe = (opts?.filename || label || "fit")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 40);
-  return { ok: true, blob, filename: `${safe || "fit"}-spi.jpg` };
-}
-
-async function stampToSquare(
-  source: Blob,
-  size: number,
-  opts?: FitExportOptions,
-): Promise<Blob> {
-  const bitmap = await createImageBitmap(source);
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext("2d");
-  if (!ctx) return source;
+  if (!ctx) return { ok: false, error: "Could not create canvas" };
 
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, size, size);
-  ctx.drawImage(bitmap, 0, 0, size, size);
-  bitmap.close();
+
+  const ordered = [...pieces].sort((a, b) => a.zIndex - b.zIndex);
+  let drawn = 0;
+  let lastError = "";
+
+  for (const piece of ordered) {
+    const item = closetById.get(piece.closetItemId);
+    if (!item) continue;
+    const src = item.cutoutImage || item.image;
+    if (!src) continue;
+
+    let bitmap: ImageBitmap;
+    try {
+      bitmap = await loadExportBitmap(src);
+    } catch (err) {
+      lastError = err instanceof Error ? err.message : "Image load failed";
+      continue;
+    }
+
+    const boxPct = FIT_BASE_SIZE * piece.scale;
+    const box = Math.max(1, (boxPct / 100) * size);
+    const x = (piece.x / 100) * size;
+    const y = (piece.y / 100) * size;
+    const rotation = piece.rotation ?? 0;
+    const pad = box * 0.04;
+    const inner = Math.max(1, box - pad * 2);
+    const fit = Math.min(inner / bitmap.width, inner / bitmap.height);
+    const dw = bitmap.width * fit;
+    const dh = bitmap.height * fit;
+
+    ctx.save();
+    ctx.translate(x + box / 2, y + box / 2);
+    if (rotation) ctx.rotate((rotation * Math.PI) / 180);
+    ctx.drawImage(bitmap, -dw / 2, -dh / 2, dw, dh);
+    ctx.restore();
+    bitmap.close();
+    drawn += 1;
+  }
+
+  if (drawn === 0) {
+    return {
+      ok: false,
+      error:
+        lastError ||
+        "Couldn't load fit images for export — wait a second and try again",
+    };
+  }
 
   if (opts?.showName && opts.name?.trim()) {
     const label = opts.name.trim();
@@ -140,38 +212,54 @@ async function stampToSquare(
     ctx.fillText(label, size / 2, size - Math.round(size * 0.035));
   }
 
-  return await new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob(
-      (b) => (b ? resolve(b) : reject(new Error("JPEG encode failed"))),
-      "image/jpeg",
-      opts?.quality ?? 0.92,
-    );
-  });
+  let blob: Blob;
+  try {
+    blob = await encodeCanvasJpeg(canvas, quality);
+  } catch {
+    return { ok: false, error: "Could not encode JPEG" };
+  }
+
+  return {
+    ok: true,
+    blob,
+    filename: exportFilename(opts?.name ?? "", opts?.filename),
+  };
 }
 
-/** Download or open the system share sheet (mobile-friendly). */
+function isMobileUa(ua: string) {
+  return /iPhone|iPad|iPod|Android/i.test(ua);
+}
+
+function isAbortError(err: unknown) {
+  if (!(err instanceof Error)) return false;
+  return /AbortError|canceled|cancelled/i.test(err.name + err.message);
+}
+
+/**
+ * Save the JPEG. On phones, prefer the share sheet (Save Image / Instagram).
+ * Always falls back to a real file download.
+ */
 export async function saveOrShareJpeg(blob: Blob, filename: string) {
   const file = new File([blob], filename, { type: "image/jpeg" });
+  const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  const mobile = isMobileUa(ua);
 
-  try {
-    if (
-      typeof navigator !== "undefined" &&
-      typeof navigator.share === "function" &&
-      typeof navigator.canShare === "function" &&
-      navigator.canShare({ files: [file] })
-    ) {
-      await navigator.share({
-        files: [file],
-        title: filename,
-      });
-      return { mode: "share" as const };
-    }
-  } catch (err) {
-    if (
-      err instanceof Error &&
-      /AbortError|canceled|cancelled/i.test(err.name + err.message)
-    ) {
-      return { mode: "cancelled" as const };
+  if (
+    mobile &&
+    typeof navigator !== "undefined" &&
+    typeof navigator.share === "function" &&
+    typeof navigator.canShare === "function"
+  ) {
+    try {
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: filename,
+        });
+        return { mode: "share" as const };
+      }
+    } catch (err) {
+      if (isAbortError(err)) return { mode: "cancelled" as const };
     }
   }
 
@@ -185,13 +273,14 @@ export function downloadBlob(blob: Blob, filename: string) {
   a.href = url;
   a.download = filename;
   a.rel = "noopener";
+  a.type = "image/jpeg";
   a.style.display = "none";
   document.body.appendChild(a);
   a.click();
   window.setTimeout(() => {
     URL.revokeObjectURL(url);
     a.remove();
-  }, 2500);
+  }, 60_000);
 }
 
 /** Placement math helper for tests. */
