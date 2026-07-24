@@ -4,8 +4,8 @@ export const PLUS_COOKIE = "sp_plus_member";
 
 /**
  * Public Plus marketing + checkout.
- * Off by default until StockX API access is approved/denied — set
- * NEXT_PUBLIC_PLUS_PUBLIC=1 (and/or PLUS_PUBLIC=1) on Vercel to re-enable.
+ * Off by default until you're ready to sell — set
+ * NEXT_PUBLIC_PLUS_PUBLIC=1 (and/or PLUS_PUBLIC=1) on Vercel to enable.
  */
 export function plusPublicEnabled() {
   const v = (
@@ -46,11 +46,20 @@ export function openNodeConfigured() {
   return Boolean(process.env.OPENNODE_API_KEY?.trim());
 }
 
+/** Stripe secret unlocks card checkout. */
+export function stripeConfigured() {
+  return Boolean(process.env.STRIPE_SECRET_KEY?.trim());
+}
+
+/** Either card or BTC path is ready. */
+export function plusCheckoutConfigured() {
+  return openNodeConfigured() || stripeConfigured();
+}
+
 export function openNodeBaseUrl() {
   const env = process.env.OPENNODE_ENV?.trim().toLowerCase();
   if (env === "live" || env === "production") {
     return "https://api.opennode.com";
   }
-  // Default to OpenNode's test/dev API until live keys are set.
   return "https://dev-api.opennode.com";
 }

@@ -83,4 +83,24 @@ CREATE INDEX IF NOT EXISTS discovered_products_updated_idx
 CREATE INDEX IF NOT EXISTS discovered_products_brand_idx
   ON discovered_products (brand);
 
+-- Plus purchases (Stripe / OpenNode / mock) — founding cohort + membership audit.
+CREATE TABLE IF NOT EXISTS plus_purchases (
+  id            text PRIMARY KEY,
+  email         citext NOT NULL,
+  provider      text NOT NULL,
+  plan          text NOT NULL DEFAULT 'plus',
+  amount_usd    numeric(12, 2) NOT NULL,
+  term_days     integer NOT NULL,
+  status        text NOT NULL DEFAULT 'pending',
+  created_at    timestamptz NOT NULL DEFAULT now(),
+  paid_at       timestamptz
+);
+
+CREATE INDEX IF NOT EXISTS plus_purchases_email_idx
+  ON plus_purchases (email);
+
+CREATE INDEX IF NOT EXISTS plus_purchases_founding_paid_idx
+  ON plus_purchases (plan, status)
+  WHERE plan = 'founding' AND status = 'paid';
+
 COMMIT;

@@ -21,8 +21,14 @@ type MeResponse = {
   expiresAt: string | null;
   priceUsd: number;
   termDays: number;
+  plan?: "founding" | "plus";
+  offerLabel?: string;
+  foundingRemaining?: number;
+  foundingCap?: number;
   mockCheckout: boolean;
   checkoutReady: boolean;
+  stripeReady?: boolean;
+  openNodeReady?: boolean;
 };
 
 type PlusCharge = PlusChargeView;
@@ -62,6 +68,45 @@ export function PlusApp() {
   useEffect(() => {
     setSession(getSession());
     void refreshMe();
+  }, [refreshMe]);
+
+  // Stripe success redirect: /plus?stripe_session=cs_...
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const stripeSession = params.get("stripe_session");
+    if (!stripeSession) return;
+
+    let cancelled = false;
+    async function completeStripe() {
+      setBusy(true);
+      setError(null);
+      try {
+        const current = getSession();
+        const res = await fetch("/api/plus/stripe/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId: stripeSession,
+            email: current?.email,
+          }),
+        });
+        const json = (await res.json()) as { ok?: boolean; error?: string };
+        if (cancelled) return;
+        if (!res.ok || !json.ok) {
+          setError(json.error ?? "Could not confirm Stripe payment");
+          return;
+        }
+        window.history.replaceState({}, "", "/plus");
+        await refreshMe();
+      } finally {
+        if (!cancelled) setBusy(false);
+      }
+    }
+    void completeStripe();
+    return () => {
+      cancelled = true;
+    };
   }, [refreshMe]);
 
   useEffect(() => {
@@ -115,7 +160,7 @@ export function PlusApp() {
     setPassword("");
   }
 
-  async function startCheckout() {
+  async function startCheckout(provider: "stripe" | "opennode") {
     if (!session) return;
     setBusy(true);
     setError(null);
@@ -123,17 +168,28 @@ export function PlusApp() {
       const res = await fetch("/api/plus/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: session.email }),
+        body: JSON.stringify({ email: session.email, provider }),
       });
       const json = (await res.json()) as {
         ok?: boolean;
         error?: string;
-        data?: PlusCharge;
+        provider?: string;
+        data?: PlusCharge & { url?: string; mock?: boolean };
       };
       if (!res.ok || !json.ok || !json.data) {
-        setError(json.error ?? "Could not create invoice");
+        setError(json.error ?? "Could not start checkout");
         return;
       }
+
+      if (json.provider === "stripe" || json.provider === "mock") {
+        if (json.data.url) {
+          window.location.href = json.data.url;
+          return;
+        }
+        setError("Stripe checkout URL missing");
+        return;
+      }
+
       setCharge(json.data);
       setTab(json.data.lightningInvoice ? "lightning" : "onchain");
     } finally {
@@ -166,7 +222,14 @@ export function PlusApp() {
   if (session && isMember) {
     return (
       <div className="space-y-10">
-        <PlusPlanOverview priceUsd={me?.priceUsd} termDays={me?.termDays} />
+        <PlusPlanOverview
+          priceUsd={me?.priceUsd}
+          termDays={me?.termDays}
+          offerLabel={me?.offerLabel}
+          foundingRemaining={me?.foundingRemaining}
+          foundingCap={me?.foundingCap}
+          plan={me?.plan}
+        />
 
         <section className="dash-card space-y-4 border-dash-up/30 p-5 sm:p-6">
           <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.16em] text-dash-up">
@@ -433,7 +496,14 @@ export function PlusApp() {
   // ——— Logged in, not member (before pay) ———
   return (
     <div className="space-y-10">
-      <PlusPlanOverview priceUsd={me?.priceUsd} termDays={me?.termDays} />
+      <PlusPlanOverview
+        priceUsd={me?.priceUsd}
+        termDays={me?.termDays}
+        offerLabel={me?.offerLabel}
+        foundingRemaining={me?.foundingRemaining}
+        foundingCap={me?.foundingCap}
+        plan={me?.plan}
+      />
 
       <section
         id="checkout"
@@ -448,48 +518,62 @@ export function PlusApp() {
               ${me?.priceUsd ?? 10}
               <span className="text-base font-semibold text-dash-muted">
                 {" "}
-                / {me?.termDays ?? 30} days
+                / {me?.termDays === 365 ? "first year" : `${me?.termDays ?? 30} days`}
               </span>
             </p>
+            {me?.offerLabel ? (
+              <p className="mt-1 text-xs text-dash-accent">{me.offerLabel}</p>
+            ) : null}
           </div>
-          <p className="text-sm text-dash-muted">
-            Pay with <strong className="text-dash-text">Lightning</strong> or{" "}
-            <strong className="text-dash-text">on-chain Bitcoin</strong> only.
+          <p className="max-w-xs text-sm text-dash-muted">
+            Pay with <strong className="text-dash-text">card (Stripe)</strong>{" "}
+            or <strong className="text-dash-text">Bitcoin</strong>{" "}
+            (Lightning / on-chain).
           </p>
         </div>
 
         {me?.mockCheckout ? (
           <p className="rounded-xl border border-dash-border bg-dash-elevated/50 px-3 py-2 text-xs text-dash-faint">
-            OpenNode is not configured yet — checkout runs in mock mode so you
-            can click through the flow. Add{" "}
+            No live payment keys yet — checkout runs in mock mode. Add{" "}
+            <code className="text-dash-muted">STRIPE_SECRET_KEY</code> and/or{" "}
             <code className="text-dash-muted">OPENNODE_API_KEY</code> on Vercel
-            for real BTC/LN invoices.
+            for real payments.
           </p>
         ) : null}
 
         {error ? <p className="text-sm text-dash-down">{error}</p> : null}
 
-        <button
-          type="button"
-          disabled={busy}
-          onClick={startCheckout}
-          className="w-full rounded-xl bg-dash-accent px-4 py-3 text-sm font-semibold text-dash-bg hover:brightness-110 disabled:opacity-60 sm:w-auto"
-        >
-          {busy ? "Creating invoice…" : "Pay with Bitcoin"}
-        </button>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => startCheckout("stripe")}
+            className="w-full rounded-xl bg-dash-accent px-4 py-3 text-sm font-semibold text-dash-bg hover:brightness-110 disabled:opacity-60 sm:w-auto"
+          >
+            {busy ? "Starting…" : "Pay with card"}
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => startCheckout("opennode")}
+            className="w-full rounded-xl border border-dash-border px-4 py-3 text-sm font-semibold text-dash-text hover:bg-dash-elevated disabled:opacity-60 sm:w-auto"
+          >
+            Pay with Bitcoin
+          </button>
+        </div>
         <button
           type="button"
           onClick={onLogout}
-          className="ml-0 block text-xs text-dash-faint hover:text-dash-muted sm:ml-3 sm:inline"
+          className="block text-xs text-dash-faint hover:text-dash-muted"
         >
           Log out
         </button>
       </section>
 
       <p className="text-xs leading-relaxed text-dash-faint">
-        Not financial advice. No cards for now — Bitcoin only. Payments are
-        processed via OpenNode (Lightning + on-chain). Do your own research
-        before buying or restocking sneakers.
+        Not financial advice. Cards go through Stripe; Bitcoin through OpenNode
+        (Lightning + on-chain). Founding: first {me?.foundingCap ?? 100} paid
+        members get $10 for the first year.
       </p>
     </div>
   );

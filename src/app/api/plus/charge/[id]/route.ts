@@ -9,6 +9,10 @@ import {
   plusCookieOptions,
   signPlusMembership,
 } from "@/lib/plus/membership";
+import {
+  getPlusPurchase,
+  markPlusPurchasePaid,
+} from "@/lib/plus/purchases";
 import { isValidEmail } from "@/lib/portfolio/username";
 
 /** Poll charge status. */
@@ -74,10 +78,14 @@ export async function POST(
     );
   }
 
+  const purchase = await getPlusPurchase(id);
+  const termDays = purchase?.termDays;
   const { token, expiresAt } = await signPlusMembership({
     email,
     chargeId: id,
+    termDays,
   });
+  await markPlusPurchasePaid(id);
   const jar = await cookies();
   const opts = plusCookieOptions(expiresAt);
   jar.set(opts.name, token, opts);
@@ -88,7 +96,8 @@ export async function POST(
       email,
       expiresAt,
       chargeId: id,
-      plan: "plus",
+      plan: purchase?.plan ?? "plus",
+      termDays: termDays ?? null,
     },
   });
 }

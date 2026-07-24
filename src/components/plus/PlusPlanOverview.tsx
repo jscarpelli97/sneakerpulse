@@ -38,12 +38,21 @@ function CellMark({ cell }: { cell: PlanCell }) {
 export function PlusPlanOverview({
   priceUsd,
   termDays,
+  offerLabel,
+  foundingRemaining,
+  foundingCap,
+  plan,
 }: {
   priceUsd?: number | null;
   termDays?: number | null;
+  offerLabel?: string | null;
+  foundingRemaining?: number | null;
+  foundingCap?: number | null;
+  plan?: "founding" | "plus" | null;
 }) {
   const price = priceUsd ?? 10;
   const term = termDays ?? 30;
+  const termLabel = term === 365 ? "first year" : `${term} days`;
 
   return (
     <div className="space-y-10">
@@ -56,13 +65,20 @@ export function PlusPlanOverview({
         </h1>
         <p className="max-w-2xl text-lg leading-relaxed text-dash-muted">
           Free keeps the terminal open. Plus unlocks the full board, Collection,
-          and the Restock Monitor roadmap — paid with Lightning or on-chain
-          Bitcoin only.
+          and the Restock Monitor roadmap — pay with card (Stripe) or Bitcoin.
         </p>
         <p className="font-[family-name:var(--font-plex-mono)] text-sm text-dash-text">
           ${price}
-          <span className="text-dash-muted"> / {term} days</span>
+          <span className="text-dash-muted"> / {termLabel}</span>
+          {plan === "founding" && foundingRemaining != null ? (
+            <span className="ml-2 text-dash-accent">
+              · {foundingRemaining} of {foundingCap ?? 100} founding left
+            </span>
+          ) : null}
         </p>
+        {offerLabel ? (
+          <p className="text-xs text-dash-faint">{offerLabel}</p>
+        ) : null}
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2">

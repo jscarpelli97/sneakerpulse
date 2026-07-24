@@ -47,22 +47,32 @@ npx vercel --prod --yes
 2. Connect the GitHub account / install the Vercel GitHub app if prompted  
 3. Link repo `jscarpelli97/spi-markets`, production branch `main`
 
-## Plus (later — Bitcoin / Lightning)
+## Plus (Stripe cards + OpenNode Bitcoin)
 
-Checkout scaffolding uses [OpenNode](https://opennode.com). Keep Plus off for day one.
+Keep Plus off for day one (`NEXT_PUBLIC_PLUS_PUBLIC` unset). When you're ready:
 
-1. Create an OpenNode account and API key (start with **dev** keys).
-2. In Vercel set:
-   - `OPENNODE_API_KEY`
-   - `OPENNODE_ENV=dev` (or `live`)
+1. **Stripe** (cards) — https://dashboard.stripe.com  
+   - Create test keys, then live keys  
+   - Webhook endpoint: `https://spimarkets.com/api/plus/webhook/stripe`  
+     Events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`  
+   - Optional: create Prices and set `STRIPE_PRICE_FOUNDING_YEARLY` / `STRIPE_PRICE_PLUS`  
+2. **OpenNode** (BTC / Lightning) — optional second rail  
+3. In Vercel set:
+   - `STRIPE_SECRET_KEY`
+   - `STRIPE_WEBHOOK_SECRET`
+   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (optional for future Elements)
+   - `OPENNODE_API_KEY` / `OPENNODE_ENV=dev` (optional)
    - `PLUS_JWT_SECRET` (long random string)
-   - `PLUS_PRICE_USD=10`
-   - `PLUS_TERM_DAYS=30`
+   - `PLUS_PRICE_USD=10` / `PLUS_TERM_DAYS=30` (post-founding standard plan)
    - `NEXT_PUBLIC_SITE_URL=https://spimarkets.com`
    - `NEXT_PUBLIC_PLUS_PUBLIC=1` only when checkout is ready to sell
-3. Redeploy. Without `OPENNODE_API_KEY`, `/plus` still works in **mock** mode when public.
+4. Run `DATABASE_URL=… node scripts/migrate-users.mjs` so `plus_purchases` exists (founding 100 cap).
+5. Redeploy. Without Stripe/OpenNode keys, `/plus` still works in **mock** mode when public.
 
-Webhook URL: `https://spimarkets.com/api/plus/webhook`
+Founding offer (first 100 paid): **$10 / first year**, tracked in Neon `plus_purchases`.
+
+OpenNode webhook (BTC): `https://spimarkets.com/api/plus/webhook`  
+Stripe webhook (cards): `https://spimarkets.com/api/plus/webhook/stripe`
 
 ## Daily SPI snapshots
 

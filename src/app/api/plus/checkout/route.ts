@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import {
-  plusPriceUsd,
   openNodeConfigured,
   plusPublicEnabled,
+  stripeConfigured,
 } from "@/lib/plus/config";
 import { createPlusCharge } from "@/lib/plus/opennode";
+import {
+  recordPlusPurchase,
+  resolvePlusOffer,
+} from "@/lib/plus/purchases";
+import { createStripeCheckoutSession } from "@/lib/plus/stripe";
 import { isValidEmail } from "@/lib/portfolio/username";
 
 export async function POST(request: Request) {
@@ -13,15 +18,15 @@ export async function POST(request: Request) {
       {
         ok: false,
         error:
-          "Plus checkout is paused while StockX API access is pending",
+          "Plus checkout is paused while we finish soft-launch testing",
       },
       { status: 503 },
     );
   }
 
-  let body: { email?: string } = {};
+  let body: { email?: string; provider?: string } = {};
   try {
-    body = (await request.json()) as { email?: string };
+    body = (await request.json()) as { email?: string; provider?: string };
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
@@ -34,16 +39,62 @@ export async function POST(request: Request) {
     );
   }
 
+  const requested = (body.provider ?? "stripe").trim().toLowerCase();
+  const provider =
+    requested === "opennode" || requested === "bitcoin" || requested === "btc"
+      ? "opennode"
+      : "stripe";
+
   try {
+    const offer = await resolvePlusOffer();
+
+    if (provider === "stripe") {
+      const session = await createStripeCheckoutSession({ email, offer });
+      await recordPlusPurchase({
+        id: session.id,
+        email,
+        provider: session.mock ? "mock" : "stripe",
+        plan: offer.plan,
+        amountUsd: offer.amountUsd,
+        termDays: offer.termDays,
+        status: "pending",
+      });
+      return NextResponse.json({
+        ok: true,
+        provider: session.mock ? "mock" : "stripe",
+        configured: stripeConfigured(),
+        offer,
+        data: {
+          id: session.id,
+          url: session.url,
+          email: session.email,
+          amountUsd: session.amountUsd,
+          plan: session.plan,
+          termDays: session.termDays,
+          mock: session.mock,
+        },
+      });
+    }
+
     const charge = await createPlusCharge({
       email,
-      amountUsd: plusPriceUsd(),
+      amountUsd: offer.amountUsd,
+    });
+    await recordPlusPurchase({
+      id: charge.id,
+      email,
+      provider: charge.mock ? "mock" : "opennode",
+      plan: offer.plan,
+      amountUsd: offer.amountUsd,
+      termDays: offer.termDays,
+      status: "pending",
     });
     return NextResponse.json({
       ok: true,
       data: charge,
       provider: charge.mock ? "mock" : "opennode",
       configured: openNodeConfigured(),
+      offer,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Checkout failed";
