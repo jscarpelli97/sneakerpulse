@@ -113,16 +113,17 @@ export default function AboutPage() {
               Data — we keep it honest
             </h2>
             <p className="text-dash-muted leading-relaxed">
-              When live market access is on, prices refresh from StockX data
+              When live market access is on, prices refresh from connected data
               providers. Otherwise {BRAND_NAME} serves a{" "}
               <strong className="text-dash-text">daily snapshot</strong>
               {asOf ? ` (last refreshed ${asOf})` : ""} so the board stays usable
-              without hammering APIs on every click.
+              without hammering feeds on every click.
             </p>
             <p className="text-sm text-dash-faint leading-relaxed">
-              Official StockX Developer API access is still pending. Until then
-              you may see a Snapshot badge instead of Live. That&apos;s
-              intentional — we&apos;d rather be clear than fake realtime.
+              I’m looking into all options to enhance freshness and coverage
+              over time — open, nothing promised. You may see a Snapshot badge
+              instead of Live; that&apos;s intentional — we&apos;d rather be
+              clear than fake realtime.
             </p>
             <Link
               href="/spi"

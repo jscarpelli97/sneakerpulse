@@ -8,11 +8,9 @@ export const FOUNDING_PRICE_USD = 10;
 export const FOUNDING_TERM_LABEL = "first year";
 
 export const PLUS_BENEFITS = [
-  "Early access to GOAT / Stadium Goods tape as APIs land",
   `Full top-seller board with Compare + Deal check (not just the free top ${FREE_TOP})`,
-  "Live ask refresh (when feeds are connected)",
   "Portfolio + Wardrobe in Collection, with synced accounts",
-  "Restock Monitor — size restocks & soft price drops (coming soon)",
+  "Looking into options to enhance the experience over time — open, nothing promised yet",
 ] as const;
 
 /** Free-tier bullets — homepage surface only. */
@@ -82,25 +80,20 @@ export const PLAN_COMPARE: PlanCompareRow[] = [
     plus: { label: "Included", state: "yes" },
   },
   {
-    id: "restock",
-    feature: "Restock Monitor",
-    detail: "Watch sizes come back in ask inventory, plus optional soft price-drop pings.",
-    free: { label: "Not included", state: "no" },
-    plus: { label: "Coming soon", state: "soon" },
+    id: "freshness",
+    feature: "Ask freshness",
+    detail:
+      "Board asks may use a daily snapshot or a live refresh depending on how data is connected. We stay clear about which mode you’re in.",
+    free: { label: "Snapshot / limited", state: "limited" },
+    plus: { label: "Full board access", state: "yes" },
   },
   {
-    id: "live",
-    feature: "Live ask refresh",
-    detail: "Fresher StockX asks when KicksDB / feed credentials are connected.",
-    free: { label: "Cached / limited", state: "limited" },
-    plus: { label: "Priority when live", state: "yes" },
-  },
-  {
-    id: "multi-venue",
-    feature: "GOAT / Stadium Goods tape",
-    detail: "Extra venues as APIs land — Plus members get early access.",
-    free: { label: "Not included", state: "no" },
-    plus: { label: "Early access", state: "soon" },
+    id: "next",
+    feature: "What’s next",
+    detail:
+      "I’m looking into all options to enhance the experience — fresher data, more coverage, restocks, new releases, and other tools. Open to what helps; nothing locked in or promised yet.",
+    free: { label: "—", state: "no" },
+    plus: { label: "Exploring", state: "soon" },
   },
 ];
 

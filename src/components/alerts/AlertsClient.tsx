@@ -58,38 +58,17 @@ function ComingSoonCard() {
   return (
     <section className="rounded-2xl border border-dashed border-dash-border bg-dash-elevated/30 px-4 py-5 sm:px-5">
       <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
-        Coming soon for Plus
+        Exploring for Plus
       </p>
       <h3 className="mt-2 font-[family-name:var(--font-syne)] text-lg font-bold text-dash-text">
-        Restock Monitor
+        What&apos;s next
       </h3>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dash-muted">
-        A Plus watchlist that watches ask inventory for you — email when a size
-        or colorway comes back in stock, plus optional price-drop pings when
-        the market softens. Same inbox as threshold alerts once it ships.
+        Threshold alerts work today. Beyond that, I&apos;m looking into all
+        options to enhance the experience — things like restocks, new releases,
+        fresher data, and other tools. Open to what helps; nothing locked in or
+        promised yet.
       </p>
-      <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-        {[
-          {
-            title: "Size restocks",
-            body: "Ping when your size flips from sold out back to a live ask.",
-          },
-          {
-            title: "Price softens",
-            body: "Optional drop alerts when the ask falls without a manual threshold.",
-          },
-        ].map((item) => (
-          <li
-            key={item.title}
-            className="rounded-xl border border-dash-border/80 bg-dash-bg/40 px-3.5 py-3"
-          >
-            <p className="text-sm font-semibold text-dash-text">{item.title}</p>
-            <p className="mt-1 text-xs leading-relaxed text-dash-faint">
-              {item.body}
-            </p>
-          </li>
-        ))}
-      </ul>
     </section>
   );
 }
@@ -208,7 +187,7 @@ export function AlertsClient({
         </h2>
         <p className="mt-1 text-sm text-dash-muted">
           {emailMode
-            ? "Threshold alerts email your inbox when you check them. Restock Monitor is coming soon for Plus."
+            ? "Threshold alerts email your inbox when you check them. I’m exploring more ways to enhance alerts over time — nothing promised yet."
             : "Thresholds stay in this browser. Check now evaluates against live asks."}
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">

@@ -64,9 +64,10 @@ export function PlusPlanOverview({
           What you get
         </h1>
         <p className="max-w-2xl text-lg leading-relaxed text-dash-muted">
-          Free keeps the terminal open. Plus unlocks the full board, Collection,
-          and the Restock Monitor roadmap — pay with card (Stripe), or request a
-          Lightning invoice from John.
+          Free keeps the terminal open. Plus unlocks the full board and
+          Collection — pay with card (Stripe), or request a Lightning invoice
+          from John. I’m also looking into options to enhance the experience
+          over time; nothing beyond what’s listed is promised yet.
         </p>
         <p className="font-[family-name:var(--font-plex-mono)] text-sm text-dash-text">
           ${price}
@@ -126,8 +127,8 @@ export function PlusPlanOverview({
             Free vs Plus
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-dash-muted">
-            Read through each line — limited means the free top sellers only;
-            coming soon ships to Plus members first.
+            Read through each line — limited means the free top sellers only.
+            “Exploring” means ideas under consideration, not a shipping date.
           </p>
         </div>
 

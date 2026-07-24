@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-/** Soft landing while StockX API access is pending — no paid pitch. */
+/** Soft landing when Plus checkout is paused — no paid pitch. */
 export function PlusPausedNotice() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -12,17 +12,16 @@ export function PlusPausedNotice() {
           Plus is on pause
         </h1>
         <p className="text-lg leading-relaxed text-dash-muted">
-          We&apos;re waiting on StockX API access before selling or marketing a
-          paid tier that leans on their market data. Until that&apos;s clear,
-          SPI Markets stays free for now — no Plus checkout, no upsells.
+          Paid checkout is paused for now. SPI Markets stays usable on free —
+          no Plus upsells until we turn it back on.
         </p>
       </header>
 
       <section className="rounded-2xl border border-dash-border bg-dash-elevated/30 px-5 py-5">
         <p className="text-sm leading-relaxed text-dash-muted">
-          Official StockX Developer API access is pending. Daily snapshot data
-          keeps the terminal usable in the meantime. Not affiliated with
-          StockX.
+          I&apos;m looking into all options to enhance the experience over time
+          — open, nothing promised. Daily snapshot data keeps the terminal
+          usable in the meantime.
         </p>
       </section>
 

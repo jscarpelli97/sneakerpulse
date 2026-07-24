@@ -104,8 +104,9 @@ export function PlusPopup() {
               a cleaner read on keep vs dump across your shelves.
             </li>
             <li>
-              <span className="text-dash-text">More markets</span> — StockX
-              live first; GOAT, Stadium Goods, and others on the roadmap.
+              <span className="text-dash-text">What’s next</span> — I’m
+              looking into all options to enhance the experience. Open to ideas;
+              nothing locked in yet.
             </li>
           </ul>
 

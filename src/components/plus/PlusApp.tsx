@@ -181,8 +181,9 @@ export function PlusApp() {
             term.
           </p>
           <p className="text-xs text-dash-faint">
-            Live feeds turn on as StockX / GOAT / Stadium Goods access lands.
-            Until then you keep the full free terminal plus member status.
+            Thanks for supporting the build. I’m looking into all options to
+            enhance the experience over time — open, nothing promised beyond
+            what’s live today.
           </p>
           <div className="flex flex-wrap gap-3 pt-1">
             <Link
