@@ -60,12 +60,12 @@ export const PRODUCT_TOOLS = [
   {
     title: "Compare",
     href: "/markets?view=compare",
-    body: "Search the board or quick-pick top sellers — stack up to five colorways on ask, retail, premium, and flow.",
+    body: "Type to search any pair (catalog only after 2+ characters) or quick-pick top sellers — stack up to five on ask, retail, premium, and flow.",
   },
   {
     title: "Deal check",
     href: "/markets?view=deal",
-    body: "Search any pair (or pick a top seller) → size + offer → cop, stretch, or pass.",
+    body: "Search any pair when you type — or pick a top seller — then size + offer → cop, stretch, or pass.",
   },
 ] as const;
 

@@ -664,7 +664,7 @@ export function CatalogMarketsExplorer({
           id="compare"
           index="02"
           title="Compare"
-          blurb="Search the board or quick-pick top sellers — stack 2–5 pairs on ask, premium, volume, and rank."
+          blurb="Search any pair (type 2+ characters) or quick-pick top sellers — stack 2–5 on ask, premium, volume, and rank."
         />
         <div className="p-4 sm:p-5">
           {rows.length < 2 ? (
@@ -690,7 +690,7 @@ export function CatalogMarketsExplorer({
           id="deal"
           index="03"
           title="Deal check"
-          blurb="Search any board pair — or jump from the top-10 list — then size + offer → cop, stretch, or pass."
+          blurb="Search any pair beyond the board (only when you type) — or jump from the top-10 list — then size + offer → cop, stretch, or pass."
         />
         <div className="p-4 sm:p-5">
           <MarketsDealCheck

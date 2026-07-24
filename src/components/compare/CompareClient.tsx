@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   MAX_COMPARE,
   MIN_COMPARE,
@@ -10,8 +10,8 @@ import {
   type CompareQuote,
 } from "@/hooks/useCompareMarkets";
 import {
-  filterBoardEntries,
-  TopSellersQuickPick,
+  BoardPairMultiSearch,
+  type PairSuggestion,
 } from "@/components/markets/BoardPairPicker";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 import { changeClass, formatMaybeMoney } from "@/utils/format";
@@ -38,6 +38,7 @@ function SideCard({
   index,
   slug,
   catalog,
+  known,
   quote,
   wins,
   loading,
@@ -47,15 +48,16 @@ function SideCard({
   index: number;
   slug: string;
   catalog: SneakerCatalogEntry | null;
+  known?: { ticker: string; name: string; image?: string } | null;
   quote: CompareQuote | null;
   wins: number;
   loading: boolean;
   canRemove: boolean;
   onRemove: () => void;
 }) {
-  const name = quote?.name ?? catalog?.name ?? slug;
-  const ticker = quote?.ticker ?? catalog?.ticker ?? "—";
-  const image = quote?.image || catalog?.fallbackImage || "";
+  const name = quote?.name ?? catalog?.name ?? known?.name ?? slug;
+  const ticker = quote?.ticker ?? catalog?.ticker ?? known?.ticker ?? "—";
+  const image = quote?.image || catalog?.fallbackImage || known?.image || "";
   const brand = quote?.brand ?? catalog?.brand ?? "";
   const year = quote?.year ?? catalog?.year;
   const colorway = quote?.colorway ?? catalog?.colorway ?? "";
@@ -155,155 +157,6 @@ function SideCard({
   );
 }
 
-function PairSearchPicker({
-  sneakers,
-  selected,
-  canAdd,
-  onAdd,
-  onRemove,
-}: {
-  sneakers: SneakerCatalogEntry[];
-  selected: string[];
-  canAdd: boolean;
-  onAdd: (slug: string) => void;
-  onRemove: (slug: string) => void;
-}) {
-  const [q, setQ] = useState("");
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-
-  const selectedSet = useMemo(() => new Set(selected), [selected]);
-
-  const matches = useMemo(() => {
-    return filterBoardEntries(sneakers, q)
-      .filter((row) => !selectedSet.has(row.slug))
-      .slice(0, 8);
-  }, [sneakers, q, selectedSet]);
-
-  useEffect(() => {
-    function onDocClick(event: MouseEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
-    }
-    document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
-  }, []);
-
-  return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap gap-2">
-        {selected.map((slug) => {
-          const entry = catalogPick(sneakers, slug);
-          return (
-            <button
-              key={slug}
-              type="button"
-              onClick={() => onRemove(slug)}
-              className="inline-flex items-center gap-2 rounded-xl border border-dash-border bg-dash-elevated/60 px-3 py-1.5 text-left transition-colors hover:border-dash-down/40 hover:bg-dash-elevated"
-              title="Remove from compare"
-            >
-              <span className="font-[family-name:var(--font-plex-mono)] text-[11px] text-dash-accent">
-                {entry?.ticker ?? slug}
-              </span>
-              <span className="max-w-[10rem] truncate text-xs text-dash-muted">
-                {entry?.name ?? slug}
-              </span>
-              <span className="text-dash-faint" aria-hidden>
-                ×
-              </span>
-            </button>
-          );
-        })}
-        {selected.length === 0 ? (
-          <p className="text-sm text-dash-muted">
-            Search and add at least {MIN_COMPARE} pairs to compare.
-          </p>
-        ) : null}
-      </div>
-
-      <div ref={rootRef} className="relative max-w-xl">
-        <label className="block text-sm text-dash-muted">
-          Search board
-          <input
-            type="search"
-            value={q}
-            disabled={!canAdd}
-            onChange={(e) => {
-              setQ(e.target.value);
-              setOpen(true);
-            }}
-            onFocus={() => setOpen(true)}
-            placeholder={
-              canAdd
-                ? "Name, style ID, brand…"
-                : `Max ${MAX_COMPARE} pairs — remove one to add another`
-            }
-            className="mt-1.5 w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent disabled:cursor-not-allowed disabled:opacity-50"
-          />
-        </label>
-        {open && canAdd ? (
-          <ul className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-dash-border bg-dash-surface shadow-[var(--shadow-md)]">
-            {matches.length === 0 ? (
-              <li className="px-3 py-3 text-sm text-dash-muted">
-                {q.trim()
-                  ? `No board matches for “${q.trim()}”.`
-                  : "Type to filter the board."}
-              </li>
-            ) : (
-              matches.map((row) => (
-                <li key={row.slug}>
-                  <button
-                    type="button"
-                    className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-dash-elevated"
-                    onClick={() => {
-                      onAdd(row.slug);
-                      setQ("");
-                      setOpen(false);
-                    }}
-                  >
-                    <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-dash-bg">
-                      {row.fallbackImage ? (
-                        <Image
-                          src={row.fallbackImage}
-                          alt=""
-                          fill
-                          className="object-contain p-1"
-                          sizes="36px"
-                        />
-                      ) : null}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold text-dash-text">
-                        {row.name}
-                      </span>
-                      <span className="block truncate font-[family-name:var(--font-plex-mono)] text-[11px] text-dash-accent">
-                        {row.ticker}
-                        {row.rank != null ? ` · #${row.rank}` : ""}
-                      </span>
-                    </span>
-                    <span className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-faint">
-                      Add
-                    </span>
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
-        ) : null}
-      </div>
-      <p className="font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.14em] text-dash-faint">
-        {selected.length}/{MAX_COMPARE} selected · {MIN_COMPARE}–{MAX_COMPARE}{" "}
-        pairs
-      </p>
-      <TopSellersQuickPick
-        sneakers={sneakers}
-        exclude={selected}
-        disabled={!canAdd}
-        onPick={onAdd}
-      />
-    </div>
-  );
-}
-
 export function CompareClient({
   sneakers,
   initialSlugs,
@@ -327,6 +180,10 @@ export function CompareClient({
     ready,
   } = useCompareMarkets(initialSlugs);
 
+  const [known, setKnown] = useState<
+    Record<string, { ticker: string; name: string; image?: string }>
+  >({});
+
   const onSlugsChangeRef = useRef(onSlugsChange);
   onSlugsChangeRef.current = onSlugsChange;
 
@@ -334,15 +191,33 @@ export function CompareClient({
     onSlugsChangeRef.current?.(slugs);
   }, [slugs]);
 
+  function remember(hit?: PairSuggestion) {
+    if (!hit) return;
+    setKnown((prev) => ({
+      ...prev,
+      [hit.slug]: {
+        ticker: hit.ticker,
+        name: hit.name,
+        image: hit.fallbackImage,
+      },
+    }));
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
-          <PairSearchPicker
+          <BoardPairMultiSearch
             sneakers={sneakers}
             selected={slugs}
+            knownLabels={known}
             canAdd={canAdd}
-            onAdd={addSlug}
+            minCount={MIN_COMPARE}
+            maxCount={MAX_COMPARE}
+            onAdd={(slug, hit) => {
+              remember(hit);
+              addSlug(slug);
+            }}
             onRemove={removeSlug}
           />
         </div>
@@ -371,6 +246,7 @@ export function CompareClient({
               index={index}
               slug={slug}
               catalog={catalogPick(sneakers, slug)}
+              known={known[slug] ?? null}
               quote={quotes[slug] ?? null}
               wins={winCounts[slug] ?? 0}
               loading={loading}
@@ -400,7 +276,10 @@ export function CompareClient({
                     href={`/sneakers/${slug}`}
                     className="text-dash-text hover:underline"
                   >
-                    {quote?.ticker ?? catalog?.ticker ?? slug}
+                    {quote?.ticker ??
+                      catalog?.ticker ??
+                      known[slug]?.ticker ??
+                      slug}
                   </Link>
                 </div>
               );

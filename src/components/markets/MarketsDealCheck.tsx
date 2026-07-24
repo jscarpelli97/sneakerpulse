@@ -96,8 +96,9 @@ export function MarketsDealCheck({
 
       {!slug ? (
         <p className="rounded-2xl border border-dashed border-dash-border bg-dash-elevated/30 px-5 py-10 text-sm text-dash-muted">
-          Search the board or quick-pick a top seller. You can also tap Deal on
-          any row in Browse.
+          Search the board or quick-pick a top seller. Type 2+ characters to
+          look up pairs beyond the board (catalog only then — no idle pulls).
+          You can also tap Deal on any Browse row.
         </p>
       ) : null}
 
