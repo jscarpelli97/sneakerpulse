@@ -2,6 +2,11 @@ import { HOMEPAGE_WATCHLIST_LIMIT } from "@/services/catalog/mapProductToCatalog
 
 const FREE_TOP = HOMEPAGE_WATCHLIST_LIMIT;
 
+/** Soft-launch founding offer — copy only until checkout wires the cap. */
+export const FOUNDING_MEMBER_CAP = 100;
+export const FOUNDING_PRICE_USD = 10;
+export const FOUNDING_TERM_LABEL = "first year";
+
 export const PLUS_BENEFITS = [
   "Early access to GOAT / Stadium Goods tape as APIs land",
   `Full top-seller board with Compare + Deal check (not just the free top ${FREE_TOP})`,

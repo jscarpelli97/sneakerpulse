@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { FoundingMemberNotice } from "@/components/auth/FoundingMemberNotice";
 import { plusPublicEnabled } from "@/lib/plus/config";
 import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
 import { usernameFromEmail } from "@/lib/portfolio/username";
@@ -428,6 +429,7 @@ export function PortfolioApp() {
             {authError ? (
               <p className="text-sm text-dash-down">{authError}</p>
             ) : null}
+            {mode === "register" ? <FoundingMemberNotice /> : null}
             <button
               type="submit"
               disabled={authBusy}

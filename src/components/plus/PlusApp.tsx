@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { FoundingMemberNotice } from "@/components/auth/FoundingMemberNotice";
 import { PlusPlanOverview } from "@/components/plus/PlusPlanOverview";
 import type { PlusChargeView } from "@/lib/plus/public";
 import type { PortfolioSession } from "@/lib/portfolio/types";
@@ -411,6 +412,7 @@ export function PlusApp() {
               className="w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm outline-none focus:border-dash-accent"
             />
             {error ? <p className="text-sm text-dash-down">{error}</p> : null}
+            {authMode === "register" ? <FoundingMemberNotice /> : null}
             <button
               type="submit"
               disabled={busy}

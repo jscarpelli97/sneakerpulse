@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { FoundingMemberNotice } from "@/components/auth/FoundingMemberNotice";
 import { ClosetPanel } from "@/components/wardrobe/ClosetPanel";
 import { FitsPanel } from "@/components/wardrobe/FitsPanel";
 import type { PortfolioHolding, PortfolioSession } from "@/lib/portfolio/types";
@@ -228,6 +229,7 @@ export function WardrobeApp() {
             {authError ? (
               <p className="text-sm text-dash-down">{authError}</p>
             ) : null}
+            {mode === "register" ? <FoundingMemberNotice /> : null}
             <button
               type="submit"
               disabled={authBusy}
