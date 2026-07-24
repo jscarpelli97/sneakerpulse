@@ -54,8 +54,8 @@ export default function AboutPage() {
               bouncing between StockX tabs, screenshots, and spreadsheets just
               to see prices and what I own. {BRAND_NAME} started with the{" "}
               {INDEX_LONG_NAME} ({INDEX_NAME}) — then grew into a board,
-              portfolio, wardrobe, and the tools around them. Clearer numbers,
-              less noise.
+              Collection (portfolio + wardrobe), and the tools around them.
+              Clearer numbers, less noise.
             </p>
             <p className="text-sm text-dash-faint">
               Questions or ideas?{" "}
