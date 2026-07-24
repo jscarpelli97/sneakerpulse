@@ -2,9 +2,15 @@ import { isDataImageUrl } from "@/lib/wardrobe/image";
 import { FIT_BASE_SIZE } from "@/lib/wardrobe/layout";
 import type { ClosetItem, FitPiece } from "@/lib/wardrobe/types";
 
-/** Instagram square (1:1) — matches the fit board. */
-export const FIT_EXPORT_WIDTH = 1080;
-export const FIT_EXPORT_HEIGHT = 1080;
+/**
+ * Export square size. 2160 keeps Instagram sharp on 2x/3x screens
+ * while staying under common mobile canvas limits.
+ */
+export const FIT_EXPORT_WIDTH = 2160;
+export const FIT_EXPORT_HEIGHT = 2160;
+
+/** Near-lossless JPEG encode (1.0 can bloat with little visible gain). */
+export const FIT_EXPORT_QUALITY = 0.98;
 
 export type FitExportOptions = {
   size?: number;
@@ -14,6 +20,31 @@ export type FitExportOptions = {
   name?: string;
   showName?: boolean;
 };
+
+/**
+ * Ask StockX/CDN for a larger source when the catalog URL is capped
+ * (many product thumbs ship as w=700).
+ */
+export function upscaleRemoteImageUrl(src: string): string {
+  if (!src || isDataImageUrl(src) || src.startsWith("blob:") || src.startsWith("/")) {
+    return src;
+  }
+  try {
+    const url = new URL(src);
+    if (url.hostname !== "images.stockx.com") return src;
+    const w = Number(url.searchParams.get("w") || "0");
+    const h = Number(url.searchParams.get("h") || "0");
+    if (w > 0 && w < 1600) url.searchParams.set("w", "1600");
+    if (h > 0 && h < 1200) url.searchParams.set("h", "1200");
+    // Prefer a clean still for canvas decode.
+    if (url.searchParams.has("fm")) url.searchParams.set("fm", "jpg");
+    if (url.searchParams.has("q")) url.searchParams.set("q", "100");
+    if (url.searchParams.has("auto")) url.searchParams.delete("auto");
+    return url.toString();
+  } catch {
+    return src;
+  }
+}
 
 /** Same-origin URL so canvas can read StockX (and other remote) pixels. */
 export function toExportImageSrc(src: string): string {
@@ -25,11 +56,13 @@ export function toExportImageSrc(src: string): string {
   ) {
     return src;
   }
-  return `/_next/image?url=${encodeURIComponent(src)}&w=1080&q=90`;
+  const hi = upscaleRemoteImageUrl(src);
+  return `/_next/image?url=${encodeURIComponent(hi)}&w=2048&q=100`;
 }
 
 export function toProxyImageSrc(src: string): string {
-  return `/api/wardrobe/image?url=${encodeURIComponent(src)}`;
+  const hi = upscaleRemoteImageUrl(src);
+  return `/api/wardrobe/image?url=${encodeURIComponent(hi)}`;
 }
 
 async function bitmapFromBlob(blob: Blob): Promise<ImageBitmap> {
@@ -45,7 +78,7 @@ async function fetchBitmap(url: string, init?: RequestInit): Promise<ImageBitmap
 
 /**
  * Fetch an image into a canvas-safe bitmap.
- * Tries Next optimizer → wardrobe proxy → direct CORS fetch.
+ * Prefers full CDN / proxy sources before the Next optimizer re-encode.
  */
 export async function loadExportBitmap(src: string): Promise<ImageBitmap> {
   if (!src) throw new Error("No image");
@@ -59,24 +92,28 @@ export async function loadExportBitmap(src: string): Promise<ImageBitmap> {
     return fetchBitmap(src, { cache: "force-cache" });
   }
 
+  const hi = upscaleRemoteImageUrl(src);
   const errors: string[] = [];
 
-  try {
-    return await fetchBitmap(toExportImageSrc(src), { cache: "force-cache" });
-  } catch (err) {
-    errors.push(err instanceof Error ? err.message : "next/image failed");
-  }
-
+  // 1) Same-origin proxy of the high-res original (best quality).
   try {
     return await fetchBitmap(toProxyImageSrc(src), { cache: "force-cache" });
   } catch (err) {
     errors.push(err instanceof Error ? err.message : "proxy failed");
   }
 
+  // 2) Direct CORS fetch of the high-res CDN URL.
   try {
-    return await fetchBitmap(src, { mode: "cors", cache: "force-cache" });
+    return await fetchBitmap(hi, { mode: "cors", cache: "force-cache" });
   } catch (err) {
     errors.push(err instanceof Error ? err.message : "direct fetch failed");
+  }
+
+  // 3) Next optimizer (already high w/q) as last resort.
+  try {
+    return await fetchBitmap(toExportImageSrc(src), { cache: "force-cache" });
+  } catch (err) {
+    errors.push(err instanceof Error ? err.message : "next/image failed");
   }
 
   throw new Error(errors[0] || "Could not load image for export");
@@ -141,7 +178,7 @@ export async function exportFitBoardJpeg(
   }
 
   const size = opts?.size ?? FIT_EXPORT_WIDTH;
-  const quality = opts?.quality ?? 0.92;
+  const quality = opts?.quality ?? FIT_EXPORT_QUALITY;
 
   if (pieces.length === 0) {
     return { ok: false, error: "Add pieces to the fit before exporting" };
@@ -153,6 +190,9 @@ export async function exportFitBoardJpeg(
   const ctx = canvas.getContext("2d");
   if (!ctx) return { ok: false, error: "Could not create canvas" };
 
+  // Sharper downscales when source > export box.
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, size, size);
 
@@ -163,7 +203,9 @@ export async function exportFitBoardJpeg(
   for (const piece of ordered) {
     const item = closetById.get(piece.closetItemId);
     if (!item) continue;
-    const src = item.cutoutImage || item.image;
+    // Prefer the original high-res catalog image over in-memory cutouts
+    // (cutouts are capped ~520px). White studio plates still look clean on export.
+    const src = item.image || item.cutoutImage;
     if (!src) continue;
 
     let bitmap: ImageBitmap;

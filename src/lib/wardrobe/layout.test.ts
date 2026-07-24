@@ -16,6 +16,7 @@ import {
   pieceBox,
   toExportImageSrc,
   toProxyImageSrc,
+  upscaleRemoteImageUrl,
 } from "@/lib/wardrobe/exportFit";
 import type { ClosetItem, FitPiece } from "@/lib/wardrobe/types";
 
@@ -166,13 +167,23 @@ describe("fit export math", () => {
   it("builds same-origin export image URLs", () => {
     const remote = "https://images.stockx.com/x.jpg";
     expect(toExportImageSrc(remote)).toContain("/_next/image?url=");
-    expect(toExportImageSrc(remote)).toContain(encodeURIComponent(remote));
-    expect(toProxyImageSrc(remote)).toBe(
-      `/api/wardrobe/image?url=${encodeURIComponent(remote)}`,
-    );
+    expect(toExportImageSrc(remote)).toContain("w=2048");
+    expect(toExportImageSrc(remote)).toContain("q=100");
+    expect(toProxyImageSrc(remote)).toContain("/api/wardrobe/image?url=");
     expect(toExportImageSrc("data:image/png;base64,xx")).toBe(
       "data:image/png;base64,xx",
     );
     expect(exportFilename("Mocha Fit")).toBe("mocha-fit-spi.jpg");
+  });
+
+  it("upscales capped StockX product thumbs for export", () => {
+    const src =
+      "https://images.stockx.com/images/x.jpg?fit=fill&w=700&h=500&fm=webp&auto=compress&q=90";
+    const hi = upscaleRemoteImageUrl(src);
+    expect(hi).toContain("w=1600");
+    expect(hi).toContain("h=1200");
+    expect(hi).toContain("fm=jpg");
+    expect(hi).toContain("q=100");
+    expect(hi).not.toContain("auto=compress");
   });
 });
