@@ -22,7 +22,7 @@ import { imageToCutoutPng } from "@/lib/wardrobe/cutout";
 import {
   autoOrganizePieces,
   alignPiecesCenter,
-  pullPiecesTogether,
+  groupAndCenterPieces,
   FIT_BASE_SIZE,
   FIT_CENTER_X,
   snapCenterX,
@@ -314,13 +314,17 @@ function FitEditor({
     onFlash("Locked to equal slots");
   }
 
-  function pullTogether() {
-    if (board.pieces.length < 2) {
-      onFlash("Need at least two pieces");
+  function groupAndCenter() {
+    if (board.pieces.length === 0) {
+      onFlash("Add pieces first");
       return;
     }
-    onChange({ pieces: pullPiecesTogether(board.pieces, displayById) });
-    onFlash("Locked — equal spacing, no overlap");
+    onChange({ pieces: groupAndCenterPieces(board.pieces, displayById) });
+    onFlash(
+      board.pieces.length === 1
+        ? "Centered on the board"
+        : "Grouped and centered",
+    );
   }
 
   async function makeCutouts() {
@@ -437,11 +441,11 @@ function FitEditor({
           </button>
           <button
             type="button"
-            onClick={pullTogether}
-            disabled={board.pieces.length < 2}
+            onClick={groupAndCenter}
+            disabled={board.pieces.length === 0}
             className="rounded-xl border border-dash-border px-3 py-2 text-sm font-semibold text-dash-text hover:border-dash-muted disabled:opacity-40"
           >
-            Pull together
+            Group & center
           </button>
           <button
             type="button"
@@ -464,8 +468,8 @@ function FitEditor({
           </button>
         </div>
         <p className="text-[11px] text-dash-faint">
-          Reset to factory restores the locked equal-slot layout. Export captures
-          the board as a white 1:1 JPEG (share sheet on phones).
+          Group & center packs pieces into a tight stack in the middle. Reset to
+          factory spreads equal slots. Export is a white 1:1 JPEG.
         </p>
         {missing ? (
           <p className="text-xs text-dash-down">

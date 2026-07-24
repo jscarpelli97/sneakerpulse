@@ -26,6 +26,12 @@ export const FIT_EDGE_MARGIN = 6;
 /** Gap between locked slots (prevents touching / overlap). */
 export const FIT_SLOT_GAP = 2.5;
 
+/** Tight gap when packing pieces into a centered group. */
+export const FIT_GROUP_GAP = 0.75;
+
+/** Target piece size (% of board) for a compact centered group. */
+export const FIT_GROUP_SIZE = 24;
+
 /** Snap distance (board %) when dragging near the center guide. */
 export const FIT_CENTER_SNAP = 3.5;
 
@@ -207,13 +213,67 @@ export function alignPiecesCenter(
 }
 
 /**
- * Re-lock into equal non-overlapping slots (same as auto-arrange).
+ * Pack pieces into a tight vertical cluster (kind order) and center
+ * the whole group on the board. Keeps pieces close — unlike auto-arrange,
+ * which spreads them into full-board equal slots.
+ */
+export function groupAndCenterPieces(
+  pieces: FitPiece[],
+  closetById: Map<string, ClosetItem>,
+): FitPiece[] {
+  const ordered = orderedPieces(pieces, closetById);
+  const n = ordered.length;
+  if (n === 0) return [];
+
+  if (n === 1) {
+    const p = ordered[0]!;
+    const { x, y } = centerToOrigin(FIT_CENTER_X, FIT_CENTER_Y, p.scale);
+    return [{ ...p, x, y, rotation: 0, zIndex: 1 }];
+  }
+
+  const gap = FIT_GROUP_GAP;
+  const maxStack = 100 - FIT_EDGE_MARGIN * 2;
+  const maxWidth = maxStack;
+
+  // Prefer a compact outfit size (not full-board slots). Shrink only if needed.
+  let size = FIT_GROUP_SIZE;
+  let totalH = size * n + gap * (n - 1);
+  if (totalH > maxStack) {
+    size = (maxStack - gap * (n - 1)) / n;
+    totalH = size * n + gap * (n - 1);
+  }
+  if (size > maxWidth) {
+    size = maxWidth;
+    totalH = size * n + gap * (n - 1);
+  }
+  const scale = size / FIT_BASE_SIZE;
+
+  let yCursor = FIT_CENTER_Y - totalH / 2;
+  const stacked = ordered.map((piece, i) => {
+    const cy = yCursor + size / 2;
+    const { x, y } = centerToOrigin(FIT_CENTER_X, cy, scale);
+    yCursor += size + gap;
+    return {
+      ...piece,
+      x,
+      y,
+      scale,
+      rotation: 0,
+      zIndex: i + 1,
+    };
+  });
+
+  return centerGroupOnBoard(stacked);
+}
+
+/**
+ * Pack pieces into a tight centered group (alias for groupAndCenterPieces).
  */
 export function pullPiecesTogether(
   pieces: FitPiece[],
   closetById: Map<string, ClosetItem>,
 ): FitPiece[] {
-  return autoOrganizePieces(pieces, closetById);
+  return groupAndCenterPieces(pieces, closetById);
 }
 
 /** Build pieces for a new fit from closet items (outfit ideas → board). */

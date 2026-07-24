@@ -5,6 +5,7 @@ import {
   alignPiecesCenter,
   centerToOrigin,
   FIT_EDGE_MARGIN,
+  groupAndCenterPieces,
   piecesBounds,
   piecesFromClosetItems,
   pieceSize,
@@ -116,6 +117,32 @@ describe("fit layout", () => {
     const b = piecesBounds(organized);
     expect(b.cx).toBeCloseTo(50, 0);
     expect(b.cy).toBeCloseTo(50, 0);
+  });
+
+  it("groups three pieces into a tight centered stack", () => {
+    const closet = [item("t1", "top"), item("b1", "bottom"), item("s1", "sneaker")];
+    const byId = new Map(closet.map((c) => [c.id, c]));
+    const spread = [
+      { ...piece("p1", "t1"), x: 5, y: 5, scale: 1 },
+      { ...piece("p2", "b1"), x: 60, y: 40, scale: 1 },
+      { ...piece("p3", "s1"), x: 10, y: 70, scale: 1 },
+    ];
+    const grouped = groupAndCenterPieces(spread, byId);
+    expect(grouped).toHaveLength(3);
+    expect(anyPiecesOverlap(grouped)).toBe(false);
+
+    const top = grouped.find((p) => p.closetItemId === "t1")!;
+    const bottom = grouped.find((p) => p.closetItemId === "b1")!;
+    const sneaker = grouped.find((p) => p.closetItemId === "s1")!;
+    expect(top.y).toBeLessThan(bottom.y);
+    expect(bottom.y).toBeLessThan(sneaker.y);
+
+    const b = piecesBounds(grouped);
+    expect(b.cx).toBeCloseTo(50, 0);
+    expect(b.cy).toBeCloseTo(50, 0);
+    // Tighter than full-board factory spread for 3 pieces.
+    const factory = piecesBounds(autoOrganizePieces(spread, byId));
+    expect(b.maxY - b.minY).toBeLessThan(factory.maxY - factory.minY - 1);
   });
 });
 
