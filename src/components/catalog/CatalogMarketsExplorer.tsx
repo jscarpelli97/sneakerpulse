@@ -22,26 +22,14 @@ type SortableColumn = {
   label: string;
 };
 
-type MarketsView = "columns" | "icons" | "compare" | "deal";
+type BrowseLayout = "columns" | "icons";
+type MarketsFocus = "browse" | "compare" | "deal";
 
-const VIEW_STORAGE_KEY = "spi-markets-view";
+const LAYOUT_STORAGE_KEY = "spi-markets-view";
 const PAGE_SIZE_STORAGE_KEY = "spi-markets-page-size";
 const PAGE_SIZES = [10, 50, 100] as const;
 type PageSize = (typeof PAGE_SIZES)[number];
 const DEFAULT_PAGE_SIZE: PageSize = 10;
-
-const VIEW_LABELS: Record<MarketsView, { eyebrow: string; blurb: string }> = {
-  columns: { eyebrow: "Browse", blurb: "pairs" },
-  icons: { eyebrow: "Browse", blurb: "pairs" },
-  compare: {
-    eyebrow: "Compare",
-    blurb: "Search and stack 2–5 pairs on ask, premium, volume, and rank",
-  },
-  deal: {
-    eyebrow: "Deal check",
-    blurb: "Size + offer → cop, stretch, or pass vs the board",
-  },
-};
 
 const COLUMNS: SortableColumn[] = [
   { key: "rank", label: "#" },
@@ -54,6 +42,31 @@ const COLUMNS: SortableColumn[] = [
 
 function isPageSize(value: unknown): value is PageSize {
   return PAGE_SIZES.includes(value as PageSize);
+}
+
+function StatusPill({ row }: { row: CatalogQuote }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] ${
+        row.live
+          ? "bg-[rgba(38,166,154,0.12)] text-dash-up"
+          : row.price != null
+            ? "bg-[rgba(212,160,23,0.12)] text-dash-accent"
+            : "bg-dash-elevated text-dash-faint"
+      }`}
+    >
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${
+          row.live
+            ? "animate-blink bg-dash-up"
+            : row.price != null
+              ? "bg-dash-accent"
+              : "bg-dash-faint"
+        }`}
+      />
+      {row.live ? "Live" : row.price != null ? "Snapshot" : "Offline"}
+    </span>
+  );
 }
 
 function BoardPager({
@@ -135,28 +148,24 @@ function BoardPager({
   );
 }
 
-function StatusPill({ row }: { row: CatalogQuote }) {
+function SectionIntro({
+  id,
+  index,
+  title,
+  blurb,
+}: {
+  id: string;
+  index: string;
+  title: string;
+  blurb: string;
+}) {
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] ${
-        row.live
-          ? "bg-[rgba(38,166,154,0.12)] text-dash-up"
-          : row.price != null
-            ? "bg-[rgba(212,160,23,0.12)] text-dash-accent"
-            : "bg-dash-elevated text-dash-faint"
-      }`}
-    >
-      <span
-        className={`h-1.5 w-1.5 rounded-full ${
-          row.live
-            ? "animate-blink bg-dash-up"
-            : row.price != null
-              ? "bg-dash-accent"
-              : "bg-dash-faint"
-        }`}
-      />
-      {row.live ? "Live" : row.price != null ? "Snapshot" : "Offline"}
-    </span>
+    <div id={id} className="scroll-mt-28 space-y-1 px-4 pt-5 sm:px-5">
+      <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
+        {index} · {title}
+      </p>
+      <p className="max-w-2xl text-sm text-dash-muted">{blurb}</p>
+    </div>
   );
 }
 
@@ -177,16 +186,25 @@ function defaultCompareSlugs(
   return out.slice(0, MAX_COMPARE);
 }
 
+function scrollToSection(id: MarketsFocus) {
+  window.requestAnimationFrame(() => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  });
+}
+
 export function CatalogMarketsExplorer({
   rows,
   initialQuery = "",
-  initialView = "columns",
+  initialFocus = "browse",
   initialCompareSlugs = [],
   initialDealSlug,
 }: {
   rows: CatalogQuote[];
   initialQuery?: string;
-  initialView?: MarketsView;
+  initialFocus?: MarketsFocus;
   initialCompareSlugs?: string[];
   initialDealSlug?: string;
 }) {
@@ -194,11 +212,7 @@ export function CatalogMarketsExplorer({
   const [query, setQuery] = useState(initialQuery);
   const [sortKey, setSortKey] = useState<CatalogSortKey>("rank");
   const [sortDir, setSortDir] = useState<CatalogSortDir>("asc");
-  const [view, setView] = useState<MarketsView>(
-    initialView === "compare" || initialView === "deal"
-      ? initialView
-      : "columns",
-  );
+  const [layout, setLayout] = useState<BrowseLayout>("columns");
   const [compareSlugs, setCompareSlugs] = useState(() =>
     defaultCompareSlugs(rows, initialCompareSlugs),
   );
@@ -213,17 +227,13 @@ export function CatalogMarketsExplorer({
   const [, startTransition] = useTransition();
 
   useEffect(() => {
-    if (initialView === "compare" || initialView === "deal") {
-      setView(initialView);
-      return;
-    }
     try {
-      const saved = window.localStorage.getItem(VIEW_STORAGE_KEY);
-      if (saved === "columns" || saved === "icons") setView(saved);
+      const saved = window.localStorage.getItem(LAYOUT_STORAGE_KEY);
+      if (saved === "columns" || saved === "icons") setLayout(saved);
     } catch {
       /* ignore */
     }
-  }, [initialView]);
+  }, []);
 
   useEffect(() => {
     try {
@@ -234,48 +244,43 @@ export function CatalogMarketsExplorer({
     }
   }, []);
 
+  useEffect(() => {
+    if (initialFocus === "compare" || initialFocus === "deal") {
+      scrollToSection(initialFocus);
+    }
+  }, [initialFocus]);
+
   function syncUrl(next: {
-    view: MarketsView;
     q?: string;
     compare?: string[];
-    slug?: string;
+    dealSlug?: string | null;
+    focus?: MarketsFocus;
   }) {
     const params = new URLSearchParams();
     const q = (next.q ?? query).trim();
     if (q) params.set("q", q);
-    if (next.view === "compare") {
-      params.set("view", "compare");
-      const list = next.compare ?? compareSlugs;
-      if (list.length) params.set("s", list.join(","));
-    } else if (next.view === "deal") {
-      params.set("view", "deal");
-      if (next.slug) params.set("slug", next.slug);
-    }
+    const compare = next.compare ?? compareSlugs;
+    if (compare.length) params.set("s", compare.join(","));
+    const deal =
+      next.dealSlug === undefined
+        ? dealSeed
+        : next.dealSlug;
+    if (deal) params.set("slug", deal);
+    const focus = next.focus;
+    if (focus === "compare" || focus === "deal") params.set("view", focus);
     const qs = params.toString();
     startTransition(() => {
-      router.replace(qs ? `/markets?${qs}` : "/markets");
+      router.replace(qs ? `/markets?${qs}` : "/markets", { scroll: false });
     });
   }
 
-  function setViewMode(next: MarketsView) {
-    setView(next);
-    if (next === "columns" || next === "icons") {
-      try {
-        window.localStorage.setItem(VIEW_STORAGE_KEY, next);
-      } catch {
-        /* ignore */
-      }
-      syncUrl({ view: next });
-      return;
+  function setBrowseLayout(next: BrowseLayout) {
+    setLayout(next);
+    try {
+      window.localStorage.setItem(LAYOUT_STORAGE_KEY, next);
+    } catch {
+      /* ignore */
     }
-    if (next === "deal") {
-      syncUrl({ view: "deal", slug: dealSeed ?? undefined });
-      return;
-    }
-    const nextSlugs = defaultCompareSlugs(rows, compareSlugs);
-    setCompareSlugs(nextSlugs);
-    setCompareKey((key) => key + 1);
-    syncUrl({ view: "compare", compare: nextSlugs });
   }
 
   function openCompareWith(slug: string) {
@@ -285,14 +290,14 @@ export function CatalogMarketsExplorer({
     ]);
     setCompareSlugs(next);
     setCompareKey((key) => key + 1);
-    setView("compare");
-    syncUrl({ view: "compare", compare: next });
+    syncUrl({ compare: next, focus: "compare" });
+    scrollToSection("compare");
   }
 
   function openDealWith(slug: string) {
     setDealSeed(slug);
-    setView("deal");
-    syncUrl({ view: "deal", slug });
+    syncUrl({ dealSlug: slug, focus: "deal" });
+    scrollToSection("deal");
   }
 
   const visible = useMemo(() => {
@@ -327,12 +332,7 @@ export function CatalogMarketsExplorer({
   function onQueryChange(value: string) {
     setQuery(value);
     setPage(1);
-    syncUrl({
-      view,
-      q: value,
-      compare: compareSlugs,
-      slug: dealSeed ?? undefined,
-    });
+    syncUrl({ q: value });
   }
 
   function changePageSize(size: PageSize) {
@@ -345,9 +345,7 @@ export function CatalogMarketsExplorer({
     }
   }
 
-  const showSearch = view === "columns" || view === "icons";
-  const viewMeta = VIEW_LABELS[view];
-  const pager = showSearch ? (
+  const pager = (
     <BoardPager
       page={safePage}
       pageCount={pageCount}
@@ -358,80 +356,316 @@ export function CatalogMarketsExplorer({
       onPage={setPage}
       onPageSize={changePageSize}
     />
-  ) : null;
+  );
 
   return (
-    <section className="dash-card animate-rise overflow-hidden">
-      <div className="flex flex-col gap-4 border-b border-dash-border px-4 py-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:px-5">
-        <div>
-          <p className="font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.14em] text-dash-faint">
-            {viewMeta.eyebrow}
-          </p>
-          <p className="mt-1 text-sm text-dash-muted">
-            {view === "columns" || view === "icons"
-              ? visible.length === rows.length
-                ? `${rows.length} ${viewMeta.blurb}`
-                : `${visible.length} of ${rows.length} ${viewMeta.blurb}`
-              : viewMeta.blurb}
-            {view === "columns" ? (
+    <div className="space-y-6">
+      <nav
+        className="sticky top-[calc(env(safe-area-inset-top)+3.5rem)] z-30 flex flex-wrap gap-2 rounded-2xl border border-dash-border bg-dash-surface/95 p-2 shadow-[var(--shadow-sm)] backdrop-blur-xl"
+        aria-label="Markets sections"
+      >
+        {(
+          [
+            ["browse", "Browse"],
+            ["compare", "Compare"],
+            ["deal", "Deal"],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => {
+              syncUrl({ focus: id === "browse" ? undefined : id });
+              scrollToSection(id);
+            }}
+            className="rounded-xl px-3 py-2 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-muted transition-colors hover:bg-dash-elevated hover:text-dash-text"
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      <section className="dash-card animate-rise overflow-hidden">
+        <SectionIntro
+          id="browse"
+          index="01"
+          title="Browse"
+          blurb={`${rows.length} pairs on the board — Columns or Icons, paged so you can scan without drowning.`}
+        />
+        <div className="flex flex-col gap-4 border-b border-dash-border px-4 py-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:px-5">
+          <p className="text-sm text-dash-muted">
+            {visible.length === rows.length
+              ? `${rows.length} pairs`
+              : `${visible.length} of ${rows.length} pairs`}
+            {layout === "columns" ? (
               <span className="text-dash-faint"> · hover a thumb to enlarge</span>
             ) : null}
           </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <div
-            className="inline-flex rounded-xl border border-dash-border bg-dash-elevated p-1"
-            role="group"
-            aria-label="Board layout"
-          >
-            {(
-              [
-                ["columns", "Columns"],
-                ["compare", "Compare"],
-                ["deal", "Deal"],
-                ["icons", "Icons"],
-              ] as const
-            ).map(([id, label]) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setViewMode(id)}
-                aria-pressed={view === id}
-                className={`rounded-lg px-3 py-1.5 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] transition-colors ${
-                  view === id
-                    ? "bg-dash-accent text-dash-bg"
-                    : "text-dash-muted hover:text-dash-text"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-3">
+            <div
+              className="inline-flex rounded-xl border border-dash-border bg-dash-elevated p-1"
+              role="group"
+              aria-label="Browse layout"
+            >
+              {(
+                [
+                  ["columns", "Columns"],
+                  ["icons", "Icons"],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setBrowseLayout(id)}
+                  aria-pressed={layout === id}
+                  className={`rounded-lg px-3 py-1.5 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] transition-colors ${
+                    layout === id
+                      ? "bg-dash-accent text-dash-bg"
+                      : "text-dash-muted hover:text-dash-text"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <label className="sr-only" htmlFor="markets-search">
+              Search markets
+            </label>
+            <input
+              id="markets-search"
+              type="search"
+              value={query}
+              onChange={(e) => onQueryChange(e.target.value)}
+              placeholder="Name, style ID, brand…"
+              className="w-full min-w-[220px] rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent sm:w-72"
+            />
           </div>
-          {showSearch ? (
-            <>
-              <label className="sr-only" htmlFor="markets-search">
-                Search markets
-              </label>
-              <input
-                id="markets-search"
-                type="search"
-                value={query}
-                onChange={(e) => onQueryChange(e.target.value)}
-                placeholder="Name, style ID, brand…"
-                className="w-full min-w-[220px] rounded-xl border border-dash-border bg-dash-elevated px-3 py-2.5 text-sm text-dash-text outline-none placeholder:text-dash-faint hover:border-dash-muted focus:border-dash-accent sm:w-72"
-              />
-            </>
-          ) : null}
         </div>
-      </div>
 
-      {showSearch && visible.length > 0 ? (
-        <div className="border-b border-dash-border px-4 py-3 sm:px-5">
-          {pager}
-        </div>
-      ) : null}
+        {visible.length > 0 ? (
+          <div className="border-b border-dash-border px-4 py-3 sm:px-5">
+            {pager}
+          </div>
+        ) : null}
 
-      {view === "compare" ? (
+        {layout === "columns" ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left text-sm">
+              <thead className="border-b border-dash-border bg-dash-elevated/60 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
+                <tr>
+                  {COLUMNS.map((col) => {
+                    const active = sortKey === col.key;
+                    return (
+                      <th
+                        key={col.key}
+                        className="px-4 py-3.5 font-medium sm:px-5"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => toggleSort(col.key)}
+                          className={`inline-flex items-center gap-1.5 rounded-md px-1 py-0.5 transition-colors hover:text-dash-text ${
+                            active ? "text-dash-accent" : "text-dash-faint"
+                          }`}
+                        >
+                          {col.label}
+                          <span aria-hidden className="text-[10px] opacity-80">
+                            {active ? (sortDir === "asc" ? "▲" : "▼") : "◇"}
+                          </span>
+                        </button>
+                      </th>
+                    );
+                  })}
+                  <th className="px-4 py-3.5 font-medium sm:px-5"> </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--dash-border-subtle)]">
+                {visible.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="px-4 py-10 text-center text-sm text-dash-muted sm:px-5"
+                    >
+                      No pairs match “{query.trim()}”.
+                    </td>
+                  </tr>
+                ) : (
+                  pageRows.map((row, index) => (
+                    <tr
+                      key={row.slug}
+                      className="group transition-colors hover:bg-dash-elevated/55"
+                    >
+                      <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
+                        {pageOffset + index + 1}
+                      </td>
+                      <td className="px-4 py-3.5 sm:px-5">
+                        <Link
+                          href={`/sneakers/${row.slug}`}
+                          className="flex items-center gap-3"
+                        >
+                          <SneakerThumb
+                            src={row.fallbackImage}
+                            alt={row.name}
+                            size={44}
+                            previewWidth={300}
+                          />
+                          <span>
+                            <span className="block font-semibold text-dash-text transition-colors group-hover:text-white">
+                              {row.name}
+                            </span>
+                            <span className="block text-xs text-dash-faint">
+                              {row.brand}
+                              {row.colorway && row.colorway !== "—"
+                                ? ` · ${row.colorway}`
+                                : ""}
+                              {row.rank != null
+                                ? ` · StockX #${row.rank}`
+                                : ""}
+                            </span>
+                          </span>
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] font-medium text-dash-accent sm:px-5">
+                        {row.ticker}
+                      </td>
+                      <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-dash-text sm:px-5">
+                        {row.price != null
+                          ? formatMaybeMoney(row.price)
+                          : "—"}
+                      </td>
+                      <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
+                        {row.weeklyOrders != null
+                          ? formatNumber(row.weeklyOrders)
+                          : "—"}
+                      </td>
+                      <td className="px-4 py-3.5 sm:px-5">
+                        <StatusPill row={row} />
+                      </td>
+                      <td className="px-4 py-3.5 sm:px-5">
+                        <div className="flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                          <button
+                            type="button"
+                            onClick={() => openCompareWith(row.slug)}
+                            className="rounded-lg border border-dash-border px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted hover:border-dash-muted hover:text-dash-text"
+                          >
+                            Vs
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openDealWith(row.slug)}
+                            className="rounded-lg border border-dash-border px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted hover:border-dash-muted hover:text-dash-text"
+                          >
+                            Deal
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-4 sm:p-5">
+            {visible.length === 0 ? (
+              <p className="py-10 text-center text-sm text-dash-muted">
+                No pairs match “{query.trim()}”.
+              </p>
+            ) : (
+              <>
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {COLUMNS.map((col) => {
+                    const active = sortKey === col.key;
+                    return (
+                      <button
+                        key={col.key}
+                        type="button"
+                        onClick={() => toggleSort(col.key)}
+                        className={`rounded-lg border px-2.5 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] transition-colors ${
+                          active
+                            ? "border-dash-accent text-dash-accent"
+                            : "border-dash-border text-dash-faint hover:text-dash-text"
+                        }`}
+                      >
+                        {col.label}
+                        {active ? (sortDir === "asc" ? " ▲" : " ▼") : ""}
+                      </button>
+                    );
+                  })}
+                </div>
+                <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                  {pageRows.map((row, index) => (
+                    <li key={row.slug} className="relative">
+                      <Link
+                        href={`/sneakers/${row.slug}`}
+                        className="group flex h-full flex-col overflow-hidden rounded-2xl border border-dash-border bg-dash-elevated/25 transition-colors hover:border-dash-muted hover:bg-dash-elevated/55"
+                      >
+                        <div className="relative aspect-[7/5] border-b border-dash-border bg-dash-bg/60">
+                          <Image
+                            src={row.fallbackImage}
+                            alt={row.name}
+                            fill
+                            className="object-contain p-3 transition-transform duration-300 group-hover:scale-[1.04]"
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                          />
+                          <span className="absolute left-2 top-2 rounded-md bg-dash-bg/85 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] tabular-nums text-dash-muted backdrop-blur-sm">
+                            #{pageOffset + index + 1}
+                          </span>
+                        </div>
+                        <div className="flex flex-1 flex-col gap-1.5 p-3">
+                          <p className="line-clamp-2 text-sm font-semibold leading-snug text-dash-text transition-colors group-hover:text-white">
+                            {row.name}
+                          </p>
+                          <p className="truncate font-[family-name:var(--font-plex-mono)] text-[11px] text-dash-accent">
+                            {row.ticker}
+                          </p>
+                          <div className="mt-auto flex items-end justify-between gap-2 pt-1">
+                            <p className="font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums text-dash-text">
+                              {row.price != null
+                                ? formatMaybeMoney(row.price)
+                                : "—"}
+                            </p>
+                            <StatusPill row={row} />
+                          </div>
+                        </div>
+                      </Link>
+                      <div className="absolute right-2 top-2 flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => openCompareWith(row.slug)}
+                          className="rounded-md border border-dash-border bg-dash-bg/90 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted backdrop-blur-sm hover:text-dash-text"
+                        >
+                          Vs
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openDealWith(row.slug)}
+                          className="rounded-md border border-dash-border bg-dash-bg/90 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted backdrop-blur-sm hover:text-dash-text"
+                        >
+                          Deal
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        )}
+
+        {visible.length > 0 ? (
+          <div className="border-t border-dash-border px-4 py-3 sm:px-5">
+            {pager}
+          </div>
+        ) : null}
+      </section>
+
+      <section className="dash-card animate-rise overflow-hidden">
+        <SectionIntro
+          id="compare"
+          index="02"
+          title="Compare"
+          blurb="Search the board or quick-pick top sellers — stack 2–5 pairs on ask, premium, volume, and rank."
+        />
         <div className="p-4 sm:p-5">
           {rows.length < 2 ? (
             <p className="py-10 text-center text-sm text-dash-muted">
@@ -444,224 +678,31 @@ export function CatalogMarketsExplorer({
               initialSlugs={compareSlugs}
               onSlugsChange={(next) => {
                 setCompareSlugs(next);
-                syncUrl({ view: "compare", compare: next });
+                syncUrl({ compare: next });
               }}
             />
           )}
         </div>
-      ) : view === "deal" ? (
+      </section>
+
+      <section className="dash-card animate-rise overflow-hidden">
+        <SectionIntro
+          id="deal"
+          index="03"
+          title="Deal check"
+          blurb="Search any board pair — or jump from the top-10 list — then size + offer → cop, stretch, or pass."
+        />
         <div className="p-4 sm:p-5">
           <MarketsDealCheck
             quotes={rows}
             seedSlug={dealSeed}
             onClearSeed={() => setDealSeed(null)}
             onSlugChange={(next) => {
-              syncUrl({ view: "deal", slug: next || undefined });
+              syncUrl({ dealSlug: next || null });
             }}
           />
         </div>
-      ) : view === "columns" ? (
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-dash-border bg-dash-elevated/60 font-[family-name:var(--font-plex-mono)] text-[11px] uppercase tracking-[0.12em] text-dash-faint">
-              <tr>
-                {COLUMNS.map((col) => {
-                  const active = sortKey === col.key;
-                  return (
-                    <th key={col.key} className="px-4 py-3.5 font-medium sm:px-5">
-                      <button
-                        type="button"
-                        onClick={() => toggleSort(col.key)}
-                        className={`inline-flex items-center gap-1.5 rounded-md px-1 py-0.5 transition-colors hover:text-dash-text ${
-                          active ? "text-dash-accent" : "text-dash-faint"
-                        }`}
-                      >
-                        {col.label}
-                        <span aria-hidden className="text-[10px] opacity-80">
-                          {active ? (sortDir === "asc" ? "▲" : "▼") : "◇"}
-                        </span>
-                      </button>
-                    </th>
-                  );
-                })}
-                <th className="px-4 py-3.5 font-medium sm:px-5"> </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--dash-border-subtle)]">
-              {visible.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-4 py-10 text-center text-sm text-dash-muted sm:px-5"
-                  >
-                    No pairs match “{query.trim()}”.
-                  </td>
-                </tr>
-              ) : (
-                pageRows.map((row, index) => (
-                  <tr
-                    key={row.slug}
-                    className="group transition-colors hover:bg-dash-elevated/55"
-                  >
-                    <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
-                      {pageOffset + index + 1}
-                    </td>
-                    <td className="px-4 py-3.5 sm:px-5">
-                      <Link
-                        href={`/sneakers/${row.slug}`}
-                        className="flex items-center gap-3"
-                      >
-                        <SneakerThumb
-                          src={row.fallbackImage}
-                          alt={row.name}
-                          size={44}
-                          previewWidth={300}
-                        />
-                        <span>
-                          <span className="block font-semibold text-dash-text transition-colors group-hover:text-white">
-                            {row.name}
-                          </span>
-                          <span className="block text-xs text-dash-faint">
-                            {row.brand}
-                            {row.colorway && row.colorway !== "—"
-                              ? ` · ${row.colorway}`
-                              : ""}
-                            {row.rank != null ? ` · StockX #${row.rank}` : ""}
-                          </span>
-                        </span>
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] font-medium text-dash-accent sm:px-5">
-                      {row.ticker}
-                    </td>
-                    <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] font-semibold tabular-nums text-dash-text sm:px-5">
-                      {row.price != null ? formatMaybeMoney(row.price) : "—"}
-                    </td>
-                    <td className="px-4 py-3.5 font-[family-name:var(--font-plex-mono)] tabular-nums text-dash-muted sm:px-5">
-                      {row.weeklyOrders != null
-                        ? formatNumber(row.weeklyOrders)
-                        : "—"}
-                    </td>
-                    <td className="px-4 py-3.5 sm:px-5">
-                      <StatusPill row={row} />
-                    </td>
-                    <td className="px-4 py-3.5 sm:px-5">
-                      <div className="flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-                        <button
-                          type="button"
-                          onClick={() => openCompareWith(row.slug)}
-                          className="rounded-lg border border-dash-border px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted hover:border-dash-muted hover:text-dash-text"
-                        >
-                          Vs
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => openDealWith(row.slug)}
-                          className="rounded-lg border border-dash-border px-2 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted hover:border-dash-muted hover:text-dash-text"
-                        >
-                          Deal
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="p-4 sm:p-5">
-          {visible.length === 0 ? (
-            <p className="py-10 text-center text-sm text-dash-muted">
-              No pairs match “{query.trim()}”.
-            </p>
-          ) : (
-            <>
-              <div className="mb-4 flex flex-wrap gap-2">
-                {COLUMNS.map((col) => {
-                  const active = sortKey === col.key;
-                  return (
-                    <button
-                      key={col.key}
-                      type="button"
-                      onClick={() => toggleSort(col.key)}
-                      className={`rounded-lg border px-2.5 py-1 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] transition-colors ${
-                        active
-                          ? "border-dash-accent text-dash-accent"
-                          : "border-dash-border text-dash-faint hover:text-dash-text"
-                      }`}
-                    >
-                      {col.label}
-                      {active ? (sortDir === "asc" ? " ▲" : " ▼") : ""}
-                    </button>
-                  );
-                })}
-              </div>
-              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                {pageRows.map((row, index) => (
-                  <li key={row.slug} className="relative">
-                    <Link
-                      href={`/sneakers/${row.slug}`}
-                      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-dash-border bg-dash-elevated/25 transition-colors hover:border-dash-muted hover:bg-dash-elevated/55"
-                    >
-                      <div className="relative aspect-[7/5] border-b border-dash-border bg-dash-bg/60">
-                        <Image
-                          src={row.fallbackImage}
-                          alt={row.name}
-                          fill
-                          className="object-contain p-3 transition-transform duration-300 group-hover:scale-[1.04]"
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
-                        />
-                        <span className="absolute left-2 top-2 rounded-md bg-dash-bg/85 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] tabular-nums text-dash-muted backdrop-blur-sm">
-                          #{pageOffset + index + 1}
-                        </span>
-                      </div>
-                      <div className="flex flex-1 flex-col gap-1.5 p-3">
-                        <p className="line-clamp-2 text-sm font-semibold leading-snug text-dash-text transition-colors group-hover:text-white">
-                          {row.name}
-                        </p>
-                        <p className="truncate font-[family-name:var(--font-plex-mono)] text-[11px] text-dash-accent">
-                          {row.ticker}
-                        </p>
-                        <div className="mt-auto flex items-end justify-between gap-2 pt-1">
-                          <p className="font-[family-name:var(--font-plex-mono)] text-sm font-semibold tabular-nums text-dash-text">
-                            {row.price != null
-                              ? formatMaybeMoney(row.price)
-                              : "—"}
-                          </p>
-                          <StatusPill row={row} />
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="absolute right-2 top-2 flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => openCompareWith(row.slug)}
-                        className="rounded-md border border-dash-border bg-dash-bg/90 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted backdrop-blur-sm hover:text-dash-text"
-                      >
-                        Vs
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => openDealWith(row.slug)}
-                        className="rounded-md border border-dash-border bg-dash-bg/90 px-1.5 py-0.5 font-[family-name:var(--font-plex-mono)] text-[10px] uppercase tracking-[0.12em] text-dash-muted backdrop-blur-sm hover:text-dash-text"
-                      >
-                        Deal
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      )}
-
-      {showSearch && visible.length > 0 ? (
-        <div className="border-t border-dash-border px-4 py-3 sm:px-5">
-          {pager}
-        </div>
-      ) : null}
-    </section>
+      </section>
+    </div>
   );
 }

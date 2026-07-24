@@ -60,12 +60,12 @@ export const PRODUCT_TOOLS = [
   {
     title: "Compare",
     href: "/markets?view=compare",
-    body: "Stack up to five colorways on ask, retail, premium, and flow — search the board, built into Markets.",
+    body: "Search the board or quick-pick top sellers — stack up to five colorways on ask, retail, premium, and flow.",
   },
   {
     title: "Deal check",
     href: "/markets?view=deal",
-    body: "Size + offer → heat check: cop, stretch, or pass vs that size’s ask — from the Markets toolbar.",
+    body: "Search any pair (or pick a top seller) → size + offer → cop, stretch, or pass.",
   },
 ] as const;
 

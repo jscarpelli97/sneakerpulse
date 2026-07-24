@@ -9,6 +9,10 @@ import {
   useCompareMarkets,
   type CompareQuote,
 } from "@/hooks/useCompareMarkets";
+import {
+  filterBoardEntries,
+  TopSellersQuickPick,
+} from "@/components/markets/BoardPairPicker";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 import { changeClass, formatMaybeMoney } from "@/utils/format";
 
@@ -22,24 +26,6 @@ const CARD_GLOWS = [
 
 function catalogPick(sneakers: SneakerCatalogEntry[], slug: string) {
   return sneakers.find((s) => s.slug === slug) ?? null;
-}
-
-function filterEntries(sneakers: SneakerCatalogEntry[], query: string) {
-  const q = query.trim().toLowerCase();
-  if (!q) return sneakers;
-  return sneakers.filter((row) => {
-    const haystack = [
-      row.name,
-      row.brand,
-      row.ticker,
-      row.styleCode,
-      row.colorway,
-      row.slug,
-    ]
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(q);
-  });
 }
 
 function premiumLabel(price: number | null, retail: number | null) {
@@ -189,7 +175,7 @@ function PairSearchPicker({
   const selectedSet = useMemo(() => new Set(selected), [selected]);
 
   const matches = useMemo(() => {
-    return filterEntries(sneakers, q)
+    return filterBoardEntries(sneakers, q)
       .filter((row) => !selectedSet.has(row.slug))
       .slice(0, 8);
   }, [sneakers, q, selectedSet]);
@@ -308,6 +294,12 @@ function PairSearchPicker({
         {selected.length}/{MAX_COMPARE} selected · {MIN_COMPARE}–{MAX_COMPARE}{" "}
         pairs
       </p>
+      <TopSellersQuickPick
+        sneakers={sneakers}
+        exclude={selected}
+        disabled={!canAdd}
+        onPick={onAdd}
+      />
     </div>
   );
 }

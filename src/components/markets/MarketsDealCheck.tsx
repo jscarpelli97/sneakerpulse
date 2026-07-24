@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchMarket } from "@/api/market";
 import { DealCheckPanel } from "@/components/market/DealCheckPanel";
+import {
+  BoardPairSearch,
+  TopSellersQuickPick,
+} from "@/components/markets/BoardPairPicker";
 import type { CatalogQuote } from "@/services/market/getCatalogQuotes";
 import type { SneakerMarket } from "@/types/market";
 
@@ -19,17 +23,6 @@ export function MarketsDealCheck({
   onClearSeed,
   onSlugChange,
 }: MarketsDealCheckProps) {
-  const options = useMemo(
-    () =>
-      [...quotes]
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map((quote) => ({
-          slug: quote.slug,
-          label: `${quote.name}${quote.ticker ? ` · ${quote.ticker}` : ""}`,
-        })),
-    [quotes],
-  );
-
   const [slug, setSlug] = useState(seedSlug ?? "");
   const [market, setMarket] = useState<SneakerMarket | null>(null);
   const [loading, setLoading] = useState(false);
@@ -81,43 +74,30 @@ export function MarketsDealCheck({
     };
   }, [slug]);
 
+  function selectSlug(next: string) {
+    setSlug(next);
+    onSlugChange?.(next);
+  }
+
   return (
     <div className="space-y-5">
-      <div className="space-y-2">
-        <h2 className="font-[family-name:var(--font-syne)] text-2xl font-bold tracking-tight text-dash-text sm:text-3xl">
-          Ask vs. the board — before you buy.
-        </h2>
-        <p className="max-w-2xl text-sm leading-relaxed text-dash-muted">
-          Pick any pair on this board. Deal check scores your size and offer
-          against the ladder — same relative read you get on a pair page.
-        </p>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <BoardPairSearch
+          sneakers={quotes}
+          selectedSlug={slug}
+          onSelect={selectSlug}
+        />
+        <TopSellersQuickPick
+          sneakers={quotes}
+          exclude={slug ? [slug] : []}
+          onPick={selectSlug}
+        />
       </div>
-
-      <label className="block max-w-xl space-y-2">
-        <span className="font-[family-name:var(--font-plex-mono)] text-[10px] font-semibold uppercase tracking-[0.18em] text-dash-faint">
-          Pair
-        </span>
-        <select
-          value={slug}
-          onChange={(event) => {
-            const next = event.target.value;
-            setSlug(next);
-            onSlugChange?.(next);
-          }}
-          className="w-full rounded-xl border border-dash-border bg-dash-elevated px-3 py-3 text-sm text-dash-text outline-none transition focus:border-dash-accent"
-        >
-          <option value="">Select a sneaker…</option>
-          {options.map((option) => (
-            <option key={option.slug} value={option.slug}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
 
       {!slug ? (
         <p className="rounded-2xl border border-dashed border-dash-border bg-dash-elevated/30 px-5 py-10 text-sm text-dash-muted">
-          Choose a pair above, or tap Deal on any row in Columns / Icons.
+          Search the board or quick-pick a top seller. You can also tap Deal on
+          any row in Browse.
         </p>
       ) : null}
 

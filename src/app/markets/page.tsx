@@ -63,8 +63,8 @@ export default async function MarketsBrowsePage({
     total: quotes.length,
     asOf: getOfflineCatalogAsOf(),
   });
-  const initialView =
-    view === "compare" || view === "deal" ? view : "columns";
+  const initialFocus =
+    view === "compare" || view === "deal" ? view : "browse";
 
   return (
     <div className="dashboard flex min-h-screen flex-col bg-dash-bg text-dash-text">
@@ -86,9 +86,8 @@ export default async function MarketsBrowsePage({
             </h1>
             <p className="mt-3 text-base leading-relaxed text-dash-muted md:text-lg">
               Top {quotes.length} sneakers by sales volume — board # is 1–
-              {quotes.length} in order. Browse 10, 50, or 100 at a time; use
-              Compare and Deal in the toolbar, or open any pair for the full
-              page.
+              {quotes.length} in order. Three sections: Browse (Columns /
+              Icons), Compare, and Deal check.
             </p>
           </header>
           {access.gated && publicPlus ? (
@@ -106,7 +105,7 @@ export default async function MarketsBrowsePage({
           <CatalogMarketsExplorer
             rows={quotes}
             initialQuery={typeof q === "string" ? q : ""}
-            initialView={initialView}
+            initialFocus={initialFocus}
             initialCompareSlugs={parseCompareSlugs({ s, a, b })}
             initialDealSlug={typeof slug === "string" ? slug : undefined}
           />
