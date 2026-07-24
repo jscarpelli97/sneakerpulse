@@ -3,7 +3,7 @@ import {
   resolveHoldingAsk,
   type HoldingAskSource,
 } from "@/lib/portfolio/resolveHoldingAsk";
-import { getOfflineQuoteBySlug } from "@/services/catalog/sneakers";
+import { resolveCatalogQuoteBySlug } from "@/services/catalog/sneakers";
 import { mapProductToMarket } from "@/services/market/mapProductToMarket";
 import type { SizeAsk } from "@/types/market";
 
@@ -46,7 +46,7 @@ export async function getPortfolioSizeAsks(
 
   await Promise.all(
     uniqueSlugs.map(async (slug) => {
-      const offline = getOfflineQuoteBySlug(slug);
+      const offline = await resolveCatalogQuoteBySlug(slug);
       const catalogFallback = {
         slug,
         ticker: offline?.ticker ?? slug.slice(0, 8).toUpperCase(),
@@ -103,23 +103,25 @@ export async function getPortfolioSizeAsks(
     }),
   );
 
-  return lines.map((line) => {
-    const ladder = ladders.get(line.slug);
-    const offline = getOfflineQuoteBySlug(line.slug);
-    const resolved = resolveHoldingAsk({
-      holdingSize: line.size,
-      sizes: ladder?.sizes,
-      catalogPrice: offline?.price ?? null,
-      marketPrice: ladder?.marketPrice ?? null,
-      statsLowestAsk: ladder?.statsLowestAsk ?? null,
-    });
-    return {
-      id: line.id,
-      slug: line.slug,
-      size: line.size,
-      ask: resolved.ask,
-      source: resolved.source,
-      live: Boolean(ladder?.live && resolved.source === "size"),
-    };
-  });
+  return await Promise.all(
+    lines.map(async (line) => {
+      const ladder = ladders.get(line.slug);
+      const offline = await resolveCatalogQuoteBySlug(line.slug);
+      const resolved = resolveHoldingAsk({
+        holdingSize: line.size,
+        sizes: ladder?.sizes,
+        catalogPrice: offline?.price ?? null,
+        marketPrice: ladder?.marketPrice ?? null,
+        statsLowestAsk: ladder?.statsLowestAsk ?? null,
+      });
+      return {
+        id: line.id,
+        slug: line.slug,
+        size: line.size,
+        ask: resolved.ask,
+        source: resolved.source,
+        live: Boolean(ladder?.live && resolved.source === "size"),
+      };
+    }),
+  );
 }

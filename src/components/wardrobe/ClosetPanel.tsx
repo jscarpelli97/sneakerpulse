@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 import { ClosetImage } from "@/components/wardrobe/ClosetImage";
 import { useCatalogSearch } from "@/hooks/useCatalogSearch";
+import { rememberCatalogHit } from "@/lib/catalog/rememberClient";
 import { fileToClosetDataUrl } from "@/lib/wardrobe/image";
 import {
   getOutfitIdeas,
@@ -560,7 +561,10 @@ export function ClosetPanel({
                     <button
                       key={row.slug}
                       type="button"
-                      onClick={() => setSelectedSlug(row.slug)}
+                      onClick={() => {
+                        rememberCatalogHit(row);
+                        setSelectedSlug(row.slug);
+                      }}
                       className={`flex items-center gap-3 rounded-xl border px-3 py-2 text-left ${
                         active
                           ? "border-dash-accent bg-dash-accent/10"

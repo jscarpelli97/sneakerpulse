@@ -6,7 +6,7 @@ vi.mock("@/lib/kicksdb/client", () => ({
 }));
 
 vi.mock("@/services/catalog/sneakers", () => ({
-  getOfflineQuoteBySlug: vi.fn(() => ({
+  resolveCatalogQuoteBySlug: vi.fn(async () => ({
     slug: "air-jordan-1-retro-low-og-mocha",
     ticker: "CZ0790-102",
     styleCode: "CZ0790-102",
@@ -22,6 +22,7 @@ vi.mock("@/services/catalog/sneakers", () => ({
     weeklyOrders: 10,
     rank: 3,
     featured: false,
+    live: false,
   })),
 }));
 

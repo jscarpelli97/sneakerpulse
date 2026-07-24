@@ -6,6 +6,7 @@ import {
   useCatalogSearch,
   type CatalogSearchHit,
 } from "@/hooks/useCatalogSearch";
+import { rememberCatalogHit } from "@/lib/catalog/rememberClient";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 
 export const TOP_SELLERS_QUICK_LIMIT = 10;
@@ -344,6 +345,7 @@ export function BoardPairSearch({
           emptyHint="Type at least 2 characters to search beyond the board."
           actionLabel="Select"
           onPick={(hit) => {
+            rememberCatalogHit(hit);
             setPicked(hit);
             onSelect(hit.slug, hit);
             setQ("");
@@ -459,6 +461,7 @@ export function BoardPairMultiSearch({
             emptyHint="Type at least 2 characters to search beyond the board."
             actionLabel="Add"
             onPick={(hit) => {
+              rememberCatalogHit(hit);
               onAdd(hit.slug, hit);
               setQ("");
               setOpen(false);

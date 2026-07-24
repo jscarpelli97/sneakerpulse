@@ -1,4 +1,7 @@
-import { getSneakerBySlug, getOfflineQuoteBySlug } from "@/services/catalog/sneakers";
+import {
+  getSneakerBySlug,
+  resolveCatalogQuoteBySlug,
+} from "@/services/catalog/sneakers";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 import {
   fetchStockxDailySales,
@@ -7,6 +10,7 @@ import {
 } from "@/lib/kicksdb/client";
 import { kicksLiveReadsEnabled } from "@/lib/dataMode";
 import { mapListedProductToCatalog } from "@/services/catalog/mapProductToCatalog";
+import { rememberProductLater } from "@/services/catalog/discoveredProducts";
 import { resolveLocalHistory } from "@/services/market/historyStore";
 import { getEbayCompsForProduct } from "@/services/market/getEbayComps";
 import { emptyMarket, mapProductToMarket } from "@/services/market/mapProductToMarket";
@@ -33,12 +37,12 @@ async function withEbayComps(market: SneakerMarket): Promise<SneakerMarket> {
 }
 
 async function marketFromCachedCatalog(slug: string): Promise<MarketLoadResult> {
-  const quote = getOfflineQuoteBySlug(slug);
+  const quote = await resolveCatalogQuoteBySlug(slug);
   if (!quote) {
     return {
       ok: false,
       code: "not_found",
-      error: `Sneaker "${slug}" was not found in the free offline catalog.`,
+      error: `Sneaker "${slug}" was not found in the local catalog.`,
     };
   }
 
@@ -158,6 +162,18 @@ export async function getMarketBySlug(slug: string): Promise<MarketLoadResult> {
       fallbackImage: product.image || "",
       rank: product.rank ?? null,
     } satisfies SneakerCatalogEntry);
+
+  rememberProductLater({
+    ...catalog,
+    price:
+      typeof product.min_price === "number"
+        ? product.min_price
+        : typeof product.avg_price === "number"
+          ? product.avg_price
+          : null,
+    weeklyOrders: product.weekly_orders ?? null,
+    source: "market",
+  });
 
   let upstreamStatus: UpstreamStatus = productRes.cacheHit
     ? "cached"

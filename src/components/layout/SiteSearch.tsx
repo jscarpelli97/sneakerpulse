@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useCatalogSearch } from "@/hooks/useCatalogSearch";
+import { rememberCatalogHit } from "@/lib/catalog/rememberClient";
 
 /**
  * Header search — local debounce via useCatalogSearch (no KicksDB until 2+ chars).
@@ -32,25 +33,26 @@ export function SiteSearch({
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
+  function goToPair(slug: string, hit?: (typeof hits)[number]) {
+    if (hit) rememberCatalogHit(hit);
+    setOpen(false);
+    setQuery("");
+    startTransition(() => {
+      router.push(`/sneakers/${slug}`);
+    });
+  }
+
   function submit(event: FormEvent) {
     event.preventDefault();
     const q = query.trim();
     if (hits[0]) {
-      goToPair(hits[0].slug);
+      goToPair(hits[0].slug, hits[0]);
       return;
     }
     startTransition(() => {
       router.push(q ? `/markets?q=${encodeURIComponent(q)}` : "/markets");
     });
     setOpen(false);
-  }
-
-  function goToPair(slug: string) {
-    setOpen(false);
-    setQuery("");
-    startTransition(() => {
-      router.push(`/sneakers/${slug}`);
-    });
   }
 
   return (
@@ -98,6 +100,7 @@ export function SiteSearch({
                   href={`/sneakers/${hit.slug}`}
                   className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-dash-elevated"
                   onClick={() => {
+                    rememberCatalogHit(hit);
                     setOpen(false);
                     setQuery("");
                   }}

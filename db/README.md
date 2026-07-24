@@ -13,6 +13,9 @@ in `src/data/` until a database is wired in. Portfolio / Wardrobe accounts use
 `scripts/migrate-users.mjs`); otherwise they fall back to a device-local vault
 (`src/lib/portfolio/localVault.ts`).
 
+Searched pairs are cached in `discovered_products` (same users schema) so a
+lookup is reused site-wide without re-hitting KicksDB.
+
 ## Tables
 
 ### `marketplaces`

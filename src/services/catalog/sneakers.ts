@@ -2,6 +2,7 @@ import {
   getOfflineCatalogEntries,
   getOfflineCatalogQuotes,
   getOfflineQuoteBySlug,
+  resolveCatalogQuoteBySlug,
 } from "@/services/catalog/offlineCatalog";
 import {
   mapListedProductToCatalog,
@@ -15,6 +16,10 @@ import {
   getKicksApiKey,
 } from "@/lib/kicksdb/client";
 import { kicksLiveReadsEnabled } from "@/lib/dataMode";
+import {
+  quoteToCatalogEntry,
+  rememberProductLater,
+} from "@/services/catalog/discoveredProducts";
 import type { SneakerCatalogEntry } from "@/types/catalog";
 
 export type { SneakerCatalogEntry };
@@ -75,31 +80,31 @@ export async function getSneakerBySlug(slug: string) {
   const hit = catalog.find((sneaker) => sneaker.slug === slug);
   if (hit) return hit;
 
-  const offline = getOfflineQuoteBySlug(slug);
-  if (offline) {
-    return {
-      slug: offline.slug,
-      ticker: offline.ticker,
-      styleCode: offline.styleCode,
-      name: offline.name,
-      brand: offline.brand,
-      year: offline.year,
-      releaseDate: offline.releaseDate,
-      colorway: offline.colorway,
-      retail: offline.retail,
-      stockxUrl: offline.stockxUrl,
-      fallbackImage: offline.fallbackImage,
-      featured: offline.featured,
-      rank: offline.rank,
-    };
-  }
+  const resolved = await resolveCatalogQuoteBySlug(slug);
+  if (resolved) return quoteToCatalogEntry(resolved);
 
   // Allow market pages for any StockX slug even if it falls out of the tracked top sellers.
   const apiKey = getKicksApiKey();
   if (!apiKey || !kicksLiveReadsEnabled()) return null;
   const res = await fetchStockxProduct(slug, apiKey);
   if (!res.ok) return null;
-  return mapListedProductToCatalog(res.data.data);
+  const mapped = mapListedProductToCatalog(res.data.data);
+  if (mapped) {
+    rememberProductLater({
+      ...mapped,
+      price:
+        typeof res.data.data.min_price === "number"
+          ? res.data.data.min_price
+          : null,
+      weeklyOrders: res.data.data.weekly_orders ?? null,
+      source: "market",
+    });
+  }
+  return mapped;
 }
 
-export { getOfflineCatalogQuotes, getOfflineQuoteBySlug };
+export {
+  getOfflineCatalogQuotes,
+  getOfflineQuoteBySlug,
+  resolveCatalogQuoteBySlug,
+};

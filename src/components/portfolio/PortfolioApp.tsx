@@ -17,6 +17,7 @@ import {
 } from "@/lib/portfolio/vault";
 import { changeClass, formatMaybeMoney, formatMoney } from "@/utils/format";
 import { useCatalogSearch } from "@/hooks/useCatalogSearch";
+import { rememberCatalogHit } from "@/lib/catalog/rememberClient";
 import type { FormEvent } from "react";
 
 type CatalogRow = {
@@ -575,6 +576,7 @@ export function PortfolioApp() {
                     <button
                       type="button"
                       onClick={() => {
+                        rememberCatalogHit(row);
                         setSelectedSlug(row.slug);
                         setQuery(row.name);
                       }}

@@ -54,4 +54,33 @@ CREATE TABLE IF NOT EXISTS kicks_quota (
   updated_at  timestamptz NOT NULL DEFAULT now()
 );
 
+-- Pairs looked up via search / market pages — reused site-wide without
+-- re-hitting KicksDB for the same slug.
+CREATE TABLE IF NOT EXISTS discovered_products (
+  slug            text PRIMARY KEY,
+  ticker          text NOT NULL DEFAULT '—',
+  style_code      text NOT NULL DEFAULT '—',
+  name            text NOT NULL,
+  brand           text NOT NULL DEFAULT 'Unknown',
+  year            integer,
+  release_date    text,
+  colorway        text,
+  retail          numeric(12, 2) NOT NULL DEFAULT 0,
+  stockx_url      text NOT NULL DEFAULT '',
+  fallback_image  text NOT NULL DEFAULT '',
+  featured        boolean NOT NULL DEFAULT false,
+  rank            integer,
+  price           numeric(12, 2),
+  weekly_orders   integer,
+  source          text NOT NULL DEFAULT 'search',
+  captured_at     timestamptz NOT NULL DEFAULT now(),
+  updated_at      timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS discovered_products_updated_idx
+  ON discovered_products (updated_at DESC);
+
+CREATE INDEX IF NOT EXISTS discovered_products_brand_idx
+  ON discovered_products (brand);
+
 COMMIT;

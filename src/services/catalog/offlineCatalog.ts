@@ -76,3 +76,18 @@ export function getOfflineCatalogQuotes(
 export function getOfflineQuoteBySlug(slug: string): OfflineCatalogQuote | null {
   return getOfflineCatalogQuotes().find((row) => row.slug === slug) ?? null;
 }
+
+/**
+ * Offline JSON first, then pairs previously discovered via search/market
+ * (Neon / process memory). Use this before spending KicksDB quota.
+ */
+export async function resolveCatalogQuoteBySlug(
+  slug: string,
+): Promise<OfflineCatalogQuote | null> {
+  const offline = getOfflineQuoteBySlug(slug);
+  if (offline) return offline;
+  const { getDiscoveredBySlug } = await import(
+    "@/services/catalog/discoveredProducts"
+  );
+  return getDiscoveredBySlug(slug);
+}
